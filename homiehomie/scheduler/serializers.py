@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Lead
+from .models import Course
 
-class LeadSerializer(serializers.ModelSerializer):
+class CourseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Lead
-        fields = ('id', 'name', 'email', 'message')
+        model = Course
+        fields = ('major', 'name', 'description')
