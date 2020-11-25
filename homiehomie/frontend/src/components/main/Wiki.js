@@ -1,11 +1,14 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
+import WikiNotebook from '../Wiki/WikiNotebook'
+import WikiSummary from '../Wiki/WikiSummary'
 
 export class Wiki extends Component {
   render() {
     return (
-      <div>
-        <h1> Add Lead Form </h1>{" "}
-      </div>
+      <Fragment>
+        <WikiSummary />
+        <WikiNotebook />
+      </Fragment>
     );
   }
 }

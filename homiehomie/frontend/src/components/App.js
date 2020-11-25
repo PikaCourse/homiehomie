@@ -5,6 +5,7 @@ import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 
 import Dashboard from "./main/Dashboard";
+import Wiki from "./main/Wiki";
 
 
 import {Provider} from 'react-redux';
@@ -16,8 +17,16 @@ class App extends Component {
       <Provider store = {store}>
         <Fragment>
           <Header />
-          <div className="container">
-            <Dashboard />
+          <div className="container-fluid">
+            <div class="row">
+              <div id="app" class="col-md-7">
+                <Dashboard />
+              </div>
+              <div id="app" class="col-md-5">
+                <Wiki />
+              </div>
+            </div>
+            
           </div>
           <Footer />
         </Fragment>
