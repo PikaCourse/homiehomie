@@ -26,3 +26,4 @@ settings.py
 ehthumbs.db
 Icon
 Thumbs.db
+node_modules

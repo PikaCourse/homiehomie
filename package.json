@@ -1,0 +1,35 @@
+{
+  "name": "homiehomie",
+  "version": "1.0.0",
+  "description": "source venv/bin/activate python manage.py runserver",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack --mode development ./homiehomie/frontend/src/index.js --output-path ./homiehomie/frontend/static/frontend/main.js",
+    "build": "webpack --mode production ./homiehomie/frontend/src/index.js --output-path ./homiehomie/frontend/static/frontend/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MARX1108/homiehomie.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MARX1108/homiehomie/issues"
+  },
+  "homepage": "https://github.com/MARX1108/homiehomie#readme",
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-react": "^7.12.7",
+    "babel-loader": "^8.2.1",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "react-dom": "^17.0.1",
+    "webpack": "^5.6.0",
+    "webpack-cli": "^4.2.0"
+  },
+  "dependencies": {
+    "prop-types": "^15.7.2",
+    "react": "^17.0.1"
+  }
+}
