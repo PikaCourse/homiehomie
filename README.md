@@ -1,9 +1,12 @@
 # homiehomie
+## how to
+source venv/bin/activate
+python manage.py runserver
+
 ## workflowy
 https://workflowy.com/s/homiehomie/qLpaReYIIj7eGbsl
 ## database
 backend
-
 - Data
   - VT
     - Course
