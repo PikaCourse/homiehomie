@@ -6,8 +6,9 @@
 
 1. [ ] Scheduler
     1. [x] Model
-    2. [ ] API Documentation
+    2. [x] API Documentation
     3. [ ] API Backend implementation
+    4. [ ] Set up test
 2. [ ] User
     1. [ ] User model
     2. [ ] Register/Login

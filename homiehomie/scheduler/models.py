@@ -4,36 +4,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Schedule(models.Model):
-    """
-    Course scheduled created by USER
-    user:           User creating this schedule
-    created_at:     The time this schedule is created
-    last_edited:    The most recent time this schedule is edited
-    is_star:        Is this schedule starred by user?
-    year:           Year of the schedule for
-    semester:       Semester of the schedule
-    name:           Name of the schedule
-    note:           Note of the schedule
-    tags:           User tagging
-
-    courses:        Access all the courses in this schedule
-    """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    last_edited = models.DateTimeField(auto_now_add=True)
-    is_star = models.BooleanField(default=False)
-    year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
-    semester = models.CharField(max_length=20)
-    name = models.CharField(max_length=200)
-    note = models.TextField()
-    coursesid = models.JSONField(default=list)
-    tags = models.JSONField(default=list)
-
-    def __str__(self):
-        return self.user.username + "_" + str(self.year) + "_" + self.semester + "_" + self.name
-
-
 # Create your models here.
 class Course(models.Model):
     """
@@ -205,5 +175,35 @@ class PostAnswer(models.Model):
 
     def __str__(self):
         return "_".join([self.post.title, self.postee.username])
+
+
+class Schedule(models.Model):
+    """
+    Course scheduled created by USER
+    user:           User creating this schedule
+    created_at:     The time this schedule is created
+    last_edited:    The most recent time this schedule is edited
+    is_star:        Is this schedule starred by user?
+    year:           Year of the schedule for
+    semester:       Semester of the schedule
+    name:           Name of the schedule
+    note:           Note of the schedule
+    tags:           User tagging
+
+    coursesid:      Access all the courses in this schedule via id array
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now_add=True)
+    is_star = models.BooleanField(default=False)
+    year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
+    semester = models.CharField(max_length=20)
+    name = models.CharField(max_length=200)
+    note = models.TextField()
+    coursesid = models.JSONField(default=list)
+    tags = models.JSONField(default=list)
+
+    def __str__(self):
+        return self.user.username + "_" + str(self.year) + "_" + self.semester + "_" + self.name
 
 
