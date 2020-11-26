@@ -5,8 +5,13 @@
 ### Backend
 
 1. [ ] Scheduler
+    1. [x] Model
+    2. [ ] URL redirecting
 2. [ ] User
-3
+    1. [ ] User model
+    2. [ ] Register/Login
+    3. [ ] Setting
+3. [ ] Instant Messaging
 
 ## how to
     pip install -r requirements.txt

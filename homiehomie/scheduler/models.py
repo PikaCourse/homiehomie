@@ -73,20 +73,20 @@ class Course(models.Model):
     tags:           ["hard", "interesting", "time-consuming", "math"]
     """
     created_at = models.DateTimeField(auto_now_add=True)
-    major = models.CharField(max_length=100)
-    department = models.CharField(max_length=100)
-    name = models.CharField(max_length=300)
-    crn = models.CharField(max_length=50)
-    time = models.JSONField()
-    school = models.CharField(max_length=100)
-    professor = models.CharField(max_length=100)
+    major = models.CharField(max_length=100, default="")
+    department = models.CharField(max_length=100, default="")
+    name = models.CharField(max_length=300, default="")
+    crn = models.CharField(max_length=50, default="")
+    time = models.JSONField(default=list)
+    school = models.CharField(max_length=100, default="")
+    professor = models.CharField(max_length=100, default="")
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
-    semester = models.CharField(max_length=20)
+    semester = models.CharField(max_length=20, null=True)
     description = models.CharField(max_length=2048, default="empty course description")
-    tags = models.JSONField()
+    tags = models.JSONField(default=list)
 
     # one to many
-    schedule = models.ForeignKey(Schedule, on_delete=models.PROTECT, related_name="courses")
+    schedule = models.ForeignKey(Schedule, on_delete=models.PROTECT, related_name="courses", null=True)
 
 
 class Question(models.Model):
