@@ -21,29 +21,40 @@ export class Scheduler extends Component {
             disableDblClick={true}
             disableClick={false}
             isReadOnly={false}
-            // schedules={[
-            // {
-            //     id: '1',
-            //     calendarId: '0',
-            //     title: 'TOAST UI Calendar Study',
-            //     category: 'time',
-            //     dueDateClass: '',
-            //     start: new Date(new Date().setHours(start.getHours() + 1)),
-            //     end: new Date(new Date().setHours(start.getHours() + 2))
-            // },
-            // {
-            //     id: '2',
-            //     calendarId: '0',
-            //     title: 'Practice',
-            //     category: 'milestone',
-            //     dueDateClass: '',
-            //     start: new Date(new Date().setHours(start.getHours() + 4)),
-            //     end: new Date(new Date().setHours(start.getHours() + 5)),
-            //     isReadOnly: true
-            // }
+            scheduleView
+            taskView
+            schedules={[
+            {
+                id: '1',
+                calendarId: '0',
+                title: 'TOAST UI Calendar Study',
+                category: 'time',
+                dueDateClass: '',
+                start: new Date(new Date().setHours(start.getHours() + 1)),
+                end: new Date(new Date().setHours(start.getHours() + 2))
+            },
+            {
+                id: '2',
+                calendarId: '0',
+                title: 'Practice',
+                category: 'milestone',
+                dueDateClass: '',
+                start: new Date(new Date().setHours(start.getHours() + 4)),
+                end: new Date(new Date().setHours(start.getHours() + 5)),
+                isReadOnly: true
+            }
             
-            // ]}
-            
+            ]}
+           
+              theme={myTheme}
+              useDetailPopup
+              useCreationPopup
+            //   view={selectedView} // You can also set the `defaultView` option.
+              week={{
+                showTimezoneCollapseButton: true,
+                timezonesCollapsed: true
+              }}
+
             taskView
   />
         )
