@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course
+from homiehomie.scheduler.models import Course
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:

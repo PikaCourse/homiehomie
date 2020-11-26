@@ -8,6 +8,7 @@
 # Python # 
 *.py[cod] 
 *$py.class
+*.coverage
 
 # Virutalenv
 venv/
