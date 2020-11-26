@@ -29,6 +29,7 @@
         "webpack-cli": "^4.2.0"
     },
     "dependencies": {
+        "@toast-ui/react-calendar": "^1.0.5",
         "axios": "^0.21.0",
         "prop-types": "^15.7.2",
         "react": "^17.0.1",
