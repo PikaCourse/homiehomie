@@ -1,5 +1,10 @@
-import React, { Component } from 'react'
-import Calendar from '@toast-ui/react-calendar';
+import React, { useCallback, useRef } from "react";
+import { render } from "react-dom";
+
+
+import TUICalendar from "@toast-ui/react-calendar";
+import { ISchedule, ICalendarInfo } from "tui-calendar";
+
 
 import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
@@ -51,7 +56,7 @@ const calendars: ICalendarInfo[] = [
 ];
 
 
-export class Calendar extends Component {
+export class Calendar_1 extends Component {
     
   const cal = useRef(null);
 

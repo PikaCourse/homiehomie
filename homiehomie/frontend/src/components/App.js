@@ -5,7 +5,7 @@ import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 
 import Dashboard from "./main/Dashboard";
-import Calendar from "./main/Calendar";
+import Calendar from "./main/Scheduler";
 import Wiki from "./main/Wiki";
 
 
