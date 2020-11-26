@@ -5,6 +5,7 @@ import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 
 import Dashboard from "./main/Dashboard";
+import Calendar from "./main/Calendar";
 import Wiki from "./main/Wiki";
 
 
@@ -20,7 +21,7 @@ class App extends Component {
           <div className="container-fluid">
             <div class="row">
               <div id="app" class="col-md-7">
-                <Dashboard />
+                <Calendar />
               </div>
               <div id="app" class="col-md-5">
                 <Wiki />
