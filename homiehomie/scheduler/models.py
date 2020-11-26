@@ -27,7 +27,11 @@ class Schedule(models.Model):
     semester = models.CharField(max_length=20)
     name = models.CharField(max_length=200)
     note = models.TextField()
-    tags = models.JSONField()
+    coursesid = models.JSONField(default=list)
+    tags = models.JSONField(default=list)
+
+    def __str__(self):
+        return self.user.username + "_" + str(self.year) + "_" + self.semester + "_" + self.name
 
 
 # Create your models here.
@@ -85,8 +89,8 @@ class Course(models.Model):
     description = models.CharField(max_length=2048, default="empty course description")
     tags = models.JSONField(default=list)
 
-    # one to many
-    schedule = models.ForeignKey(Schedule, on_delete=models.PROTECT, related_name="courses", null=True)
+    def __str__(self):
+        return "_".join([self.school, self.name])
 
 
 class Question(models.Model):
@@ -114,6 +118,9 @@ class Question(models.Model):
     title = models.CharField(max_length=200)
     tags = models.JSONField()
 
+    def __str__(self):
+        return "_".join([self.course.name, self.title])
+
 
 # TODO Enable referring to past editing via git?
 class Note(models.Model):
@@ -138,8 +145,11 @@ class Note(models.Model):
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
-    content = models.TextField()    # In markdown
-    tags = models.JSONField()
+    content = models.TextField(blank=True)    # In markdown
+    tags = models.JSONField(default=list)
+
+    def __str__(self):
+        return "_".join([self.course.name, self.question.title, self.title])
 
 
 class Post(models.Model):
@@ -167,6 +177,9 @@ class Post(models.Model):
     content = models.TextField()  # In markdown
     tags = models.JSONField()
 
+    def __str__(self):
+        return "_".join([self.course.name, self.title])
+
 
 class PostAnswer(models.Model):
     """
@@ -189,4 +202,8 @@ class PostAnswer(models.Model):
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
     content = models.TextField()  # In markdown
+
+    def __str__(self):
+        return "_".join([self.post.title, self.postee.username])
+
 

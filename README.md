@@ -6,7 +6,8 @@
 
 1. [ ] Scheduler
     1. [x] Model
-    2. [ ] URL redirecting
+    2. [ ] API Documentation
+    3. [ ] API Backend implementation
 2. [ ] User
     1. [ ] User model
     2. [ ] Register/Login
@@ -16,6 +17,10 @@
 ## how to
     pip install -r requirements.txt
     python manage.py runserver
+    
+## API
+
+https://app.swaggerhub.com/apis/NeX-Studio/HomieHomie/1.0.0
 
 ## workflowy
 
