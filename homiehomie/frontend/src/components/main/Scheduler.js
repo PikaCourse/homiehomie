@@ -6,9 +6,16 @@ import 'tui-calendar/dist/tui-calendar.css';
 import 'tui-date-picker/dist/tui-date-picker.css';
 import 'tui-time-picker/dist/tui-time-picker.css';
 
+const themeConfig =  {
+    'common.border': '1px solid #e5e5e5',
+    'common.today.color': '#419EF4',
+    'common.creationGuide.filter': 'drop-shadow(6px 4px 30px rgba(65, 158, 244, 0.81))',
+    'common.creationGuide.border': '1px solid #515ce6',
+};
+
 const myTheme = {
-    // Theme object to extends default dark theme.
-  };
+    themeConfig
+};
 const start = new Date();
 const end = new Date(new Date().setMinutes(start.getMinutes() + 30));
 
