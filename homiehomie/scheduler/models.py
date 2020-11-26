@@ -26,7 +26,7 @@ class Schedule(models.Model):
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
     semester = models.CharField(max_length=20)
     name = models.CharField(max_length=200)
-    note = models.CharField()
+    note = models.TextField()
     tags = models.JSONField()
 
 
@@ -138,7 +138,7 @@ class Note(models.Model):
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
-    content = models.CharField()    # In markdown
+    content = models.TextField()    # In markdown
     tags = models.JSONField()
 
 
@@ -164,7 +164,7 @@ class Post(models.Model):
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
-    content = models.CharField()  # In markdown
+    content = models.TextField()  # In markdown
     tags = models.JSONField()
 
 
@@ -188,5 +188,5 @@ class PostAnswer(models.Model):
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
-    content = models.CharField()  # In markdown
+    content = models.TextField()  # In markdown
 

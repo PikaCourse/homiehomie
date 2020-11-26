@@ -3,10 +3,8 @@ import React, { Component } from 'react'
 export class Header extends Component {
     render() {
         return (
-          <nav className="navbar navbar-expand-lg navbar-light bg-light border-0">
-          <a className="navbar-brand" href="#"
-          tyle="text-shadow: 0px 4px 10px rgba(89, 108, 126, 0.35); color: #596C7E;"
-          >Homiehomie Beta</a>
+          <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-4 pt-4">
+          <a className="navbar-brand pl-4" href="#" style={selectedStyle}>Homiehomie Beta</a>
           <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
@@ -40,5 +38,10 @@ export class Header extends Component {
         )
     }
 }
-
+const selectedStyle = {
+  textShadow: '0px 4px 10px rgba(89, 108, 126, 0.35)',
+  color: '#596C7E',
+  fontWeight: '800',
+  fontSize:'1.5rem'
+}
 export default Header

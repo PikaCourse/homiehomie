@@ -1,10 +1,21 @@
 # homiehomie
+
+## TODO
+
+### Backend
+
+1. [ ] Scheduler
+2. [ ] User
+3
+
 ## how to
-source venv/bin/activate
-python manage.py runserver
+    pip install -r requirements.txt
+    python manage.py runserver
 
 ## workflowy
+
 https://workflowy.com/s/homiehomie/qLpaReYIIj7eGbsl
+
 ## database
 backend
 - Data
