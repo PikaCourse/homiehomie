@@ -20,7 +20,6 @@ venv/
 __pycache__
 db.sqlite3
 media
-settings.py
 
 # Backup files # 
 *.bak 
@@ -30,6 +29,7 @@ settings.py
 ehthumbs.db
 Icon
 Thumbs.db
+*.env
 
 # NPM
 node_modules
