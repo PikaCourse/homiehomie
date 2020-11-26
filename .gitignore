@@ -29,7 +29,7 @@ media
 ehthumbs.db
 Icon
 Thumbs.db
-*.env
+.env
 
 # NPM
 node_modules
