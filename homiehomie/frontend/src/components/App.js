@@ -19,11 +19,11 @@ class App extends Component {
         <Fragment>
           <Header />
           <div className="container-fluid">
-            <div class="row">
-              <div id="app" class="col-md-7">
+            <div className="row">
+              <div id="app" className="col-md-6 m-3">
                 <Calendar />
               </div>
-              <div id="app" class="col-md-5">
+              <div id="app" className="col-md-5">
                 <Wiki />
               </div>
             </div>
