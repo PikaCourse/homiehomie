@@ -1,5 +1,5 @@
 from django.urls import path
-from frontend import views
+from homiehomie.frontend import views
 
 urlpatterns = [
     path('', views.index),
