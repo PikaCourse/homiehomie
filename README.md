@@ -15,6 +15,8 @@
     3. [ ] Setting
 3. [ ] Instant Messaging
 4. [ ] Test server deployment on dokku 
+    1. [ ] Test server
+    2. [ ] Upgrade dokku to use `Procfile`
 5. [ ] Production Deployment
 
 ## how to
