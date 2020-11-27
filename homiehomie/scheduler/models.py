@@ -20,6 +20,7 @@ class Course(models.Model):
     professor:      Course instructor
     year:           Course providing year
     semester:       Course providing semester, possible value: spring, fall, summer
+    location:       Course classroom location
     description:    Course description
     tags:           User tagging
 
@@ -45,6 +46,7 @@ class Course(models.Model):
     professor:      Tester Test
     year:           2020
     semester:       fall
+    location:       ARMS-124
     description:    Doing some algorithms
     tags:           ["hard", "interesting", "time-consuming", "math"]
     """
@@ -59,6 +61,7 @@ class Course(models.Model):
     professor = models.CharField(max_length=100, default="")
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
     semester = models.CharField(max_length=20, null=True)
+    location = models.CharField(max_length=100, blank=True)
     description = models.CharField(max_length=2048, default="empty course description")
     tags = models.JSONField(default=list)
 
