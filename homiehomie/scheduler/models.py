@@ -63,10 +63,10 @@ class Course(models.Model):
     semester = models.CharField(max_length=20, null=True)
     location = models.CharField(max_length=100, blank=True)
     description = models.CharField(max_length=2048, default="empty course description")
-    tags = models.JSONField(default=list)
+    tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
-        return "_".join([self.school, self.name])
+        return "_".join([self.school, self.course, self.name])
 
 
 class Question(models.Model):
@@ -92,7 +92,7 @@ class Question(models.Model):
     is_pin = models.BooleanField(default=False)
     pin_order = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
-    tags = models.JSONField()
+    tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         return "_".join([self.course.name, self.title])
@@ -122,7 +122,7 @@ class Note(models.Model):
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
     content = models.TextField(blank=True)    # In markdown
-    tags = models.JSONField(default=list)
+    tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         return "_".join([self.course.name, self.question.title, self.title])
@@ -151,7 +151,7 @@ class Post(models.Model):
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
     content = models.TextField()  # In markdown
-    tags = models.JSONField()
+    tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         return "_".join([self.course.name, self.title])
@@ -207,7 +207,7 @@ class Schedule(models.Model):
     name = models.CharField(max_length=200)
     note = models.TextField()
     coursesid = models.JSONField(default=list)
-    tags = models.JSONField(default=list)
+    tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
         return self.user.username + "_" + str(self.year) + "_" + self.semester + "_" + self.name
