@@ -14,6 +14,8 @@
     2. [ ] Register/Login
     3. [ ] Setting
 3. [ ] Instant Messaging
+4. [ ] Test server deployment on dokku 
+5. [ ] Production Deployment
 
 ## how to
     pip install -r requirements.txt
