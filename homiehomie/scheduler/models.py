@@ -11,6 +11,7 @@ class Course(models.Model):
 
     major:          Course major name
     department:     Course providing department
+    course:         Course id
     name:           Course name
     crn:            Course registration number, only number that identified course in a school
     time:           Course time period, in form of array of JSON containing weekday (0~6),
@@ -25,7 +26,8 @@ class Course(models.Model):
     Sample data record:
     major:          Computer Science
     department:     School of Science
-    name:           CS 38100
+    course:         CS 38100
+    name:           Algorithm
     crn:            13247-LE1
     time:           [
                         {
@@ -49,6 +51,7 @@ class Course(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     major = models.CharField(max_length=100, default="")
     department = models.CharField(max_length=100, default="")
+    course = models.CharField(max_length=300, default="")
     name = models.CharField(max_length=300, default="")
     crn = models.CharField(max_length=50, default="")
     time = models.JSONField(default=list)
