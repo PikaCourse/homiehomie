@@ -26,7 +26,7 @@ SECRET_KEY = config("HOMIE_HOMIE_DJANGO_SECRET_KEY", )
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["test-homiehomie.thexyzlab.studio", "127.0.0.1"]
 
 
 # Application definition
@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'homiehomie.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'storage/db.sqlite3',
     }
 }
 

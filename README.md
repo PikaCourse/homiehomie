@@ -12,6 +12,7 @@
 2. [ ] User
     1. [ ] User model
     2. [ ] Register/Login
+        1. [ ] Frontend send hashed password
     3. [ ] Setting
 3. [ ] Instant Messaging
 4. [ ] Test server deployment on dokku 
