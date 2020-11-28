@@ -6,15 +6,15 @@ export class WikiNotebook extends Component {
             <div className ="p-3" style = {noteBookStyle}>
                 <div>
                     <h2>title</h2>
-                    <p class="pl-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) </p>
+                    <p className="pl-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) </p>
                 </div>
                 <div>
                     <h2>title</h2>
-                    <p class="pl-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) </p>
+                    <p className="pl-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) </p>
                 </div>
                 <div>
                     <h2>title</h2>
-                    <p class="pl-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) </p>
+                    <p className="pl-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) </p>
                 </div>
             </div>
         )
