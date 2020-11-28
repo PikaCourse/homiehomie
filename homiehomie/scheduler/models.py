@@ -5,33 +5,63 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
+class CourseMeta(models.Model):
+    """
+    Course meta data model
+
+    Fields explanation:
+    major:          Course major name
+    college:        Course providing college
+    title:          Course title
+    name:           Course name
+    credit_hours:   Course credit hours
+    school:         Course provider
+    description:    Course description
+    tags:           User tagging
+
+    Example data record:
+    major:          CS
+    college:        College of Science
+    title:          CS 38100
+    name:           Algorithm
+    credit_hours:   3
+    school:         Purdue University
+    description:    Doing some algorithms
+    tags:           ["hard", "interesting", "time-consuming", "math"]
+    """
+    created_at = models.DateTimeField(auto_now_add=True)
+    major = models.CharField(max_length=100, default="", null=True)
+    college = models.CharField(max_length=100, null=True, blank=True)
+    title = models.CharField(max_length=300, default="")
+    name = models.CharField(max_length=300, default="")
+    credit_hours = models.IntegerField(default=0)
+    school = models.CharField(max_length=100)
+    description = models.CharField(max_length=2048, default="empty course description", blank=True, null=True)
+    tags = models.JSONField(default=list, blank=True, null=True)
+
+    def __str__(self):
+        return "_".join([self.school, self.title, self.name])
+
+
 class Course(models.Model):
     """
     Course data model
 
-    major:          Course major name
-    college:        Course providing college
-    course:         Course id
-    name:           Course name
+    Fields explanation:
+    course_meta:    Many to one mapping to course meta info
     crn:            Course registration number, only number that identified course in a school
     time:           Course time period, in form of array of JSON containing weekday (0~6),
                     start_at (HH:MM), end_at (HH:MM)
-    credit_hours:   Course credit hours
-    capacity:       Course classroom capacity
     type:           Course type: lecture, lab, recitation, research, online, other
-    school:         Course provider
     professor:      Course instructor
     year:           Course providing year
     semester:       Course providing semester, possible value: spring, fall, summer
     location:       Course classroom location
-    description:    Course description
-    tags:           User tagging
+    capacity:       Course classroom capacity
 
-    Sample data record:
-    major:          CS
-    college:        College of Science
-    course:         CS 38100
-    name:           Algorithm
+
+    Example Data record:
+    course_meta:    1
     crn:            13247-LE1
     time:           [
                         {
@@ -45,37 +75,26 @@ class Course(models.Model):
                             "end_at": "14:45"
                         }
                     ]
-    credit_hours:   3
-    capacity:       100
     type:           lecture
-    school:         Purdue University
     professor:      Tester Test
     year:           2020
     semester:       fall
     location:       ARMS-124
-    description:    Doing some algorithms
-    tags:           ["hard", "interesting", "time-consuming", "math"]
+    capacity:       100
     """
+    course_meta = models.ForeignKey(CourseMeta, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    major = models.CharField(max_length=100, default="", null=True)
-    college = models.CharField(max_length=100, null=True, blank=True)
-    course = models.CharField(max_length=300, default="")
-    name = models.CharField(max_length=300, default="")
     crn = models.CharField(max_length=50, default="", null=True)
     time = models.JSONField(default=list, blank=True, null=True)
-    credit_hours = models.IntegerField(default=0)
-    capacity = models.IntegerField(default=0, null=True, blank=True)
     type = models.CharField(max_length=10, default="lecture")
-    school = models.CharField(max_length=100)
     professor = models.CharField(max_length=100, default="", null=True, blank=True)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
     semester = models.CharField(max_length=20, null=True, blank=True)
     location = models.CharField(max_length=100, blank=True, null=True)
-    description = models.CharField(max_length=2048, default="empty course description", blank=True, null=True)
-    tags = models.JSONField(default=list, blank=True, null=True)
+    capacity = models.IntegerField(default=0, null=True, blank=True)
 
     def __str__(self):
-        return "_".join([self.school, self.course, self.name])
+        return "_".join([str(self.year), str(self.semester), str(self.course_meta)])
 
 
 class Question(models.Model):
@@ -137,6 +156,7 @@ class Note(models.Model):
         return "_".join([self.course.name, self.question.title, self.title])
 
 
+# TODO Need to modify the logic
 class Post(models.Model):
     """
     Post Data model
