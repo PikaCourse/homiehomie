@@ -4,37 +4,45 @@ from homiehomie.scheduler.models import *
 # TODO Restrict update method
 
 
+class CourseMetaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseMeta
+        fields = '__all__'
+
+
 class CourseSerializer(serializers.ModelSerializer):
+    # TODO Access CourseMeta info based on the id in Course
     class Meta:
         model = Course
-        fields = [field.name for field in model._meta.fields]
+        fields = '__all__'
+        depth = 1
 
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = [field.name for field in model._meta.fields]
+        fields = '__all__'
 
 
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note
-        fields = [field.name for field in model._meta.fields]
+        fields = '__all__'
 
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = [field.name for field in model._meta.fields]
+        fields = '__all__'
 
 
 class PostAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostAnswer
-        fields = [field.name for field in model._meta.fields]
+        fields = '__all__'
 
 
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PostAnswer
-        fields = [field.name for field in model._meta.fields]
+        model = Schedule
+        fields = '__all__'

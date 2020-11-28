@@ -3,6 +3,7 @@ from rest_framework import routers
 from homiehomie.scheduler import views
 
 router = routers.DefaultRouter()
+router.register(r'coursesmeta', views.CourseMetaViewSet)
 router.register(r'courses', views.CourseViewSet, basename='courses')
 router.register(r'questions', views.QuestionViewSet, basename='questions')
 router.register(r'notes', views.NoteViewSet)

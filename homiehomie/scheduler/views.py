@@ -13,6 +13,48 @@ def scheduler(request):
     return render(request, 'templates/base.html', {})
 
 
+"""
+API Definition below
+"""
+
+# TODO API for this
+class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
+    query_parameters = ["school", "major", "limit"]
+    queryset = CourseMeta.objects.all()
+    serializer_class = CourseMetaSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = CourseMeta.objects.all()
+
+        # TODO Better way?
+        # TODO Query parameter Vaildation
+        school      = self.request.query_params.get("school", None)
+        college     = self.request.query_params.get("college", None)
+        name        = self.request.query_params.get("name", None)
+        major       = self.request.query_params.get("major", None)
+        limit       = self.request.query_params.get("limit", None)
+
+        if school is not None:
+            queryset = queryset.filter(school=school)
+        if major is not None:
+            queryset = queryset.filter(major=major)
+        if name is not None:
+            queryset = queryset.filter(name__contains=name)
+        if college is not None:
+            queryset = queryset.filter(college__contains=college)
+        if limit is not None:
+            try:
+                queryset = queryset[0:int(limit)]
+            except ValueError as err:
+                error_pack = {"errmsg": "invalid query param: limit"}
+                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            queryset = queryset[:200]
+
+        serializer = CourseMetaSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     query_parameters = ["school", "major", "year",
                         "semester", "professor", "limit"]
@@ -32,15 +74,15 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         limit       = self.request.query_params.get("limit", None)
 
         if school is not None:
-            queryset = queryset.filter(school=school)
+            queryset = queryset.filter(course_meta__school=school)
         if major is not None:
-            queryset = queryset.filter(major=major)
+            queryset = queryset.filter(course_meta__major=major)
         if year is not None:
             queryset = queryset.filter(year=year)
         if semester is not None:
-            queryset = queryset.filter(school=semester)
+            queryset = queryset.filter(semester=semester)
         if professor is not None:
-            queryset = queryset.filter(school=professor)
+            queryset = queryset.filter(professor=professor)
         if limit is not None:
             try:
                 queryset = queryset[0:int(limit)]
