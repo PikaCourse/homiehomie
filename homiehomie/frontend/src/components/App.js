@@ -6,6 +6,8 @@ import Footer from "./layout/Footer";
 
 import Dashboard from "./main/Dashboard";
 import Calendar from "./main/Scheduler";
+import Leads from "./main/Leads";
+
 import Wiki from "./main/Wiki";
 
 

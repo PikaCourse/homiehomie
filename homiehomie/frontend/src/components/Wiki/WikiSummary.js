@@ -2,7 +2,6 @@ import React, { Component, Fragment } from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import {getCourse} from '../../actions/course'
-import course from '../../reducers/course'
 
 
 export class WikiSummary extends Component {
@@ -46,16 +45,16 @@ export class WikiSummary extends Component {
                         <tr>
                         <th>Major</th>
                         <th>Name</th>
-                        <th>Description</th>
+                        <th>Location</th>
                         <th />
                         </tr>
                     </thead>
                     <tbody>
                         {this.props.course.map((course) => (
                         <tr key={course.major}>
-                            <td>{course.major}</td>
+                            <td>{course.course}</td>
                             <td>{course.name}</td>
-                            <td>{course.description}</td>
+                            <td>{course.location}</td>
                             <td>
                             <button className="btn btn-danger btn-sm">
                                 Delete
@@ -76,5 +75,5 @@ const mapStateToProps = state =>({
     course: state.course.course
 });
 
-export default connect(mapStateToProps, {getCourse})(course);
+export default connect(mapStateToProps, {getCourse})(WikiSummary);
 // export default WikiSummary
