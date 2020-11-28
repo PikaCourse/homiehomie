@@ -27,7 +27,6 @@ class App extends Component {
                 <Wiki />
               </div>
             </div>
-            
           </div>
           <Footer />
         </Fragment>
