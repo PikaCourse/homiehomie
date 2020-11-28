@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_list_or_404
 from homiehomie.scheduler.models import *
 from homiehomie.scheduler.serializers import *
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.decorators import action
@@ -56,7 +56,7 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
-    query_parameters = ["school", "major", "year",
+    query_parameters = ["school", "major", "year", "title",
                         "semester", "professor", "limit"]
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
@@ -67,6 +67,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         # TODO Better way?
         # TODO Query parameter Vaildation
         school      = self.request.query_params.get("school", None)
+        title       = self.request.query_params.get("title", None)
         major       = self.request.query_params.get("major", None)
         year        = self.request.query_params.get("year", None)
         semester    = self.request.query_params.get("semester", None)
@@ -75,6 +76,8 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         if school is not None:
             queryset = queryset.filter(course_meta__school=school)
+        if title is not None:
+            queryset = queryset.filter(course_meta__title=title)
         if major is not None:
             queryset = queryset.filter(course_meta__major=major)
         if year is not None:
@@ -100,6 +103,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
     query_parameters = ["courseid", "sortby", "descending", "limit"]
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def list(self, request, *args, **kwargs):
         queryset = Question.objects.all()
