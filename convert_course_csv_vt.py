@@ -167,13 +167,32 @@ college_map = {
     'ENT': '',
     'GER': '',
     'CMDA': '',
-    'AFST': 'College of Liberal Arts and Human Sciences'
+    'AFST': 'College of Liberal Arts and Human Sciences',
+    'ARBC': 'College of Liberal Arts and Human Sciences',
+    'BTDM': '',
+    'EDTE': 'College of Liberal Arts and Human Sciences',
+    'BUS' : 'College of Liberal Arts and Human Sciences'
 }
+
+# parse arguments
+import argparse
+
+parser = argparse.ArgumentParser(description='Homiehomie VT Course Data Convert tool\n'
+                                             'Convert original files from github to formatted'
+                                             'CSV file to be uploaded to db')
+parser.add_argument('--input', required=True, help="Input file path")
+parser.add_argument('--delimit', default=",")
+parser.add_argument('--year', type=int, default=2020)
+parser.add_argument('--semester', default="fall")
+args = parser.parse_args()
+args_dict = vars(args)
 
 
 def convert_to_24(timestring):
     # AM and 12PM
-    if timestring[-2:] == "AM" or timestring[:2] == "12":
+    if "ARR" in timestring or "TBA" in timestring:
+        timestring = ""
+    elif timestring[-2:] == "AM" or timestring[:2] == "12":
         timestring = timestring[:-2]
         # 12 AM convert to 00
         if timestring[-2:] == "AM" and timestring[:2] == "12":
@@ -187,32 +206,35 @@ def convert_to_24(timestring):
     return timestring
 
 
-vt_dir = "data/course/VT/"
-course_file = open(vt_dir + "202009.csv")
-course_out = open(vt_dir + "202009_out.csv", "w")
+input_file = args_dict["input"]
+course_file = open(input_file)
+course_out = open(input_file.split(".")[0] + "_out.csv", "w")
 
 # Specify output csv header
 field_names = ["major", "college", "course", "name", "crn", "time",
                "credit_hours", "capacity", "type", "school", "professor",
                "year", "semester", "location", "description", "tags"]
-year = 2020
-semester = "fall"
+
+year = args_dict["year"]
+semester = args_dict["semester"]
 school = "Virgina Tech"
 
 # Gather column that can be pass into output directly
 reader_field_names = ["crn", "course", "name", "credit_hours", "capacity",
                       "professor", "location"]
 
-reader = csv.DictReader(course_file)
+dialect = csv.excel()
+dialect.delimiter = {"TAB": "\t"}.get(args_dict["delimit"], args_dict["delimit"])
+reader = csv.DictReader(course_file, dialect=dialect)
 writer = csv.DictWriter(course_out, fieldnames=field_names)
 writer.writeheader()
 
 time_template = {'weekday': 0, 'start_at': 'HH:MM', 'end_at': 'HH:MM'}
-
-for row in tqdm(reader, desc="Converting course file"):
+rows = tqdm(reader, desc="Converting course file")
+for row in rows:
     # init output row
     writer_row = dict.fromkeys(field_names)
-
+    # print(row["crn"])
     # Meta fields
     writer_row["year"] = year
     writer_row["semester"] = semester
@@ -235,7 +257,10 @@ for row in tqdm(reader, desc="Converting course file"):
     # Time json field
     time_array = list()
     # Check if the course has a fixed time schedule
-    if row["weekday"] != "ARR" and row["weekday"] != "":
+    # TODO Better handling
+    if (row["weekday"] is not None and row["weekday"] != ""
+        and row["weekday"] != "ARR" and row["weekday"] != "(ARR)") \
+            and row["weekday"] != "":
         weekdays = row["weekday"].split(" ")
         # Convert from 12 hours to 24 hours
         start_at = convert_to_24(row["start_at"])
