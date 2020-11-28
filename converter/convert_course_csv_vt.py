@@ -184,8 +184,16 @@ parser.add_argument('--input', required=True, help="Input file path")
 parser.add_argument('--delimit', default=",")
 parser.add_argument('--year', type=int, default=2020)
 parser.add_argument('--semester', default="fall")
+parser.add_argument('--meta', type=bool, default=False, help="Generate course meta info or schedule info")
+parser.add_argument('--meta_id_map', help="JSON file path containing mapping from course title to db id")
 args = parser.parse_args()
 args_dict = vars(args)
+
+args_dict["meta"] = {"True": True, "False": False}.get(args_dict["delimit"], False)
+
+if not args_dict["meta"] and args_dict["meta_id_map"] is None:
+    print("Need to provide a meta id mapping JSON when generating course csv!")
+    exit(1)
 
 
 def convert_to_24(timestring):
@@ -208,75 +216,117 @@ def convert_to_24(timestring):
 
 input_file = args_dict["input"]
 course_file = open(input_file)
-course_out = open(input_file.split(".")[0] + "_out.csv", "w")
-
-# Specify output csv header
-field_names = ["major", "college", "course", "name", "crn", "time",
-               "credit_hours", "capacity", "type", "school", "professor",
-               "year", "semester", "location", "description", "tags"]
-
-year = args_dict["year"]
-semester = args_dict["semester"]
 school = "Virgina Tech"
 
-# Gather column that can be pass into output directly
-reader_field_names = ["crn", "course", "name", "credit_hours", "capacity",
-                      "professor", "location"]
-
+# Read delimiter setting
 dialect = csv.excel()
 dialect.delimiter = {"TAB": "\t"}.get(args_dict["delimit"], args_dict["delimit"])
-reader = csv.DictReader(course_file, dialect=dialect)
-writer = csv.DictWriter(course_out, fieldnames=field_names)
-writer.writeheader()
 
-time_template = {'weekday': 0, 'start_at': 'HH:MM', 'end_at': 'HH:MM'}
-rows = tqdm(reader, desc="Converting course file")
-for row in rows:
-    # init output row
-    writer_row = dict.fromkeys(field_names)
-    # print(row["crn"])
-    # Meta fields
-    writer_row["year"] = year
-    writer_row["semester"] = semester
-    writer_row["school"] = school
 
-    # Bypass fields
-    for column in reader_field_names:
-        writer_row[column] = row[column]
+if args_dict["meta"]:
+    course_out = open(input_file.split(".")[0] + "_out_meta.csv", "w")
+    # Specify output csv header
+    field_names = ["major", "college", "title",
+                   "name", "credit_hours", "school",
+                   "description", "tags"]
 
-    # Hash fields
-    subject = row["course"].split("-")[0]
-    type = type_map[row["type"]]
-    college = college_map[subject]
-    description = "Empty"
-    writer_row["major"] = subject
-    writer_row["type"] = type
-    writer_row["college"] = college
-    writer_row["description"] = description
+    # Gather column that can be pass into output directly
+    reader_field_names = ["course", "name", "credit_hours"]
 
-    # Time json field
-    time_array = list()
-    # Check if the course has a fixed time schedule
-    # TODO Better handling
-    if (row["weekday"] is not None and row["weekday"] != ""
-        and row["weekday"] != "ARR" and row["weekday"] != "(ARR)") \
-            and row["weekday"] != "":
-        weekdays = row["weekday"].split(" ")
-        # Convert from 12 hours to 24 hours
-        start_at = convert_to_24(row["start_at"])
-        end_at = convert_to_24(row["end_at"])
-        for weekday in weekdays:
-            tmp = time_template.copy()
-            tmp["weekday"] = weekday_map[weekday]
-            tmp["start_at"] = start_at
-            tmp["end_at"] = end_at
-            time_array.append(tmp)
-    writer_row["time"] = json.dumps(time_array)
+    reader = csv.DictReader(course_file, dialect=dialect)
+    writer = csv.DictWriter(course_out, fieldnames=field_names)
+    writer.writeheader()
+    rows = tqdm(reader, desc="Converting course meta file")
+    course_set = set()
+    for row in rows:
+        # init output row
+        writer_row = dict.fromkeys(field_names)
 
-    # Empty tags field
-    writer_row["tags"] = "[]"
+        title = row["course"]
+        if title in course_set:
+            continue
+        else:
+            course_set.add(title)
 
-    writer.writerow(writer_row)
+        # Meta fields
+        writer_row["school"] = school
+
+        # Bypass fields
+        writer_row["title"] = title
+        writer_row["name"] = row["name"]
+        writer_row["credit_hours"] = row["credit_hours"]
+
+        # Hash fields
+        subject = row["course"].split("-")[0]
+        college = college_map[subject]
+        description = "Empty"
+        writer_row["major"] = subject
+        writer_row["college"] = college
+        writer_row["description"] = description
+
+        # Empty tags field
+        writer_row["tags"] = "[]"
+        writer.writerow(writer_row)
+    course_out.close()
+else:
+    map_file = open(args_dict["meta_id_map"])
+    title_id_lookup = json.loads(map_file.readline())
+    course_out = open(input_file.split(".")[0] + "_out.csv", "w")
+
+    # Specify output csv header
+    field_names = ["course_meta_id", "crn", "time",
+                   "capacity", "type", "professor",
+                   "year", "semester", "location"]
+
+    year = args_dict["year"]
+    semester = args_dict["semester"]
+
+    # Gather column that can be pass into output directly
+    reader_field_names = ["crn", "capacity",
+                          "professor", "location"]
+
+    reader = csv.DictReader(course_file, dialect=dialect)
+    writer = csv.DictWriter(course_out, fieldnames=field_names)
+    writer.writeheader()
+
+    time_template = {'weekday': 0, 'start_at': 'HH:MM', 'end_at': 'HH:MM'}
+    rows = tqdm(reader, desc="Converting course file")
+    for row in rows:
+        # init output row
+        writer_row = dict.fromkeys(field_names)
+        # print(row["crn"])
+        # Meta fields
+        writer_row["year"] = year
+        writer_row["semester"] = semester
+
+        # Bypass fields
+        for column in reader_field_names:
+            writer_row[column] = row[column]
+
+        # Hash fields
+        writer_row["course_meta_id"] = title_id_lookup[row["course"]]
+        writer_row["type"] = type_map[row["type"]]
+
+        # Time json field
+        time_array = list()
+        # Check if the course has a fixed time schedule
+        # TODO Better handling
+        if (row["weekday"] is not None and row["weekday"] != ""
+            and row["weekday"] != "ARR" and row["weekday"] != "(ARR)") \
+                and row["weekday"] != "":
+            weekdays = row["weekday"].split(" ")
+            # Convert from 12 hours to 24 hours
+            start_at = convert_to_24(row["start_at"])
+            end_at = convert_to_24(row["end_at"])
+            for weekday in weekdays:
+                tmp = time_template.copy()
+                tmp["weekday"] = weekday_map[weekday]
+                tmp["start_at"] = start_at
+                tmp["end_at"] = end_at
+                time_array.append(tmp)
+        writer_row["time"] = json.dumps(time_array)
+
+        writer.writerow(writer_row)
+    course_out.close()
 
 course_file.close()
-course_out.close()
