@@ -10,12 +10,15 @@ class Course(models.Model):
     Course data model
 
     major:          Course major name
-    department:     Course providing department
+    college:        Course providing college
     course:         Course id
     name:           Course name
     crn:            Course registration number, only number that identified course in a school
     time:           Course time period, in form of array of JSON containing weekday (0~6),
                     start_at (HH:MM), end_at (HH:MM)
+    credit_hours:   Course credit hours
+    capacity:       Course classroom capacity
+    type:           Course type: lecture, lab, recitation, research, online, other
     school:         Course provider
     professor:      Course instructor
     year:           Course providing year
@@ -25,8 +28,8 @@ class Course(models.Model):
     tags:           User tagging
 
     Sample data record:
-    major:          Computer Science
-    department:     School of Science
+    major:          CS
+    college:        College of Science
     course:         CS 38100
     name:           Algorithm
     crn:            13247-LE1
@@ -42,6 +45,9 @@ class Course(models.Model):
                             "end_at": "14:45"
                         }
                     ]
+    credit_hours:   3
+    capacity:       100
+    type:           lecture
     school:         Purdue University
     professor:      Tester Test
     year:           2020
@@ -51,19 +57,22 @@ class Course(models.Model):
     tags:           ["hard", "interesting", "time-consuming", "math"]
     """
     created_at = models.DateTimeField(auto_now_add=True)
-    major = models.CharField(max_length=100, default="")
-    department = models.CharField(max_length=100, default="")
+    major = models.CharField(max_length=100, default="", null=True)
+    college = models.CharField(max_length=100, null=True, blank=True)
     course = models.CharField(max_length=300, default="")
     name = models.CharField(max_length=300, default="")
-    crn = models.CharField(max_length=50, default="")
-    time = models.JSONField(default=list)
-    school = models.CharField(max_length=100, default="")
-    professor = models.CharField(max_length=100, default="")
+    crn = models.CharField(max_length=50, default="", null=True)
+    time = models.JSONField(default=list, blank=True, null=True)
+    credit_hours = models.IntegerField(default=0)
+    capacity = models.IntegerField(default=0, null=True, blank=True)
+    type = models.CharField(max_length=10, default="lecture")
+    school = models.CharField(max_length=100)
+    professor = models.CharField(max_length=100, default="", null=True, blank=True)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
-    semester = models.CharField(max_length=20, null=True)
-    location = models.CharField(max_length=100, blank=True)
-    description = models.CharField(max_length=2048, default="empty course description")
-    tags = models.JSONField(default=list, blank=True)
+    semester = models.CharField(max_length=20, null=True, blank=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
+    description = models.CharField(max_length=2048, default="empty course description", blank=True, null=True)
+    tags = models.JSONField(default=list, blank=True, null=True)
 
     def __str__(self):
         return "_".join([self.school, self.course, self.name])

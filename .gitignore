@@ -37,3 +37,6 @@ node_modules
 
 # Project specific
 homiehomie_django_env.py
+
+# Data files
+data/
