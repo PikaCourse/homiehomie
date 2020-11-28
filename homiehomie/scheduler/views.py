@@ -48,7 +48,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                 error_pack = {"errmsg": "invalid query param: limit"}
                 return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
         else:
-            queryset = queryset[:1000]
+            queryset = queryset[:200]
 
         serializer = CourseSerializer(queryset, many=True)
         return Response(serializer.data)
