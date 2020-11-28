@@ -55,6 +55,7 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
         return Response(serializer.data)
 
 
+# TODO Support for tag serch
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
     query_parameters = ["school", "major", "year", "title",
                         "semester", "professor", "limit"]
@@ -68,16 +69,20 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         # TODO Query parameter Vaildation
         school      = self.request.query_params.get("school", None)
         title       = self.request.query_params.get("title", None)
+        crn         = self.request.query_params.get("crn", None)
         major       = self.request.query_params.get("major", None)
         year        = self.request.query_params.get("year", None)
         semester    = self.request.query_params.get("semester", None)
         professor   = self.request.query_params.get("professor", None)
+        tags        = self.request.query_params.get("tags", None)
         limit       = self.request.query_params.get("limit", None)
 
         if school is not None:
             queryset = queryset.filter(course_meta__school=school)
         if title is not None:
             queryset = queryset.filter(course_meta__title=title)
+        if crn is not None:
+            queryset = queryset.filter(crn__startswith=crn)
         if major is not None:
             queryset = queryset.filter(course_meta__major=major)
         if year is not None:
