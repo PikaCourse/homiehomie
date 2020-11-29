@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'homiehomie.scheduler',
     'rest_framework',
-    'homiehomie.frontend'
+    'homiehomie.frontend',
+    'homiehomie.user',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +60,9 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'scheduler'),
+            # os.path.join(BASE_DIR, 'scheduler/templates'),
+            # os.path.join(BASE_DIR, 'user/templates'),
+            # os.path.join(BASE_DIR, 'frontend/templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {

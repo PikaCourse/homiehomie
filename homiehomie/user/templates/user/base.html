@@ -1,0 +1,72 @@
+{%  load static %}
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static "css/main.css" %}">
+    <script src="{% static "frontend/main.js" %}"></script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+    {% block styles %}
+
+    {% endblock %}
+    <title>Homiehomie</title>
+</head>
+
+<!-- header -->
+<div class="contain-fluid pt-4 pb-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7">
+                <h1 style="
+                text-shadow: 0px 4px 10px rgba(89, 108, 126, 0.35); color: #596C7E";
+                ">Homiehomie</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- body -->
+{% block content %}
+
+{% endblock %}
+
+<!-- footer -->
+<div class="contain-fluid mt-4">
+    <div class=" container"">
+    <h1 class="display-5 pt-4" style=" text-align: center; font-size: 20px;">
+        Homiehomie
+    </h1>
+    <h1 class="display-5 " style="text-align: center; font-size: 10px;">
+        Copyright © All
+        rights reserved
+    </h1>
+</div>
+</div>
+
+{% block script %}
+
+{% endblock %}
+
+</html>
