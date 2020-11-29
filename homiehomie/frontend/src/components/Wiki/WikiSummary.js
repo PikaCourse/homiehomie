@@ -10,62 +10,64 @@ export class WikiSummary extends Component {
     }
 
     componentDidMount(){
-        this.props.getCourse();
+        this.props.getCourse('CS-3114');
     }
-
     render() {
         return (
             <Fragment>
-            <div>
-                <div className ="p-2">
+                
+                
+                {typeof this.props.course[0] != 'undefined'? 
+                    <div className ="p-2">
                     <h1 style={{color:'#419EF4'}}>
-                        MATH2114
+                        {this.props.course[0].course_meta.title}
                     </h1>
                     <h1>
-                        Intro Diff Equations
-                    </h1>
+                        {this.props.course[0].course_meta.name}
+                    </h1> 
+                    <div className="p-2">
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        <table className="table table-striped">
+                        <thead>
+                            <tr>
+                            <th>Weekday</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th/>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.props.course[0].time.map((time) => (
+                                <tr key={time.weekday}>
+                                    <td>{time.weekday}</td>
+                                    <td>{time.start_at}</td>
+                                    <td>{time.end_at}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                            </table> 
+                    </p>
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        Location: {this.props.course[0].location}
+                    </p>
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        Instructor: {this.props.course[0].professor}
+                    </p>
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        Credit Hour: {this.props.course[0].course_meta.credit_hours}
+                    </p>
+
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        Capacity: {this.props.course[0].capacity}
+                    </p>
+                    {/* ToDO: GPA & Modality */}
                 </div>
-                <div className="p-2">
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        12:20PM - 01:10PM
-                    </p>
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Online with Synchronous Mtgs
-                    </p>
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Instructor: Joe Biden
-                    </p>
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Avg GPA: 2.56
-                    </p>
                 </div>
-                <div className="p-2">
-                    <table className="table table-striped">
-                    <thead>
-                        <tr>
-                        <th>Major</th>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.props.course.map((course) => (
-                        <tr key={course.major}>
-                            <td>{course.course}</td>
-                            <td>{course.name}</td>
-                            <td>{course.location}</td>
-                            <td>
-                            <button className="btn btn-danger btn-sm">
-                                Delete
-                            </button>
-                            </td>
-                        </tr>
-                        ))}
-                    </tbody>
-                    </table>`
-                </div>
-            </div>
+
+                :'loading...'}
+
+                    
+
             </Fragment>
         )
     }
@@ -76,4 +78,3 @@ const mapStateToProps = state =>({
 });
 
 export default connect(mapStateToProps, {getCourse})(WikiSummary);
-// export default WikiSummary
