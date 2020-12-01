@@ -38,6 +38,7 @@
     cp node_modules
 
 ### Run
+    source venv/bin/activate
     python manage.py runserver
     npm run dev
 ### Migrate Database
