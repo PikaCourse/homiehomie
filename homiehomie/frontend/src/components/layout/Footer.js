@@ -8,6 +8,7 @@ export class Footer extends Component {
                     <a style={footerStyle}>
                         Homiehomie
                     </a> 
+
                     
                     <a style={footerStyle}>
                         Copyright © All
