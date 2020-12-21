@@ -10,9 +10,10 @@
     3. [x] API Backend implementation
     4. [ ] Set up test
 2. [ ] User
-    1. [ ] User model
+    1. [X] User model
     2. [ ] Register/Login
-        1. [ ] Frontend send hashed password
+        1. [ ] Registration Form
+        2. [ ] Frontend send hashed password
     3. [ ] Permission Setting
         1. [ ] User group
             1. [ ] standard
@@ -23,12 +24,13 @@
                 1. Staff to manage the db
                 2. Can do anything except delete
             4. [ ] superuser
-3. [ ] Instant Messaging
-4. [x] Test server deployment on dokku 
+3. [ ] General Search API
+4. [ ] Instant Messaging
+5. [x] Test server deployment on dokku 
     1. [x] Test server
     2. [x] Upgrade dokku to use `Procfile`
-5. [ ] Production Deployment
-6. [ ] Importing Course
+6. [ ] Production Deployment
+7. [ ] Importing Course
     1. [ ] Detail schema of course data
 ## how to
     pip install -r requirements.txt
