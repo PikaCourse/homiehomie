@@ -2,70 +2,92 @@ import React, { Component, Fragment } from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import {getCourse} from '../../actions/course'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import Dropdown from 'react-bootstrap/Dropdown'
 
 
 export class WikiSummary extends Component {
+    constructor(props) {
+        super(props)
+    
+        this.state = {
+             courseIndex: 0
+        }
+    }
+
+    handleCRNChange(course) {
+        this.setState({courseIndex: this.props.course.indexOf(course)});
+    }
+    
     static propTypes = {
         course:PropTypes.array.isRequired
     }
 
     componentDidMount(){
-        this.props.getCourse();
+        this.props.getCourse('CS-3114');
     }
-
     render() {
         return (
             <Fragment>
-            <div>
-                <div className ="p-2">
+
+                {typeof this.props.course[this.state.courseIndex] != 'undefined'? 
+                    <div className ="p-2">
                     <h1 style={{color:'#419EF4'}}>
-                        MATH2114
+                        {this.props.course[this.state.courseIndex].course_meta.title}
                     </h1>
                     <h1>
-                        Intro Diff Equations
-                    </h1>
+                        {this.props.course[this.state.courseIndex].course_meta.name}
+                    </h1> 
+
+                    <DropdownButton alignRight title={this.props.course[this.state.courseIndex].crn} id="dropdown-menu-align-right">
+                    {this.props.course.map((course) => (
+                                <Dropdown.Item value={course.crn} onSelect={()=> this.handleCRNChange(course)} >{course.crn}</Dropdown.Item>
+                            ))}
+                    </DropdownButton>
+ 
+                    <div className="p-2">
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        <table className="table table-striped">
+                        <thead>
+                            <tr>
+                            <th>Weekday</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th/>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {this.props.course[this.state.courseIndex].time.map((time) => (
+                                <tr key={time.weekday}>
+                                    <td>{time.weekday}</td>
+                                    <td>{time.start_at}</td>
+                                    <td>{time.end_at}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                            </table> 
+                    </p>
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        Location: {this.props.course[this.state.courseIndex].location}
+                    </p>
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        Instructor: {this.props.course[this.state.courseIndex].professor}
+                    </p>
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        Credit Hour: {this.props.course[this.state.courseIndex].course_meta.credit_hours}
+                    </p>
+
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        Capacity: {this.props.course[this.state.courseIndex].capacity}
+                    </p>
+                    {/* ToDO: GPA & Modality */}
                 </div>
-                <div className="p-2">
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        12:20PM - 01:10PM
-                    </p>
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Online with Synchronous Mtgs
-                    </p>
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Instructor: Joe Biden
-                    </p>
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Avg GPA: 2.56
-                    </p>
                 </div>
-                <div className="p-2">
-                    <table className="table table-striped">
-                    <thead>
-                        <tr>
-                        <th>Major</th>
-                        <th>Name</th>
-                        <th>Location</th>
-                        <th />
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {this.props.course.map((course) => (
-                        <tr key={course.major}>
-                            <td>{course.course}</td>
-                            <td>{course.name}</td>
-                            <td>{course.location}</td>
-                            <td>
-                            <button className="btn btn-danger btn-sm">
-                                Delete
-                            </button>
-                            </td>
-                        </tr>
-                        ))}
-                    </tbody>
-                    </table>`
-                </div>
-            </div>
+
+                :'loading...'}
+
+                    
+
             </Fragment>
         )
     }
@@ -76,4 +98,3 @@ const mapStateToProps = state =>({
 });
 
 export default connect(mapStateToProps, {getCourse})(WikiSummary);
-// export default WikiSummary

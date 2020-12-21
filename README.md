@@ -33,9 +33,20 @@
 7. [ ] Importing Course
     1. [ ] Detail schema of course data
 ## how to
+### Setup
     pip install -r requirements.txt
+    python -m venv venv
+    source venv/bin/activate
+    cp node_modules
+
+### Run
+    source venv/bin/activate
     python manage.py runserver
-    
+    npm run dev
+### Migrate Database
+    python manage.py makemigration
+    python manage.py migrate
+
 ## API
 
 1. [API Document](https://app.swaggerhub.com/apis/NeX-Studio/HomieHomie/1.0.0)
