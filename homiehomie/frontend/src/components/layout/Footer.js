@@ -7,7 +7,8 @@ export class Footer extends Component {
                 <div className="container card text-center border-0">
                     <a style={footerStyle}>
                         Homiehomie
-                    </a>
+                    </a> 
+                    
                     <a style={footerStyle}>
                         Copyright © All
                         rights reserved
