@@ -30,6 +30,7 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
         # TODO Query parameter Vaildation
         school      = self.request.query_params.get("school", None)
         college     = self.request.query_params.get("college", None)
+        title       = self.request.query_params.get("title", None)
         name        = self.request.query_params.get("name", None)
         major       = self.request.query_params.get("major", None)
         limit       = self.request.query_params.get("limit", None)
@@ -42,6 +43,8 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(name__contains=name)
         if college is not None:
             queryset = queryset.filter(college__contains=college)
+        if title is not None:
+            queryset = queryset.filter(title__startswith=title)
         if limit is not None:
             try:
                 queryset = queryset[0:int(limit)]

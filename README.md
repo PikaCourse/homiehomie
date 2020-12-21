@@ -29,8 +29,9 @@
 5. [x] Test server deployment on dokku 
     1. [x] Test server
     2. [x] Upgrade dokku to use `Procfile`
-6. [ ] Production Deployment
-7. [ ] Importing Course
+6. [ ] GitHub action auto deploy to dokku
+7. [ ] Production Deployment
+8. [ ] Importing Course
     1. [ ] Detail schema of course data
 ## how to
 ### Setup
