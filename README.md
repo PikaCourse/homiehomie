@@ -39,16 +39,22 @@
     
 
 ## how to
+
+### Install virtualenv and initialize venv
+    python -m pip install --user virtualenv
+    python -m virtualenv --help
+    virtualenv -p python3 venv
+
 ### Setup
-    pip install -r requirements.txt
-    python -m venv venv
     source venv/bin/activate
-    cp node_modules
+    pip install -r requirements.txt
+    npm install
 
 ### Run
     source venv/bin/activate
     python manage.py runserver
     npm run dev
+    
 ### Migrate Database
     python manage.py makemigration
     python manage.py migrate
