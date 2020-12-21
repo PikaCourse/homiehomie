@@ -11,10 +11,13 @@
     4. [ ] Set up test
 2. [ ] User
     1. [X] User model
-    2. [ ] Register/Login
+    2. [ ] Password transmission
+        1. [ ] plain text over HTTPS
+        2. [ ] Store as hashed value using django API
+    3. [ ] Register/Login
         1. [ ] Registration Form
         2. [ ] Frontend send hashed password
-    3. [ ] Permission Setting
+    4. [ ] Permission Setting
         1. [ ] User group
             1. [ ] standard
                 1. Normal user
@@ -33,6 +36,8 @@
 7. [ ] Production Deployment
 8. [ ] Importing Course
     1. [ ] Detail schema of course data
+    
+
 ## how to
 ### Setup
     pip install -r requirements.txt
