@@ -1,23 +1,6 @@
 import React, { Component } from 'react'
 
 export class Header extends Component {
-    // constructor(props) {
-    //   super(props)
-    
-    //   this.state = {
-    //     inputVal: ''
-    //   }
-    // }
-  
-    // handleInputChangeTwo({ target }) {
-    //   this.setState({inputVal: target.value}); 
-    // }
-
-    // handleSearchClickedTwo() {
-    //   console.log(this.state.inputVal); 
-    //   // plusSlides(this.state.inputVal); 
-    // }
-
     render() {
         return (
           <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-4 pt-4">
