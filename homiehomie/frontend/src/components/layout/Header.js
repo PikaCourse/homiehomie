@@ -1,6 +1,23 @@
 import React, { Component } from 'react'
 
 export class Header extends Component {
+    // constructor(props) {
+    //   super(props)
+    
+    //   this.state = {
+    //     inputVal: ''
+    //   }
+    // }
+  
+    // handleInputChangeTwo({ target }) {
+    //   this.setState({inputVal: target.value}); 
+    // }
+
+    // handleSearchClickedTwo() {
+    //   console.log(this.state.inputVal); 
+    //   // plusSlides(this.state.inputVal); 
+    // }
+
     render() {
         return (
           <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-4 pt-4">
@@ -33,9 +50,6 @@ export class Header extends Component {
               </li>
             </ul>
             
-            <form className="form-inline my-2 my-lg-0 w-50"/>
-              <input className="form-control mr-sm-2" type="search" placeholder="Search subject, CRN or course name" aria-label="Search" style = {{borderRadius: "30px"}}/>
-              <button className="btn btn-outline-primary my-2 my-sm-0" style = {{borderRadius: "30px"}} type="submit">Search</button>
           </div>
         </nav>
         )
