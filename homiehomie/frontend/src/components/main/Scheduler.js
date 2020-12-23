@@ -30,7 +30,7 @@ export class Scheduler extends Component {
         this.state = {
              events: [
                 {
-                    id: '1',
+                    id: 1,
                     calendarId: '0',
                     title: 'TOAST UI Calendar Study',
                     category: 'time',
@@ -39,9 +39,9 @@ export class Scheduler extends Component {
                     end: new Date(new Date().setHours(start.getHours() + 2))
                 },
                 {
-                    id: '2',
+                    id: 2,
                     calendarId: '0',
-                    title: 'Practice',
+                    title: 'Practice333s',
                     category: 'milestone',
                     dueDateClass: '',
                     start: new Date(new Date().setHours(start.getHours() -4)),
@@ -58,7 +58,6 @@ export class Scheduler extends Component {
 
     addCourseSchedule(course) {
         console.log('addCourseSchedule ran'); 
-        console.log(course.time); 
         const calendarInstance = this.calendarRef.current.getInstance();
         // console.log(titleCont+weekday+startTime+endTime);
         // titleCont, weekday, startTime, endTime
@@ -66,6 +65,7 @@ export class Scheduler extends Component {
         // this.props.course[0].time[0].weekday, 
         // this.props.course[0].time[0].start_at, 
         // this.props.course[0].time[0].end_at
+        var tempArray = [...this.state.events]; 
         var timeArray = course.time; 
         for (var i = 0; i < timeArray.length; i++) {
             var startTime = timeArray[i].start_at; 
@@ -88,8 +88,7 @@ export class Scheduler extends Component {
             endDate.setHours(tempEndHours); 
             endDate.setMinutes(tempEndMins); 
 
-            this.setState({
-                events: [ ...this.state.events, {
+            tempArray.push({
                     id: idCont,
                     calendarId: '0',
                     title: course.course_meta.name,
@@ -98,10 +97,11 @@ export class Scheduler extends Component {
                     start: startDate, //new Date(new Date().setHours(start.getHours() -4)),
                     end: endDate,//new Date(new Date().setHours(start.getHours() -5)),
                     isReadOnly: true
-                }]
-            }); 
+                }); 
             // this.addEvent(idCont, course.course_meta.name, startDate, endDate); 
-          }s
+          }
+          console.log(tempArray); 
+          this.setState({events: tempArray}); 
           console.log(this.state.events); 
     }
 
