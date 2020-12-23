@@ -9,6 +9,7 @@
     2. [x] API Documentation
     3. [x] API Backend implementation
     4. [ ] Set up test
+    5. [ ] 
 2. [ ] User
     1. [X] User model
     2. [ ] Password transmission
@@ -16,7 +17,12 @@
         2. [ ] Store as hashed value using django API
     3. [ ] Register/Login
         1. [ ] Registration Form
-        2. [ ] Frontend send hashed password
+            1. Use form
+        2. [ ] Link with customized user model
+        3. [ ] Implement other user password related views
+            1. Change
+            2. reset
+            3. etc
     4. [ ] Permission Setting
         1. [ ] User group
             1. [ ] standard
@@ -33,10 +39,11 @@
     1. [x] Test server
     2. [x] Upgrade dokku to use `Procfile`
 6. [ ] GitHub action auto deploy to dokku
-7. [ ] Production Deployment
-8. [ ] Importing Course
+7. [ ] Dockerify
+8. [ ] Production Deployment
+9. [ ] Importing Course
     1. [ ] Detail schema of course data
-    
+10. [ ] Support for dynamic/partially loading notes 
 
 ## how to
 
@@ -56,7 +63,7 @@
     npm run dev
     
 ### Migrate Database
-    python manage.py makemigration
+    python manage.py makemigrations
     python manage.py migrate
 
 ## API

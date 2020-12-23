@@ -119,9 +119,9 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
         # TODO Better way?
         # TODO Query parameter Validation according to API DOC
-        courseid    = self.request.query_params.get("courseid", None)
-        sortby      = self.request.query_params.get("sortby", None)
-        descending  = self.request.query_params.get("descending", None)
+        coursemetaid    = self.request.query_params.get("coursemetaid", None)
+        sortby          = self.request.query_params.get("sortby", None)
+        descending      = self.request.query_params.get("descending", None)
         if descending is not None:
             if descending == "true":
                 descending = True
@@ -131,8 +131,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
             descending = True
         limit = self.request.query_params.get("limit", None)
 
-        if courseid is not None:
-            queryset = queryset.filter(course_id=courseid)
+        if coursemetaid is not None:
+            queryset = queryset.filter(course_meta_id=coursemetaid)
         if sortby is not None:
             queryset = queryset.order_by(("-" if descending else "") + sortby)
         else:

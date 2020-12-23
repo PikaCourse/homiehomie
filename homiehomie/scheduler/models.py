@@ -82,7 +82,7 @@ class Course(models.Model):
     location:       ARMS-124
     capacity:       100
     """
-    course_meta = models.ForeignKey(CourseMeta, on_delete=models.CASCADE)
+    course_meta = models.ForeignKey(CourseMeta, on_delete=models.CASCADE, default=-1)
     created_at = models.DateTimeField(auto_now_add=True)
     crn = models.CharField(max_length=50, default="", null=True)
     time = models.JSONField(default=list, blank=True, null=True)
@@ -100,7 +100,7 @@ class Course(models.Model):
 class Question(models.Model):
     """
     Question Data model
-    course:         Course this question is referred to
+    course_meta:    Course meta this question is referred to
     created_at:     The time this question is created
     last_answered:  The most recent time this question is answered
     like_count:     Like count
@@ -111,7 +111,7 @@ class Question(models.Model):
     title:          Question text
     tags:           User tagging
     """
-    course = models.ForeignKey(Course, on_delete=models.PROTECT)    # Prevent deleting course object
+    course_meta = models.ForeignKey(CourseMeta, on_delete=models.PROTECT, default=-1)    # Prevent deleting course object
     created_at = models.DateTimeField(auto_now_add=True)
     last_answered = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
