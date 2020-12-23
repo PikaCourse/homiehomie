@@ -25,10 +25,13 @@ export class Wiki extends Component {
 
   handleSearchClickedTwo() {
     console.log(this.state.inputVal); 
-    this.props.getCourse(this.state.inputVal);
+    this.props.dispatch(getCourse(this.state.inputVal));
   }
 
-  
+  componentDidMount(){
+    this.props.dispatch(getCourse('CS-3114'));
+  }
+
   render() {
     return (
       <Fragment>
@@ -47,4 +50,4 @@ const mapStateToProps = state =>({
   course: state.course.course
 });
 
-export default connect(mapStateToProps, {getCourse})(Wiki);
+export default connect(mapStateToProps)(Wiki);

@@ -23,9 +23,7 @@ export class WikiSummary extends Component {
         course:PropTypes.array.isRequired
     }
 
-    componentDidMount(){
-        this.props.getCourse('CS-3114');
-    }
+
     render() {
         return (
             <Fragment>
@@ -97,4 +95,4 @@ const mapStateToProps = state =>({
     course: state.course.course
 });
 
-export default connect(mapStateToProps, {getCourse})(WikiSummary);
+export default connect(mapStateToProps)(WikiSummary);
