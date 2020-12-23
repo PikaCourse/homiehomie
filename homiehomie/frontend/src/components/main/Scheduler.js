@@ -50,12 +50,6 @@ export class Scheduler extends Component {
     addCourseSchedule(course) {
         console.log('addCourseSchedule ran'); 
         const calendarInstance = this.calendarRef.current.getInstance();
-        // console.log(titleCont+weekday+startTime+endTime);
-        // titleCont, weekday, startTime, endTime
-        // this.props.course[0].course_meta.name, 
-        // this.props.course[0].time[0].weekday, 
-        // this.props.course[0].time[0].start_at, 
-        // this.props.course[0].time[0].end_at
         var tempArray = [...this.state.events]; 
         var timeArray = course.time; 
         for (var i = 0; i < timeArray.length; i++) {
@@ -95,26 +89,11 @@ export class Scheduler extends Component {
           this.setState({events: tempArray}); 
           console.log(this.state.events); 
     }
-
-    // addEvent(idCont, titleStr, startDate, endDate) {
-    //     this.setState((state, props) => ({
-    //         events: [ ...this.state.events, {
-    //             id: idCont,
-    //             calendarId: '0',
-    //             title: titleStr,
-    //             category: 'time',
-    //             //dueDateClass: '',
-    //             start: startDate, //new Date(new Date().setHours(start.getHours() -4)),
-    //             end: endDate,//new Date(new Date().setHours(start.getHours() -5)),
-    //             isReadOnly: true
-    //         }]
-    //       }));
-    // }
-
     render() {
         return (    
         <div>
-            <button className="btn btn-outline-primary my-2 my-sm-0" onClick={()=> this.addCourseSchedule(this.props.course[0])} style = {{borderRadius: "30px"}} type="submit">Add</button> 
+            <button className="btn btn-outline-primary my-2 my-sm-0" 
+                onClick={()=> this.addCourseSchedule(this.props.course[0])} style = {{borderRadius: "30px"}} type="submit">Add</button> 
             <Calendar
             ref={this.calendarRef}
             height="1000px"

@@ -1,7 +1,9 @@
 import React, { Component, Fragment } from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
-import {getCourse} from '../../actions/course'
+import {addCurrCourse} from '../../actions/calendar'
+
+// style 
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -19,7 +21,14 @@ export class WikiSummary extends Component {
     handleCRNChange(course) {
         this.setState({courseIndex: this.props.course.indexOf(course)});
     }
-    
+
+    addCourseSchedule()
+    {
+        console.log("add");
+        this.props.dispatch(addCurrCourse());
+    }
+
+
     static propTypes = {
         course:PropTypes.array.isRequired
     }
@@ -46,7 +55,9 @@ export class WikiSummary extends Component {
                     <h1>
                         {this.props.course[this.state.courseIndex].course_meta.name}
                     </h1> 
-                    <button type="button" className="btn btn-primary" style={{fontFamily: 'Montserrat'}}>
+                    <button type="button" className="btn btn-primary" 
+                        onClick={()=> this.addCourseSchedule()} 
+                        style={{fontFamily: 'Montserrat'}}>
                         <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
                         </button>
  
