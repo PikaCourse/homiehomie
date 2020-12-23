@@ -9,16 +9,20 @@
     2. [x] API Documentation
     3. [x] API Backend implementation
     4. [ ] Set up test
-    5. [ ] 
+    5. [ ] API Post and Put
+        1. [ ] Create/Modify question
+        2. [ ] Create/Modify note
+        3. [ ] Create/Modify Post
+        4. [ ] Create/Modify PostAnswer
 2. [ ] User
     1. [X] User model
-    2. [ ] Password transmission
-        1. [ ] plain text over HTTPS
-        2. [ ] Store as hashed value using django API
+    2. [x] Password transmission
+        1. [x] plain text over HTTPS
+        2. [x] Store as hashed value using django API
     3. [ ] Register/Login
-        1. [ ] Registration Form
+        1. [x] Registration Form
             1. Use form
-        2. [ ] Link with customized user model
+        2. [x] Link with customized user model
         3. [ ] Implement other user password related views
             1. Change
             2. reset

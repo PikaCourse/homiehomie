@@ -6,9 +6,9 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    # dependencies = [
-    #     ('scheduler', '0006_auto_20201222_1724'),
-    # ]
+    dependencies = [
+        ('scheduler', '0006_auto_20201222_1724'),
+    ]
 
     operations = [
         migrations.RemoveField(
