@@ -4,7 +4,8 @@ import PropTypes from 'prop-types'
 import {getCourse} from '../../actions/course'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 export class WikiSummary extends Component {
     constructor(props) {
@@ -45,8 +46,9 @@ export class WikiSummary extends Component {
                     <h1>
                         {this.props.course[this.state.courseIndex].course_meta.name}
                     </h1> 
-
-                    
+                    <button type="button" className="btn btn-primary" style={{fontFamily: 'Montserrat'}}>
+                        <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
+                        </button>
  
                     <div className="p-2">
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>

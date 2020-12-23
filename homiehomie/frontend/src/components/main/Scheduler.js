@@ -30,18 +30,9 @@ export class Scheduler extends Component {
         this.state = {
              events: [
                 {
-                    id: 1,
-                    calendarId: '0',
-                    title: 'TOAST UI Calendar Study',
-                    category: 'time',
-                    dueDateClass: '',
-                    start: new Date(new Date().setHours(start.getHours() + 1)),
-                    end: new Date(new Date().setHours(start.getHours() + 2))
-                },
-                {
                     id: 2,
                     calendarId: '0',
-                    title: 'Practice333s',
+                    title: 'Practices',
                     category: 'milestone',
                     dueDateClass: '',
                     start: new Date(new Date().setHours(start.getHours() -4)),
