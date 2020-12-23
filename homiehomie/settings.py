@@ -26,7 +26,7 @@ SECRET_KEY = config("HOMIE_HOMIE_DJANGO_SECRET_KEY", )
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["test-homiehomie.thexyzlab.studio", "127.0.0.1"]
+ALLOWED_HOSTS = ["test-homiehomie.thexyzlab.studio", "127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -39,9 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'homiehomie.scheduler',
-    'rest_framework',
     'homiehomie.frontend',
     'homiehomie.user',
+    'rest_framework',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -131,3 +132,6 @@ STATICFILES_DIRS = (
 )
 
 STATIC_URL = '/static/'
+
+# Default redirect to index page
+LOGIN_REDIRECT_URL = '/'
