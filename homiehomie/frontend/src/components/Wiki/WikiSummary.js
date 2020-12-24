@@ -1,10 +1,13 @@
 import React, { Component, Fragment } from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
-import {getCourse} from '../../actions/course'
+import {addCurrCourse} from '../../actions/calendar'
+
+// style 
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 export class WikiSummary extends Component {
     constructor(props) {
@@ -18,7 +21,14 @@ export class WikiSummary extends Component {
     handleCRNChange(course) {
         this.setState({courseIndex: this.props.course.indexOf(course)});
     }
-    
+
+    addCourseSchedule()
+    {
+        console.log("add");
+        this.props.dispatch(addCurrCourse());
+    }
+
+
     static propTypes = {
         course:PropTypes.array.isRequired
     }
@@ -29,21 +39,29 @@ export class WikiSummary extends Component {
     render() {
         return (
             <Fragment>
-
                 {typeof this.props.course[this.state.courseIndex] != 'undefined'? 
                     <div className ="p-2">
-                    <h1 style={{color:'#419EF4'}}>
-                        {this.props.course[this.state.courseIndex].course_meta.title}
-                    </h1>
+                    <div className = "row">
+                        <h1 className = "col-sm-3 text-wrap pr-0" style={{color:'#419EF4'}}>
+                            {this.props.course[this.state.courseIndex].course_meta.title}
+                        </h1>
+                        <DropdownButton className = "col-sm-3 mx-0 px-0" alignRight title={'CRN: ' + this.props.course[this.state.courseIndex].crn} 
+                            id="dropdown-menu-align-right">
+                            {this.props.course.map((course) => (
+                                <Dropdown.Item value={course.crn} 
+                                    onSelect={()=> this.handleCRNChange(course)} >{course.crn}</Dropdown.Item>
+                            ))}
+                        </DropdownButton>
+                    </div>
+
                     <h1>
                         {this.props.course[this.state.courseIndex].course_meta.name}
                     </h1> 
-
-                    <DropdownButton alignRight title={this.props.course[this.state.courseIndex].crn} id="dropdown-menu-align-right">
-                    {this.props.course.map((course) => (
-                                <Dropdown.Item value={course.crn} onSelect={()=> this.handleCRNChange(course)} >{course.crn}</Dropdown.Item>
-                            ))}
-                    </DropdownButton>
+                    <button type="button" className="btn btn-primary" 
+                        onClick={()=> this.addCourseSchedule()} 
+                        style={{fontFamily: 'Montserrat'}}>
+                        <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
+                        </button>
  
                     <div className="p-2">
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
@@ -97,4 +115,5 @@ const mapStateToProps = state =>({
     course: state.course.course
 });
 
-export default connect(mapStateToProps, {getCourse})(WikiSummary);
+
+export default connect(mapStateToProps)(WikiSummary);
