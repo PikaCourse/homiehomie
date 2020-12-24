@@ -126,7 +126,7 @@ class Question(models.Model):
     tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
-        return "_".join([self.course.name, self.title])
+        return "_".join([str(self.course_meta), self.title])
 
 
 # TODO Enable referring to past editing via git?
