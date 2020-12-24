@@ -28,7 +28,7 @@ export default function(state = initialState, action) {
                 }
                 
             var tempArray = [...state.courselist];
-            var timeArray = action.payload.time; 
+            var timeArray = action.course.time; 
             for (var i = 0; i < timeArray.length; i++) {
                 let startTime = alignDate(timeArray[i].weekday);
                 var tempStartArray = timeArray[i].start_at.split(':');
@@ -47,13 +47,16 @@ export default function(state = initialState, action) {
                 tempArray.push({
                         id: id,
                         calendarId: id,
-                        title: action.payload.course_meta.name,
+                        title: action.course.course_meta.name,
                         category: 'time',
-                        //dueDateClass: '',
+                        dueDateClass: '',
                         start: startTime, //new Date(new Date().setHours(start.getHours() -4)),
                         end: endTime,//new Date(new Date().setHours(start.getHours() -5)),
-                        isReadOnly: true
+                        isReadOnly: true, 
+                        raw: {course: action.course,
+                            courselist: action.courselist}
                     }); 
+                
               }
             return {courselist: tempArray};
             // return tempArray;
