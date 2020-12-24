@@ -42,7 +42,7 @@ export class WikiSummary extends Component {
     }
 
     componentDidMount(){
-        this.props.getCourse('CS-3114');
+        //this.props.getCourse('CS-3114');
     }
     render() {
         return (
