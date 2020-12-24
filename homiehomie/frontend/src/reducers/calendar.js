@@ -3,7 +3,7 @@ import {REMOVE_COURSE} from '../actions/types.js'
 import store from '../store'
 const start = new Date();
 const initialState = {
-    courselist:[]
+    calendarCourseBag:[]
 }
 
 function getMonday(d) {
@@ -22,12 +22,12 @@ export default function(state = initialState, action) {
     switch (action.type) {
         case ADD_COURSE:
                 let id = 0;
-                if(state.courselist.length != 0)
+                if(state.calendarCourseBag.length != 0)
                 {
-                    id = state.courselist[state.courselist.length - 1].id+1;
+                    id = state.calendarCourseBag[state.calendarCourseBag.length - 1].id+1;
                 }
                 
-            var tempArray = [...state.courselist];
+            var tempArray = [...state.calendarCourseBag];
             var timeArray = action.course.time; 
             for (var i = 0; i < timeArray.length; i++) {
                 let startTime = alignDate(timeArray[i].weekday);
@@ -58,7 +58,7 @@ export default function(state = initialState, action) {
                     }); 
                 
               }
-            return {courselist: tempArray};
+            return {calendarCourseBag: tempArray};
             // return tempArray;
             
         case REMOVE_COURSE:

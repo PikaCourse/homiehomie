@@ -104,49 +104,7 @@ export class Scheduler extends Component {
         }); 
         
     }
-    
-    // addCourseSchedule(course) {
-    //     console.log('addCourseSchedule ran'); 
-    //     const calendarInstance = this.calendarRef.current.getInstance();
-    //     var tempArray = [...this.state.events]; 
-    //     var timeArray = course.time; 
-    //     for (var i = 0; i < timeArray.length; i++) {
-    //         var startTime = timeArray[i].start_at; 
-    //         var endTime = timeArray[i].end_at; 
 
-    //         var tempStartArray = startTime.split(':');
-    //         var tempStartHours = parseFloat(tempStartArray[0]); 
-    //         var tempStartMins = parseFloat(tempStartArray[1]); 
-    //         var tempEndArray = endTime.split(':');
-    //         var tempEndHours = parseFloat(tempEndArray[0]); 
-    //         var tempEndMins = parseFloat(tempEndArray[1]); 
-
-    //         var idCont = this.state.events[this.state.events.length - 1].id + 1; 
-    //         var currentDate = calendarInstance.getDateRangeStart(); 
-    //         currentDate.setDate(currentDate.getDate() + timeArray[i].weekday - 1);
-    //         var startDate = new Date(currentDate); 
-    //         var endDate = new Date(currentDate); 
-    //         startDate.setHours(tempStartHours); 
-    //         startDate.setMinutes(tempStartMins)
-    //         endDate.setHours(tempEndHours); 
-    //         endDate.setMinutes(tempEndMins); 
-
-    //         tempArray.push({
-    //                 id: idCont,
-    //                 calendarId: '0',
-    //                 title: course.course_meta.name,
-    //                 category: 'time',
-    //                 //dueDateClass: '',
-    //                 start: startDate, //new Date(new Date().setHours(start.getHours() -4)),
-    //                 end: endDate,//new Date(new Date().setHours(start.getHours() -5)),
-    //                 isReadOnly: true
-    //             }); 
-    //         // this.addEvent(idCont, course.course_meta.name, startDate, endDate); 
-    //       }
-    //       console.log(tempArray); 
-    //       this.setState({events: tempArray}); 
-    //       console.log(this.state.events); 
-    // }
     render() {
         return (    
         <Fragment>
@@ -197,7 +155,7 @@ export class Scheduler extends Component {
 const mapStateToProps = state =>({
     course: state.course.course,
     calendar: state.calendar,
-    courselist: state.calendar.courselist
+    courselist: state.calendar.calendarCourseBag
 });
 
 export default connect(mapStateToProps)(Scheduler);

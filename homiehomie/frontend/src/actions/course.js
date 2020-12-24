@@ -13,11 +13,11 @@ export const getCourse = (title) => dispatch =>
         }).catch(err =>console.log(err));
 }
 
-export const setCourse = (course, courselist)  =>
+export const setCourse = (selectedCourseArray, selectedCourse)  =>
 {
    return {
     type:SET_COURSE,
-    course: course,
-    courselist:courselist
+    selectedCourse: selectedCRN,
+    selectedCourseArray:selectedCourseArray
    }
 }
