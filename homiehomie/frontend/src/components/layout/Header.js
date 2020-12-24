@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {getCourse} from '../../actions/course'
 import {connect} from 'react-redux'
+import store from '../../store'
+import {getQuestion} from '../../actions/question'
+
 export class Header extends Component {
   constructor(props) {
     super(props)
@@ -20,9 +23,13 @@ export class Header extends Component {
     this.setState({inputVal: target.value}); 
   }
 
-  handleSearchClickedTwo() {
-    console.log(this.state.inputVal); 
+  handleSearchClickedTwo() { 
+    //getcourse: store course_info -> can find course_meta_id
+    //getQuestion: store question_array of question_objects -> can find question_id
+    //getNotes: store a notes_array depends on a question id array
     this.props.dispatch(getCourse(this.state.inputVal));
+    this.props.dispatch(getQuestion(store.getState().course.course[0].course_meta.id));
+    this.props.dispatch(getNotes(store.getState().question.question));
   }
     render() {
         return (
