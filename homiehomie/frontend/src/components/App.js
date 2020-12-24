@@ -13,6 +13,7 @@ import Wiki from "./main/Wiki";
 
 import {Provider} from 'react-redux';
 import store from '../store';
+import '../../static/scss/button.scss'
 
 class App extends Component {
   render() {

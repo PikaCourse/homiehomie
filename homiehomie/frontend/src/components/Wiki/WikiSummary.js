@@ -3,6 +3,7 @@ import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import {addCurrCourse} from '../../actions/calendar'
 
+
 // style 
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
@@ -65,12 +66,22 @@ export class WikiSummary extends Component {
                     <h1>
                         {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.name}
                     </h1> 
-                    <button type="button" className="btn btn-primary" 
+                    {/* <button type="button" className="btn btn-primary" 
                         onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))} 
-                        style={{fontFamily: 'Montserrat', backgroundColor: '#419EF4', borderColor:'#419EF4'}}>
+                        style={{fontFamily: 'Montserrat', backgroundColor: '#419EF4', borderColor:'#419EF4', boxShadow:'0px 4px 10px rgba(65, 158, 244, 0.81)'}}>
                         <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
-                        </button>
- 
+                        </button> */}
+                    
+                    <div className="my-4">
+                        <a href="#"  onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))} class="cta">
+                        <span>Add To My Schedule</span>
+                        <svg width="13px" height="10px" viewBox="0 0 13 10">
+                            <path d="M1,5 L11,5"></path>
+                            <polyline points="8 1 12 5 8 9"></polyline>
+                        </svg>
+                        </a>
+                    </div>
+
                     <div className="p-2">
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
                         <table className="table table-striped">
