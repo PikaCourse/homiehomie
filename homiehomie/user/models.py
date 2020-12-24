@@ -28,6 +28,9 @@ class Student(models.Model):
     sex = models.CharField(max_length=20)
     type = models.CharField(max_length=10)
 
+    def __str__(self):
+        return self.user.username
+
 
 # Create student instance upon new user and link with it
 @receiver(post_save, sender=User)

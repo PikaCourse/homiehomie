@@ -16,6 +16,8 @@
         4. [ ] Create/Modify PostAnswer
     6. [ ] Better tagging model
         1. Create a table? shared by question, note, and post or even course
+    7. Code optimization
+        1. [ ] Use mixin to add GET/POST/PUT/DELETE for api
 2. [ ] User
     1. [X] User model
     2. [x] Password transmission

@@ -104,6 +104,7 @@ class Question(models.Model):
     course_meta:    Course meta this question is referred to
     created_at:     The time this question is created
     created_by:     The user who create the question
+    last_edited:    The most recent time this question is edited
     last_answered:  The most recent time this question is answered
     like_count:     Like count
     star_count:     Star/favorite count
@@ -116,6 +117,7 @@ class Question(models.Model):
     course_meta = models.ForeignKey(CourseMeta, on_delete=models.PROTECT, default=-1)    # Prevent deleting course object
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(Student, on_delete=models.PROTECT)
+    last_edited = models.DateTimeField(auto_now_add=True)
     last_answered = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
@@ -137,7 +139,7 @@ class Note(models.Model):
     question:       Question this note is referred to
     created_at:     The time this question is created
     created_by:     The user who create the question
-    last_edited:    The most recent time this question is edited
+    last_edited:    The most recent time this note is edited
     like_count:     Like count
     star_count:     Star/favorite count
     dislike_count:  Dislike count
@@ -158,7 +160,7 @@ class Note(models.Model):
     tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
-        return "_".join([self.course.name, self.question.title, self.title])
+        return "_".join([str(self.course), self.question.title, self.title])
 
 
 class Post(models.Model):
@@ -168,6 +170,7 @@ class Post(models.Model):
     poster:         User that post this post
     created_at:     The time this post is created
     last_edited:    The most recent time this post is edited
+    last_answered:  The most recent time this post is answered
     like_count:     Like count
     star_count:     Star/favorite count
     dislike_count:  Dislike count
@@ -179,6 +182,7 @@ class Post(models.Model):
     poster = models.ForeignKey(Student, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
+    last_answered = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
@@ -187,7 +191,7 @@ class Post(models.Model):
     tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
-        return "_".join([self.course.name, self.title])
+        return "_".join([str(self.course), self.title])
 
 
 class PostAnswer(models.Model):
@@ -213,7 +217,7 @@ class PostAnswer(models.Model):
     content = models.TextField()  # In markdown
 
     def __str__(self):
-        return "_".join([self.post.title, self.postee.username])
+        return "_".join([self.post.title, str(self.postee)])
 
 
 class Schedule(models.Model):
@@ -243,6 +247,6 @@ class Schedule(models.Model):
     tags = models.JSONField(default=list, blank=True)
 
     def __str__(self):
-        return self.user.username + "_" + str(self.year) + "_" + self.semester + "_" + self.name
+        return str(self.user) + "_" + str(self.year) + "_" + self.semester + "_" + self.name
 
 
