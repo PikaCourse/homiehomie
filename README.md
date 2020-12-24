@@ -14,6 +14,8 @@
         2. [ ] Create/Modify note
         3. [ ] Create/Modify Post
         4. [ ] Create/Modify PostAnswer
+    6. [ ] Better tagging model
+        1. Create a table? shared by question, note, and post or even course
 2. [ ] User
     1. [X] User model
     2. [x] Password transmission

@@ -26,92 +26,92 @@ class Migration(migrations.Migration):
         #         ('tags', models.JSONField(blank=True, default=list, null=True)),
         #     ],
         # ),
-        # migrations.RemoveField(
-        #     model_name='course',
-        #     name='course',
-        # ),
-        # migrations.RemoveField(
-        #     model_name='course',
-        #     name='department',
-        # ),
-        # migrations.RemoveField(
-        #     model_name='course',
-        #     name='description',
-        # ),
-        # migrations.RemoveField(
-        #     model_name='course',
-        #     name='major',
-        # ),
-        # migrations.RemoveField(
-        #     model_name='course',
-        #     name='name',
-        # ),
-        # migrations.RemoveField(
-        #     model_name='course',
-        #     name='school',
-        # ),
-        # migrations.RemoveField(
-        #     model_name='course',
-        #     name='tags',
-        # ),
-        # migrations.AddField(
-        #     model_name='course',
-        #     name='capacity',
-        #     field=models.IntegerField(blank=True, default=0, null=True),
-        # ),
-        # migrations.AddField(
-        #     model_name='course',
-        #     name='type',
-        #     field=models.CharField(default='lecture', max_length=10),
-        # ),
-        # migrations.AlterField(
-        #     model_name='course',
-        #     name='crn',
-        #     field=models.CharField(default='', max_length=50, null=True),
-        # ),
-        # migrations.AlterField(
-        #     model_name='course',
-        #     name='location',
-        #     field=models.CharField(blank=True, max_length=100, null=True),
-        # ),
-        # migrations.AlterField(
-        #     model_name='course',
-        #     name='professor',
-        #     field=models.CharField(blank=True, default='', max_length=100, null=True),
-        # ),
-        # migrations.AlterField(
-        #     model_name='course',
-        #     name='semester',
-        #     field=models.CharField(blank=True, max_length=20, null=True),
-        # ),
-        # migrations.AlterField(
-        #     model_name='course',
-        #     name='time',
-        #     field=models.JSONField(blank=True, default=list, null=True),
-        # ),
-        # migrations.AlterField(
-        #     model_name='note',
-        #     name='tags',
-        #     field=models.JSONField(blank=True, default=list),
-        # ),
-        # migrations.AlterField(
-        #     model_name='post',
-        #     name='tags',
-        #     field=models.JSONField(blank=True, default=list),
-        # ),
-        # migrations.AlterField(
-        #     model_name='question',
-        #     name='tags',
-        #     field=models.JSONField(blank=True, default=list),
-        # ),
-        # migrations.AlterField(
-        #     model_name='schedule',
-        #     name='tags',
-        #     field=models.JSONField(blank=True, default=list),
-        # ),
-        # migrations.AddField(
-        #     model_name='course',
-        #     name='course_meta',
-        #     field=models.ForeignKey(default=-1, on_delete=django.db.models.deletion.CASCADE, to='scheduler.coursemeta'),
-        # ),
+        migrations.RemoveField(
+            model_name='course',
+            name='course',
+        ),
+        migrations.RemoveField(
+            model_name='course',
+            name='department',
+        ),
+        migrations.RemoveField(
+            model_name='course',
+            name='description',
+        ),
+        migrations.RemoveField(
+            model_name='course',
+            name='major',
+        ),
+        migrations.RemoveField(
+            model_name='course',
+            name='name',
+        ),
+        migrations.RemoveField(
+            model_name='course',
+            name='school',
+        ),
+        migrations.RemoveField(
+            model_name='course',
+            name='tags',
+        ),
+        migrations.AddField(
+            model_name='course',
+            name='capacity',
+            field=models.IntegerField(blank=True, default=0, null=True),
+        ),
+        migrations.AddField(
+            model_name='course',
+            name='type',
+            field=models.CharField(default='lecture', max_length=10),
+        ),
+        migrations.AlterField(
+            model_name='course',
+            name='crn',
+            field=models.CharField(default='', max_length=50, null=True),
+        ),
+        migrations.AlterField(
+            model_name='course',
+            name='location',
+            field=models.CharField(blank=True, max_length=100, null=True),
+        ),
+        migrations.AlterField(
+            model_name='course',
+            name='professor',
+            field=models.CharField(blank=True, default='', max_length=100, null=True),
+        ),
+        migrations.AlterField(
+            model_name='course',
+            name='semester',
+            field=models.CharField(blank=True, max_length=20, null=True),
+        ),
+        migrations.AlterField(
+            model_name='course',
+            name='time',
+            field=models.JSONField(blank=True, default=list, null=True),
+        ),
+        migrations.AlterField(
+            model_name='note',
+            name='tags',
+            field=models.JSONField(blank=True, default=list),
+        ),
+        migrations.AlterField(
+            model_name='post',
+            name='tags',
+            field=models.JSONField(blank=True, default=list),
+        ),
+        migrations.AlterField(
+            model_name='question',
+            name='tags',
+            field=models.JSONField(blank=True, default=list),
+        ),
+        migrations.AlterField(
+            model_name='schedule',
+            name='tags',
+            field=models.JSONField(blank=True, default=list),
+        ),
+        migrations.AddField(
+            model_name='course',
+            name='course_meta',
+            field=models.ForeignKey(default=-1, on_delete=django.db.models.deletion.CASCADE, to='scheduler.coursemeta'),
+        ),
     ]

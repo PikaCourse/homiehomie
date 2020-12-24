@@ -1,7 +1,8 @@
 from django.db import models
 
 # TODO Creat user by extending User Model
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from homiehomie.user.models import Student
 
 
 # Create your models here.
@@ -102,6 +103,7 @@ class Question(models.Model):
     Question Data model
     course_meta:    Course meta this question is referred to
     created_at:     The time this question is created
+    created_by:     The user who create the question
     last_answered:  The most recent time this question is answered
     like_count:     Like count
     star_count:     Star/favorite count
@@ -113,6 +115,7 @@ class Question(models.Model):
     """
     course_meta = models.ForeignKey(CourseMeta, on_delete=models.PROTECT, default=-1)    # Prevent deleting course object
     created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(Student, on_delete=models.PROTECT)
     last_answered = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
@@ -133,6 +136,7 @@ class Note(models.Model):
     course:         Course this note is referred to
     question:       Question this note is referred to
     created_at:     The time this question is created
+    created_by:     The user who create the question
     last_edited:    The most recent time this question is edited
     like_count:     Like count
     star_count:     Star/favorite count
@@ -144,6 +148,7 @@ class Note(models.Model):
     course = models.ForeignKey(Course, on_delete=models.PROTECT)    # Prevent deleting course object
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(Student, on_delete=models.PROTECT)
     last_edited = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
@@ -156,7 +161,6 @@ class Note(models.Model):
         return "_".join([self.course.name, self.question.title, self.title])
 
 
-# TODO Need to modify the logic
 class Post(models.Model):
     """
     Post Data model
@@ -172,7 +176,7 @@ class Post(models.Model):
     tags:           User tagging
     """
     course = models.ForeignKey(Course, on_delete=models.PROTECT)    # Prevent deleting course object
-    poster = models.ForeignKey(User, on_delete=models.PROTECT)
+    poster = models.ForeignKey(Student, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
@@ -200,7 +204,7 @@ class PostAnswer(models.Model):
     tags:           User tagging
     """
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    postee = models.ForeignKey(User, on_delete=models.PROTECT)
+    postee = models.ForeignKey(Student, on_delete=models.PROTECT)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
@@ -227,7 +231,7 @@ class Schedule(models.Model):
 
     coursesid:      Access all the courses in this schedule via id array
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(Student, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     is_star = models.BooleanField(default=False)
