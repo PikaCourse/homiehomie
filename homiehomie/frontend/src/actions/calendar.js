@@ -1,10 +1,11 @@
 import {ADD_COURSE} from './types'
 import store from '../store'
 
-export const addCurrCourse = ()  =>
+export const addCurrCourse = (props)  =>
 {
     return {
         type: ADD_COURSE,
-        payload: store.getState().course.course[0]
+        course: store.getState().course.course[props],
+        courselist: store.getState().course.course
     };
 }
