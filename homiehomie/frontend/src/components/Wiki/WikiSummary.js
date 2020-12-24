@@ -67,7 +67,7 @@ export class WikiSummary extends Component {
                     </h1> 
                     <button type="button" className="btn btn-primary" 
                         onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))} 
-                        style={{fontFamily: 'Montserrat'}}>
+                        style={{fontFamily: 'Montserrat', backgroundColor: '#419EF4', borderColor:'#419EF4'}}>
                         <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
                         </button>
  
