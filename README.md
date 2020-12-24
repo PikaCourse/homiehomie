@@ -9,11 +9,15 @@
     2. [x] API Documentation
     3. [x] API Backend implementation
     4. [ ] Set up test
-    5. [ ] API Post and Put
-        1. [ ] Create/Modify question
-        2. [ ] Create/Modify note
-        3. [ ] Create/Modify Post
-        4. [ ] Create/Modify PostAnswer
+    5. [x] API Post and Put
+        1. [x] Create/Modify question
+        2. [x] Create/Modify note
+        3. [x] Create/Modify Post
+        4. [x] Create/Modify PostAnswer
+    6. [ ] API Delete
+        1. [ ] API Doc
+        2. [ ] API Implementation
+            1. [ ] Post answer deletion
     6. [ ] Better tagging model
         1. Create a table? shared by question, note, and post or even course
     7. Code optimization
