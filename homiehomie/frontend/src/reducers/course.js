@@ -15,9 +15,8 @@ export default function(state = initialState, action) {
             } 
         case SET_COURSE:
             return {
-                // ...state,
-                selectedCourse: selectedCRN,
-                selectedCourseArray:selectedCourseArray
+                selectedCourse: action.selectedCourse,
+                selectedCourseArray: action.selectedCourseArray
             } 
         default:
             return state;

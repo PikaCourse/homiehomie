@@ -31,18 +31,14 @@ export default function(state = initialState, action) {
             var timeArray = action.course.time; 
             for (var i = 0; i < timeArray.length; i++) {
                 let startTime = alignDate(timeArray[i].weekday);
-                var tempStartArray = timeArray[i].start_at.split(':');
-                var tempStartHours = parseFloat(tempStartArray[0]); 
-                var tempStartMins = parseFloat(tempStartArray[1]); 
-                startTime.setHours(tempStartHours);
-                startTime.setMinutes(tempStartMins);
+                let tempStartArray = timeArray[i].start_at.split(':');
+                startTime.setHours(parseFloat(tempStartArray[0]));
+                startTime.setMinutes(parseFloat(tempStartArray[1]));
 
                 let endTime = alignDate(timeArray[i].weekday);
                 tempStartArray = timeArray[i].end_at.split(':');
-                tempStartHours = parseFloat(tempStartArray[0]); 
-                tempStartMins = parseFloat(tempStartArray[1]); 
-                endTime.setHours(tempStartHours);
-                endTime.setMinutes(tempStartMins);
+                endTime.setHours(parseFloat(tempStartArray[0]));
+                endTime.setMinutes(parseFloat(tempStartArray[1]));
 
                 tempArray.push({
                         id: id,
@@ -53,8 +49,8 @@ export default function(state = initialState, action) {
                         start: startTime, //new Date(new Date().setHours(start.getHours() -4)),
                         end: endTime,//new Date(new Date().setHours(start.getHours() -5)),
                         isReadOnly: true, 
-                        raw: {course: action.course,
-                            courselist: action.courselist}
+                        raw: {selectedCourse: action.course,
+                            selectedCourseArray: action.courselist}
                     }); 
                 
               }
