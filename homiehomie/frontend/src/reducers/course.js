@@ -2,8 +2,8 @@ import { func } from 'prop-types'
 import {GET_COURSE, SET_COURSE} from '../actions/types.js'
 
 const initialState = {
-    course:[],
-    selectedcourse:{}
+    selectedCourseArray:[],
+    selectedCourse:{}
 }
 
 export default function(state = initialState, action) {
@@ -11,13 +11,12 @@ export default function(state = initialState, action) {
         case GET_COURSE:
             return {
                 ...state,
-                course: action.payload
+                selectedCourseArray: action.payload
             } 
         case SET_COURSE:
             return {
-                // ...state,
-                selectedcourse: action.course,
-                course: action.courselist
+                selectedCourse: action.selectedCourse,
+                selectedCourseArray: action.selectedCourseArray
             } 
         default:
             return state;
