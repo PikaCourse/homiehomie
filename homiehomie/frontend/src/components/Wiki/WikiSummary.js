@@ -41,7 +41,9 @@ export class WikiSummary extends Component {
         course:PropTypes.array.isRequired
     }
 
-
+    componentDidMount(){
+        this.props.getCourse('CS-3114');
+    }
     render() {
         return (
             <Fragment>

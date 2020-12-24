@@ -5,6 +5,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.decorators import action
+from rest_framework.parsers import JSONParser, FormParser
 
 # Create your views here.
 
@@ -17,7 +18,7 @@ def scheduler(request):
 API Definition below
 """
 
-# TODO API for this
+
 class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
     query_parameters = ["school", "major", "limit"]
     queryset = CourseMeta.objects.all()
@@ -111,9 +112,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
     query_parameters = ["courseid", "sortby", "descending", "limit"]
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+    parser_classes = [FormParser]
 
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # TODO Tmp disable to ease debugging
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
+    # GET method to get list of question related to the query
     def list(self, request, *args, **kwargs):
         queryset = Question.objects.all()
 
@@ -141,13 +145,39 @@ class QuestionViewSet(viewsets.ModelViewSet):
             try:
                 queryset = queryset[0:int(limit)]
             except ValueError as err:
-                error_pack = {"errmsg": "invalid query param: limit"}
+                error_pack = {"errcode": 1000, "errmsg": "invalid query param: limit"}
                 return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
         else:
             queryset = queryset[:50]
 
         serializer = QuestionSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    # Post method to create a question related to a course
+    # TODO Use django form?
+    def create(self, request, *args, **kwargs):
+        question = request.data
+        try:
+            coursemetaid = question["coursemetaid"]
+            title = question["title"]
+            tags = question.get("tags", [])
+            question = Question.objects.create(
+                course_meta_id=coursemetaid,
+                # TODO Remove this or 1 before release
+                created_by_id=request.user.id or 1,
+                title=title,
+                tags=tags
+            )
+        except KeyError:
+            # Invalid form key
+            error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
+            return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+        question.save()
+        error_pack = {"errcode": 0, "errmsg": ""}
+        return Response(error_pack, status=status.HTTP_201_CREATED)
+
+
+
 
 
 class NoteViewSet(viewsets.ModelViewSet):
