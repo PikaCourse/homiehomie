@@ -11,21 +11,21 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.CreateModel(
-        #     name='CourseMeta',
-        #     fields=[
-        #         ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-        #         ('created_at', models.DateTimeField(auto_now_add=True)),
-        #         ('major', models.CharField(default='', max_length=100, null=True)),
-        #         ('college', models.CharField(blank=True, max_length=100, null=True)),
-        #         ('title', models.CharField(default='', max_length=300)),
-        #         ('name', models.CharField(default='', max_length=300)),
-        #         ('credit_hours', models.IntegerField(default=0)),
-        #         ('school', models.CharField(max_length=100)),
-        #         ('description', models.CharField(blank=True, default='empty course description', max_length=2048, null=True)),
-        #         ('tags', models.JSONField(blank=True, default=list, null=True)),
-        #     ],
-        # ),
+        migrations.CreateModel(
+            name='CourseMeta',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('major', models.CharField(default='', max_length=100, null=True)),
+                ('college', models.CharField(blank=True, max_length=100, null=True)),
+                ('title', models.CharField(default='', max_length=300)),
+                ('name', models.CharField(default='', max_length=300)),
+                ('credit_hours', models.IntegerField(default=0)),
+                ('school', models.CharField(max_length=100)),
+                ('description', models.CharField(blank=True, default='empty course description', max_length=2048, null=True)),
+                ('tags', models.JSONField(blank=True, default=list, null=True)),
+            ],
+        ),
         migrations.RemoveField(
             model_name='course',
             name='course',
