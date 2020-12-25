@@ -10,3 +10,5 @@ urlpatterns = [
     # path('', include('django.contrib.auth.urls')),
     # path('', include(router.urls)),
 ]
+
+app_name = 'user'
