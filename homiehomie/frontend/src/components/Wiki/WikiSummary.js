@@ -9,6 +9,17 @@ import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+const weekday= ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+
+function weekdayToClass(index, timeArray)
+{
+    for(let i = 0; i<timeArray.length;i++)
+    {
+        if(timeArray[i].weekday == index) return "mb-1 badge bg-secondary" ;
+    }
+
+    return "badge bg-light mb-1" ;
+ };
 
 export class WikiSummary extends Component {
     constructor(props) {
@@ -53,6 +64,9 @@ export class WikiSummary extends Component {
     componentDidMount(){
         //this.props.getCourse('CS-3114');
     }
+    
+
+
     render() {
         return (
             <Fragment>
@@ -79,59 +93,43 @@ export class WikiSummary extends Component {
 
 
                        
-                    <button type="button" className="bubbly-button" 
+                    
+                    <div className="">
+                    
+                        <p className="mb-1" style={{fontFamily: 'Montserrat'}}>
+                            {weekday.map((day, index) => (
+                                <span className= {weekdayToClass(index, this.props.selectedCourse.time)}>{day}</span>
+                            ))}
+                        </p>
+
+                        <p className="mb-1" style={{fontFamily: 'Montserrat'}}>
+                        {this.props.selectedCourse.professor} - {this.props.selectedCourse.time[0].start_at}-{this.props.selectedCourse.time[0].end_at} - {this.props.selectedCourse.location}
+                        </p>
+                        
+                        <p className="mb-1" style={{fontFamily: 'Montserrat'}}>
+                        Credit Hour: {this.props.selectedCourse.course_meta.credit_hours}
+                        </p>
+
+                        <p className="mb-1" style={{fontFamily: 'Montserrat'}}>
+                            Capacity: {this.props.selectedCourse.capacity}
+                        </p>
+                    
+                        {/* <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                            Location: {this.props.selectedCourse.location}
+                        </p> */}
+                        {/* <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                            Instructor: {this.props.selectedCourse.professor}
+                        </p> */}
+                        
+
+                        
+                        {/* ToDO: GPA & Modality */}
+                    </div>
+                <button type="button" className="bubbly-button mt-2 mb-4" 
                         onClick={(event)=> {this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse)); this.animateButton(event)} }
                         style={{fontFamily: 'Montserrat', fontSize:'1rem'}}>
                         <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
                         </button>
-                    <div className="p-2">
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        <table className="table table-striped">
-                        <thead>
-                            <tr>
-                            <th>Weekday</th>
-                            <th>Start Time</th>
-                            <th>End Time</th>
-                            <th/>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.props.selectedCourse.time.map((time) => (
-                                <tr key={time.weekday}>
-                                    <td>{time.weekday}</td>
-                                    <td>{time.start_at}</td>
-                                    <td>{time.end_at}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                            </table> 
-                    </p>
-                    
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        <span class="badge bg-light">Mo</span>
-                        <span class="badge bg-secondary">Tu</span>
-                        <span class="badge bg-light">We</span>
-                        <span class="badge bg-secondary">Th</span>
-                        <span class="badge bg-light">Fr</span>
-                        <span class="badge bg-light">Sa</span>
-                        <span class="badge bg-light">Su</span>
-            
-                    </p>
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Location: {this.props.selectedCourse.location}
-                    </p>
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Instructor: {this.props.selectedCourse.professor}
-                    </p>
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Credit Hour: {this.props.selectedCourse.course_meta.credit_hours}
-                    </p>
-
-                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Capacity: {this.props.selectedCourse.capacity}
-                    </p>
-                    {/* ToDO: GPA & Modality */}
-                </div>
                 </div>
 
                 :'loading...'}
@@ -148,13 +146,6 @@ const mapStateToProps = state =>({
     selectedCourse: state.course.selectedCourse
 });
 
-
-
-  var bubblyButtons = document.getElementsByClassName("bubbly-button");
-  
-  for (var i = 0; i < bubblyButtons.length; i++) {
-    bubblyButtons[i].addEventListener('click', animateButton, false);
- }
 
 
 export default connect(mapStateToProps)(WikiSummary);
