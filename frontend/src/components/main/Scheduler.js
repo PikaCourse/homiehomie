@@ -10,9 +10,9 @@ import PropTypes from 'prop-types'
 import {setCourse} from '../../actions/course'
 import store from '../../store';
 const themeConfig =  {
-    'common.border': '1px solid #e5e5e5',
+    'common.border': '1px solid rgba(89, 108, 126, 0.22)',
     'common.today.color': '#419EF4',
-    'common.creationGuide.filter': 'drop-shadow(6px 4px 30px rgba(65, 158, 244, 0.81))',
+    'common.creationGuide.filter': 'drop-shadow(6px 4px 30px rgba(65, 158, 244, 0.30))',
     'common.creationGuide.border': '1px solid #515ce6',
 };
 
@@ -39,54 +39,67 @@ export class Scheduler extends Component {
         const calendarInstance = this.calendarRef.current.getInstance();
         //use map to reduce redundance 
         calendarInstance.setCalendarColor(0, {
-            color: '#FFFFFF',
-            bgColor: '#585858',
-            borderColor: '#a1b56c',
-            dragBgColor: '#585858',
+            color: 'rgba(65, 158, 244, 1)',
+            bgColor: 'rgba(65, 158, 244, 0.3)',
+            borderColor: 'rgba(65, 158, 244, 0.3)',
         });
         calendarInstance.setCalendarColor(1, {
-            color: '#FFFFFF',
-            bgColor: '#dc9656',
-            borderColor: '#a1b56c',
-            dragBgColor: '#dc9656',
+            color: 'rgba(79, 207, 184, 1)',
+            bgColor: 'rgba(79, 207, 184, 0.3)',
+            borderColor: 'rgba(79, 207, 184, 0.3)',
         });
         calendarInstance.setCalendarColor(2, {
-            color: '#FFFFFF',
-            bgColor: '#ab4642',
-            borderColor: '#a1b56c',
-            dragBgColor: '#ab4642',
+            color: 'rgba(255, 175, 115, 1)',
+            bgColor: 'rgba(255, 175, 115, 0.3)',
+            borderColor: 'rgba(255, 175, 115, 0.3)',
         });
         calendarInstance.setCalendarColor(3, {
-            color: '#FFFFFF',
-            bgColor: '#540d6e',
+            color: 'rgba(166, 65, 244, 1)',
+            bgColor: 'rgba(166, 65, 244, 0.3)',
+            borderColor: 'rgba(166, 65, 244, 0.3)',
+
         });
         calendarInstance.setCalendarColor(4, {
-            color: '#FFFFFF',
-            bgColor: '#ee4266',
+            color: 'rgba(242, 124, 87, 1)',
+            bgColor: 'rgba(242, 124, 87, 0.3)',
+            borderColor: 'rgba(242, 124, 87, 0.3)',
+
         });
         calendarInstance.setCalendarColor(5, {
-            color: '#FFFFFF',
-            bgColor: '#ffd23f',
+            color: 'rgba(113, 79, 207, 1)',
+            bgColor: 'rgba(113, 79, 207, 0.3)',
+            borderColor: 'rgba(113, 79, 207, 0.3)',
+
         });
         calendarInstance.setCalendarColor(6, {
-            color: '#FFFFFF',
-            bgColor: '#3bceac',
+            color: 'rgba(109, 218, 120, 1)',
+            bgColor: 'rgba(109, 218, 120, 0.3)',
+            borderColor: 'rgba(109, 218, 120, 0.3)',
+
         });
         calendarInstance.setCalendarColor(7, {
-            color: '#FFFFFF',
-            bgColor: '#0ead69',
+            color: 'rgba(234, 104, 153, 1)',
+            bgColor: 'rgba(234, 104, 153, 0.3)',
+            borderColor: 'rgba(234, 104, 153, 0.3)',
+
         });
         calendarInstance.setCalendarColor(8, {
-            color: '#FFFFFF',
-            bgColor: '#f0984d',
+            color: 'rgba(188, 191, 4, 1)',
+            bgColor: 'rgba(188, 191, 4, 0.3)',
+            borderColor: 'rgba(188, 191, 4, 0.3)',
+
         });
         calendarInstance.setCalendarColor(9, {
-            color: '#FFFFFF',
-            bgColor: '#e9c135',
+            color: 'rgba(21, 77, 222, 1)',
+            bgColor: 'rgba(21, 77, 222, 0.3)',
+            borderColor: 'rgba(21, 77, 222, 0.3)',
+
         });
         calendarInstance.setCalendarColor(10, {
-            color: '#FFFFFF',
-            bgColor: '#14c97e',
+            color: 'rgba(68, 207, 207, 1)',
+            bgColor: 'rgba(68, 207, 207, 0.3)',
+            borderColor: 'rgba(68, 207, 207, 0.3)',
+
         });
     }
 
@@ -96,7 +109,7 @@ export class Scheduler extends Component {
         const calendarInstance = this.calendarRef.current.getInstance();
         calendarInstance.on('clickSchedule', function(event) {
             // var ClickedSchedule = event.schedule;
-            store.dispatch(setCourse(event.schedule));
+            store.dispatch(setCourse(event.schedule.raw));
             //store crn and course name in schedule  
         }); 
         
@@ -112,27 +125,27 @@ export class Scheduler extends Component {
                 {/* <button className="btn btn-outline-primary my-2 my-sm-0" 
                     onClick={()=> this.addCourseSchedule(this.props.course[0])} style = {{borderRadius: "30px"}} type="submit">Add</button>  */}
                 <Calendar
-                ref={this.calendarRef}
-                height="1000px"
-                disableDblClick={true}
-                disableClick={false}
-                isReadOnly={false}
-                //scheduleView
-                //taskView={true}
-                schedules={this.props.courselist}
+                    ref={this.calendarRef}
+                    height="1000px"
+                    disableDblClick={true}
+                    disableClick={false}
+                    isReadOnly={true}
+                    //scheduleView
+                    //taskView={true}
+                    schedules={this.props.courselist}
             
-                theme={myTheme}
-                useDetailPopup
-                useCreationPopup
-                //   view={selectedView} // You can also set the `defaultView` option.
-                week={{
-                    showTimezoneCollapseButton: true,
-                    timezonesCollapsed: true, 
-                    workweek: true, 
-                    hourStart: 7, 
-                    hourEnd: 22, 
-                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-                }}
+                    theme={myTheme}
+                    useDetailPopup
+                    
+                    //   view={selectedView} // You can also set the `defaultView` option.
+                    week={{
+                        showTimezoneCollapseButton: true,
+                        timezonesCollapsed: true, 
+                        workweek: true, 
+                        hourStart: 7, 
+                        hourEnd: 22, 
+                        daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                    }}
 
                 taskView/>
             </div> 

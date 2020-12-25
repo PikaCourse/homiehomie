@@ -9,8 +9,9 @@ const initialState = {
 export default function(state = initialState, action) {
     switch (action.type) {
         case GET_COURSE:
+            console.log(action.payload);
             return {
-                ...state,
+                selectedCourse: action.payload[0],
                 selectedCourseArray: action.payload
             } 
         case SET_COURSE:
