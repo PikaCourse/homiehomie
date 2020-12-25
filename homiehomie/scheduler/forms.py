@@ -5,8 +5,8 @@ from django.forms import ModelForm
 from django.utils.translation import ugettext as _
 from django.utils import timezone
 
-# TODO User id verification/authentication
 
+# TODO User id verification/authentication
 class QuestionCreationForm(ModelForm):
     class Meta:
         model = Question
@@ -156,6 +156,7 @@ class PostAnswerCreationForm(ModelForm):
             answer.save()
             self.post.save()
         return answer
+
 
 class PostAnswerModificationForm(ModelForm):
     class Meta:
