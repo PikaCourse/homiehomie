@@ -22,10 +22,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Cloning repo
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Dokku
         # You may pin to the exact commit or the version.
         # uses: dokku/github-action@f3dfd4bae85d064232999f269c271bfd0e45c2e8
