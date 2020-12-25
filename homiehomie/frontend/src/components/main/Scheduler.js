@@ -96,7 +96,7 @@ export class Scheduler extends Component {
         const calendarInstance = this.calendarRef.current.getInstance();
         calendarInstance.on('clickSchedule', function(event) {
             // var ClickedSchedule = event.schedule;
-            store.dispatch(setCourse(event.schedule));
+            store.dispatch(setCourse(event.schedule.raw));
             //store crn and course name in schedule  
         }); 
         

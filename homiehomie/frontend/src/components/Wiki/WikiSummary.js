@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import {addCurrCourse} from '../../actions/calendar'
-
+import { setCourse } from "../../actions/course";
 
 // style 
 import DropdownButton from 'react-bootstrap/DropdownButton'
@@ -20,7 +20,10 @@ export class WikiSummary extends Component {
     }
 
     handleCRNChange(course) {
-        this.setState({courseIndex: this.props.selectedCourseArray.indexOf(course)});
+        this.props.dispatch(setCourse({
+            selectedCourse: course, 
+            selectedCourseArray: this.props.selectedCourseArray}))
+        // this.setState({courseIndex: this.props.selectedCourseArray.indexOf(course)});
     }
 
     addCourseSchedule(props)
@@ -32,9 +35,6 @@ export class WikiSummary extends Component {
         let result = 0;
         if(course != undefined && course != null && Object.keys(course).length != 0) 
             result = this.props.selectedCourseArray.indexOf(course);
-        // console.log(course);
-
-        console.log(result);
         return result;
     }
     animateButton(e) {
@@ -70,7 +70,8 @@ export class WikiSummary extends Component {
                     <DropdownButton className = "col-sm-3 mx-0 px-0 mb-1" alignRight title={'CRN: ' + this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].crn} 
                                 id="dropdown-menu-align-right" style = {{fontSize:'1rem', display:'inline'}}>
                                 {this.props.selectedCourseArray.map((course) => (
-                                    <Dropdown.Item value={course.crn} 
+                                    <Dropdown.Item 
+                                        value={course.crn} 
                                         onSelect={()=> this.handleCRNChange(course)} >{course.crn}</Dropdown.Item>
                                 ))}
                     </DropdownButton>
