@@ -41,3 +41,14 @@ homiehomie_django_env.py
 
 # Data files
 data/
+
+### react ###
+.DS_*
+*.log
+logs
+**/*.backup.*
+**/*.back.*
+
+node_modules
+bower_components
+main.js
