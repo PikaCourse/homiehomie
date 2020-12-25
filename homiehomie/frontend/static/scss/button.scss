@@ -1,79 +1,207 @@
-$color: #111;
-$primary: #419EF4;
+$fuschia: #419EF4;
+$button-bg: $fuschia;
+$button-onhover-bg: #fab92b;
 
-a
-{
-    text-decoration: none;
-    color: inherit;
-}
-a:hover{
-    text-decoration: none;
-}
+$button-text-color: #fff;
+$baby-blue: #f8faff;
 
-.cta
-{
-position: relative;
-margin: auto;
-padding: 19px 22px;
-transition: all .2s ease;
-&:before{
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  border-radius: 28px;
-  background: rgba($primary,1);
-  width: 56px;
-  height: 56px;
-  transition: all .3s ease;
-}
 
-span{
+.bubbly-button{
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  display: inline-block;
+  font-size: 1em;
+  padding: 0.8em 1em;
+//   margin-top: 100px;
+//   margin-bottom: 60px;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: $button-bg;
+  color: $button-text-color;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
   position: relative;
-  font-size: 16px;
-  line-height: 18px;
-  font-weight: 900;
-//   letter-spacing: .25em;
-  text-transform: uppercase;
-  vertical-align: middle;
+  transition: transform ease-in 0.1s, box-shadow ease-in 0.25s;
+  box-shadow: 0 2px 25px rgba(65, 158, 244, 0.5);
+  transition: 0.3s;
   
-}
-svg{
-  position: relative;
-  top: 0;
-  margin-left: 10px;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke: $color;
-  stroke-width: 2;
-  transform: translateX(-5px);
-  transition: all .3s ease;
-}
-&:hover{
+  &:hover{
+    background-color: $button-onhover-bg;
+    box-shadow: 0 2px 25px #d69a17ad;
+
+    color:white;
+    transition: all 0.5s ease 0s
+  }
+
+  &:focus {
+    outline: 0;
+  }
+  
+  &:before, &:after{
+    position: absolute;
+    content: '';
+    display: block;
+    width: 140%;
+    height: 100%;
+    left: -20%;
+    z-index: -1000;
+    transition: all ease-in-out 0.5s;
+    background-repeat: no-repeat;
+  }
+  
+  &:before{
+    display: none;
+    top: -75%;
+    background-image:  
+      radial-gradient(circle, $button-bg 20%, transparent 20%),
+    radial-gradient(circle,  transparent 20%, $button-bg 20%, transparent 30%),
+    radial-gradient(circle, $button-bg 20%, transparent 20%), 
+    radial-gradient(circle, $button-bg 20%, transparent 20%),
+    radial-gradient(circle,  transparent 10%, $button-bg 15%, transparent 20%),
+    radial-gradient(circle, $button-bg 20%, transparent 20%),
+    radial-gradient(circle, $button-bg 20%, transparent 20%),
+    radial-gradient(circle, $button-bg 20%, transparent 20%),
+    radial-gradient(circle, $button-bg 20%, transparent 20%);
+  background-size: 10% 10%, 20% 20%, 15% 15%, 20% 20%, 18% 18%, 10% 10%, 15% 15%, 10% 10%, 18% 18%;
+  //background-position: 0% 80%, -5% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%, 50% 50%, 65% 20%, 85% 30%;
+  }
+  
+  &:after{
+    display: none;
+    bottom: -75%;
+    background-image:  
+    radial-gradient(circle, $button-bg 20%, transparent 20%), 
+    radial-gradient(circle, $button-bg 20%, transparent 20%),
+    radial-gradient(circle,  transparent 10%, $button-bg 15%, transparent 20%),
+    radial-gradient(circle, $button-bg 20%, transparent 20%),
+    radial-gradient(circle, $button-bg 20%, transparent 20%),
+    radial-gradient(circle, $button-bg 20%, transparent 20%),
+    radial-gradient(circle, $button-bg 20%, transparent 20%);
+  background-size: 15% 15%, 20% 20%, 18% 18%, 20% 20%, 15% 15%, 10% 10%, 20% 20%;
+  //background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%, 40% 90%, 55% 90%, 70% 90%;
+  }
+ 
+  &:active{
+    transform: scale(0.9);
+    // background-color: darken($button-bg, 5%);
+    background-color: $button-onhover-bg;
+    box-shadow: 0 2px 25px rgba(65, 158, 244, 0.2);
+  }
+  
+  &.animate{
     &:before{
-        width: 100%;
-        background: rgba($primary,1);
+      display: block;
+      animation: topBubbles ease-in-out 0.75s forwards;
     }
-    svg{
-
-        transform: translateX(0);
-        
+    &:after{
+      display: block;
+      animation: bottomBubbles ease-in-out 0.75s forwards;
     }
-    path{
-        fill:#ffffff;
-    }
-    span{
-        color:#ffffff;
-        
-    }
-    
+  }
 }
+
+
+@keyframes topBubbles {
+  0%{
+    background-position: 5% 90%, 10% 90%, 10% 90%, 15% 90%, 25% 90%, 25% 90%, 40% 90%, 55% 90%, 70% 90%;
+  }
+    50% {
+      background-position: 0% 80%, 0% 20%, 10% 40%, 20% 0%, 30% 30%, 22% 50%, 50% 50%, 65% 20%, 90% 30%;}
+ 100% {
+    background-position: 0% 70%, 0% 10%, 10% 30%, 20% -10%, 30% 20%, 22% 40%, 50% 40%, 65% 10%, 90% 20%;
+  background-size: 0% 0%, 0% 0%,  0% 0%,  0% 0%,  0% 0%,  0% 0%;
+  }
+}
+
+@keyframes bottomBubbles {
+  0%{
+    background-position: 10% -10%, 30% 10%, 55% -10%, 70% -10%, 85% -10%, 70% -10%, 70% 0%;
+  }
+  50% {
+    background-position: 0% 80%, 20% 80%, 45% 60%, 60% 100%, 75% 70%, 95% 60%, 105% 0%;}
+ 100% {
+    background-position: 0% 90%, 20% 90%, 45% 70%, 60% 110%, 75% 80%, 95% 70%, 110% 10%;
+  background-size: 0% 0%, 0% 0%,  0% 0%,  0% 0%,  0% 0%,  0% 0%;
+  }
+}
+
+
+// $color: #111;
+// $primary: #419EF4;
+
+// // a
+// // {
+// //     text-decoration: none;
+// //     color: inherit;
+// // }
+// // a:hover{
+// //     text-decoration: none;
+// // }
+
+// .cta
+// {
+// position: relative;
+// margin: auto;
+// padding: 19px 22px;
+// transition: all .2s ease;
+// &:before{
+//   content: "";
+//   position: absolute;
+//   top: 0;
+//   left: 0;
+//   display: block;
+//   border-radius: 28px;
+//   background: rgba($primary,1);
+//   width: 56px;
+//   height: 56px;
+//   transition: all .3s ease;
+// }
+
+// span{
+//   position: relative;
+//   font-size: 16px;
+//   line-height: 18px;
+//   font-weight: 900;
+// //   letter-spacing: .25em;
+//   text-transform: uppercase;
+//   vertical-align: middle;
   
-&:active
-{
-    transform: scale(.96)
+// }
+// svg{
+//   position: relative;
+//   top: 0;
+//   margin-left: 10px;
+//   fill: none;
+//   stroke-linecap: round;
+//   stroke-linejoin: round;
+//   stroke: $color;
+//   stroke-width: 2;
+//   transform: translateX(-5px);
+//   transition: all .3s ease;
+// }
+// &:hover{
+//     &:before{
+//         width: 100%;
+//         background: rgba($primary,1);
+//     }
+//     svg{
 
-}
-}
+//         transform: translateX(0);
+        
+//     }
+//     path{
+//         fill:#ffffff;
+//     }
+//     span{
+//         color:#ffffff;
+        
+//     }
+    
+// }
+  
+// &:active
+// {
+//     transform: scale(.96)
+
+// }
+// }

@@ -37,6 +37,17 @@ export class WikiSummary extends Component {
         console.log(result);
         return result;
     }
+    animateButton(e) {
+
+        e.preventDefault;
+        //reset animation
+        e.target.classList.remove('animate');
+        
+        e.target.classList.add('animate');
+        setTimeout(function(){
+          e.target.classList.remove('animate');
+        },700);
+    };
 
     static propTypes = {
         selectedCourseArray:PropTypes.array.isRequired
@@ -50,38 +61,31 @@ export class WikiSummary extends Component {
             <Fragment>
                 {typeof this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)] != 'undefined'? 
                     <div className ="p-2">
-                    <div className = "row">
-                        <h1 className = "col-sm-3 text-wrap pr-0" style={{color:'#419EF4'}}>
-                            {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.title}
-                        </h1>
-                        <DropdownButton className = "col-sm-3 mx-0 px-0" alignRight title={'CRN: ' + this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].crn} 
-                            id="dropdown-menu-align-right">
-                            {this.props.selectedCourseArray.map((course) => (
-                                <Dropdown.Item value={course.crn} 
-                                    onSelect={()=> this.handleCRNChange(course)} >{course.crn}</Dropdown.Item>
-                            ))}
-                        </DropdownButton>
+                    
+                    <div>
+                    <h1 className = "mr-2" style={{color:'#419EF4',  display:'inline'}}>
+                        {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.title}
+                        
+                    </h1>
+                    <DropdownButton className = "col-sm-3 mx-0 px-0 mb-1" alignRight title={'CRN: ' + this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].crn} 
+                                id="dropdown-menu-align-right" style = {{fontSize:'1rem', display:'inline'}}>
+                                {this.props.selectedCourseArray.map((course) => (
+                                    <Dropdown.Item value={course.crn} 
+                                        onSelect={()=> this.handleCRNChange(course)} >{course.crn}</Dropdown.Item>
+                                ))}
+                    </DropdownButton>
                     </div>
-
                     <h1>
                         {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.name}
                     </h1> 
-                    {/* <button type="button" className="btn btn-primary" 
-                        onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))} 
-                        style={{fontFamily: 'Montserrat', backgroundColor: '#419EF4', borderColor:'#419EF4', boxShadow:'0px 4px 10px rgba(65, 158, 244, 0.81)'}}>
-                        <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
-                        </button> */}
-                    
-                    <div className="my-4">
-                        <a href="#"  onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))} class="cta">
-                        <span>Add To My Schedule</span>
-                        <svg width="13px" height="10px" viewBox="0 0 13 10">
-                            <path d="M1,5 L11,5"></path>
-                            <polyline points="8 1 12 5 8 9"></polyline>
-                        </svg>
-                        </a>
-                    </div>
 
+
+                       
+                    <button type="button" className="bubbly-button" 
+                        onClick={(event)=> {this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse)); this.animateButton(event)} }
+                        style={{fontFamily: 'Montserrat', fontSize:'1rem'}}>
+                        <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
+                        </button>
                     <div className="p-2">
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
                         <table className="table table-striped">
@@ -134,6 +138,14 @@ const mapStateToProps = state =>({
     selectedCourseArray: state.course.selectedCourseArray,
     selectedCourse: state.course.selectedCourse
 });
+
+
+
+  var bubblyButtons = document.getElementsByClassName("bubbly-button");
+  
+  for (var i = 0; i < bubblyButtons.length; i++) {
+    bubblyButtons[i].addEventListener('click', animateButton, false);
+ }
 
 
 export default connect(mapStateToProps)(WikiSummary);
