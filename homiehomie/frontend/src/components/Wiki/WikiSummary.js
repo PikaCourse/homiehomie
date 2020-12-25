@@ -13,16 +13,13 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 export class WikiSummary extends Component {
     constructor(props) {
         super(props)
-    
-        this.state = {
-             courseIndex: 0
-        }
     }
 
     handleCRNChange(course) {
         this.props.dispatch(setCourse({
             selectedCourse: course, 
-            selectedCourseArray: this.props.selectedCourseArray}))
+            selectedCourseArray: this.props.selectedCourseArray
+        }))
         // this.setState({courseIndex: this.props.selectedCourseArray.indexOf(course)});
     }
 
@@ -77,7 +74,7 @@ export class WikiSummary extends Component {
                     </DropdownButton>
                     </div>
                     <h1>
-                        {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.name}
+                        {this.props.selectedCourse.course_meta.name}
                     </h1> 
 
 
@@ -99,7 +96,7 @@ export class WikiSummary extends Component {
                             </tr>
                         </thead>
                         <tbody>
-                            {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].time.map((time) => (
+                            {this.props.selectedCourse.time.map((time) => (
                                 <tr key={time.weekday}>
                                     <td>{time.weekday}</td>
                                     <td>{time.start_at}</td>
@@ -109,18 +106,29 @@ export class WikiSummary extends Component {
                         </tbody>
                             </table> 
                     </p>
+                    
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Location: {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].location}
+                        <span class="badge bg-light">Mo</span>
+                        <span class="badge bg-secondary">Tu</span>
+                        <span class="badge bg-light">We</span>
+                        <span class="badge bg-secondary">Th</span>
+                        <span class="badge bg-light">Fr</span>
+                        <span class="badge bg-light">Sa</span>
+                        <span class="badge bg-light">Su</span>
+            
                     </p>
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Instructor: {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].professor}
+                        Location: {this.props.selectedCourse.location}
                     </p>
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Credit Hour: {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.credit_hours}
+                        Instructor: {this.props.selectedCourse.professor}
+                    </p>
+                    <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
+                        Credit Hour: {this.props.selectedCourse.course_meta.credit_hours}
                     </p>
 
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                        Capacity: {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].capacity}
+                        Capacity: {this.props.selectedCourse.capacity}
                     </p>
                     {/* ToDO: GPA & Modality */}
                 </div>

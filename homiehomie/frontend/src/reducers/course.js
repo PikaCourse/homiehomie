@@ -11,7 +11,7 @@ export default function(state = initialState, action) {
         case GET_COURSE:
             console.log(action.payload);
             return {
-                ...state,
+                selectedCourse: action.payload[0],
                 selectedCourseArray: action.payload
             } 
         case SET_COURSE:

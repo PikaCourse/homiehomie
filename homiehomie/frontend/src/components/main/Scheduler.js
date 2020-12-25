@@ -10,9 +10,9 @@ import PropTypes from 'prop-types'
 import {setCourse} from '../../actions/course'
 import store from '../../store';
 const themeConfig =  {
-    'common.border': '1px solid #e5e5e5',
+    'common.border': '1px solid rgba(89, 108, 126, 0.22)',
     'common.today.color': '#419EF4',
-    'common.creationGuide.filter': 'drop-shadow(6px 4px 30px rgba(65, 158, 244, 0.81))',
+    'common.creationGuide.filter': 'drop-shadow(6px 4px 30px rgba(65, 158, 244, 0.30))',
     'common.creationGuide.border': '1px solid #515ce6',
 };
 
@@ -125,27 +125,27 @@ export class Scheduler extends Component {
                 {/* <button className="btn btn-outline-primary my-2 my-sm-0" 
                     onClick={()=> this.addCourseSchedule(this.props.course[0])} style = {{borderRadius: "30px"}} type="submit">Add</button>  */}
                 <Calendar
-                ref={this.calendarRef}
-                height="1000px"
-                disableDblClick={true}
-                disableClick={false}
-                isReadOnly={false}
-                //scheduleView
-                //taskView={true}
-                schedules={this.props.courselist}
+                    ref={this.calendarRef}
+                    height="1000px"
+                    disableDblClick={true}
+                    disableClick={false}
+                    isReadOnly={true}
+                    //scheduleView
+                    //taskView={true}
+                    schedules={this.props.courselist}
             
-                theme={myTheme}
-                useDetailPopup
-                useCreationPopup
-                //   view={selectedView} // You can also set the `defaultView` option.
-                week={{
-                    showTimezoneCollapseButton: true,
-                    timezonesCollapsed: true, 
-                    workweek: true, 
-                    hourStart: 7, 
-                    hourEnd: 22, 
-                    daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-                }}
+                    theme={myTheme}
+                    useDetailPopup
+                    
+                    //   view={selectedView} // You can also set the `defaultView` option.
+                    week={{
+                        showTimezoneCollapseButton: true,
+                        timezonesCollapsed: true, 
+                        workweek: true, 
+                        hourStart: 7, 
+                        hourEnd: 22, 
+                        daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                    }}
 
                 taskView/>
             </div> 
