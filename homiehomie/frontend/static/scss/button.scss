@@ -1,5 +1,7 @@
 $fuschia: #419EF4;
 $button-bg: $fuschia;
+$button-onhover-bg: #fab92b;
+
 $button-text-color: #fff;
 $baby-blue: #f8faff;
 
@@ -20,8 +22,17 @@ $baby-blue: #f8faff;
   cursor: pointer;
   position: relative;
   transition: transform ease-in 0.1s, box-shadow ease-in 0.25s;
-  box-shadow: 0 2px 25px rgba(255, 0, 130, 0.5);
+  box-shadow: 0 2px 25px rgba(65, 158, 244, 0.5);
+  transition: 0.3s;
   
+  &:hover{
+    background-color: $button-onhover-bg;
+    box-shadow: 0 2px 25px #d69a17ad;
+
+    color:white;
+    transition: all 0.5s ease 0s
+  }
+
   &:focus {
     outline: 0;
   }
@@ -72,8 +83,9 @@ $baby-blue: #f8faff;
  
   &:active{
     transform: scale(0.9);
-    background-color: darken($button-bg, 5%);
-    box-shadow: 0 2px 25px rgba(255, 0, 130, 0.2);
+    // background-color: darken($button-bg, 5%);
+    background-color: $button-onhover-bg;
+    box-shadow: 0 2px 25px rgba(65, 158, 244, 0.2);
   }
   
   &.animate{

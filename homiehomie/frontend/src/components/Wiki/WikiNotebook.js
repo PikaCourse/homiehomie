@@ -33,11 +33,13 @@ export class WikiNotebook extends Component {
                     <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>Which Professor is better?</h5>
                     <form className="form-inline my-2 my-lg-0"/>
                     <div class="mb-3">
+                    <p className="pl-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) </p>
+                    <p className="pl-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) </p>
+
                     <textarea class="form-control w-100" id="exampleFormControlTextarea1" style = {{borderRadius: "5px"}} 
                       rows="3" onChange={(e)=>this.handleInputChangeTwo(e)}></textarea>
                         <button className="btn btn-outline-primary my-0 py-1 px-1 my-sm-0" 
                         style = {{borderRadius: "5px"}} type="save" onClick={()=>this.handleSaveClicked()}>Save</button></div>
-                    <p className="pl-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) </p>
                 </div>
 
             </div>

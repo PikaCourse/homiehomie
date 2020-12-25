@@ -73,38 +73,19 @@ export class WikiSummary extends Component {
                                     onSelect={()=> this.handleCRNChange(course)} >{course.crn}</Dropdown.Item>
                             ))}
                         </DropdownButton>
+
+                        
                     </div>
 
                     <h1>
                         {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.name}
                     </h1> 
 
-                    <button type="button" className="btn btn-primary bubbly-button" 
+                    <button type="button" className="bubbly-button" 
                         onClick={(event)=> {this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse)); this.animateButton(event)} }
-                        style={{fontFamily: 'Montserrat', backgroundColor: '#419EF4', borderColor:'#419EF4', boxShadow:'0px 0px 15px rgba(65, 158, 244, 0.81)'}}>
+                        style={{fontFamily: 'Montserrat'}}>
                         <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
                         </button>
-
-                    {/* <a href="#"  class="hbtn hb-fill-middle" 
-                        onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))}>
-                        <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
-                        </a> */}
-
-                    {/* <button type="button" className="btn btn-primary" 
-                        onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))} 
-                        style={{fontFamily: 'Montserrat', backgroundColor: '#419EF4', borderColor:'#419EF4', boxShadow:'0px 4px 10px rgba(65, 158, 244, 0.81)'}}>
-                        <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
-                        </button> */}
-                    
-                    {/* <div className="my-4">
-                        <a href="#"  onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))} class="cta">
-                        <span>Add To My Schedule</span>
-                        <svg width="13px" height="10px" viewBox="0 0 13 10">
-                            <path d="M1,5 L11,5"></path>
-                            <polyline points="8 1 12 5 8 9"></polyline>
-                        </svg>
-                        </a>
-                    </div> */}
 
                     <div className="p-2">
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
