@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons'
+
 import TextareaAutosize from 'react-textarea-autosize';
 
 export class WikiNotebook extends Component {
@@ -52,13 +53,15 @@ export class WikiNotebook extends Component {
                         className="pl-2" 
                         style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
                           Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) 
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 
+                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
+                          <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
                       </p>
                       <p 
                         className="pl-2" 
                         style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
                         Lorem ipsum dolor sit amet. (Spring 2019) 
-                        <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/>
+                        <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
+                        <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
                       </p>
 
                       <div className="row">
@@ -85,20 +88,63 @@ export class WikiNotebook extends Component {
                 </div>
 
                 <div>
-                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>Which Professor is better?</h5>
+                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>What is this class about?</h5>
                     <form className="form-inline my-2 my-lg-0"/>
                     <div class="mb-3">
                       <p 
                         className="pl-2" 
                         style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
                           Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) 
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 
+                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
+                          <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
                       </p>
                       <p 
                         className="pl-2" 
                         style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
                         Lorem ipsum dolor sit amet. (Spring 2019) 
-                        <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/>
+                        <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
+                        <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
+                      </p>
+
+                      <div className="row">
+                        <div className = "col-sm-11 pr-0">
+                            <TextareaAutosize
+                              className="w-100 pl-2"
+                              minRows={2}
+                              maxRows={10}
+                              placeholder="Write Your Notes..."
+                              onChange={(e)=>this.handleInputChangeTwo(e)}
+                              style = {{borderRadius: "5px", borderColor:"white"}}/>
+                        </div>
+                        <div className = "col-sm-1 pl-0">
+                          <button 
+                            className="bubbly-button" 
+                            style = {{borderRadius: "5px", fontFamily: 'Montserrat'}} 
+                            type="save" 
+                            onClick={(event)=>{this.handleSaveClicked(); this.animateButton(event)}}>Save
+                          </button>
+                        </div>
+                      </div>
+                    
+                    </div>
+                </div>
+                <div>
+                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>How hard it is?</h5>
+                    <form className="form-inline my-2 my-lg-0"/>
+                    <div class="mb-3">
+                      <p 
+                        className="pl-2" 
+                        style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) 
+                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
+                          <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
+                      </p>
+                      <p 
+                        className="pl-2" 
+                        style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
+                        Lorem ipsum dolor sit amet. (Spring 2019) 
+                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
+                          <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
                       </p>
 
                       <div className="row">
