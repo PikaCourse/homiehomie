@@ -1,6 +1,9 @@
 {
     "name": "homiehomie",
     "version": "1.0.0",
+    "engines": {
+        "node": "15.x"
+    },
     "description": "source venv/bin/activate python manage.py runserver",
     "main": "index.js",
     "scripts": {
