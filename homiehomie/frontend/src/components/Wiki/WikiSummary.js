@@ -47,7 +47,6 @@ export class WikiSummary extends Component {
         setTimeout(function(){
           e.target.classList.remove('animate');
         },700);
-        console.log("animateButton");
     };
 
     static propTypes = {
