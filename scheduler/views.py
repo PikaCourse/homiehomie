@@ -55,7 +55,7 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
             try:
                 queryset = queryset[0:int(limit)]
             except ValueError as err:
-                error_pack = {"errmsg": "invalid query param: limit"}
+                error_pack = {"errcode": 1000, "errmsg": "invalid query param: limit"}
                 return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
         else:
             queryset = queryset[:200]
@@ -118,6 +118,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     parser_classes = [FormParser]
+    http_method_names = ['get', 'post', 'head', 'put']
 
     # TODO Tmp disable to ease debugging
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
@@ -159,7 +160,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     # POST method to create a question related to a course
-    # TODO Use django form?
     # TODO Consider mixin? refer to django rest framework ModelViewset API
     def create(self, request, *args, **kwargs):
         question = request.data
@@ -199,6 +199,7 @@ class NoteViewSet(viewsets.ModelViewSet):
 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
+    http_method_names = ['get', 'post', 'head', 'put']
 
     def list(self, request, *args, **kwargs):
         queryset = Note.objects.all()
@@ -279,6 +280,7 @@ class PostViewSet(viewsets.ModelViewSet):
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    http_method_names = ['get', 'post', 'head', 'put']
 
     def list(self, request, *args, **kwargs):
         queryset = Post.objects.all()
@@ -423,3 +425,4 @@ class PostViewSet(viewsets.ModelViewSet):
 class ScheduleViewSet(viewsets.ModelViewSet):
     queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
+    http_method_names = ['get', 'post', 'head', 'put']

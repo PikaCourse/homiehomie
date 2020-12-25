@@ -33,6 +33,11 @@ class Student(models.Model):
         user = User.objects.get_or_create(username='deleted')[0]
         return Student.objects.get(user=user)
 
+    @classmethod
+    def get_tester_user(cls):
+        tester = User.objects.get_or_create(username='tester')[0]
+        return Student.objects.get(user=tester)
+
     def __str__(self):
         return self.user.username
 

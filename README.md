@@ -26,6 +26,12 @@
             3. [ ] Permission testing
         3. [ ] Coverage report
         4. [ ] GitHub action
+        5. [ ] Advance testing
+            1. [ ] Do we need separate test db to run unit testing?
+                1. Probably not
+                1. But do need a test db
+                1. Specify test db in `setting.py`?
+                1. Use [test fixture](https://docs.djangoproject.com/en/3.1/topics/testing/tools/#fixture-loading)
     5. [x] API Post and Put
         1. [x] Create/Modify question
         2. [x] Create/Modify note
