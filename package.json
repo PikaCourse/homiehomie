@@ -4,8 +4,8 @@
     "description": "source venv/bin/activate python manage.py runserver",
     "main": "index.js",
     "scripts": {
-        "dev": "webpack --mode development --watch ./homiehomie/frontend/src/index.js --output-path ./homiehomie/frontend/static/frontend/main.js",
-        "build": "webpack --mode production ./homiehomie/frontend/src/index.js --output-path ./homiehomie/frontend/static/frontend/main.js"
+        "dev": "webpack --mode development --watch ./frontend/src/index.js --output-path ./homiehomie/frontend/static/frontend/main.js",
+        "build": "webpack --mode production ./frontend/src/index.js --output-path ./homiehomie/frontend/static/frontend/main.js"
     },
     "repository": {
         "type": "git",
