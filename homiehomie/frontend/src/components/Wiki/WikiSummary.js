@@ -62,31 +62,31 @@ export class WikiSummary extends Component {
             <Fragment>
                 {typeof this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)] != 'undefined'? 
                     <div className ="p-2">
-                    <div className = "row">
-                        <h1 className = "col-sm-3 text-wrap pr-0" style={{color:'#419EF4'}}>
-                            {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.title}
-                        </h1>
-                        <DropdownButton className = "col-sm-3 mx-0 px-0" alignRight title={'CRN: ' + this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].crn} 
-                            id="dropdown-menu-align-right">
-                            {this.props.selectedCourseArray.map((course) => (
-                                <Dropdown.Item value={course.crn} 
-                                    onSelect={()=> this.handleCRNChange(course)} >{course.crn}</Dropdown.Item>
-                            ))}
-                        </DropdownButton>
-
+                    
+                    <div>
+                    <h1 className = "mr-2" style={{color:'#419EF4',  display:'inline'}}>
+                        {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.title}
                         
+                    </h1>
+                    <DropdownButton className = "col-sm-3 mx-0 px-0 mb-1" alignRight title={'CRN: ' + this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].crn} 
+                                id="dropdown-menu-align-right" style = {{fontSize:'1rem', display:'inline'}}>
+                                {this.props.selectedCourseArray.map((course) => (
+                                    <Dropdown.Item value={course.crn} 
+                                        onSelect={()=> this.handleCRNChange(course)} >{course.crn}</Dropdown.Item>
+                                ))}
+                    </DropdownButton>
                     </div>
-
                     <h1>
                         {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.name}
                     </h1> 
 
+
+                       
                     <button type="button" className="bubbly-button" 
                         onClick={(event)=> {this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse)); this.animateButton(event)} }
-                        style={{fontFamily: 'Montserrat'}}>
+                        style={{fontFamily: 'Montserrat', fontSize:'1rem'}}>
                         <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
                         </button>
-
                     <div className="p-2">
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
                         <table className="table table-striped">
