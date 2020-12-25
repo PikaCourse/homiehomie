@@ -27,9 +27,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-      env:
-        # Fake SECRET KEY used for run test only 
-        HOMIE_HOMIE_DJANGO_SECRET_KEY: wtelrbj_4zy@(16_f0vvvxa85i4otovka)a)651ccxm7ng9tuv
     - name: Run Tests
       run: |
         python manage.py test
+      env:
+        # Fake SECRET KEY used for run test only 
+        HOMIE_HOMIE_DJANGO_SECRET_KEY: wtelrbj_4zy@(16_f0vvvxa85i4otovka)a)651ccxm7ng9tuv
