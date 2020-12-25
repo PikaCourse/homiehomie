@@ -39,54 +39,67 @@ export class Scheduler extends Component {
         const calendarInstance = this.calendarRef.current.getInstance();
         //use map to reduce redundance 
         calendarInstance.setCalendarColor(0, {
-            color: '#FFFFFF',
-            bgColor: '#585858',
-            borderColor: '#a1b56c',
-            dragBgColor: '#585858',
+            color: 'rgba(65, 158, 244, 1)',
+            bgColor: 'rgba(65, 158, 244, 0.3)',
+            borderColor: 'rgba(65, 158, 244, 0.3)',
         });
         calendarInstance.setCalendarColor(1, {
-            color: '#FFFFFF',
-            bgColor: '#dc9656',
-            borderColor: '#a1b56c',
-            dragBgColor: '#dc9656',
+            color: 'rgba(79, 207, 184, 1)',
+            bgColor: 'rgba(79, 207, 184, 0.3)',
+            borderColor: 'rgba(79, 207, 184, 0.3)',
         });
         calendarInstance.setCalendarColor(2, {
-            color: '#FFFFFF',
-            bgColor: '#ab4642',
-            borderColor: '#a1b56c',
-            dragBgColor: '#ab4642',
+            color: 'rgba(255, 175, 115, 1)',
+            bgColor: 'rgba(255, 175, 115, 0.3)',
+            borderColor: 'rgba(255, 175, 115, 0.3)',
         });
         calendarInstance.setCalendarColor(3, {
-            color: '#FFFFFF',
-            bgColor: '#540d6e',
+            color: 'rgba(166, 65, 244, 1)',
+            bgColor: 'rgba(166, 65, 244, 0.3)',
+            borderColor: 'rgba(166, 65, 244, 0.3)',
+
         });
         calendarInstance.setCalendarColor(4, {
-            color: '#FFFFFF',
-            bgColor: '#ee4266',
+            color: 'rgba(242, 124, 87, 1)',
+            bgColor: 'rgba(242, 124, 87, 0.3)',
+            borderColor: 'rgba(242, 124, 87, 0.3)',
+
         });
         calendarInstance.setCalendarColor(5, {
-            color: '#FFFFFF',
-            bgColor: '#ffd23f',
+            color: 'rgba(113, 79, 207, 1)',
+            bgColor: 'rgba(113, 79, 207, 0.3)',
+            borderColor: 'rgba(113, 79, 207, 0.3)',
+
         });
         calendarInstance.setCalendarColor(6, {
-            color: '#FFFFFF',
-            bgColor: '#3bceac',
+            color: 'rgba(109, 218, 120, 1)',
+            bgColor: 'rgba(109, 218, 120, 0.3)',
+            borderColor: 'rgba(109, 218, 120, 0.3)',
+
         });
         calendarInstance.setCalendarColor(7, {
-            color: '#FFFFFF',
-            bgColor: '#0ead69',
+            color: 'rgba(234, 104, 153, 1)',
+            bgColor: 'rgba(234, 104, 153, 0.3)',
+            borderColor: 'rgba(234, 104, 153, 0.3)',
+
         });
         calendarInstance.setCalendarColor(8, {
-            color: '#FFFFFF',
-            bgColor: '#f0984d',
+            color: 'rgba(188, 191, 4, 1)',
+            bgColor: 'rgba(188, 191, 4, 0.3)',
+            borderColor: 'rgba(188, 191, 4, 0.3)',
+
         });
         calendarInstance.setCalendarColor(9, {
-            color: '#FFFFFF',
-            bgColor: '#e9c135',
+            color: 'rgba(21, 77, 222, 1)',
+            bgColor: 'rgba(21, 77, 222, 0.3)',
+            borderColor: 'rgba(21, 77, 222, 0.3)',
+
         });
         calendarInstance.setCalendarColor(10, {
-            color: '#FFFFFF',
-            bgColor: '#14c97e',
+            color: 'rgba(68, 207, 207, 1)',
+            bgColor: 'rgba(68, 207, 207, 0.3)',
+            borderColor: 'rgba(68, 207, 207, 0.3)',
+
         });
     }
 
