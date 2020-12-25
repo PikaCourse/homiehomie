@@ -217,7 +217,7 @@ class PostAnswer(models.Model):
     content = models.TextField()  # In markdown
 
     def __str__(self):
-        return "_".join([self.post.title, str(self.postee)])
+        return "_".join([str(self.post), str(self.postee)])
 
 
 class Schedule(models.Model):

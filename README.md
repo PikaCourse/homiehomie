@@ -45,7 +45,9 @@
                 1. Staff to manage the db
                 2. Can do anything except delete
             4. [ ] superuser
-3. [ ] General Search API
+        2. [ ] Permission
+            1. Add isOwnerOrReadOnly Permission
+3. [x] General Search API
 4. [ ] Instant Messaging
 5. [x] Test server deployment on dokku 
     1. [x] Test server
