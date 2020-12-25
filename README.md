@@ -1,4 +1,6 @@
-# homiehomie
+# Homiehomie
+![Django CI](https://github.com/MARX1108/homiehomie/workflows/Django%20CI/badge.svg)
+![Deploy_Test](https://github.com/MARX1108/homiehomie/workflows/Deploy_Test/badge.svg)
 
 ## TODO
 
@@ -23,6 +25,19 @@
     7. Code optimization
         1. [x] Use django form for POST/PUT
         1. [ ] Use mixin to add GET/POST/PUT/DELETE for api
+    8. [ ] Testing
+        1. [x] Test model method
+        2. [ ] Test view
+            1. [ ] Regular access
+                1. Valid access
+                2. Multiple valid access
+                3. Large access
+            2. [ ] Irregular access
+                1. Invalid access
+                2. access not existing object
+                3. invalid url
+            3. [ ] Permission testing
+        3. [ ] Coverage report
 2. [ ] User
     1. [X] User model
     2. [x] Password transmission
@@ -53,7 +68,7 @@
 5. [x] Test server deployment on dokku 
     1. [x] Test server
     2. [x] Upgrade dokku to use `Procfile`
-6. [ ] GitHub action auto deploy to dokku
+6. [x] GitHub action auto deploy to dokku
 7. [ ] Dockerify
 8. [ ] Production Deployment
 9. [ ] Importing Course

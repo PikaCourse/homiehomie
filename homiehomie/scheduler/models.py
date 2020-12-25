@@ -1,6 +1,5 @@
 from django.db import models
 
-# TODO Creat user by extending User Model
 # from django.contrib.auth.models import User
 from homiehomie.user.models import Student
 
@@ -87,6 +86,7 @@ class Course(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     crn = models.CharField(max_length=50, default="", null=True)
     time = models.JSONField(default=list, blank=True, null=True)
+    section = models.CharField(max_length=50, null=True)
     type = models.CharField(max_length=10, default="lecture")
     professor = models.CharField(max_length=100, default="", null=True, blank=True)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
