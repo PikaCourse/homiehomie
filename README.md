@@ -10,7 +10,22 @@
     1. [x] Model
     2. [x] API Documentation
     3. [x] API Backend implementation
+    3. [x] Add course section num field?
+    3. [ ] Make a new table for school for ease of searching school when creating user?
     4. [ ] Set up test
+        1. [x] Test model method
+        2. [ ] Test view
+            1. [ ] Regular access
+                1. Valid access
+                2. Multiple valid access
+                3. Large access
+            2. [ ] Irregular access
+                1. Invalid access
+                2. access not existing object
+                3. invalid url
+            3. [ ] Permission testing
+        3. [ ] Coverage report
+        4. [ ] GitHub action
     5. [x] API Post and Put
         1. [x] Create/Modify question
         2. [x] Create/Modify note
@@ -25,19 +40,7 @@
     7. Code optimization
         1. [x] Use django form for POST/PUT
         1. [ ] Use mixin to add GET/POST/PUT/DELETE for api
-    8. [ ] Testing
-        1. [x] Test model method
-        2. [ ] Test view
-            1. [ ] Regular access
-                1. Valid access
-                2. Multiple valid access
-                3. Large access
-            2. [ ] Irregular access
-                1. Invalid access
-                2. access not existing object
-                3. invalid url
-            3. [ ] Permission testing
-        3. [ ] Coverage report
+    8. Detail documentation
 2. [ ] User
     1. [X] User model
     2. [x] Password transmission
@@ -63,7 +66,11 @@
             4. [ ] superuser
         2. [ ] Permission
             1. Add isOwnerOrReadOnly Permission
-3. [x] General Search API
+    5. [ ] User Profile
+        1. [ ] Student information
+        2. [ ] Link with scheduler app
+3. [ ] General Search API
+    1. [ ] Advanced search via hashtag
 4. [ ] Instant Messaging
 5. [x] Test server deployment on dokku 
     1. [x] Test server
@@ -71,8 +78,14 @@
 6. [x] GitHub action auto deploy to dokku
 7. [ ] Dockerify
 8. [ ] Production Deployment
+    1. [ ] Docker?
+    2. [ ] Static file serving issue
+        1. [ ] Use server
+        2. [ ] CDN
 9. [ ] Importing Course
-    1. [ ] Detail schema of course data
+    1. [x] Detail schema of course data
+    2. [ ] Purdue
+    3. [ ] UNC/BU
 10. [ ] Support for dynamic/partially loading notes 
 
 ## how to

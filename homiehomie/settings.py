@@ -38,11 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'homiehomie.scheduler',
-    'homiehomie.frontend',
-    'homiehomie.user',
     'rest_framework',
     'django_extensions',
+    'scheduler.apps.SchedulerConfig',
+    'frontend.apps.FrontendConfig',
+    'user.apps.UserConfig',
 ]
 
 MIDDLEWARE = [

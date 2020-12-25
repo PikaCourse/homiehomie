@@ -1,7 +1,7 @@
 from django.db import models
 
 # from django.contrib.auth.models import User
-from homiehomie.user.models import Student
+from user.models import Student
 
 
 # Create your models here.

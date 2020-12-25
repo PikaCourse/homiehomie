@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from homiehomie.scheduler.models import *
+from scheduler.models import *
 
 # TODO Restrict update method
 

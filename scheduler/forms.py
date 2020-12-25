@@ -1,6 +1,6 @@
 # Form used by scheduler to modify or update information
 
-from homiehomie.scheduler.models import *
+from scheduler.models import *
 from django.forms import ModelForm
 from django.utils.translation import ugettext as _
 from django.utils import timezone

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from homiehomie.scheduler.models import *
+from scheduler.models import *
 
 # Register your models here.
 admin.site.register(Schedule)

@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.db.models import Model
 from django.core.exceptions import ValidationError
-from homiehomie.scheduler.models import *
-from homiehomie.scheduler.forms import *
-from homiehomie.scheduler.serializers import *
+from scheduler.models import *
+from scheduler.forms import *
+from scheduler.serializers import *
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request

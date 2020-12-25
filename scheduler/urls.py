@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from homiehomie.scheduler import views
+from scheduler import views
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'coursesmeta', views.CourseMetaViewSet)
@@ -11,7 +11,7 @@ router.register(r'posts', views.PostViewSet, basename='posts')
 
 urlpatterns = [
     # path('templates/', views.scheduler, name='scheduler'),
-    path('/', include(router.urls), name='api')
+    path('', include(router.urls), name='api')
 ]
 
 app_name = 'api'

@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('homiehomie.frontend.urls')),
-    path('api/', include('homiehomie.scheduler.urls')),
-    path('user/', include('homiehomie.user.urls'))
+    path('', include('frontend.urls')),
+    path('api/', include('scheduler.urls')),
+    path('user/', include('user.urls'))
 ]

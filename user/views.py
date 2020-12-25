@@ -1,4 +1,4 @@
-from homiehomie.user.models import Student
+from user.models import Student
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.views import LoginView

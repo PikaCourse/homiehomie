@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from homiehomie.user.models import *
+from user.models import *
 
 
 class StudentSerializer(serializers.ModelSerializer):

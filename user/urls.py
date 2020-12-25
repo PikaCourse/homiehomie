@@ -1,5 +1,5 @@
 from django.urls import path, include
-from homiehomie.user.views import *
+from user.views import *
 
 urlpatterns = [
     path('login/',
