@@ -37,6 +37,18 @@ export class WikiSummary extends Component {
         console.log(result);
         return result;
     }
+    animateButton(e) {
+
+        e.preventDefault;
+        //reset animation
+        e.target.classList.remove('animate');
+        
+        e.target.classList.add('animate');
+        setTimeout(function(){
+          e.target.classList.remove('animate');
+        },700);
+        console.log("animateButton");
+    };
 
     static propTypes = {
         selectedCourseArray:PropTypes.array.isRequired
@@ -66,13 +78,25 @@ export class WikiSummary extends Component {
                     <h1>
                         {this.props.selectedCourseArray[this.mapSelectedCourse(this.props.selectedCourse)].course_meta.name}
                     </h1> 
+
+                    <button type="button" className="btn btn-primary bubbly-button" 
+                        onClick={(event)=> {this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse)); this.animateButton(event)} }
+                        style={{fontFamily: 'Montserrat', backgroundColor: '#419EF4', borderColor:'#419EF4', boxShadow:'0px 0px 15px rgba(65, 158, 244, 0.81)'}}>
+                        <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
+                        </button>
+
+                    {/* <a href="#"  class="hbtn hb-fill-middle" 
+                        onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))}>
+                        <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
+                        </a> */}
+
                     {/* <button type="button" className="btn btn-primary" 
                         onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))} 
                         style={{fontFamily: 'Montserrat', backgroundColor: '#419EF4', borderColor:'#419EF4', boxShadow:'0px 4px 10px rgba(65, 158, 244, 0.81)'}}>
                         <FontAwesomeIcon className="mr-2" icon={faPlus}/>Add To My Schedule
                         </button> */}
                     
-                    <div className="my-4">
+                    {/* <div className="my-4">
                         <a href="#"  onClick={()=> this.addCourseSchedule(this.mapSelectedCourse(this.props.selectedCourse))} class="cta">
                         <span>Add To My Schedule</span>
                         <svg width="13px" height="10px" viewBox="0 0 13 10">
@@ -80,7 +104,7 @@ export class WikiSummary extends Component {
                             <polyline points="8 1 12 5 8 9"></polyline>
                         </svg>
                         </a>
-                    </div>
+                    </div> */}
 
                     <div className="p-2">
                     <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
@@ -134,6 +158,14 @@ const mapStateToProps = state =>({
     selectedCourseArray: state.course.selectedCourseArray,
     selectedCourse: state.course.selectedCourse
 });
+
+
+
+  var bubblyButtons = document.getElementsByClassName("bubbly-button");
+  
+  for (var i = 0; i < bubblyButtons.length; i++) {
+    bubblyButtons[i].addEventListener('click', animateButton, false);
+ }
 
 
 export default connect(mapStateToProps)(WikiSummary);
