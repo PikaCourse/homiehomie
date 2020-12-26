@@ -33,7 +33,6 @@ export class WikiSummary extends Component {
     );
   }
 
-
   animateButton(e) {
     e.preventDefault;
     //reset animation
@@ -49,16 +48,12 @@ export class WikiSummary extends Component {
     selectedCourseArray: PropTypes.array.isRequired,
   };
 
-  componentDidMount() {
-    //this.props.getCourse('CS-3114');
-  }
-
   render() {
     return (
       <Fragment>
         {typeof this.props.selectedCourseArray.find(
-            ({ crn }) => crn === this.props.selectedCRN
-          ) != "undefined" ? (
+          ({ crn }) => crn === this.props.selectedCRN
+        ) != "undefined" ? (
           <div className="p-2">
             <div>
               <h1
