@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { addCurrCourse, removeCurrCourse } from "../../actions/calendar";
 import { setCourse } from "../../actions/course";
-
+import store from "../../store";
 // style
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -33,6 +33,66 @@ export class WikiSummary extends Component {
     setTimeout(function () {
       e.target.classList.remove("animate");
     }, 700);
+  }
+  buttonLoader() {
+    const courseArray = store
+      .getState()
+      .calendar.calendarCourseBag.filter(
+        (item) => item.raw.selectedCourseArray == this.props.selectedCourseArray
+      );
+
+    let enableAdd = true;
+    let enableRemove = true;
+    let addButtonText = "Add Course";
+    if (!Array.isArray(courseArray) || !courseArray.length) {
+      // course not in calendarbag
+      enableRemove = false;
+    } else {
+      const course = store
+        .getState()
+        .calendar.calendarCourseBag.filter(
+          (item) => item.raw.selectedCRN == this.props.selectedCRN
+        );
+      // course in calendarbag
+      if (!Array.isArray(course) || !course.length) {
+        // course different crn
+        addButtonText = "Change CRN";
+      } else {
+        // course same crn
+        enableAdd = false;
+      }
+    }
+    return (
+      <div>
+        <button
+          disabled={!enableAdd}
+          type="button"
+          className="bubbly-button mt-2 mb-4"
+          onClick={(event) => {
+            this.props.dispatch(addCurrCourse());
+            this.animateButton(event);
+          }}
+          style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
+        >
+          <FontAwesomeIcon className="mr-2" icon={faPlus} />
+          {addButtonText}
+        </button>
+
+        <button
+          disabled={!enableRemove}
+          type="button"
+          className="bubbly-button mt-2 mb-4 mx-2"
+          onClick={(event) => {
+            this.props.dispatch(removeCurrCourse());
+            //   this.animateButton(event);
+          }}
+          style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
+        >
+          <FontAwesomeIcon className="mr-2" icon={faMinus} />
+          Remove Course
+        </button>
+      </div>
+    );
   }
 
   static propTypes = {
@@ -70,7 +130,7 @@ export class WikiSummary extends Component {
                     onSelect={() =>
                       this.props.dispatch(
                         setCourse({
-                          selectedCRN: newCRN,
+                          selectedCRN: course.crn,
                           selectedCourseArray: this.props.selectedCourseArray,
                         })
                       )
@@ -162,32 +222,7 @@ export class WikiSummary extends Component {
 
               {/* ToDO: GPA & Modality */}
             </div>
-
-            <button
-              type="button"
-              className="bubbly-button mt-2 mb-4"
-              onClick={(event) => {
-                this.props.dispatch(addCurrCourse());
-                this.animateButton(event);
-              }}
-              style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
-            >
-              <FontAwesomeIcon className="mr-2" icon={faPlus} />
-              Add To My Schedule
-            </button>
-
-            <button
-              type="button"
-              className="bubbly-button mt-2 mb-4"
-              onClick={(event) => {
-                this.props.dispatch(removeCurrCourse());
-                this.animateButton(event);
-              }}
-              style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
-            >
-              <FontAwesomeIcon className="mr-2" icon={faMinus} />
-              Remove
-            </button>
+            {this.buttonLoader()}
           </div>
         ) : (
           "loading..."

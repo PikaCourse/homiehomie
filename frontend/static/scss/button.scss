@@ -25,7 +25,13 @@ $baby-blue: #f8faff;
   box-shadow: 0 2px 25px rgba(65, 158, 244, 0.5);
   transition: 0.3s;
   
-  &:hover{
+  &:disabled{
+    box-shadow:none;
+    background-color:rgba(101, 113, 123, 0.5);
+    
+  }
+
+  &:hover:enabled{
     background-color: $button-onhover-bg;
     box-shadow: 0 2px 25px #d69a17ad;
 
