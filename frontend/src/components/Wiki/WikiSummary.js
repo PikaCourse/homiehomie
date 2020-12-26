@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { addCurrCourse, removeCurrCourse } from "../../actions/calendar";
+import { addCurrCourse, removeCurrCourse, previewCurrCourse} from "../../actions/calendar";
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
@@ -22,6 +22,13 @@ function weekdayToClass(index, timeArray) {
 export class WikiSummary extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      previewSwitch: false
+    }
+
+    this.previewInputChange = this.previewInputChange.bind(this);
+    this.previewCourseChange = this.previewCourseChange.bind(this);
   }
 
   animateButton(e) {
@@ -34,6 +41,22 @@ export class WikiSummary extends Component {
       e.target.classList.remove("animate");
     }, 700);
   }
+  previewInputChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    store.dispatch(previewCurrCourse(value));
+    this.setState({
+      previewSwitch: value
+    });
+  }
+
+  previewCourseChange() {
+    if (this.state.previewSwitch) {
+      store.dispatch(previewCurrCourse(true));
+    }
+    
+  }
+
   buttonLoader() {
     const courseArray = store
       .getState()
@@ -91,6 +114,11 @@ export class WikiSummary extends Component {
           <FontAwesomeIcon className="mr-2" icon={faMinus} />
           Remove Course
         </button>
+
+        <label class="switch">
+          <input type="checkbox" onChange={this.previewInputChange}/>
+          <span class="slider round"></span>
+        </label>
       </div>
     );
   }
@@ -117,6 +145,7 @@ export class WikiSummary extends Component {
                   ).course_meta.title
                 }
               </h1>
+              {this.previewCourseChange()}
               <DropdownButton
                 className="col-sm-3 mx-0 px-0 mb-1"
                 alignRight
@@ -127,13 +156,14 @@ export class WikiSummary extends Component {
                 {this.props.selectedCourseArray.map((course) => (
                   <Dropdown.Item
                     value={course.crn}
-                    onSelect={() =>
+                    onSelect={() => {
                       this.props.dispatch(
                         setCourse({
                           selectedCRN: course.crn,
                           selectedCourseArray: this.props.selectedCourseArray,
                         })
-                      )
+                      ); 
+                    }
                     }
                   >
                     {course.crn}

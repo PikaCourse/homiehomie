@@ -1,6 +1,6 @@
-import { ADD_COURSE_TO_CAL, REMOVE_COURSE_FROM_CAL, UPDATE_COURSE_IN_CAL } from "../actions/types.js";
+import { ADD_COURSE_TO_CAL, REMOVE_COURSE_FROM_CAL, UPDATE_COURSE_IN_CAL, PREVIEW_COURSE_IN_CAL, CLEAR_PREVIEW_COURSE_IN_CAL} from "../actions/types.js";
 const initialState = {
-	calendarCourseBag: [],
+    calendarCourseBag: [],
 };
 
 function getMonday(d) {
@@ -66,18 +66,80 @@ function addNewCourseToBag(state, action, update)
     return tempArray;
 }
 
+function previewNewCourseToBag(state, action)
+{
+    var tempArray = [...state.calendarCourseBag];
+
+    tempArray = state.calendarCourseBag.filter((item) =>
+                item.calendarId != -1);
+
+    const selectedCourse = action.selectedCourseArray.find(
+        ({ crn }) => crn === action.selectedCRN
+    );
+    let id = 0;
+    if (state.calendarCourseBag.length != 0) {
+        id = state.calendarCourseBag[state.calendarCourseBag.length - 1].id + 1;
+    }
+
+    var timeArray = selectedCourse.time;
+    for (var i = 0; i < timeArray.length; i++) {
+        let startTime = alignDate(timeArray[i].weekday);
+        let tempStartArray = timeArray[i].start_at.split(":");
+        startTime.setHours(parseFloat(tempStartArray[0]));
+        startTime.setMinutes(parseFloat(tempStartArray[1]));
+
+        let endTime = alignDate(timeArray[i].weekday);
+        tempStartArray = timeArray[i].end_at.split(":");
+        endTime.setHours(parseFloat(tempStartArray[0]));
+        endTime.setMinutes(parseFloat(tempStartArray[1]));
+
+        tempArray.push({
+            id: id,
+            calendarId: -1,
+            title: selectedCourse.course_meta.name,
+            category: "time",
+            dueDateClass: "",
+            start: startTime, //new Date(new Date().setHours(start.getHours() -4)),
+            end: endTime, //new Date(new Date().setHours(start.getHours() -5)),
+            isReadOnly: true,
+            raw: {
+                selectedCRN: action.selectedCRN,
+                selectedCourseArray: action.selectedCourseArray,
+            },
+        });
+
+        
+    }
+    return tempArray;
+}
+
 export default function (state = initialState, action) {
 	switch (action.type) {
 		case ADD_COURSE_TO_CAL:
-			return { calendarCourseBag: addNewCourseToBag(state, action, false) };
+			return { 
+                ...state,
+                calendarCourseBag: addNewCourseToBag(state, action, false) };
 
 		case REMOVE_COURSE_FROM_CAL:
 			return {
+                ...state,
 				calendarCourseBag: state.calendarCourseBag.filter((item) =>
                 item.raw.selectedCRN != action.selectedCRN) //assume CRN is unique!!
             };
         case UPDATE_COURSE_IN_CAL:
-            return { calendarCourseBag: addNewCourseToBag(state, action, true) };
+            return { 
+                ...state,
+                calendarCourseBag: addNewCourseToBag(state, action, true) };
+
+        case PREVIEW_COURSE_IN_CAL:
+            return { ...state,
+                calendarCourseBag: previewNewCourseToBag(state, action) };
+
+        case CLEAR_PREVIEW_COURSE_IN_CAL:
+            return { ...state,
+                calendarCourseBag: state.calendarCourseBag.filter((item) =>
+                item.calendarId != -1)
+            };
 
 		default:
 			return state;
