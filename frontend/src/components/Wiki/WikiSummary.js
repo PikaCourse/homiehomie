@@ -1,14 +1,14 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { addCurrCourse } from "../../actions/calendar";
+import { addCurrCourse, removeCurrCourse } from "../../actions/calendar";
 import { setCourse } from "../../actions/course";
 
 // style
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
 function weekdayToClass(index, timeArray) {
@@ -175,6 +175,19 @@ export class WikiSummary extends Component {
             >
               <FontAwesomeIcon className="mr-2" icon={faPlus} />
               Add To My Schedule
+            </button>
+
+            <button
+              type="button"
+              className="bubbly-button mt-2 mb-4"
+              onClick={(event) => {
+                this.props.dispatch(removeCurrCourse());
+                this.animateButton(event);
+              }}
+              style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
+            >
+              <FontAwesomeIcon className="mr-2" icon={faMinus} />
+              Remove
             </button>
           </div>
         ) : (

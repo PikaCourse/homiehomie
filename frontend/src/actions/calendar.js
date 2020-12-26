@@ -1,4 +1,4 @@
-import {ADD_COURSE_TO_CAL} from './types'
+import {ADD_COURSE_TO_CAL, REMOVE_COURSE_FROM_CAL} from './types'
 import store from '../store'
 
 export const addCurrCourse = ()  =>
@@ -12,3 +12,11 @@ export const addCurrCourse = ()  =>
 }
 
 
+
+export const removeCurrCourse = ()  =>
+{
+    return {
+        type: REMOVE_COURSE_FROM_CAL,
+        selectedCRN: store.getState().course.selectedCRN,
+    };  
+}
