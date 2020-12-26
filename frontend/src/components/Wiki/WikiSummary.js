@@ -24,33 +24,15 @@ export class WikiSummary extends Component {
     super(props);
   }
 
-  handleCRNChange(course) {
+  handleCRNChange(newCRN) {
     this.props.dispatch(
       setCourse({
-        selectedCourse: course,
+        selectedCRN: newCRN,
         selectedCourseArray: this.props.selectedCourseArray,
       })
     );
   }
 
-  addCourseSchedule(props) {
-    this.props.dispatch(addCurrCourse(props));
-  }
-
-  mapSelectedCourse(course) {
-    let result = 0;
-    if (
-      course != undefined &&
-      course != null &&
-      Object.keys(course).length != 0
-    )
-      result = this.props.selectedCourseArray.indexOf(course);
-    return result;
-  }
-
-  findCRN(course, crn) {
-    return course.crn === crn;
-  }
 
   animateButton(e) {
     e.preventDefault;
@@ -74,9 +56,9 @@ export class WikiSummary extends Component {
   render() {
     return (
       <Fragment>
-        {typeof this.props.selectedCourseArray[
-          this.mapSelectedCourse(this.props.selectedCourse)
-        ] != "undefined" ? (
+        {typeof this.props.selectedCourseArray.find(
+            ({ crn }) => crn === this.props.selectedCRN
+          ) != "undefined" ? (
           <div className="p-2">
             <div>
               <h1
@@ -85,21 +67,21 @@ export class WikiSummary extends Component {
               >
                 {
                   this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCrn
+                    ({ crn }) => crn === this.props.selectedCRN
                   ).course_meta.title
                 }
               </h1>
               <DropdownButton
                 className="col-sm-3 mx-0 px-0 mb-1"
                 alignRight
-                title={"CRN: " + this.props.selectedCrn}
+                title={"CRN: " + this.props.selectedCRN}
                 id="dropdown-menu-align-right"
                 style={{ fontSize: "1rem", display: "inline" }}
               >
                 {this.props.selectedCourseArray.map((course) => (
                   <Dropdown.Item
                     value={course.crn}
-                    onSelect={() => this.handleCRNChange(course)}
+                    onSelect={() => this.handleCRNChange(course.crn)}
                   >
                     {course.crn}
                   </Dropdown.Item>
@@ -109,7 +91,7 @@ export class WikiSummary extends Component {
             <h1>
               {
                 this.props.selectedCourseArray.find(
-                  ({ crn }) => crn === this.props.selectedCrn
+                  ({ crn }) => crn === this.props.selectedCRN
                 ).course_meta.name
               }
             </h1>
@@ -121,7 +103,7 @@ export class WikiSummary extends Component {
                     className={weekdayToClass(
                       index,
                       this.props.selectedCourseArray.find(
-                        ({ crn }) => crn === this.props.selectedCrn
+                        ({ crn }) => crn === this.props.selectedCRN
                       ).time
                     )}
                   >
@@ -133,25 +115,25 @@ export class WikiSummary extends Component {
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 {
                   this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCrn
+                    ({ crn }) => crn === this.props.selectedCRN
                   ).professor
                 }{" "}
                 -{" "}
                 {
                   this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCrn
+                    ({ crn }) => crn === this.props.selectedCRN
                   ).time[0].start_at
                 }
                 -
                 {
                   this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCrn
+                    ({ crn }) => crn === this.props.selectedCRN
                   ).time[0].end_at
                 }{" "}
                 -{" "}
                 {
                   this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCrn
+                    ({ crn }) => crn === this.props.selectedCRN
                   ).location
                 }
               </p>
@@ -160,7 +142,7 @@ export class WikiSummary extends Component {
                 Credit Hour:{" "}
                 {
                   this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCrn
+                    ({ crn }) => crn === this.props.selectedCRN
                   ).course_meta.credit_hours
                 }
               </p>
@@ -169,19 +151,19 @@ export class WikiSummary extends Component {
                 Capacity:{" "}
                 {
                   this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCrn
+                    ({ crn }) => crn === this.props.selectedCRN
                   ).capacity
                 }
               </p>
 
               {/* <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
                             Location: {this.props.selectedCourseArray.find(
-                ({ crn }) => crn === this.props.selectedCrn
+                ({ crn }) => crn === this.props.selectedCRN
               ).location}
                         </p> */}
               {/* <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
                             Instructor: {this.props.selectedCourseArray.find(
-                ({ crn }) => crn === this.props.selectedCrn
+                ({ crn }) => crn === this.props.selectedCRN
               ).professor}
                         </p> */}
 
@@ -191,9 +173,7 @@ export class WikiSummary extends Component {
               type="button"
               className="bubbly-button mt-2 mb-4"
               onClick={(event) => {
-                this.addCourseSchedule(
-                  this.mapSelectedCourse(this.props.selectedCourse)
-                );
+                this.props.dispatch(addCurrCourse());
                 this.animateButton(event);
               }}
               style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
@@ -213,7 +193,7 @@ export class WikiSummary extends Component {
 const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCourse: state.course.selectedCourse,
-  selectedCrn: state.course.selectedCrn,
+  selectedCRN: state.course.selectedCRN,
 });
 
 export default connect(mapStateToProps)(WikiSummary);
