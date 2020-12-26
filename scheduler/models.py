@@ -57,6 +57,7 @@ class Course(models.Model):
     year:           Course providing year
     semester:       Course providing semester, possible value: spring, fall, summer
     location:       Course classroom location
+    registered:     Course already registered
     capacity:       Course classroom capacity
 
 
@@ -80,6 +81,7 @@ class Course(models.Model):
     year:           2020
     semester:       fall
     location:       ARMS-124
+    registered:     30
     capacity:       100
     """
     course_meta = models.ForeignKey(CourseMeta, on_delete=models.CASCADE, default=-1)
@@ -92,7 +94,8 @@ class Course(models.Model):
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
     semester = models.CharField(max_length=20, null=True, blank=True)
     location = models.CharField(max_length=100, blank=True, null=True)
-    capacity = models.IntegerField(default=0, null=True, blank=True)
+    registered = models.IntegerField(default=-1)
+    capacity = models.IntegerField(default=-1, null=True, blank=True)
 
     def __str__(self):
         return "_".join([str(self.year), str(self.semester), str(self.course_meta)])
@@ -116,7 +119,7 @@ class Question(models.Model):
     """
     course_meta = models.ForeignKey(CourseMeta, on_delete=models.PROTECT, default=-1)    # Prevent deleting course object
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(Student, on_delete=models.PROTECT)
+    created_by = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     last_edited = models.DateTimeField(auto_now_add=True)
     last_answered = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
@@ -150,7 +153,7 @@ class Note(models.Model):
     course = models.ForeignKey(Course, on_delete=models.PROTECT)    # Prevent deleting course object
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(Student, on_delete=models.PROTECT)
+    created_by = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     last_edited = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
@@ -179,7 +182,7 @@ class Post(models.Model):
     tags:           User tagging
     """
     course = models.ForeignKey(Course, on_delete=models.PROTECT)    # Prevent deleting course object
-    poster = models.ForeignKey(Student, on_delete=models.PROTECT)
+    poster = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     last_answered = models.DateTimeField(auto_now_add=True)
@@ -208,7 +211,7 @@ class PostAnswer(models.Model):
     tags:           User tagging
     """
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    postee = models.ForeignKey(Student, on_delete=models.PROTECT)
+    postee = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
@@ -235,7 +238,7 @@ class Schedule(models.Model):
 
     coursesid:      Access all the courses in this schedule via id array
     """
-    user = models.ForeignKey(Student, on_delete=models.CASCADE)
+    user = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     is_star = models.BooleanField(default=False)
