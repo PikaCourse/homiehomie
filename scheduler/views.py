@@ -1,12 +1,13 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.db.models import Model
-from django.core.exceptions import ValidationError
 from scheduler.models import *
 from scheduler.forms import *
 from scheduler.serializers import *
+from scheduler.utils import *
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser, FormParser
 
@@ -166,11 +167,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
         f = QuestionCreationForm(question, request=request)
         if f.is_valid():
             question = f.save(debug=True)
-            error_pack = {"errcode": 0, "errmsg": "successfully created question", "question": question.id}
+            error_pack = {"code": 'success', "detail": "successfully created question",
+                          "status": status.HTTP_201_CREATED, "question": question.id}
             return Response(error_pack, status=status.HTTP_201_CREATED)
-        error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
-        return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
-
+        raise InvalidFormKey()
 
     # PUT method used to update existing question
     # TODO Add permission control to allow only owner or admin to modify
@@ -188,10 +188,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
                 return Response(error_pack, status=status.HTTP_200_OK)
         except Question.DoesNotExist:
             # Invalid question id
-            error_pack = {"errcode": 1000, "errmsg": "invalid question id"}
-            return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
-        error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
-        return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+            raise NotFound()
+        raise InvalidFormKey()
 
 
 class NoteViewSet(viewsets.ModelViewSet):
@@ -247,10 +245,10 @@ class NoteViewSet(viewsets.ModelViewSet):
         f = NoteCreationForm(note, request=request)
         if f.is_valid():
             note = f.save(debug=True)
-            error_pack = {"errcode": 0, "errmsg": "successfully created note", "note": note.id}
+            error_pack = {"code": 'success', "detail": "successfully created note",
+                          "status": status.HTTP_201_CREATED, "note": note.id}
             return Response(error_pack, status=status.HTTP_201_CREATED)
-        error_pack = {"errcode": 1000, "errmsg": "invalid form key or question id"}
-        return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+        raise InvalidFormKey()
 
     # PUT method used to update existing question
     def update(self, request, pk=None, *args, **kwargs):
@@ -263,14 +261,13 @@ class NoteViewSet(viewsets.ModelViewSet):
             f = NoteModificationForm(note, instance=old_note)
             if f.is_valid():
                 note = f.save()
-                error_pack = {"errcode": 0, "errmsg": "successfully updated note", "note": note.id}
+                error_pack = {"code": "success", "detail": "successfully updated note",
+                              "note": note.id, "status": status.HTTP_200_OK}
                 return Response(error_pack, status=status.HTTP_200_OK)
         except Note.DoesNotExist:
             # Invalid note id
-            error_pack = {"errcode": 1000, "errmsg": "invalid note id"}
-            return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
-        error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
-        return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+            raise NotFound()
+        raise InvalidFormKey()
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -328,10 +325,10 @@ class PostViewSet(viewsets.ModelViewSet):
         f = PostCreationForm(post, request=request)
         if f.is_valid():
             post = f.save(debug=True)
-            error_pack = {"errcode": 0, "errmsg": "successfully created post", "post": post.id}
+            error_pack = {"code": "success", "errmsg": "successfully created post",
+                          "post": post.id, "status": status.HTTP_201_CREATED}
             return Response(error_pack, status=status.HTTP_201_CREATED)
-        error_pack = {"errcode": 1000, "errmsg": "invalid form key or course id"}
-        return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+        raise InvalidFormKey()
 
     # PUT method used to update existing question
     def update(self, request, pk=None, *args, **kwargs):
@@ -348,10 +345,8 @@ class PostViewSet(viewsets.ModelViewSet):
                 return Response(error_pack, status=status.HTTP_200_OK)
         except Post.DoesNotExist:
             # Invalid note id
-            error_pack = {"errcode": 1000, "errmsg": "invalid post id"}
-            return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
-        error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
-        return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+            raise NotFound()
+        raise InvalidFormKey()
 
     @action(detail=True, methods=['get'])
     def answers(self, request, pk=None):
@@ -374,10 +369,8 @@ class PostViewSet(viewsets.ModelViewSet):
                 return Response(error_pack, status=status.HTTP_201_CREATED)
         except Post.DoesNotExist:
             # Invalid post id path
-            error_pack = {"errcode": 1000, "errmsg": "invalid post id"}
-            return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
-        error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
-        return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+            raise NotFound()
+        raise InvalidFormKey()
 
     @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>\d+)")
     def detail_answer(self, request, pk=None, answerid=None):
@@ -408,18 +401,34 @@ class PostViewSet(viewsets.ModelViewSet):
 
         except Post.DoesNotExist:
             # Invalid post id
-            error_pack = {"errcode": 1000, "errmsg": "invalid post id"}
-            return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+            raise NotFound()
         except PostAnswer.DoesNotExist:
             # Invalid question answer id
-            error_pack = {"errcode": 1000, "errmsg": "invalid post answer id"}
-            return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
-        except ValidationError as e:
-            error_pack = {"errcode": 1000, "errmsg": e.message}
-            return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+            raise NotFound()
         # Invalid form key
-        error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
-        return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+        raise InvalidFormKey()
+
+    @detail_answer.mapping.delete
+    def destroy_answer(self, request, pk=None, answerid=None):
+        answer = request.data
+        try:
+            old_answer = PostAnswer.objects.get(id=answerid)
+
+            # Check post answer and the post is linked
+            if eval(pk) != old_answer.post_id:
+                raise ValidationError("mismatch between given post id and answer post id",
+                                      code="mismatch")
+            # Delete post answer
+            old_answer.delete()
+            error_pack = {"code": "success", "detail": "successfully deleted post answer",
+                          "answer": answer.id, "status": status.HTTP_200_OK}
+            return Response(error_pack, status=status.HTTP_200_OK)
+        except PostAnswer.DoesNotExist:
+            # Invalid question answer id
+            raise NotFound()
+
+        # Invalid form key
+        raise InvalidFormKey()
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):

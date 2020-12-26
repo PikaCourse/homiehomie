@@ -1,8 +1,6 @@
 from rest_framework import serializers
 from scheduler.models import *
 
-# TODO Restrict update method
-
 
 class CourseMetaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,7 +9,6 @@ class CourseMetaSerializer(serializers.ModelSerializer):
 
 
 class CourseSerializer(serializers.ModelSerializer):
-    # TODO Access CourseMeta info based on the id in Course
     class Meta:
         model = Course
         fields = '__all__'

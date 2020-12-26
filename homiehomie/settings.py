@@ -139,3 +139,8 @@ LOGIN_REDIRECT_URL = '/'
 
 # Test fixtures
 FIXTURE_DIRS = ['test_fixtures']
+
+# Django Reset Framework config
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'scheduler.utils.custom_exception_hdr'
+}

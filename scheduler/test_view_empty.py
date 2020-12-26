@@ -4,6 +4,8 @@ Test cases testing again empty database view operations
 from django.shortcuts import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
+from rest_framework.exceptions import *
+from scheduler.utils import *
 from urllib.parse import urlencode
 
 
@@ -30,7 +32,7 @@ class EmptyCourseMetaViewSetTests(APITestCase):
         url = reverse("api:coursesmeta-detail", kwargs=params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': f'course meta not found'})
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
 
 class EmptyCourseViewSetTests(APITestCase):
@@ -56,7 +58,7 @@ class EmptyCourseViewSetTests(APITestCase):
         url = reverse("api:courses-detail", kwargs=params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'course not found'})
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
 
 class EmptyQuestionViewSetTests(APITestCase):
@@ -82,7 +84,7 @@ class EmptyQuestionViewSetTests(APITestCase):
         url = reverse("api:questions-detail", kwargs=params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'question not found'})
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_question_create(self):
         """
@@ -95,7 +97,7 @@ class EmptyQuestionViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_question_create_missing_course_meta(self):
         """
@@ -108,7 +110,7 @@ class EmptyQuestionViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_question_create_missing_title(self):
         """
@@ -121,7 +123,7 @@ class EmptyQuestionViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_question_update(self):
         """
@@ -131,8 +133,8 @@ class EmptyQuestionViewSetTests(APITestCase):
         params = {'pk': 1}
         url = reverse("api:questions-detail", kwargs=params)
         response = self.client.put(url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid question id'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_question_partial_update(self):
         """
@@ -143,7 +145,8 @@ class EmptyQuestionViewSetTests(APITestCase):
         url = reverse("api:questions-detail", kwargs=params)
         response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data, {'errcode': 5000, 'errmsg': 'method not allowed'})
+        self.assertEqual(response.data,
+                         get_packet_details(MethodNotAllowed('PATCH')))
 
     def test_empty_question_destroy(self):
         """
@@ -153,8 +156,8 @@ class EmptyQuestionViewSetTests(APITestCase):
         params = {'pk': 1}
         url = reverse("api:questions-detail", kwargs=params)
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid question id'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
 
 class EmptyNoteViewSetTests(APITestCase):
@@ -180,7 +183,7 @@ class EmptyNoteViewSetTests(APITestCase):
         url = reverse("api:notes-detail", kwargs=params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'note not found'})
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_note_create(self):
         """
@@ -194,7 +197,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or question id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_note_create_missing_course(self):
         """
@@ -208,7 +211,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or question id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_note_create_missing_question(self):
         """
@@ -222,7 +225,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or question id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_note_create_missing_title(self):
         """
@@ -236,7 +239,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or question id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_note_create_missing_content(self):
         """
@@ -250,7 +253,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or question id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_note_create_missing_tags(self):
         """
@@ -264,18 +267,18 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or question id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_note_update(self):
         """
-        Since no instance in db, should expect 400 bad request
+        Since no instance in db, should expect 404 not found
         :return:
         """
         params = {'pk': 1}
         url = reverse("api:notes-detail", kwargs=params)
         response = self.client.put(url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid note id'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_note_partial_update(self):
         """
@@ -286,7 +289,7 @@ class EmptyNoteViewSetTests(APITestCase):
         url = reverse("api:notes-detail", kwargs=params)
         response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data, {'errcode': 5000, 'errmsg': 'method not allowed'})
+        self.assertEqual(response.data, get_packet_details(MethodNotAllowed('PATCH')))
 
     def test_empty_note_destroy(self):
         """
@@ -296,8 +299,8 @@ class EmptyNoteViewSetTests(APITestCase):
         params = {'pk': 1}
         url = reverse("api:notes-detail", kwargs=params)
         response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid note id'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
 
 class EmptyPostViewSetTests(APITestCase):
@@ -323,7 +326,7 @@ class EmptyPostViewSetTests(APITestCase):
         url = reverse("api:posts-detail", kwargs=params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'post not found'})
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_post_create(self):
         """
@@ -337,7 +340,7 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or course id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_post_create_missing_course(self):
         """
@@ -351,7 +354,7 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or course id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_post_create_missing_title(self):
         """
@@ -365,7 +368,7 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or course id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_post_create_missing_content(self):
         """
@@ -379,7 +382,7 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or course id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_post_create_missing_tags(self):
         """
@@ -393,18 +396,18 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid form key or course id'})
+        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
 
     def test_empty_post_update(self):
         """
-        Since no instance in db, should expect 400 bad request
+        Since no instance in db, should expect 404 not found
         :return:
         """
         params = {'pk': 1}
         url = reverse("api:posts-detail", kwargs=params)
         response = self.client.put(url)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid post id'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_post_partial_update(self):
         """
@@ -415,7 +418,7 @@ class EmptyPostViewSetTests(APITestCase):
         url = reverse("api:posts-detail", kwargs=params)
         response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data, {'errcode': 5000, 'errmsg': 'method not allowed'})
+        self.assertEqual(response.data, get_packet_details(MethodNotAllowed("PATCH")))
 
     def test_empty_post_destroy(self):
         """
@@ -426,7 +429,7 @@ class EmptyPostViewSetTests(APITestCase):
         url = reverse("api:notes-detail", kwargs=params)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'post not found'})
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_post_answer_list(self):
         """
@@ -437,7 +440,7 @@ class EmptyPostViewSetTests(APITestCase):
         url = reverse("api:posts-answers", kwargs=params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'post not found'})
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_post_answer_retrieve(self):
         """
@@ -448,11 +451,11 @@ class EmptyPostViewSetTests(APITestCase):
         url = reverse("api:posts-detail-answer", kwargs=params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'post not found'})
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_post_answer_create(self):
         """
-        Expect a 400 response since no valid post id exists
+        Expect a 404 response since no valid post id exists
         :return:
         """
         params = {'pk': 1}
@@ -461,12 +464,12 @@ class EmptyPostViewSetTests(APITestCase):
                                     data=urlencode({'content': 'Test content'}),
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid post id'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_post_answer_create_missing_content(self):
         """
-        Expect a 400 response due to invalid post id since it should check it first
+        Expect a 404 response due to empty db
         :return:
         """
         params = {'pk': 1}
@@ -475,8 +478,8 @@ class EmptyPostViewSetTests(APITestCase):
                                     data=urlencode({}),
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid post id'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_post_answer_update(self):
         """
@@ -489,8 +492,8 @@ class EmptyPostViewSetTests(APITestCase):
                                     data=urlencode({'content': 'Test content'}),
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid post answer id'})
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     def test_empty_post_answer_partial_update(self):
         """
@@ -501,7 +504,7 @@ class EmptyPostViewSetTests(APITestCase):
         url = reverse("api:posts-detail-answer", kwargs=params)
         response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data, {'errcode': 5000, 'errmsg': 'method not allowed'})
+        self.assertEqual(response.data, get_packet_details(MethodNotAllowed("PATCH")))
 
     def test_empty_post_answer_destroy(self):
         """
@@ -512,4 +515,4 @@ class EmptyPostViewSetTests(APITestCase):
         url = reverse("api:posts-detail-answer", kwargs=params)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-        self.assertEqual(response.data, {'errcode': 1000, 'errmsg': 'invalid post answer id'})
+        self.assertEqual(response.data, get_packet_details(NotFound()))

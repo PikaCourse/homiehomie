@@ -93,6 +93,7 @@
     2. [ ] Purdue
     3. [ ] UNC/BU
 10. [ ] Support for dynamic/partially loading notes 
+11. [ ] Add admin api for easily updating course and course meta info like field `registered`
 
 ## how to
 
