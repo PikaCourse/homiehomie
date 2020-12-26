@@ -1,5 +1,5 @@
-import { ADD_COURSE } from "../actions/types.js";
-import { REMOVE_COURSE } from "../actions/types.js";
+import { ADD_COURSE_TO_CAL } from "../actions/types.js";
+import { REMOVE_COURSE_FROM_CAL } from "../actions/types.js";
 const initialState = {
   calendarCourseBag: [],
 };
@@ -20,7 +20,7 @@ function alignDate(weekDayIndex) {
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case ADD_COURSE:
+    case ADD_COURSE_TO_CAL:
       const selectedCourse = action.selectedCourseArray.find(
         ({ crn }) => crn === action.selectedCRN
       );
@@ -58,9 +58,8 @@ export default function (state = initialState, action) {
         });
       }
       return { calendarCourseBag: tempArray };
-    // return tempArray;
 
-    case REMOVE_COURSE:
+    case REMOVE_COURSE_FROM_CAL:
       return {
         ...state,
         course: action.payload,
