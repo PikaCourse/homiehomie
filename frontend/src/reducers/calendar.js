@@ -52,7 +52,7 @@ export default function (state = initialState, action) {
           end: endTime, //new Date(new Date().setHours(start.getHours() -5)),
           isReadOnly: true,
           raw: {
-            selectedCourse,
+            selectedCRN:action.selectedCRN,
             selectedCourseArray: action.selectedCourseArray,
           },
         });

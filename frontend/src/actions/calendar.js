@@ -10,3 +10,5 @@ export const addCurrCourse = ()  =>
         selectedCourseArray: store.getState().course.selectedCourseArray,
     };  
 }
+
+
