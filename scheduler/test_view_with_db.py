@@ -15,7 +15,7 @@ class CourseMetaViewSetTests(APITestCase):
     """
     Viewset testcase for CourseMetaViewSet
     """
-    fixtures = ['test_coursemeta.json']
+    # fixtures = ['test_coursemeta.json']
 
     """
     Begin valid view testing
