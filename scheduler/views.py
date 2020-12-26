@@ -118,7 +118,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     parser_classes = [FormParser]
-    http_method_names = ['get', 'post', 'head', 'put']
+    http_method_names = ['get', 'post', 'head', 'put', 'delete']
 
     # TODO Tmp disable to ease debugging
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
@@ -188,7 +188,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
                 return Response(error_pack, status=status.HTTP_200_OK)
         except Question.DoesNotExist:
             # Invalid question id
-            error_pack = {"errcode": 2000, "errmsg": "invalid question id"}
+            error_pack = {"errcode": 1000, "errmsg": "invalid question id"}
             return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
         error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
         return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
@@ -199,7 +199,7 @@ class NoteViewSet(viewsets.ModelViewSet):
 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
-    http_method_names = ['get', 'post', 'head', 'put']
+    http_method_names = ['get', 'post', 'head', 'put', 'delete']
 
     def list(self, request, *args, **kwargs):
         queryset = Note.objects.all()
@@ -267,7 +267,7 @@ class NoteViewSet(viewsets.ModelViewSet):
                 return Response(error_pack, status=status.HTTP_200_OK)
         except Note.DoesNotExist:
             # Invalid note id
-            error_pack = {"errcode": 2000, "errmsg": "invalid note id"}
+            error_pack = {"errcode": 1000, "errmsg": "invalid note id"}
             return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
         error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
         return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
@@ -280,7 +280,7 @@ class PostViewSet(viewsets.ModelViewSet):
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    http_method_names = ['get', 'post', 'head', 'put']
+    http_method_names = ['get', 'post', 'head', 'put', 'delete']
 
     def list(self, request, *args, **kwargs):
         queryset = Post.objects.all()
@@ -348,7 +348,7 @@ class PostViewSet(viewsets.ModelViewSet):
                 return Response(error_pack, status=status.HTTP_200_OK)
         except Post.DoesNotExist:
             # Invalid note id
-            error_pack = {"errcode": 2000, "errmsg": "invalid post id"}
+            error_pack = {"errcode": 1000, "errmsg": "invalid post id"}
             return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
         error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
         return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
@@ -408,14 +408,14 @@ class PostViewSet(viewsets.ModelViewSet):
 
         except Post.DoesNotExist:
             # Invalid post id
-            error_pack = {"errcode": 2000, "errmsg": "invalid post id"}
+            error_pack = {"errcode": 1000, "errmsg": "invalid post id"}
             return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
         except PostAnswer.DoesNotExist:
             # Invalid question answer id
-            error_pack = {"errcode": 2000, "errmsg": "invalid post answer id"}
+            error_pack = {"errcode": 1000, "errmsg": "invalid post answer id"}
             return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
         except ValidationError as e:
-            error_pack = {"errcode": 2000, "errmsg": e.message}
+            error_pack = {"errcode": 1000, "errmsg": e.message}
             return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
         # Invalid form key
         error_pack = {"errcode": 1000, "errmsg": "invalid form key"}
