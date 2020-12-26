@@ -38,6 +38,13 @@ export class Scheduler extends Component {
     {
         const calendarInstance = this.calendarRef.current.getInstance();
         //use map to reduce redundance 
+        calendarInstance.setCalendarColor(-1, {
+            color: 'rgba(68, 207, 207, 0.1)',
+            bgColor: 'rgba(68, 207, 207, 0.1)',
+            borderColor: 'rgba(68, 207, 207, 0.1)',
+
+        });
+
         calendarInstance.setCalendarColor(0, {
             color: 'rgba(65, 158, 244, 1)',
             bgColor: 'rgba(65, 158, 244, 0.3)',
@@ -165,7 +172,8 @@ export class Scheduler extends Component {
 const mapStateToProps = state =>({
     course: state.course.course,
     calendar: state.calendar,
-    courselist: state.calendar.calendarCourseBag
+    courselist: state.calendar.calendarCourseBag, 
+    //preview: state.preview
 });
 
 export default connect(mapStateToProps)(Scheduler);

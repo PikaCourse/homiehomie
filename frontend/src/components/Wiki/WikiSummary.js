@@ -1,14 +1,14 @@
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { addCurrCourse } from "../../actions/calendar";
+import { addCurrCourse, removeCurrCourse, previewCurrCourse} from "../../actions/calendar";
 import { setCourse } from "../../actions/course";
-
+import store from "../../store";
 // style
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 
 function weekdayToClass(index, timeArray) {
@@ -22,15 +22,13 @@ function weekdayToClass(index, timeArray) {
 export class WikiSummary extends Component {
   constructor(props) {
     super(props);
-  }
 
-  handleCRNChange(newCRN) {
-    this.props.dispatch(
-      setCourse({
-        selectedCRN: newCRN,
-        selectedCourseArray: this.props.selectedCourseArray,
-      })
-    );
+    this.state = {
+      previewSwitch: false
+    }
+
+    this.previewInputChange = this.previewInputChange.bind(this);
+    this.previewCourseChange = this.previewCourseChange.bind(this);
   }
 
   animateButton(e) {
@@ -42,6 +40,87 @@ export class WikiSummary extends Component {
     setTimeout(function () {
       e.target.classList.remove("animate");
     }, 700);
+  }
+  previewInputChange(event) {
+    const target = event.target;
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+    store.dispatch(previewCurrCourse(value));
+    this.setState({
+      previewSwitch: value
+    });
+  }
+
+  previewCourseChange() {
+    if (this.state.previewSwitch) {
+      store.dispatch(previewCurrCourse(true));
+    }
+    
+  }
+
+  buttonLoader() {
+    const courseArray = store
+      .getState()
+      .calendar.calendarCourseBag.filter(
+        (item) => item.raw.selectedCourseArray == this.props.selectedCourseArray
+      );
+
+    let enableAdd = true;
+    let enableRemove = true;
+    let addButtonText = "Add Course";
+    if (!Array.isArray(courseArray) || !courseArray.length) {
+      // course not in calendarbag
+      enableRemove = false;
+    } else {
+      const course = store
+        .getState()
+        .calendar.calendarCourseBag.filter(
+          (item) => item.raw.selectedCRN == this.props.selectedCRN
+        );
+      // course in calendarbag
+      if (!Array.isArray(course) || !course.length) {
+        // course different crn
+        addButtonText = "Change CRN";
+      } else {
+        // course same crn
+        enableAdd = false;
+      }
+    }
+    return (
+      <div>
+        <button
+          disabled={!enableAdd}
+          type="button"
+          className="bubbly-button mt-2 mb-4"
+          onClick={(event) => {
+            this.props.dispatch(addCurrCourse());
+            this.animateButton(event);
+          }}
+          style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
+        >
+          <FontAwesomeIcon className="mr-2" icon={faPlus} />
+          {addButtonText}
+        </button>
+
+        <button
+          disabled={!enableRemove}
+          type="button"
+          className="bubbly-button mt-2 mb-4 mx-2"
+          onClick={(event) => {
+            this.props.dispatch(removeCurrCourse());
+            //   this.animateButton(event);
+          }}
+          style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
+        >
+          <FontAwesomeIcon className="mr-2" icon={faMinus} />
+          Remove Course
+        </button>
+
+        <label class="switch">
+          <input type="checkbox" onChange={this.previewInputChange}/>
+          <span class="slider round"></span>
+        </label>
+      </div>
+    );
   }
 
   static propTypes = {
@@ -66,6 +145,7 @@ export class WikiSummary extends Component {
                   ).course_meta.title
                 }
               </h1>
+              {this.previewCourseChange()}
               <DropdownButton
                 className="col-sm-3 mx-0 px-0 mb-1"
                 alignRight
@@ -76,7 +156,15 @@ export class WikiSummary extends Component {
                 {this.props.selectedCourseArray.map((course) => (
                   <Dropdown.Item
                     value={course.crn}
-                    onSelect={() => this.handleCRNChange(course.crn)}
+                    onSelect={() => {
+                      this.props.dispatch(
+                        setCourse({
+                          selectedCRN: course.crn,
+                          selectedCourseArray: this.props.selectedCourseArray,
+                        })
+                      ); 
+                    }
+                    }
                   >
                     {course.crn}
                   </Dropdown.Item>
@@ -164,18 +252,7 @@ export class WikiSummary extends Component {
 
               {/* ToDO: GPA & Modality */}
             </div>
-            <button
-              type="button"
-              className="bubbly-button mt-2 mb-4"
-              onClick={(event) => {
-                this.props.dispatch(addCurrCourse());
-                this.animateButton(event);
-              }}
-              style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
-            >
-              <FontAwesomeIcon className="mr-2" icon={faPlus} />
-              Add To My Schedule
-            </button>
+            {this.buttonLoader()}
           </div>
         ) : (
           "loading..."
@@ -187,7 +264,6 @@ export class WikiSummary extends Component {
 
 const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
-  selectedCourse: state.course.selectedCourse,
   selectedCRN: state.course.selectedCRN,
 });
 
