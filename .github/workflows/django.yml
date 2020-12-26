@@ -33,6 +33,7 @@ jobs:
       env:
         # Fake SECRET KEY used for run test only 
         HOMIE_HOMIE_DJANGO_SECRET_KEY: wtelrbj_4zy@(16_f0vvvxa85i4otovka)a)651ccxm7ng9tuv
+  deploy_test:
     - name: Deploy Test Server
       # You may pin to the exact commit or the version.
       # uses: dokku/github-action@f3dfd4bae85d064232999f269c271bfd0e45c2e8

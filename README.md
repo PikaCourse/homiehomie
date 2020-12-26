@@ -1,6 +1,5 @@
 # Homiehomie
 ![Django CI](https://github.com/MARX1108/homiehomie/workflows/Django%20CI/badge.svg)
-![Deploy_Test](https://github.com/MARX1108/homiehomie/workflows/Deploy_Test/badge.svg)
 
 ## TODO
 
