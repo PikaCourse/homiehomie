@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'coverage',
     'django_extensions',
     'scheduler.apps.SchedulerConfig',
     'frontend.apps.FrontendConfig',
@@ -135,3 +136,11 @@ STATIC_URL = '/static/'
 
 # Default redirect to index page
 LOGIN_REDIRECT_URL = '/'
+
+# Test fixtures
+FIXTURE_DIRS = ['test_fixtures']
+
+# Django Reset Framework config
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'scheduler.utils.custom_exception_hdr'
+}
