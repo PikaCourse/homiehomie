@@ -151,7 +151,8 @@ export class Scheduler extends Component {
                         workweek: true, 
                         hourStart: 7, 
                         hourEnd: 22, 
-                        daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+                        daynames: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                        startDayOfWeek:1
                     }}
 
                 taskView/>
