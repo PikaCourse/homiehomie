@@ -1,3 +1,4 @@
+
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
@@ -10,7 +11,8 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-
+import { Button } from 'antd';
+import 'antd/dist/antd.css';
 function weekdayToClass(index, timeArray) {
   for (let i = 0; i < timeArray.length; i++) {
     if (timeArray[i].weekday == index) return "mb-1 badge bg-secondary";
@@ -114,7 +116,7 @@ export class WikiSummary extends Component {
           <FontAwesomeIcon className="mr-2" icon={faMinus} />
           Remove Course
         </button>
-
+        <Button id = "test" type="primary">Button</Button>
         <label class="switch">
           <input type="checkbox" onChange={this.previewInputChange}/>
           <span class="slider round"></span>
