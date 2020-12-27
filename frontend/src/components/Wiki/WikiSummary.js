@@ -1,8 +1,11 @@
-
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { addCurrCourse, removeCurrCourse, previewCurrCourse} from "../../actions/calendar";
+import {
+  addCurrCourse,
+  removeCurrCourse,
+  previewCurrCourse,
+} from "../../actions/calendar";
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
@@ -11,11 +14,13 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-import { Switch } from 'antd';
-import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { Switch } from "antd";
+import { Input } from "antd";
+const { Search } = Input;
+import { getCourse } from "../../actions/course";
 
-import 'antd/dist/antd.css';
-
+import "antd/dist/antd.css";
+// import "../../main.less";
 function weekdayToClass(index, timeArray) {
   for (let i = 0; i < timeArray.length; i++) {
     if (timeArray[i].weekday == index) return "mb-1 badge bg-secondary";
@@ -29,8 +34,8 @@ export class WikiSummary extends Component {
     super(props);
 
     this.state = {
-      previewSwitch: false
-    }
+      previewSwitch: false,
+    };
 
     this.previewInputChange = this.previewInputChange.bind(this);
     this.previewCourseChange = this.previewCourseChange.bind(this);
@@ -49,7 +54,7 @@ export class WikiSummary extends Component {
   previewInputChange(checked) {
     store.dispatch(previewCurrCourse(checked));
     this.setState({
-      previewSwitch: value
+      previewSwitch: value,
     });
   }
 
@@ -57,7 +62,6 @@ export class WikiSummary extends Component {
     if (this.state.previewSwitch) {
       store.dispatch(previewCurrCourse(true));
     }
-    
   }
 
   buttonLoader() {
@@ -133,6 +137,15 @@ export class WikiSummary extends Component {
           ({ crn }) => crn === this.props.selectedCRN
         ) != "undefined" ? (
           <div className="p-2">
+            <div className="mb-4">
+              <Search
+                placeholder="Search subject, CRN or course name"
+                allowClear
+                enterButton="Search"
+                size="large"
+                onSearch={(value) => this.props.dispatch(getCourse(value))}
+              />
+            </div>
             <div>
               <h1
                 className="mr-2"
@@ -161,9 +174,8 @@ export class WikiSummary extends Component {
                           selectedCRN: course.crn,
                           selectedCourseArray: this.props.selectedCourseArray,
                         })
-                      ); 
-                    }
-                    }
+                      );
+                    }}
                   >
                     {course.crn}
                   </Dropdown.Item>

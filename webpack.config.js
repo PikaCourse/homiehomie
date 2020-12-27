@@ -23,9 +23,9 @@ module.exports = {
                 options: {
                            lessOptions: { // If you are using less-loader@5 please spread the lessOptions to options directly
                              modifyVars: {
-                               'primary-color': 'rgb(65, 158, 244)',
-                               'link-color': 'rgb(65, 158, 244)',
-                               'border-radius-base': '2px',
+                               'btn-primary-bg': '#419EF4',
+                               'link-color': '#419EF4',
+                               'border-radius-base': '20px',
                              javascriptEnabled: true,
                            },
                          },
