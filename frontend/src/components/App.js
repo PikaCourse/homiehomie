@@ -9,6 +9,7 @@ import Calendar from "./main/Scheduler";
 import Leads from "./main/Leads";
 
 import Wiki from "./main/Wiki";
+import Wishlist from "./main/Wishlist";
 
 
 import {Provider} from 'react-redux';
@@ -22,6 +23,15 @@ class App extends Component {
         <Fragment>
           <Header />
           <div className="container-fluid">
+            <div className="row">
+              <div id="app" className="col-sm-1">
+              </div>
+              <div id="app" className="col-sm-10">
+                <Wishlist />
+              </div>
+              <div id="app" className="col-sm-1">
+              </div>
+            </div>
             <div className="row">
               <div id="app" className="col-md-6 m-3">
                 <Calendar />
