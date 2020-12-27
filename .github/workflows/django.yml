@@ -3,7 +3,13 @@ name: Django CI
 on:
   push:
     branches: [ main ]
+    paths-ignore: 
+      - 'README.md'
+      - '.gitignore'
   pull_request:
+    paths-ignore: 
+      - 'README.md'
+      - '.gitignore'
     branches: [ main ]
     
   workflow_dispatch:
