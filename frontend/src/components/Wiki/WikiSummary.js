@@ -19,8 +19,10 @@ import { Input } from "antd";
 const { Search } = Input;
 import { getCourse } from "../../actions/course";
 
-import "antd/dist/antd.css";
-// import "../../main.less";
+import 'antd/lib/style/themes/default.less';
+import "antd/dist/antd.less";
+import "../../main.less";
+
 function weekdayToClass(index, timeArray) {
   for (let i = 0; i < timeArray.length; i++) {
     if (timeArray[i].weekday == index) return "mb-1 badge bg-secondary";
