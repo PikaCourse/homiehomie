@@ -52,7 +52,7 @@ jobs:
         env_vars: PYTHON
         name: codecov-django
         fail_ci_if_error: true
-        verbose: true
+        verbose: false
   deploy_test:
     if: "!contains(github.event.commits[0].message, '[skip deploy]')"
     name: Deploy code to test server via dokku
