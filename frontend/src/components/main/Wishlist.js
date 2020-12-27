@@ -75,7 +75,6 @@ export class Wishlist extends Component {
       <div id="app" className="col-sm-12">
         <Collapse
           bordered={false}
-          defaultActiveKey={["1"]}
           expandIcon={({ isActive }) => (
             <CaretRightOutlined rotate={isActive ? 90 : 0} />
           )}

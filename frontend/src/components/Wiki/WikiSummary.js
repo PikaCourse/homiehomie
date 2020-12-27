@@ -9,20 +9,17 @@ import {
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-import { Switch } from "antd";
-import { Input } from "antd";
-const { Search } = Input;
+import { Switch, Select, Input } from "antd";
 import { getCourse } from "../../actions/course";
 
-import 'antd/lib/style/themes/default.less';
+import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
 
+const { Search } = Input;
 function weekdayToClass(index, timeArray) {
   for (let i = 0; i < timeArray.length; i++) {
     if (timeArray[i].weekday == index) return "mb-1 badge bg-secondary";
@@ -150,7 +147,7 @@ export class WikiSummary extends Component {
             </div>
             <div>
               <h1
-                className="mr-2"
+                className="mr-2 align-middle"
                 style={{ color: "#419EF4", display: "inline" }}
               >
                 {
@@ -160,29 +157,25 @@ export class WikiSummary extends Component {
                 }
               </h1>
               {this.previewCourseChange()}
-              <DropdownButton
-                className="col-sm-3 mx-0 px-0 mb-1"
-                alignRight
-                title={"CRN: " + this.props.selectedCRN}
-                id="dropdown-menu-align-right"
-                style={{ fontSize: "1rem", display: "inline" }}
+
+              <Select
+                className="col-sm-3 mx-0 px-0 align-middle"
+                defaultValue={this.props.selectedCRN}
+                style={{ width: 120 }}
+                size="large"
+                onChange={(value) => {
+                  this.props.dispatch(
+                    setCourse({
+                      selectedCRN: value,
+                      selectedCourseArray: this.props.selectedCourseArray,
+                    })
+                  );
+                }}
               >
                 {this.props.selectedCourseArray.map((course) => (
-                  <Dropdown.Item
-                    value={course.crn}
-                    onSelect={() => {
-                      this.props.dispatch(
-                        setCourse({
-                          selectedCRN: course.crn,
-                          selectedCourseArray: this.props.selectedCourseArray,
-                        })
-                      );
-                    }}
-                  >
-                    {course.crn}
-                  </Dropdown.Item>
+                  <Option value={course.crn}>{course.crn}</Option>
                 ))}
-              </DropdownButton>
+              </Select>
             </div>
             <h1>
               {
