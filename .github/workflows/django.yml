@@ -40,6 +40,9 @@ jobs:
       env:
         # Fake SECRET KEY used for run test only 
         HOMIE_HOMIE_DJANGO_SECRET_KEY: wtelrbj_4zy@(16_f0vvvxa85i4otovka)a)651ccxm7ng9tuv
+    - name: Generate coverage report 
+      run: |
+        coverage xml -o coverage.xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:
