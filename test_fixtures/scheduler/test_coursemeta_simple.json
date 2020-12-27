@@ -1,0 +1,302 @@
+[
+{
+    "model": "scheduler.coursemeta",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-12-25T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-4764",
+        "name": "Real Estate Appraisal",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 2,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-5144",
+        "name": "Res and Environ Econ",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 3,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-5814G",
+        "name": "Adv Food & Health Economics",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 4,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-5804G",
+        "name": "Fundamentals of Econometrics",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 5,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-6214",
+        "name": "Food and Health Microeconomics",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 6,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-5026",
+        "name": "Applied Microeconomics",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 7,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-3024",
+        "name": "Monetary Glob Iss Applied Econ",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 8,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-4804",
+        "name": "Elementary Econometrics",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 9,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-2104",
+        "name": "Personal Financial Planning",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 10,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "AAEC",
+        "college": "College of Agriculture and Life Sciences",
+        "title": "AAEC-3314",
+        "name": "Environmental Law",
+        "credit_hours": 3,
+        "school": "Virgina Tech",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 11,
+    "fields": {
+        "created_at": "2020-12-25T05:30:57Z",
+        "major": "COM",
+        "college": "College of Liberal Arts",
+        "title": "COM-11400",
+        "name": "Fundamentals of Speech Communication",
+        "credit_hours": 3,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 12,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "ENGL",
+        "college": "College of Liberal Arts",
+        "title": "ENGL 10600",
+        "name": "First-Year Composition",
+        "credit_hours": 4,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 13,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "ECE",
+        "college": "College of Engineering",
+        "title": "ECE 20100",
+        "name": "Linear Circuit Analysis I",
+        "credit_hours": 3,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 14,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "ECE",
+        "college": "College of Engineering",
+        "title": "ECE 27000",
+        "name": "Introduction to Digital System Design",
+        "credit_hours": 4,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 15,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "CS",
+        "college": "College of Science",
+        "title": "CS 38100",
+        "name": "Introduction To The Analysis Of Algorithms",
+        "credit_hours": 3,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 16,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "CS",
+        "college": "College of Science",
+        "title": "CS 37300",
+        "name": "Data Mining And Machine Learning",
+        "credit_hours": 3,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 17,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "CS",
+        "college": "College of Science",
+        "title": "CS 25200",
+        "name": "Systems Programming",
+        "credit_hours": 3,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 18,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "ECE",
+        "college": "College of Engineering",
+        "title": "ECE 36200",
+        "name": "Microprocessor Systems and Interfacing",
+        "credit_hours": 4,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 19,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "ECE",
+        "college": "College of Engineering",
+        "title": "ECE 43700",
+        "name": "Computer Design and Prototyping",
+        "credit_hours": 4,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+},
+{
+    "model": "scheduler.coursemeta",
+    "pk": 20,
+    "fields": {
+        "created_at": "2020-12-24T05:30:57Z",
+        "major": "CS",
+        "college": "College of Science",
+        "title": "CS 47100",
+        "name": "Introduction to Artificial Intelligence",
+        "credit_hours": 3,
+        "school": "Purdue University",
+        "description": "Empty",
+        "tags": []
+    }
+}
+]

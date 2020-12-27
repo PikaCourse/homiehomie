@@ -1,0 +1,664 @@
+[
+{
+    "model": "scheduler.course",
+    "pk": 1,
+    "fields": {
+        "course_meta": 1,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10095",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "16:00",
+                "end_at": "17:15"
+            },
+            {
+                "weekday": 2,
+                "start_at": "16:00",
+                "end_at": "17:15"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "Nature ForeignKey",
+        "year": "2017",
+        "semester": "spring",
+        "location": "GITHUB 207",
+        "registered": -1,
+        "capacity": 20
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 2,
+    "fields": {
+        "course_meta": 2,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10092",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "16:00",
+                "end_at": "17:15"
+            },
+            {
+                "weekday": 2,
+                "start_at": "16:00",
+                "end_at": "17:15"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "SK Stephenson",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 207",
+        "registered": -1,
+        "capacity": 20
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 3,
+    "fields": {
+        "course_meta": 3,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "19423",
+        "time": [
+            {
+                "weekday": 1,
+                "start_at": "12:30",
+                "end_at": "13:45"
+            },
+            {
+                "weekday": 3,
+                "start_at": "12:30",
+                "end_at": "13:45"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "GC Davis",
+        "year": "2017",
+        "semester": "spring",
+        "location": "NCB 320",
+        "registered": -1,
+        "capacity": 15
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 4,
+    "fields": {
+        "course_meta": 4,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10093",
+        "time": [
+            {
+                "weekday": 1,
+                "start_at": "9:30",
+                "end_at": "10:45"
+            },
+            {
+                "weekday": 3,
+                "start_at": "9:30",
+                "end_at": "10:45"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "EB Peterson",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 310",
+        "registered": -1,
+        "capacity": 30
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 5,
+    "fields": {
+        "course_meta": 5,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "19422",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "16:00",
+                "end_at": "17:15"
+            },
+            {
+                "weekday": 2,
+                "start_at": "16:00",
+                "end_at": "17:15"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "GC Davis",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 209",
+        "registered": -1,
+        "capacity": 15
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 6,
+    "fields": {
+        "course_meta": 6,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10087",
+        "time": [
+            {
+                "weekday": 1,
+                "start_at": "14:00",
+                "end_at": "15:15"
+            },
+            {
+                "weekday": 3,
+                "start_at": "14:00",
+                "end_at": "15:15"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "JH Grant",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 209",
+        "registered": -1,
+        "capacity": 48
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 7,
+    "fields": {
+        "course_meta": 7,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10069",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "16:00",
+                "end_at": "17:15"
+            },
+            {
+                "weekday": 2,
+                "start_at": "16:00",
+                "end_at": "17:15"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "MA Marchant",
+        "year": "2017",
+        "semester": "spring",
+        "location": "SMYTH 146",
+        "registered": -1,
+        "capacity": 83
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 8,
+    "fields": {
+        "course_meta": 8,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10083",
+        "time": [
+            {
+                "weekday": 1,
+                "start_at": "9:30",
+                "end_at": "10:45"
+            },
+            {
+                "weekday": 3,
+                "start_at": "9:30",
+                "end_at": "10:45"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "EB Peterson",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 310",
+        "registered": -1,
+        "capacity": 15
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 9,
+    "fields": {
+        "course_meta": 9,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10062",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "11:15",
+                "end_at": "12:05"
+            },
+            {
+                "weekday": 2,
+                "start_at": "11:15",
+                "end_at": "12:05"
+            },
+            {
+                "weekday": 4,
+                "start_at": "11:15",
+                "end_at": "12:05"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "WA White",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HAN 100",
+        "registered": -1,
+        "capacity": 330
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 10,
+    "fields": {
+        "course_meta": 10,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "19644",
+        "time": [
+            {
+                "weekday": 1,
+                "start_at": "8:00",
+                "end_at": "9:15"
+            },
+            {
+                "weekday": 3,
+                "start_at": "8:00",
+                "end_at": "9:15"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "LL Geyer",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 204",
+        "registered": -1,
+        "capacity": 48
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 11,
+    "fields": {
+        "course_meta": 10,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10071",
+        "time": [
+            {
+                "weekday": 1,
+                "start_at": "15:30",
+                "end_at": "16:45"
+            },
+            {
+                "weekday": 3,
+                "start_at": "15:30",
+                "end_at": "16:45"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "LL Geyer",
+        "year": "2017",
+        "semester": "spring",
+        "location": "TORG 3100",
+        "registered": -1,
+        "capacity": 150
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 12,
+    "fields": {
+        "course_meta": 11,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10068",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "12:20",
+                "end_at": "13:10"
+            },
+            {
+                "weekday": 2,
+                "start_at": "12:20",
+                "end_at": "13:10"
+            },
+            {
+                "weekday": 4,
+                "start_at": "12:20",
+                "end_at": "13:10"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "RH Lytton",
+        "year": "2017",
+        "semester": "spring",
+        "location": "ROB 105",
+        "registered": -1,
+        "capacity": 48
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 13,
+    "fields": {
+        "course_meta": 12,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10067",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "13:25",
+                "end_at": "14:15"
+            },
+            {
+                "weekday": 2,
+                "start_at": "13:25",
+                "end_at": "14:15"
+            },
+            {
+                "weekday": 4,
+                "start_at": "13:25",
+                "end_at": "14:15"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "DJ Bosch",
+        "year": "2017",
+        "semester": "spring",
+        "location": "LITRV 1860",
+        "registered": -1,
+        "capacity": 60
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 14,
+    "fields": {
+        "course_meta": 13,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10074",
+        "time": [
+            {
+                "weekday": 1,
+                "start_at": "12:30",
+                "end_at": "13:45"
+            },
+            {
+                "weekday": 3,
+                "start_at": "12:30",
+                "end_at": "13:45"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "MF Dickhans",
+        "year": "2017",
+        "semester": "spring",
+        "location": "LITRV 1870",
+        "registered": -1,
+        "capacity": 129
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 15,
+    "fields": {
+        "course_meta": 14,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "19386",
+        "time": [
+            {
+                "weekday": 1,
+                "start_at": "11:00",
+                "end_at": "12:15"
+            },
+            {
+                "weekday": 3,
+                "start_at": "11:00",
+                "end_at": "12:15"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "K Moeltner",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 209",
+        "registered": -1,
+        "capacity": 40
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 16,
+    "fields": {
+        "course_meta": 15,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10082",
+        "time": [
+            {
+                "weekday": 1,
+                "start_at": "12:30",
+                "end_at": "13:45"
+            },
+            {
+                "weekday": 3,
+                "start_at": "12:30",
+                "end_at": "13:45"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "LL Geyer",
+        "year": "2017",
+        "semester": "spring",
+        "location": "SMYTH 146",
+        "registered": -1,
+        "capacity": 130
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 17,
+    "fields": {
+        "course_meta": 16,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "19791",
+        "time": [
+            {
+                "weekday": 4,
+                "start_at": "10:00",
+                "end_at": "11:00"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "O Isengildina Massa",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 204",
+        "registered": -1,
+        "capacity": 0
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 18,
+    "fields": {
+        "course_meta": 16,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "19696",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "7:45",
+                "end_at": "8:50"
+            },
+            {
+                "weekday": 2,
+                "start_at": "7:45",
+                "end_at": "8:50"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "RT Crowder",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 310",
+        "registered": -1,
+        "capacity": 0
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 19,
+    "fields": {
+        "course_meta": 16,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "19686",
+        "time": [],
+        "section": null,
+        "type": "lecture",
+        "professor": "O Isengildina Massa",
+        "year": "2017",
+        "semester": "spring",
+        "location": "00X",
+        "registered": -1,
+        "capacity": 30
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 20,
+    "fields": {
+        "course_meta": 17,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10096",
+        "time": [],
+        "section": null,
+        "type": "other",
+        "professor": "SC Blank",
+        "year": "2017",
+        "semester": "spring",
+        "location": "00X",
+        "registered": -1,
+        "capacity": 0
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 21,
+    "fields": {
+        "course_meta": 18,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10081",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "14:30",
+                "end_at": "15:45"
+            },
+            {
+                "weekday": 2,
+                "start_at": "14:30",
+                "end_at": "15:45"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "O Isengildina Massa",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 204",
+        "registered": -1,
+        "capacity": 40
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 23,
+    "fields": {
+        "course_meta": 20,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10094",
+        "time": [],
+        "section": null,
+        "type": "lecture",
+        "professor": "SC Blank",
+        "year": "2017",
+        "semester": "spring",
+        "location": "00X",
+        "registered": -1,
+        "capacity": 20
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 24,
+    "fields": {
+        "course_meta": 21,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10089",
+        "time": [
+            {
+                "weekday": 0,
+                "start_at": "11:15",
+                "end_at": "12:30"
+            },
+            {
+                "weekday": 2,
+                "start_at": "11:15",
+                "end_at": "12:30"
+            }
+        ],
+        "section": null,
+        "type": "lecture",
+        "professor": "EB Peterson",
+        "year": "2017",
+        "semester": "spring",
+        "location": "HUTCH 204",
+        "registered": -1,
+        "capacity": 20
+    }
+},
+{
+    "model": "scheduler.course",
+    "pk": 25,
+    "fields": {
+        "course_meta": 22,
+        "created_at": "2020-12-24T05:49:03Z",
+        "crn": "10097",
+        "time": [],
+        "section": null,
+        "type": "research",
+        "professor": "SC Blank",
+        "year": "2017",
+        "semester": "spring",
+        "location": "00X",
+        "registered": -1,
+        "capacity": 40
+    }
+}
+]

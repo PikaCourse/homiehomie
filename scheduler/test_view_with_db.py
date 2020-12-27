@@ -168,6 +168,8 @@ class NoteViewSetTests(APITestCase):
     # TODO Rest of tests need to add permission check after introducing user
     # CreateView testing
 
+    # TODO Check adding note with question and course point to different coursemeta
+
     # UpdateView testing
 
     # DestroyView testing
