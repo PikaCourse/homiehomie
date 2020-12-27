@@ -613,52 +613,5 @@
         "registered": -1,
         "capacity": 20
     }
-},
-{
-    "model": "scheduler.course",
-    "pk": 24,
-    "fields": {
-        "course_meta": 21,
-        "created_at": "2020-12-24T05:49:03Z",
-        "crn": "10089",
-        "time": [
-            {
-                "weekday": 0,
-                "start_at": "11:15",
-                "end_at": "12:30"
-            },
-            {
-                "weekday": 2,
-                "start_at": "11:15",
-                "end_at": "12:30"
-            }
-        ],
-        "section": null,
-        "type": "lecture",
-        "professor": "EB Peterson",
-        "year": "2017",
-        "semester": "spring",
-        "location": "HUTCH 204",
-        "registered": -1,
-        "capacity": 20
-    }
-},
-{
-    "model": "scheduler.course",
-    "pk": 25,
-    "fields": {
-        "course_meta": 22,
-        "created_at": "2020-12-24T05:49:03Z",
-        "crn": "10097",
-        "time": [],
-        "section": null,
-        "type": "research",
-        "professor": "SC Blank",
-        "year": "2017",
-        "semester": "spring",
-        "location": "00X",
-        "registered": -1,
-        "capacity": 40
-    }
 }
 ]

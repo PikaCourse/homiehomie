@@ -1,0 +1,32 @@
+[
+{
+    "model": "user.student",
+    "pk": 2,
+    "fields": {
+        "user": 2,
+        "school": "",
+        "major": "",
+        "majors": [],
+        "minors": [],
+        "graduation": null,
+        "birthday": null,
+        "sex": "",
+        "type": ""
+    }
+},
+{
+    "model": "user.student",
+    "pk": 3,
+    "fields": {
+        "user": 3,
+        "school": null,
+        "major": null,
+        "majors": [],
+        "minors": [],
+        "graduation": null,
+        "birthday": null,
+        "sex": null,
+        "type": null
+    }
+}
+]

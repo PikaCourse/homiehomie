@@ -54,10 +54,12 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(title__startswith=title)
         if limit is not None:
             try:
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
                 queryset = queryset[0:int(limit)]
             except ValueError as err:
-                error_pack = {"errcode": 1000, "errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:200]
 
@@ -103,10 +105,12 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(professor=professor)
         if limit is not None:
             try:
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
                 queryset = queryset[0:int(limit)]
             except ValueError as err:
-                error_pack = {"errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:200]
 
@@ -150,10 +154,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
             queryset = queryset.order_by(("-" if descending else "") + "like_count")
         if limit is not None:
             try:
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
                 queryset = queryset[0:int(limit)]
             except ValueError as err:
-                error_pack = {"errcode": 1000, "errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:50]
 
@@ -227,10 +233,12 @@ class NoteViewSet(viewsets.ModelViewSet):
             queryset = queryset.order_by(("-" if descending else "") + "like_count")
         if limit is not None:
             try:
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
                 queryset = queryset[0:int(limit)]
             except ValueError as err:
-                error_pack = {"errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:50]
 

@@ -40,3 +40,14 @@ class InvalidFormKey(APIException):
         if detail is not None:
             self.detail = force_str(detail)
         super().__init__(detail, code)
+
+
+class InvalidQueryValue(APIException):
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'invalid_value'
+    default_detail = 'Invalid query value'
+
+    def __init__(self, detail=None, code=None):
+        if detail is not None:
+            self.detail = force_str(detail)
+        super().__init__(detail, code)

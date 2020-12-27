@@ -13,9 +13,7 @@ simple test of the functionalities of `scheduler` app.
 
 ### `Course` fixture
 
-1. 25 entries from VT and Purdue
-2. last two entries are invalid entries (i.e. their course meta instance not exist in db)
-to simulate erroneous loading the database, should be ignored in retrieving
+1. 23 entries from VT and Purdue
 
 ### `Question` fixture
 
