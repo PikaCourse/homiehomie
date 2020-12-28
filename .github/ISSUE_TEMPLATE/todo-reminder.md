@@ -20,13 +20,8 @@ others (i.e. documentation/bug)
 A clear and concise description of need to be done.
 
 **How urgent is the todo?**
-
-check one or more of the following
-Should this be done... 
-- as soon as possible
-- anytime within the current development cycle
-- anytime within the next development cycle
-- sometime
+Should this be done by...
+i.e. (as soon as possible, anytime within the current development cycle, anytime within the next development cycle, sometime)
 note: if it is critically urgent, please add "!important" label
 
 
