@@ -8,7 +8,9 @@ import store from '../../store'
 
 import TextareaAutosize from "react-textarea-autosize";
 
-import { Button } from "antd";
+import { Button, Input } from "antd";
+
+const { TextArea } = Input;
 
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
@@ -49,6 +51,10 @@ handleInputChangeTwo({ target }) {
         console.log("animateButton");
     }
 
+    onChange = ({ target: { value } }) => {
+      this.setState({ value });
+    }
+
     render() {
         return (
             <div className ="p-3" style = {noteBookStyle}>
@@ -70,21 +76,15 @@ handleInputChangeTwo({ target }) {
                       {/* writing part */}
                       <div className="row">
                         <div className = "col-sm-11 pr-0">
-                            <TextareaAutosize
-                              className="w-100 pl-2"
-                              minRows={2}
-                              maxRows={10}
-                              placeholder="Write Your Notes..."
-                              onChange={(e)=>this.handleInputChangeTwo(e)}
-                              style = {{borderRadius: "5px", borderColor:"white"}}/>
+                        <TextArea
+                          onChange={this.onChange}
+                          placeholder="Controlled autosize"
+                          autoSize={{ minRows: 3, maxRows: 5 }}
+                          style = {{borderRadius: "5px", borderColor:"white"}}
+                        />
                         </div>
                         <div className = "col-sm-1 pl-0">
-                          <button 
-                            className="bubbly-button" 
-                            style = {{borderRadius: "5px", fontFamily: 'Montserrat'}} 
-                            type="save" 
-                            onClick={(event)=>{this.handleSaveClicked(); this.animateButton(event)}}>Save
-                          </button>
+                        <Button size="medium" type="primary" onClick={(event)=>{this.handleSaveClicked(); this.animateButton(event)}}>save</Button>
                         </div>
                       </div>
                     </div>
