@@ -10,9 +10,10 @@ import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faStar } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-import { Switch, Select, Input } from "antd";
+import { Switch, Select, Input, Button } from "antd";
+
 import { getCourse } from "../../actions/course";
 
 import "antd/lib/style/themes/default.less";
@@ -49,6 +50,7 @@ export class WikiSummary extends Component {
     setTimeout(function () {
       e.target.classList.remove("animate");
     }, 700);
+    console.log("animate triggered");
   }
   previewInputChange(checked) {
     store.dispatch(previewCurrCourse(checked));
@@ -93,6 +95,29 @@ export class WikiSummary extends Component {
     }
     return (
       <div>
+        <div>
+          <Button
+            className="mr-1 bubbly-button"
+            type="primary"
+            size="large"
+            onClick={(event) => {
+              this.props.dispatch(addCurrCourse());
+              this.animateButton(event);
+            }}
+          >
+            <FontAwesomeIcon className="mr-2" icon={faPlus} />
+            Add
+          </Button>
+
+          <Button className="mx-1" type="primary" size="large" disabled>
+            <FontAwesomeIcon className="mr-2" icon={faMinus} />
+            Remove
+          </Button>
+
+          <Button className="mx-1" type="primary" size="large">
+            <FontAwesomeIcon icon={faStar} />
+          </Button>
+        </div>
         <button
           disabled={!enableAdd}
           type="button"
