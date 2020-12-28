@@ -9,7 +9,7 @@ assignees: ''
 
 **What is this todo related to?**
 check one or more of the following and **add the according labels to the issue**
-- [ ] frontend
+- [x] frontend
 - [ ] backend
 - [ ] UI/UX
 - [ ] administration
@@ -18,14 +18,16 @@ check one or more of the following and **add the according labels to the issue**
 **What is the todo?**
 A clear and concise description of need to be done.
 
-**How urgent is the todo? **
+**How urgent is the todo?**
+
 check one or more of the following
-should this be done 
-**if it is critically urgent, please add "!important" label**
+Should this be done... 
 - [ ] as soon as possible
 - [ ] anytime within the current development cycle
 - [ ] anytime within the next development cycle
 - [ ] sometime
+note: if it is critically urgent, please add "!important" label
+
 
 **Additional context**
 Add any other context about the problem here.

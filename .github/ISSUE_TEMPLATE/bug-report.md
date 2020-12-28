@@ -9,7 +9,7 @@ assignees: ''
 
 **What is this bug related to?**
 check one or more of the following and **add the according labels to the issue**
-- [ ] frontend
+- [x] frontend
 - [ ] backend
 - [ ] UI/UX
 - [ ] administration
