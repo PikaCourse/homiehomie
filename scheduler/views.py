@@ -10,15 +10,10 @@ from rest_framework.request import Request
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser, FormParser
-
 from datetime import datetime
 
-# Create your views here.
+
 # TODO Add isOwnerOrReadOnly Permission
-
-def scheduler(request):
-    return render(request, 'templates/base.html', {})
-
 
 """
 API Definition below
@@ -43,15 +38,15 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
         limit       = self.request.query_params.get("limit", None)
 
         if school is not None:
-            queryset = queryset.filter(school=school)
+            queryset = queryset.filter(school__istartswith=school)
         if major is not None:
-            queryset = queryset.filter(major=major)
+            queryset = queryset.filter(major__istartswith=major)
         if name is not None:
-            queryset = queryset.filter(name__contains=name)
+            queryset = queryset.filter(name__icontains=name)
         if college is not None:
-            queryset = queryset.filter(college__contains=college)
+            queryset = queryset.filter(college__icontains=college)
         if title is not None:
-            queryset = queryset.filter(title__startswith=title)
+            queryset = queryset.filter(title__istartswith=title)
         if limit is not None:
             try:
                 limit = int(limit)
@@ -90,19 +85,25 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         limit       = self.request.query_params.get("limit", None)
 
         if school is not None:
-            queryset = queryset.filter(course_meta__school=school)
+            queryset = queryset.filter(course_meta__school__istartswith=school)
         if title is not None:
-            queryset = queryset.filter(course_meta__title=title)
+            queryset = queryset.filter(course_meta__title__istartswith=title)
         if crn is not None:
-            queryset = queryset.filter(crn__startswith=crn)
+            queryset = queryset.filter(crn__istartswith=crn)
         if major is not None:
-            queryset = queryset.filter(course_meta__major=major)
+            queryset = queryset.filter(course_meta__major__istartswith=major)
         if year is not None:
-            queryset = queryset.filter(year=year)
+            try:
+                year = int(year)
+                if year < 1970 or year > 2100:
+                    raise ValueError
+                queryset = queryset.filter(year=year)
+            except ValueError:
+                raise InvalidQueryValue()
         if semester is not None:
-            queryset = queryset.filter(semester=semester)
+            queryset = queryset.filter(semester__iexact=semester)
         if professor is not None:
-            queryset = queryset.filter(professor=professor)
+            queryset = queryset.filter(professor__istartswith=professor)
         if limit is not None:
             try:
                 limit = int(limit)

@@ -10,7 +10,6 @@ router.register(r'notes', views.NoteViewSet, basename='notes')
 router.register(r'posts', views.PostViewSet, basename='posts')
 
 urlpatterns = [
-    # path('templates/', views.scheduler, name='scheduler'),
     path('', include(router.urls), name='api')
 ]
 
