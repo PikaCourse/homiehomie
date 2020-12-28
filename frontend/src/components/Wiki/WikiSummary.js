@@ -15,7 +15,6 @@ const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 import { Switch, Select, Input, Button } from "antd";
 
 import { getCourse } from "../../actions/course";
-import "../../../static/css/confetti.css"
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
@@ -34,11 +33,10 @@ export class WikiSummary extends Component {
     super(props);
 
     this.state = {
-      previewSwitch: false,
+      previewSwitch: true,
     };
 
     this.previewInputChange = this.previewInputChange.bind(this);
-    this.previewCourseChange = this.previewCourseChange.bind(this);
   }
 
   animateButton(e) {
@@ -52,17 +50,12 @@ export class WikiSummary extends Component {
     }, 700);
     console.log("animate triggered");
   }
+
   previewInputChange(checked) {
     store.dispatch(previewCurrCourse(checked));
     this.setState({
-      previewSwitch: value,
+      previewSwitch: checked,
     });
-  }
-
-  previewCourseChange() {
-    if (this.state.previewSwitch) {
-      store.dispatch(previewCurrCourse(true));
-    }
   }
 
   buttonLoader() {
@@ -95,56 +88,38 @@ export class WikiSummary extends Component {
     }
     return (
       <div>
-        <div>
-          <Button
-            className="mr-1 bubbly-button"
-            type="primary"
-            size="large"
-            onClick={(event) => {
-              this.animateButton(event);
-              this.props.dispatch(addCurrCourse());
-            }}
-          >
-            <FontAwesomeIcon className="mr-2" icon={faPlus} />
-            Add
-          </Button>
-
-          <Button className="mx-1" type="primary" size="large" disabled>
-            <FontAwesomeIcon className="mr-2" icon={faMinus} />
-            Remove
-          </Button>
-
-          <Button className="mx-1" type="primary" size="large">
-            <FontAwesomeIcon icon={faStar} />
-          </Button>
-        </div>
-        <button
+        <Button
           disabled={!enableAdd}
-          type="button"
-          className="confetti-button mt-2 mb-4"
+          className="mr-1 bubbly-button"
+          type="primary"
+          size="large"
           onClick={(event) => {
-            this.props.dispatch(addCurrCourse());
             this.animateButton(event);
+            this.props.dispatch(addCurrCourse());
           }}
-          style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
         >
           <FontAwesomeIcon className="mr-2" icon={faPlus} />
           {addButtonText}
-        </button>
+        </Button>
 
-        <button
+        <Button
+          className="mx-1"
+          type="primary"
+          size="large"
           disabled={!enableRemove}
-          type="button"
-          className="confetti-button mt-2 mb-4 mx-2"
           onClick={(event) => {
             this.props.dispatch(removeCurrCourse());
-              this.animateButton(event);
+            // this.animateButton(event);
           }}
-          style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
         >
           <FontAwesomeIcon className="mr-2" icon={faMinus} />
-          Remove Course
-        </button>
+          Remove
+        </Button>
+
+        <Button className="mx-1" type="primary" size="large">
+          <FontAwesomeIcon icon={faStar} />
+        </Button>
+
         <Switch defaultChecked onChange={this.previewInputChange} />
       </div>
     );
@@ -153,6 +128,16 @@ export class WikiSummary extends Component {
   static propTypes = {
     selectedCourseArray: PropTypes.array.isRequired,
   };
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    console.log("componentDidUpdate");
+
+    if (this.state.previewSwitch) {
+      console.log("test");
+
+      store.dispatch(previewCurrCourse(true));
+    }
+  }
 
   render() {
     return (
@@ -181,7 +166,6 @@ export class WikiSummary extends Component {
                   ).course_meta.title
                 }
               </h1>
-              {this.previewCourseChange()}
 
               <Select
                 className="col-sm-3 mx-0 px-0 align-middle"
