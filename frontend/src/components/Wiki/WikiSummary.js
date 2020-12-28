@@ -15,7 +15,7 @@ const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 import { Switch, Select, Input, Button } from "antd";
 
 import { getCourse } from "../../actions/course";
-
+import "../../../static/css/confetti.css"
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
@@ -101,8 +101,8 @@ export class WikiSummary extends Component {
             type="primary"
             size="large"
             onClick={(event) => {
-              this.props.dispatch(addCurrCourse());
               this.animateButton(event);
+              this.props.dispatch(addCurrCourse());
             }}
           >
             <FontAwesomeIcon className="mr-2" icon={faPlus} />
@@ -121,7 +121,7 @@ export class WikiSummary extends Component {
         <button
           disabled={!enableAdd}
           type="button"
-          className="bubbly-button mt-2 mb-4"
+          className="confetti-button mt-2 mb-4"
           onClick={(event) => {
             this.props.dispatch(addCurrCourse());
             this.animateButton(event);
@@ -135,10 +135,10 @@ export class WikiSummary extends Component {
         <button
           disabled={!enableRemove}
           type="button"
-          className="bubbly-button mt-2 mb-4 mx-2"
+          className="confetti-button mt-2 mb-4 mx-2"
           onClick={(event) => {
             this.props.dispatch(removeCurrCourse());
-            //   this.animateButton(event);
+              this.animateButton(event);
           }}
           style={{ fontFamily: "Montserrat", fontSize: "1rem" }}
         >
