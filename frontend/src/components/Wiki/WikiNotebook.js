@@ -14,6 +14,21 @@ import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
 
+export class WikiNotebook extends Component {
+
+    constructor(props) {
+        super(props)
+      
+        this.state = {
+          inputVal: '',
+          courseIndex: 0
+        }
+      }
+    
+      static propTypes = {
+        course:PropTypes.array.isRequired
+      }
+
 handleInputChangeTwo({ target }) {
         this.setState({inputVal: target.value}); 
       }
