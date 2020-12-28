@@ -1,4 +1,4 @@
-import {ADD_COURSE_TO_CAL, REMOVE_COURSE_FROM_CAL, UPDATE_COURSE_IN_CAL} from './types'
+import {ADD_COURSE_TO_CAL, REMOVE_COURSE_FROM_CAL, UPDATE_COURSE_IN_CAL, PREVIEW_COURSE_IN_CAL, CLEAR_PREVIEW_COURSE_IN_CAL} from './types'
 import store from '../store'
 
 export const addCurrCourse = ()  =>
@@ -39,3 +39,23 @@ export const removeCurrCourse = ()  =>
         selectedCRN: store.getState().course.selectedCRN,
     };  
 }
+
+export const previewCurrCourse = (previewSwitch) =>
+{
+    if (previewSwitch) {
+        return {
+        type: PREVIEW_COURSE_IN_CAL,
+        selectedCRN: store.getState().course.selectedCRN,
+        selectedCourseArray: store.getState().course.selectedCourseArray,
+        };
+    }
+    else {
+        return {
+            type: CLEAR_PREVIEW_COURSE_IN_CAL,
+            selectedCRN: store.getState().course.selectedCRN,
+            selectedCourseArray: store.getState().course.selectedCourseArray,
+        }; 
+    }
+
+}
+

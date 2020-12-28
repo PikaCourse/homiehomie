@@ -50,3 +50,6 @@ logs
 node_modules
 bower_components
 main.js
+
+# Testing related
+coverage.xml
