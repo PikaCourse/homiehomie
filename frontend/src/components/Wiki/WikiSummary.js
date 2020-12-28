@@ -6,6 +6,7 @@ import {
   removeCurrCourse,
   previewCurrCourse,
 } from "../../actions/calendar";
+import {addCurrCourseToWish} from "../../actions/wishlist"
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
@@ -35,6 +36,7 @@ export class WikiSummary extends Component {
 
     this.state = {
       previewSwitch: false,
+      starButton:false,
     };
 
     this.previewInputChange = this.previewInputChange.bind(this);
@@ -62,6 +64,48 @@ export class WikiSummary extends Component {
   previewCourseChange() {
     if (this.state.previewSwitch) {
       store.dispatch(previewCurrCourse(true));
+    }
+  }
+
+  wishlistCheckDuplicate() {
+    const curr = store.getState().wishlist.wishlistCourseBag.find(
+      ({ crn }) => crn === store.getState().course.selectedCRN);
+    console.log( "curr: " + curr);
+
+    // console.log( "curr.length: " + curr.length);
+    
+      return false;
+    // if (store.getState().wishlist.wishlistCourseBag.length == 0)
+    // {
+    //   console.log('ran empty'); 
+    //   return false; 
+    // }
+    // else {
+    //   console.log('ran 1');
+    // const selectedCourse = store.getState().course.selectedCourseArray.find(
+    //     ({ crn }) => crn === store.getState().course.selectedCRN
+    // );
+    // console.log('ran 2');
+    // let checkDuplicate = store.getState().wishlist.wishlistCourseBag.find( 
+    //     ({crn}) => crn == selectedCourse.crn
+    // ); 
+    // console.log('ran 3'); 
+    // console.log(typeof checkDuplicate === 'undefined'); 
+    // return (typeof checkDuplicate === 'undefined'); 
+
+    // }
+    
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.wishlistCourseBag !== this.props.wishlistCourseBag
+      || prevProps.selectedCRN !== this.props.selectedCRN
+      ) {
+      const curr = this.props.wishlistCourseBag.find(
+      ({ crn }) => crn === store.getState().course.selectedCRN);
+        this.setState({starButton: (curr != null)});
+      console.log(curr);
+    
+
     }
   }
 
@@ -93,6 +137,7 @@ export class WikiSummary extends Component {
         enableAdd = false;
       }
     }
+
     return (
       <div>
         <div>
@@ -114,8 +159,14 @@ export class WikiSummary extends Component {
             Remove
           </Button>
 
-          <Button className="mx-1" type="primary" size="large">
+          <Button className="mx-1" type="primary" size="large" 
+            onClick={(event) => {
+              store.dispatch(addCurrCourseToWish());
+            }}
+            disabled={this.state.starButton}
+          >
             <FontAwesomeIcon icon={faStar} />
+            Add to Wishlist
           </Button>
         </div>
         <button
@@ -296,6 +347,7 @@ export class WikiSummary extends Component {
 const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCRN: state.course.selectedCRN,
+  wishlistCourseBag:state.wishlist.wishlistCourseBag
 });
 
 export default connect(mapStateToProps)(WikiSummary);
