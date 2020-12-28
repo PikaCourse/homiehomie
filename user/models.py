@@ -19,14 +19,24 @@ class Student(models.Model):
     type:       Student's Type: freshman, sophomore, junior, senior, graduate
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    school = models.CharField(max_length=100)
-    major = models.CharField(max_length=100)
+    school = models.CharField(max_length=100, null=True)
+    major = models.CharField(max_length=100, null=True)
     majors = models.JSONField(default=list, blank=True, null=True)
     minors = models.JSONField(default=list, blank=True, null=True)
     graduation = models.DateField(blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
-    sex = models.CharField(max_length=20)
-    type = models.CharField(max_length=10)
+    sex = models.CharField(max_length=20, null=True)
+    type = models.CharField(max_length=10, null=True)
+
+    @classmethod
+    def get_sentinel_user(cls):
+        user = User.objects.get_or_create(username='deleted')[0]
+        return Student.objects.get(user=user)
+
+    @classmethod
+    def get_tester_user(cls):
+        tester = User.objects.get_or_create(username='tester')[0]
+        return Student.objects.get(user=tester)
 
     def __str__(self):
         return self.user.username

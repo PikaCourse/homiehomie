@@ -21,7 +21,7 @@ class QuestionCreationForm(ModelForm):
         # Defer the work to view
         question = super().save(commit=False)
         if debug:
-            question.created_by_id = self.request.user.id if self.request.user.id is not None else 1
+            question.created_by_id = self.request.user.id if self.request.user.id is not None else Student.get_tester_user().id
         else:
             question.created_by_id = self.request.user.id
 
@@ -63,7 +63,7 @@ class NoteCreationForm(ModelForm):
         # last_answered field and save it
         note = super().save(commit=False)
         if debug:
-            note.created_by_id = self.request.user.id if self.request.user.id is not None else 1
+            note.created_by_id = self.request.user.id if self.request.user.id is not None else Student.get_tester_user().id
         else:
             note.created_by_id = self.request.user.id
         question = Question.objects.get(id=note.question_id)
@@ -109,7 +109,7 @@ class PostCreationForm(ModelForm):
         # Defer the work to view
         post = super().save(commit=False)
         if debug:
-            post.poster_id = self.request.user.id if self.request.user.id is not None else 1
+            post.poster_id = self.request.user.id if self.request.user.id is not None else Student.get_tester_user().id
         else:
             post.poster_id = self.request.user.id
         if commit:
@@ -147,7 +147,7 @@ class PostAnswerCreationForm(ModelForm):
         # Defer the work to view
         answer = super().save(commit=False)
         if debug:
-            answer.postee_id = self.request.user.id if self.request.user.id is not None else 1
+            answer.postee_id = self.request.user.id if self.request.user.id is not None else Student.get_tester_user().id
         else:
             answer.postee_id = self.request.user.id
         answer.post_id = self.post.id

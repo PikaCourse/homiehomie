@@ -18,7 +18,7 @@ export const setCourse = (courseBag)  =>
 {
    return {
     type:SET_COURSE,
-    selectedCourse: courseBag.selectedCourse,
+    selectedCRN: courseBag.selectedCRN,
     selectedCourseArray: courseBag.selectedCourseArray,
    }
 }

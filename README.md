@@ -1,6 +1,7 @@
 # Homiehomie
 ![Django CI](https://github.com/MARX1108/homiehomie/workflows/Django%20CI/badge.svg)
-![Deploy_Test](https://github.com/MARX1108/homiehomie/workflows/Deploy_Test/badge.svg)
+[![codecov](https://codecov.io/gh/MARX1108/homiehomie/branch/main/graph/badge.svg?token=2WPZQMGJV0)](https://codecov.io/gh/MARX1108/homiehomie)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMARX1108%2Fhomiehomie.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMARX1108%2Fhomiehomie?ref=badge_shield)
 
 ## TODO
 
@@ -26,6 +27,12 @@
             3. [ ] Permission testing
         3. [ ] Coverage report
         4. [ ] GitHub action
+        5. [ ] Advance testing
+            1. [ ] Do we need separate test db to run unit testing?
+                1. Probably not
+                1. But do need a test db
+                1. Specify test db in `setting.py`?
+                1. Use [test fixture](https://docs.djangoproject.com/en/3.1/topics/testing/tools/#fixture-loading)
     5. [x] API Post and Put
         1. [x] Create/Modify question
         2. [x] Create/Modify note
@@ -87,6 +94,7 @@
     2. [ ] Purdue
     3. [ ] UNC/BU
 10. [ ] Support for dynamic/partially loading notes 
+11. [ ] Add admin api for easily updating course and course meta info like field `registered`
 
 ## how to
 
