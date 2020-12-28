@@ -90,18 +90,7 @@ export class WikiSummary extends Component {
     // }
     
   }
-  componentDidUpdate(prevProps) {
-    if (prevProps.wishlistCourseBag !== this.props.wishlistCourseBag
-      || prevProps.selectedCRN !== this.props.selectedCRN
-      ) {
-      const curr = this.props.wishlistCourseBag.find(
-      ({ crn }) => crn === store.getState().course.selectedCRN);
-        this.setState({starButton: (curr != null)});
-      console.log(curr);
-    
 
-    }
-  }
 
   buttonLoader() {
     const courseArray = store
@@ -162,16 +151,16 @@ export class WikiSummary extends Component {
           Remove
         </Button>
 
-    
-          <Button className="mx-1" type="primary" size="large" 
-            onClick={(event) => {
-              store.dispatch(addCurrCourseToWish());
-            }}
-            disabled={this.state.starButton}
-          >
-            <FontAwesomeIcon icon={faStar} />
-            Add to Wishlist
-          </Button>
+  
+        <Button className="mx-1" type="primary" size="large" 
+          onClick={(event) => {
+            store.dispatch(addCurrCourseToWish());
+          }}
+          disabled={this.state.starButton}
+        >
+          <FontAwesomeIcon icon={faStar} />
+          Add to Wishlist
+        </Button>
 
         <Switch defaultChecked onChange={this.previewInputChange} />
       </div>
@@ -183,12 +172,21 @@ export class WikiSummary extends Component {
   };
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
-    console.log("componentDidUpdate");
+    // console.log("componentDidUpdate");
 
     if (this.state.previewSwitch) {
       console.log("test");
 
       store.dispatch(previewCurrCourse(true));
+    }
+
+    if (prevProps.wishlistCourseBag !== this.props.wishlistCourseBag
+      || prevProps.selectedCRN !== this.props.selectedCRN
+      ) {
+      const curr = this.props.wishlistCourseBag.find(
+      ({ crn }) => crn === store.getState().course.selectedCRN);
+        this.setState({starButton: (curr != null)});
+      console.log(curr);
     }
   }
 
