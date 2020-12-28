@@ -8,12 +8,13 @@ assignees: ''
 ---
 
 **What is this bug related to?**
-check one or more of the following and **add the according labels to the issue**
-- [x] frontend
-- [ ] backend
-- [ ] UI/UX
-- [ ] administration
-- [ ] others (i.e. documentation/bug)
+check one or more of the following
+add one of the following labels to the issue
+frontend
+backend
+UI/UX
+administration
+others (i.e. documentation/bug)
 
 **Describe the bug**
 A clear and concise description of what the bug is.

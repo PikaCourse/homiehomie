@@ -8,12 +8,13 @@ assignees: ''
 ---
 
 **What is this todo related to?**
-check one or more of the following and **add the according labels to the issue**
-- [x] frontend
-- [ ] backend
-- [ ] UI/UX
-- [ ] administration
-- [ ] others (i.e. documentation/bug)
+check one or more of the following
+add one of the following labels to the issue
+frontend
+backend
+UI/UX
+administration
+others (i.e. documentation/bug)
 
 **What is the todo?**
 A clear and concise description of need to be done.
@@ -22,10 +23,10 @@ A clear and concise description of need to be done.
 
 check one or more of the following
 Should this be done... 
-- [ ] as soon as possible
-- [ ] anytime within the current development cycle
-- [ ] anytime within the next development cycle
-- [ ] sometime
+- as soon as possible
+- anytime within the current development cycle
+- anytime within the next development cycle
+- sometime
 note: if it is critically urgent, please add "!important" label
 
 

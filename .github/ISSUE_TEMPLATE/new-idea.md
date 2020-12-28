@@ -8,12 +8,13 @@ assignees: ''
 ---
 
 **What is this idea related to?**
-check one or more of the following and **add the according labels to the issue**
-- [x] frontend
-- [ ] backend
-- [ ] UI/UX
-- [ ] administration
-- [ ] others (i.e. documentation/bug)
+check one or more of the following
+add one of the following labels to the issue
+frontend
+backend
+UI/UX
+administration
+others (i.e. documentation/bug)
 
 **Is your feature request related to a problem? Please describe.**
 A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
