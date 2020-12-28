@@ -24,13 +24,9 @@ class App extends Component {
           <Header />
           <div className="container-fluid">
             <div className="row">
-              <div id="app" className="col-sm-1">
-              </div>
-              <div id="app" className="col-sm-10">
-                <Wishlist />
-              </div>
-              <div id="app" className="col-sm-1">
-              </div>
+              
+              
+                <Wishlist />             
             </div>
             <div className="row">
               <div id="app" className="col-md-6 m-3">
