@@ -1,21 +1,26 @@
-
 import React, { Component, Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { addCurrCourse, removeCurrCourse, previewCurrCourse} from "../../actions/calendar";
+import {
+  addCurrCourse,
+  removeCurrCourse,
+  previewCurrCourse,
+} from "../../actions/calendar";
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faMinus, faPlus, faStar } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-import { Switch } from 'antd';
-import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { Switch, Select, Input, Button } from "antd";
 
-import 'antd/dist/antd.css';
+import { getCourse } from "../../actions/course";
 
+import "antd/lib/style/themes/default.less";
+import "antd/dist/antd.less";
+import "../../main.less";
+
+const { Search } = Input;
 function weekdayToClass(index, timeArray) {
   for (let i = 0; i < timeArray.length; i++) {
     if (timeArray[i].weekday == index) return "mb-1 badge bg-secondary";
@@ -29,8 +34,8 @@ export class WikiSummary extends Component {
     super(props);
 
     this.state = {
-      previewSwitch: false
-    }
+      previewSwitch: false,
+    };
 
     this.previewInputChange = this.previewInputChange.bind(this);
     this.previewCourseChange = this.previewCourseChange.bind(this);
@@ -45,11 +50,12 @@ export class WikiSummary extends Component {
     setTimeout(function () {
       e.target.classList.remove("animate");
     }, 700);
+    console.log("animate triggered");
   }
   previewInputChange(checked) {
     store.dispatch(previewCurrCourse(checked));
     this.setState({
-      previewSwitch: value
+      previewSwitch: value,
     });
   }
 
@@ -57,7 +63,6 @@ export class WikiSummary extends Component {
     if (this.state.previewSwitch) {
       store.dispatch(previewCurrCourse(true));
     }
-    
   }
 
   buttonLoader() {
@@ -90,6 +95,29 @@ export class WikiSummary extends Component {
     }
     return (
       <div>
+        <div>
+          <Button
+            className="mr-1 bubbly-button"
+            type="primary"
+            size="large"
+            onClick={(event) => {
+              this.props.dispatch(addCurrCourse());
+              this.animateButton(event);
+            }}
+          >
+            <FontAwesomeIcon className="mr-2" icon={faPlus} />
+            Add
+          </Button>
+
+          <Button className="mx-1" type="primary" size="large" disabled>
+            <FontAwesomeIcon className="mr-2" icon={faMinus} />
+            Remove
+          </Button>
+
+          <Button className="mx-1" type="primary" size="large">
+            <FontAwesomeIcon icon={faStar} />
+          </Button>
+        </div>
         <button
           disabled={!enableAdd}
           type="button"
@@ -133,9 +161,18 @@ export class WikiSummary extends Component {
           ({ crn }) => crn === this.props.selectedCRN
         ) != "undefined" ? (
           <div className="p-2">
+            <div className="mb-4">
+              <Search
+                placeholder="Search subject, CRN or course name"
+                allowClear
+                enterButton="Search"
+                size="large"
+                onSearch={(value) => this.props.dispatch(getCourse(value))}
+              />
+            </div>
             <div>
               <h1
-                className="mr-2"
+                className="mr-2 align-middle"
                 style={{ color: "#419EF4", display: "inline" }}
               >
                 {
@@ -145,30 +182,25 @@ export class WikiSummary extends Component {
                 }
               </h1>
               {this.previewCourseChange()}
-              <DropdownButton
-                className="col-sm-3 mx-0 px-0 mb-1"
-                alignRight
-                title={"CRN: " + this.props.selectedCRN}
-                id="dropdown-menu-align-right"
-                style={{ fontSize: "1rem", display: "inline" }}
+
+              <Select
+                className="col-sm-3 mx-0 px-0 align-middle"
+                defaultValue={this.props.selectedCRN}
+                style={{ width: 120 }}
+                size="large"
+                onChange={(value) => {
+                  this.props.dispatch(
+                    setCourse({
+                      selectedCRN: value,
+                      selectedCourseArray: this.props.selectedCourseArray,
+                    })
+                  );
+                }}
               >
                 {this.props.selectedCourseArray.map((course) => (
-                  <Dropdown.Item
-                    value={course.crn}
-                    onSelect={() => {
-                      this.props.dispatch(
-                        setCourse({
-                          selectedCRN: course.crn,
-                          selectedCourseArray: this.props.selectedCourseArray,
-                        })
-                      ); 
-                    }
-                    }
-                  >
-                    {course.crn}
-                  </Dropdown.Item>
+                  <Option value={course.crn}>{course.crn}</Option>
                 ))}
-              </DropdownButton>
+              </Select>
             </div>
             <h1>
               {
