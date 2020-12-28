@@ -3,7 +3,6 @@ const initialState = {
     calendarCourseBag: [],
 };
 
-
 function getMonday(d) {
 	d = new Date(d);
 	var day = d.getDay(),
