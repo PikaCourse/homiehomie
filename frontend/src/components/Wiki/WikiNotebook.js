@@ -1,28 +1,20 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import {connect} from 'react-redux'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons'
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import store from '../../store'
 
-import TextareaAutosize from 'react-textarea-autosize';
 
-export class WikiNotebook extends Component {
+import TextareaAutosize from "react-textarea-autosize";
 
-    constructor(props) {
-        super(props)
-      
-        this.state = {
-          inputVal: '',
-          courseIndex: 0
-        }
-      }
-    
-      static propTypes = {
-        course:PropTypes.array.isRequired
-      }
+import { Button } from "antd";
 
-    handleInputChangeTwo({ target }) {
+import "antd/lib/style/themes/default.less";
+import "antd/dist/antd.less";
+import "../../main.less";
+
+handleInputChangeTwo({ target }) {
         this.setState({inputVal: target.value}); 
       }
     
@@ -89,14 +81,12 @@ export class WikiNotebook extends Component {
 }
 
 const noteBookStyle = {
-    background: '#FFFFFF',
-    border: '5px solid rgba(65, 158, 244, 0.27)',
-    boxSizing: 'border-box',
-    borderRadius: '2rem'
-}
-
-const mapStateToProps = state =>({
-    course: state.course.course
-  });
-
-  export default connect(mapStateToProps)(WikiNotebook);
+  background: "#FFFFFF",
+  border: "5px solid rgba(65, 158, 244, 0.27)",
+  boxSizing: "border-box",
+  borderRadius: "2rem",
+};
+const mapStateToProps = (state) => ({
+  course: state.course.course,
+});
+export default connect(mapStateToProps)(WikiNotebook);
