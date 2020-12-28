@@ -13,7 +13,7 @@ simple test of the functionalities of `scheduler` app.
 
 ### `Course` fixture
 
-1. 23 entries from VT and Purdue
+1. 22 entries from VT and Purdue
 
 ### `Question` fixture
 

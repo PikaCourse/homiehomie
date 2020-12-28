@@ -560,7 +560,7 @@
         "section": null,
         "type": "other",
         "professor": "SC Blank",
-        "year": "2017",
+        "year": "2018",
         "semester": "spring",
         "location": "00X",
         "registered": -1,
@@ -589,8 +589,8 @@
         "section": null,
         "type": "lecture",
         "professor": "O Isengildina Massa",
-        "year": "2017",
-        "semester": "spring",
+        "year": "2018",
+        "semester": "fall",
         "location": "HUTCH 204",
         "registered": -1,
         "capacity": 40
@@ -598,7 +598,7 @@
 },
 {
     "model": "scheduler.course",
-    "pk": 23,
+    "pk": 22,
     "fields": {
         "course_meta": 20,
         "created_at": "2020-12-24T05:49:03Z",
@@ -607,8 +607,8 @@
         "section": null,
         "type": "lecture",
         "professor": "SC Blank",
-        "year": "2017",
-        "semester": "spring",
+        "year": "2018",
+        "semester": "fall",
         "location": "00X",
         "registered": -1,
         "capacity": 20

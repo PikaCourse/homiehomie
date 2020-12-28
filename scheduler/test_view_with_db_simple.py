@@ -12,11 +12,186 @@ from urllib.parse import urlencode
 import random
 
 COURSE_META_NUM_ENTRIES = 20
-COURSE_NUM_ENTRIES = 25
+COURSE_NUM_ENTRIES = 22
 QUESTION_NUM_ENTRIES = 6
 NOTE_NUM_ENTRIES = 8
 POST_NUM_ENTRIES = 4
 POST_ANSWER_NUM_ENTRIES = 8
+
+
+"""
+Some helper functions to help testing
+"""
+
+
+def check_fields(test_case, obj, fields):
+    for field in fields:
+        test_case.assertTrue(field in obj)
+
+
+def check_query_exact(test_case, url, test_dict):
+    """
+    Check for single query exact match
+    :param test_case:
+    :param url:
+    :param test_dict:
+    :return:
+    """
+    for filter_param in test_dict:
+        filter_val = test_dict[filter_param]
+        response = test_case.client.get(url, {filter_param: filter_val})
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertNotEqual(response.data, [], msg=f"Query key: {filter_param}\tQuery value: {filter_val}")
+        for obj in response.data:
+            try:
+                test_case.assertEqual(obj[filter_param], filter_val)
+            except KeyError:
+                test_case.assertEqual(obj["course_meta"][filter_param], filter_val)
+
+
+def check_query_iexact(test_case, url, test_dict):
+    """
+    Check for single query case insensitive match
+    :param test_case:
+    :param url:
+    :param test_dict:
+    :return:
+    """
+    # Test Upper
+    for filter_param in test_dict:
+        filter_val = test_dict[filter_param].upper()
+        response = test_case.client.get(url, {filter_param: filter_val})
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertNotEqual(response.data, [],
+                                 msg=f"Upper exact: Query key: {filter_param}\tQuery value: {filter_val}")
+        for obj in response.data:
+            try:
+                test_case.assertEqual(str(obj[filter_param]).lower(), filter_val.lower())
+            except KeyError:
+                test_case.assertEqual(str(obj["course_meta"][filter_param]).lower(), filter_val.lower())
+
+    # Test Lower
+    for filter_param in test_dict:
+        filter_val = test_dict[filter_param].lower()
+        response = test_case.client.get(url, {filter_param: filter_val})
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertNotEqual(response.data, [],
+                                 msg=f"Lower exact: Query key: {filter_param}\tQuery value: {filter_val}")
+        for obj in response.data:
+            try:
+                test_case.assertEqual(str(obj[filter_param]).lower(), filter_val.lower())
+            except KeyError:
+                test_case.assertEqual(str(obj["course_meta"][filter_param]).lower(), filter_val.lower())
+
+
+def check_query_contains(test_case, url, test_dict):
+    for filter_param in test_dict:
+        filter_val = test_dict[filter_param][1:4]
+        response = test_case.client.get(url, {filter_param: filter_val})
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertNotEqual(response.data, [], msg=f"Query key: {filter_param}\tQuery value: {filter_val}")
+        for obj in response.data:
+            try:
+                test_case.assertIn(filter_val, obj[filter_param])
+            except KeyError:
+                test_case.assertIn(filter_val, obj["course_meta"][filter_param])
+
+
+def check_query_icontains(test_case, url, test_dict):
+    for filter_param in test_dict:
+        filter_val = test_dict[filter_param][1:4].lower()
+        response = test_case.client.get(url, {filter_param: filter_val})
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertNotEqual(response.data, [], msg=f"Query key: {filter_param}\tQuery value: {filter_val}")
+        for obj in response.data:
+            try:
+                test_case.assertIn(filter_val.upper(), str(obj[filter_param]).upper())
+            except KeyError:
+                test_case.assertIn(filter_val.upper(), str(obj["course_meta"][filter_param]).upper())
+
+
+def check_query_startswith(test_case, url, test_dict):
+    for filter_param in test_dict:
+        filter_val = test_dict[filter_param][:4]
+        response = test_case.client.get(url, {filter_param: filter_val})
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertNotEqual(response.data, [])
+        for obj in response.data:
+            try:
+                test_case.assertIn(filter_val, str(obj[filter_param]))
+            except KeyError:
+                test_case.assertIn(filter_val, str(obj["course_meta"][filter_param]))
+
+        filter_val = test_dict[filter_param][1:4]
+        response = test_case.client.get(url, {filter_param: filter_val})
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertListEqual([], response.data, msg=f"Query key: {filter_param}\tQuery value: {filter_val}")
+
+
+def check_query_istartswith(test_case, url, test_dict):
+    for filter_param in test_dict:
+        filter_val = test_dict[filter_param][:4].lower()
+        response = test_case.client.get(url, {filter_param: filter_val})
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertNotEqual(response.data, [])
+        for obj in response.data:
+            try:
+                test_case.assertIn(filter_val.upper(), str(obj[filter_param]).upper())
+            except KeyError:
+                test_case.assertIn(filter_val.upper(), str(obj["course_meta"][filter_param]).upper())
+
+        filter_val = test_dict[filter_param][1:4].lower()
+        response = test_case.client.get(url, {filter_param: filter_val})
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertListEqual([], response.data, msg=f"Query key: {filter_param}\tQuery value: {filter_val}")
+
+
+def check_multi_query(test_case, url, test_dict):
+    # Perform 100 random query and test if the result is expected
+    count = 0
+    for _ in range(100):
+        # Randomly select keys from the test_dict to perform query
+        num_pair = random.randint(1, len(test_dict.keys()))
+        query_keys = random.sample(test_dict.keys(), num_pair)
+        query_params = {query_key: test_dict[query_key] for query_key in query_keys}
+        query_params["limit"] = random.randint(1, 4)
+        response = test_case.client.get(url, query_params)
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        test_case.assertLessEqual(len(response.data), query_params["limit"])
+        query_params.pop("limit")
+        if response.data is not []:
+            for obj in response.data:
+                for query_key in query_params:
+                    try:
+                        test_case.assertIn(test_dict[query_key].lower(), str(obj[query_key]).lower())
+                    except KeyError:
+                        # If key not in the return object
+                        test_case.assertIn(test_dict[query_key].lower(), str(obj["course_meta"][query_key]).lower())
+        else:
+            count += 1
+
+    # Prevent returning all empty list
+    # Still might have a tiny chance that all queries pick conflict each other
+    # For instance, for a five keys dict with 1 key conflicts with other 2 keys
+    # Each single time, the probability of conflict is 12/31 since only major might conflict
+    # with college and name
+    # After 100 passes, the probability that all of the passes are conflict is 6.052784633E-42
+    # Which should be nearly impossible, assuming the pseudorandom algor is fairly uniform
+    test_case.assertNotEqual(100, count)
+
+"""
+Begin TestCase Cases
+"""
 
 
 class CourseMetaViewSetTests(APITestCase):
@@ -47,23 +222,14 @@ class CourseMetaViewSetTests(APITestCase):
         :return:
         """
         url = reverse("api:coursesmeta-list")
+        fields = ["id", "title", "name", "major",
+                  "college", "credit_hours", "school",
+                  "description", "tags"]
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         for obj in response.data:
-            self.assertTrue("id" in obj)
-            self.assertTrue("title" in obj)
-            self.assertTrue("name" in obj)
-            self.assertTrue("major" in obj)
-            self.assertTrue("college" in obj)
-            self.assertTrue("credit_hours" in obj)
-            self.assertTrue("school" in obj)
-            self.assertTrue("description" in obj)
-            self.assertTrue("tags" in obj)
+            check_fields(self, obj, fields)
 
-    # TODO Test proper single filtering
-    # TODO Success filter
-    # TODO Filter ignore cases
-    # TODO Filter non exist
     def test_course_meta_list_single_filter_not_exist(self):
         """
         Prepopulated database with data and test if it can be search by school name
@@ -94,18 +260,12 @@ class CourseMetaViewSetTests(APITestCase):
             "school": "Virgina Tech",
             "major": "ECE",
             "college": "College of Engineering",
-            "name": "AAEC-4804",
-            "title": "Introduction to Artificial Intelligence"
+            "title": "AAEC-4804",
+            "name": "Introduction to Artificial Intelligence"
         }
 
         # Test full name search
-        for filter_param in test_dict:
-            filter_val = test_dict[filter_param]
-            response = self.client.get(url, {filter_param: filter_val})
-
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            for obj in response.data:
-                self.assertEqual(obj[filter_param], filter_val)
+        check_query_exact(self, url, test_dict)
 
     def test_course_meta_list_single_filter_ignore_case(self):
         """
@@ -120,27 +280,11 @@ class CourseMetaViewSetTests(APITestCase):
             "school": "Virgina Tech",
             "major": "ECE",
             "college": "College of Engineering",
-            "name": "AAEC-4804",
-            "title": "Introduction to Artificial Intelligence"
+            "title": "AAEC-4804",
+            "name": "Introduction to Artificial Intelligence"
         }
 
-        # Test Upper
-        for filter_param in test_dict:
-            filter_val = test_dict[filter_param].upper()
-            response = self.client.get(url, {filter_param: filter_val})
-
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            for obj in response.data:
-                self.assertEqual(str(obj[filter_param]).lower(), filter_val.lower())
-
-        # Test Lower
-        for filter_param in test_dict:
-            filter_val = test_dict[filter_param].lower()
-            response = self.client.get(url, {filter_param: filter_val})
-
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            for obj in response.data:
-                self.assertEqual(str(obj[filter_param]).upper(), filter_val.upper())
+        check_query_iexact(self, url, test_dict)
 
     def test_course_meta_list_single_filter_contain(self):
         """
@@ -153,17 +297,28 @@ class CourseMetaViewSetTests(APITestCase):
         # Query key-value pairs used for testing
         test_dict = {
             "college": "College of Engineering",
-            "name": "AAEC-4804"
+            "name": "Introduction to Artificial Intelligence"
         }
 
-        # Test Upper
-        for filter_param in test_dict:
-            filter_val = test_dict[filter_param][1:4]
-            response = self.client.get(url, {filter_param: filter_val})
+        # Test
+        check_query_contains(self, url, test_dict)
 
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            for obj in response.data:
-                self.assertIn(filter_val, str(obj[filter_param]))
+    def test_course_meta_list_single_filter_contain_ignore_case(self):
+        """
+        Prepopulated database with data and test if it can be search by school name
+        Test if some query key support contains search as specified in API doc
+        :return:
+        """
+        url = reverse("api:coursesmeta-list")
+
+        # Query key-value pairs used for testing
+        test_dict = {
+            "college": "College of Engineering",
+            "name": "Introduction to Artificial Intelligence"
+        }
+
+        # Test
+        check_query_icontains(self, url, test_dict)
 
     def test_course_meta_list_single_filter_startswith(self):
         """
@@ -175,23 +330,27 @@ class CourseMetaViewSetTests(APITestCase):
 
         # Query key-value pairs used for testing
         test_dict = {
-            "title": "Introduction to Artificial Intelligence"
+            "title": "AAEC-4804"
         }
 
         # Test Upper
-        for filter_param in test_dict:
-            filter_val = test_dict[filter_param][:4]
-            response = self.client.get(url, {filter_param: filter_val})
+        check_query_startswith(self, url, test_dict)
 
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            for obj in response.data:
-                self.assertIn(filter_val, str(obj[filter_param]))
+    def test_course_meta_list_single_filter_startswith_ignore_case(self):
+        """
+        Prepopulated database with data and test if it can be search by school name
+        Test if some query key support startswith search as specified in API doc
+        :return:
+        """
+        url = reverse("api:coursesmeta-list")
 
-            filter_val = test_dict[filter_param][2:4]
-            response = self.client.get(url, {filter_param: filter_val})
+        # Query key-value pairs used for testing
+        test_dict = {
+            "title": "AAEC-4804"
+        }
 
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertListEqual([], response.data)
+        # Test Upper
+        check_query_istartswith(self, url, test_dict)
 
     def test_course_meta_list_single_filter_limit(self):
         """
@@ -266,37 +425,11 @@ class CourseMetaViewSetTests(APITestCase):
             "school": "Purdue University",
             "major": "CS",
             "college": "engin",
-            "name": "ECE 3",
-            "title": "Introduction "
+            "title": "ECE 3",
+            "name": "Introduction "
         }
 
-        # Perform 100 random query and test if the result is expected
-        count = 0
-        for _ in range(100):
-            # Randomly select at most 5 keys from the test_dict to perform query
-            num_pair = random.randint(1, 5)
-            query_keys = random.sample(test_dict.keys(), num_pair)
-            query_params = {query_key: test_dict[query_key] for query_key in query_keys}
-            query_params["limit"] = random.randint(1, 4)
-            response = self.client.get(url, query_params)
-
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            self.assertLessEqual(len(response.data), query_params["limit"])
-            query_params.pop("limit")
-            if response.data is not []:
-                for obj in response.data:
-                    for query_key in query_params:
-                        self.assertIn(test_dict[query_key].lower(), str(obj[query_key]).lower())
-            else:
-                count += 1
-
-        # Prevent returning all empty list
-        # Still might have a tiny chance that all queries pick conflict each other
-        # Each single time, the probability of conflict is 12/31 since only major might conflict
-        # with college and name
-        # After 100 passes, the probability that all of the passes are conflict is 6.052784633E-42
-        # Which should be nearly impossible, assuming the pseudorandom algor is fairly uniform
-        self.assertNotEqual(100, count)
+        check_multi_query(self, url, test_dict)
 
     # Should ignore non existing filter
     def test_course_meta_list_non_existing_filter(self):
@@ -317,18 +450,14 @@ class CourseMetaViewSetTests(APITestCase):
         """
         path_params = {"pk": 1}
         url = reverse("api:coursesmeta-detail", kwargs=path_params)
+        fields = ["id", "title", "name", "major",
+                  "college", "credit_hours", "school",
+                  "description", "tags"]
+
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         obj = response.data
-        self.assertTrue("id" in obj)
-        self.assertTrue("title" in obj)
-        self.assertTrue("name" in obj)
-        self.assertTrue("major" in obj)
-        self.assertTrue("college" in obj)
-        self.assertTrue("credit_hours" in obj)
-        self.assertTrue("school" in obj)
-        self.assertTrue("description" in obj)
-        self.assertTrue("tags" in obj)
+        check_fields(self, obj, fields)
 
     def test_course_meta_retrieve_not_found(self):
         """
@@ -416,22 +545,123 @@ class CourseViewSetTests(APITestCase):
     Begin valid view testing
     Support list and retrieve (GET)
     """
-
-    # ListView testing
-
-    # TODO Test proper single filtering
-    def test_get_course_list_filter_by_school(self):
+    def test_course_list_length(self):
         """
-        Prepopulated database with data and test if it can be search by school name
+        Since there are 23 entries in the fixtures, expected 23 entries
         :return:
         """
+        url = reverse("api:courses-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), COURSE_NUM_ENTRIES)
 
-    # TODO Test proper multiple filter constraint
+    # ListView testing
+    def test_course_list_format(self):
+        """
+        Check whether the returned object has the same format as described in API doc
+        :return:
+        """
+        url = reverse("api:courses-list")
+        fields = ["id", "crn", "time", "capacity", "registered",
+                  "type", "professor", "year", "semester",
+                  "location", "course_meta"]
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for obj in response.data:
+            check_fields(self, obj, fields)
 
-    # TODO Test improper: nonexisting filter search
+    def test_course_list_single_filter_not_exist(self):
+        """
+        Prepopulated database with data
+        Test if return empty list for non existing filter value
+        :return:
+        """
+        url = reverse("api:courses-list")
 
-    # TODO Test improper: filter fields constraint
+        # Test VT
+        test_array = ["school", "major", "title", "semester", "professor"]
+        for filter_param in test_array:
+            filter_val = "Test" + filter_param.capitalize()
+            response = self.client.get(url, {filter_param: filter_val})
 
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertListEqual(response.data, [])
+
+    def test_course_list_single_filter(self):
+        """
+        Prepopulated database with data
+        Test if return proper list for existing filter value
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        # Query key-value pairs used for testing
+        test_dict = {
+            "school": "Virgina Tech",
+            "major": "ECE",
+            "title": "ECE 27000",
+            "semester": "fall",
+            "professor": "SC Blank"
+        }
+
+        # Test full name search
+        check_query_exact(self, url, test_dict)
+
+    def test_course_list_single_filter_ignore_case(self):
+        """
+        Prepopulated database with data
+        Test if query is case insensitive
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        # Query key-value pairs used for testing
+        test_dict = {
+            "school": "Virgina Tech",
+            "major": "ECE",
+            "title": "ECE 27000",
+            "semester": "fall",
+            "professor": "SC Blank"
+        }
+
+        # Test Upper
+        check_query_iexact(self, url, test_dict)
+
+    def test_course_list_single_filter_startswith(self):
+        """
+        Prepopulated database with data and test if it can be search by school name
+        Test if some query key support startswith search as specified in API doc
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        # Query key-value pairs used for testing
+        test_dict = {
+            "school": "Virgina Tech",
+            "major": "ECE",
+            "title": "ECE 27000"
+        }
+
+        check_query_startswith(self, url, test_dict)
+
+    def test_course_list_single_filter_startswith_ignore_case(self):
+        """
+        Prepopulated database with data and test if it can be search by school name
+        Test if some query key support startswith search as specified in API doc
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        # Query key-value pairs used for testing
+        test_dict = {
+            "school": "Virgina Tech",
+            "major": "ECE",
+            "title": "ECE 27000"
+        }
+
+        check_query_istartswith(self, url, test_dict)
+
+    # Limit key constraint checker
     def test_course_list_single_filter_limit(self):
         """
         Prepopulated database with data
@@ -492,7 +722,135 @@ class CourseViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
 
+    # Year key constraint checker
+    def test_course_list_single_filter_year(self):
+        """
+        Test whether the filter year is working
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        test_year = 2018
+        response = self.client.get(url, {"year": test_year})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(response.data, [])
+        for obj in response.data:
+            self.assertEqual(int(obj["year"]), test_year)
+
+    def test_course_list_single_filter_year_not_exist(self):
+        """
+        Test whether the response is proper when no course in system
+        match the year requirement
+        Expecting 200 and empty queryset
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        test_year = 1970
+        response = self.client.get(url, {"year": test_year})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, [])
+
+    def test_course_list_single_filter_year_invalid_lt(self):
+        """
+        Test whether the response is proper when the given year is less than limit (1970)
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        test_year = 1960
+        response = self.client.get(url, {"year": test_year})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+    def test_course_list_single_filter_year_invalid_gt(self):
+        """
+        Test whether the response is proper when the given year is greater than limit (2100)
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        test_year = 2110
+        response = self.client.get(url, {"year": test_year})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+    def test_course_list_single_filter_year_invalid_not_integer(self):
+        """
+        Test whether the response is proper when the given year is not an integer
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        test_year = 3.1415926
+        response = self.client.get(url, {"year": test_year})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+        test_year = "I am invalid"
+        response = self.client.get(url, {"year": test_year})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+    def test_course_list_multi_filter(self):
+        url = reverse("api:courses-list")
+
+        # Query key-value pairs used for testing
+        test_dict = {
+            "school": "Virgina Tech",
+            "major": "CS",
+            "title": "ECE 2",
+            "semester": "fall",
+            "professor": "SC Blank"
+        }
+
+        check_multi_query(self, url, test_dict)
+
+    # Should ignore non existing filter
+    def test_course_list_non_existing_filter(self):
+        """
+        Since there are 22 entries in the fixtures, expected 22 entries
+        :return:
+        """
+        url = reverse("api:courses-list")
+        response = self.client.get(url, {"nonexisted": "Purdue"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), COURSE_NUM_ENTRIES)
+
     # DetailView/RetrieveView testing
+    def test_course_retrieve(self):
+        """
+        Test accessing single course object
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:courses-detail", kwargs=path_params)
+        fields = ["id", "crn", "time", "capacity", "registered",
+                  "type", "professor", "year", "semester",
+                  "location", "course_meta"]
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        obj = response.data
+        check_fields(self, obj, fields)
+
+    def test_course_retrieve_not_found(self):
+        """
+        Test accessing single course object with invalid id
+        expecting a 404 not found
+        :return:
+        """
+        path_params = {"pk": 100}
+        url = reverse("api:courses-detail", kwargs=path_params)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
+
+        path_params = {"pk": -1}
+        url = reverse("api:courses-detail", kwargs=path_params)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     """
     Begin invalid view testing/invalid http method
@@ -500,12 +858,55 @@ class CourseViewSetTests(APITestCase):
     gets updated from db directly
     """
     # CreateView testing
+    def test_course_create(self):
+        """
+        Create/POST not supported, should expect 405 method not allowed
+        :return:
+        """
+        url = reverse("api:courses-list")
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.data,
+                         get_packet_details(MethodNotAllowed('POST')))
 
     # UpdateView testing
+    def test_course_update(self):
+        """
+        Update/PUT not supported, should expect 405 method not allowed
+        :return:
+        """
+        params = {"pk": 1}
+        url = reverse("api:courses-detail", kwargs=params)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.data,
+                         get_packet_details(MethodNotAllowed('PUT')))
 
     # PartialUpdateView testing
+    def test_course_partial_update(self):
+        """
+        Update/PUT not supported, should expect 405 method not allowed
+        :return:
+        """
+        params = {"pk": 1}
+        url = reverse("api:courses-detail", kwargs=params)
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.data,
+                         get_packet_details(MethodNotAllowed('PATCH')))
 
     # DestroyView testing
+    def test_course_destroy(self):
+        """
+        Update/PUT not supported, should expect 405 method not allowed
+        :return:
+        """
+        params = {"pk": 1}
+        url = reverse("api:courses-detail", kwargs=params)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.data,
+                         get_packet_details(MethodNotAllowed('DELETE')))
 
 
 class QuestionViewSetTests(APITestCase):
