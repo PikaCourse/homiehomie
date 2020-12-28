@@ -10,6 +10,7 @@ export const getNotes = (questionArray) => dispatch =>
                 dispatch({
                     type: GET_NOTES,
                     payload_queid: questionArray[i].id,
+                    //payload_quecontent: questionArray[i].title,
                     payload_notes: res.data
                 });
             }).catch(err => console.log(err));

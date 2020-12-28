@@ -9,8 +9,7 @@ export default function(state = initialState, action) {
 
     switch (action.type) {
         case GET_QUE:
-            state.question[i]
-
+            console.log("from question.js: "+action.payload)
             return {
                 ...state,
                 question: action.payload

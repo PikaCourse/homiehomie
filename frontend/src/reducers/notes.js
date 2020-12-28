@@ -2,7 +2,7 @@ import {GET_NOTES} from '../actions/types.js'
 
 const initialState = {
     //questionIDarray:[que300, que301]
-    questionIDarray: ["Which professor?","which section?"],
+    questionIDarray: [3,4],
     //notes: [[que300note1, que300note2, que300note3][que301note1,que301note2]]
     notes: [["1anything", "1anything2"],["2anything1","2anything2"]]
 }

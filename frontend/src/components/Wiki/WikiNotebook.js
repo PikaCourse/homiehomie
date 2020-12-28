@@ -4,6 +4,9 @@ import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import store from '../../store'
+import axios from 'axios'
+import {getQuestion} from "../../actions/question.js"
+import {getNotes} from "../../actions/notes.js"
 
 
 import TextareaAutosize from "react-textarea-autosize";
@@ -22,7 +25,7 @@ export class WikiNotebook extends Component {
         super(props)
       
         this.state = {
-          inputVal: '',
+          value:'',
           courseIndex: 0
         }
       }
@@ -30,13 +33,18 @@ export class WikiNotebook extends Component {
       static propTypes = {
         course:PropTypes.array.isRequired
       }
-
-handleInputChangeTwo({ target }) {
-        this.setState({inputVal: target.value}); 
-      }
     
-      handleSaveClicked() {
-        console.log(this.state.inputVal); 
+      handleSaveClicked(i,q) {
+        const form = new FormData();
+        form.append('course', store.getState().course.selectedCourseArray.find(
+          ({ crn }) => crn === store.getState().course.selectedCRN
+        ).course_meta.id)
+        form.append('question', q) //store.getState().notes.questionIDarray[i])
+        form.append('title', "whatever")
+        form.append('content', this.state.value)
+        form.append('tags',[])
+        //console.log(this.state.value); 
+        axios.post('api/notes', form)
         //this.props.dispatch(getNotes(this.state.inputVal));
       }
       animateButton(e) {
@@ -53,15 +61,24 @@ handleInputChangeTwo({ target }) {
 
     onChange = ({ target: { value } }) => {
       this.setState({ value });
+      console.log({value});
     }
-
+    componentDidMount(){
+      console.log(store.getState().course.selectedCourseArray);
+      store.dispatch(getQuestion(store.getState().course.selectedCourseArray.find(
+        ({ crn }) => crn === store.getState().course.selectedCRN
+      ).course_meta.id));
+      store.dispatch(getNotes(store.getState().question.question));
+    }
     render() {
+      const{value} = this.state;
         return (
             <div className ="p-3" style = {noteBookStyle}>
                     {/* Question */}
-                    {store.getState().notes.questionIDarray.map((question, index) => (
+                    {store.getState().notes.questionIDarray.map((queID, index) => (
                       <div>
-                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>{question}</h5>
+                        {console.log(store.getState().question.question[index])}
+                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>hi</h5>
                     <form className="form-inline my-2 my-lg-0"/>
                     <div class="mb-3">
                     {store.getState().notes.notes[index].map((content) => (
@@ -77,6 +94,7 @@ handleInputChangeTwo({ target }) {
                       <div className="row">
                         <div className = "col-sm-11 pr-0">
                         <TextArea
+                          value={value}
                           onChange={this.onChange}
                           placeholder="Controlled autosize"
                           autoSize={{ minRows: 3, maxRows: 5 }}
@@ -84,7 +102,7 @@ handleInputChangeTwo({ target }) {
                         />
                         </div>
                         <div className = "col-sm-1 pl-0">
-                        <Button size="medium" type="primary" onClick={(event)=>{this.handleSaveClicked(); this.animateButton(event)}}>save</Button>
+                        <Button size="medium" type="primary" onClick={(event)=>{this.handleSaveClicked(index,queID); this.animateButton(event)}}>save</Button>
                         </div>
                       </div>
                     </div>
