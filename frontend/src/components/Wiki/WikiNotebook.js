@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {connect} from 'react-redux'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons'
+import store from '../../store'
 
 import TextareaAutosize from 'react-textarea-autosize';
 
@@ -30,7 +31,6 @@ export class WikiNotebook extends Component {
         //this.props.dispatch(getNotes(this.state.inputVal));
       }
       animateButton(e) {
-
         e.preventDefault;
         //reset animation
         e.target.classList.remove('animate');
@@ -40,30 +40,27 @@ export class WikiNotebook extends Component {
           e.target.classList.remove('animate');
         },700);
         console.log("animateButton");
-    };
+    }
 
     render() {
         return (
             <div className ="p-3" style = {noteBookStyle}>
-                <div>
-                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>Which Professor is better?</h5>
+                    {/* Question */}
+                    {store.getState().notes.questionIDarray.map((question, index) => (
+                      <div>
+                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>{question}</h5>
                     <form className="form-inline my-2 my-lg-0"/>
                     <div class="mb-3">
-                      <p 
-                        className="pl-2" 
+                    {store.getState().notes.notes[index].map((content) => (
+                      <p
+                        className="pl-2"
                         style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) 
+                          {content}
                           <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
                           <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
                       </p>
-                      <p 
-                        className="pl-2" 
-                        style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
-                        Lorem ipsum dolor sit amet. (Spring 2019) 
-                        <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
-                        <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
-                      </p>
-
+                    ))}
+                      {/* writing part */}
                       <div className="row">
                         <div className = "col-sm-11 pr-0">
                             <TextareaAutosize
@@ -83,103 +80,21 @@ export class WikiNotebook extends Component {
                           </button>
                         </div>
                       </div>
-                    
                     </div>
-                </div>
-
-                <div>
-                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>What is this class about?</h5>
-                    <form className="form-inline my-2 my-lg-0"/>
-                    <div class="mb-3">
-                      <p 
-                        className="pl-2" 
-                        style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) 
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
-                      </p>
-                      <p 
-                        className="pl-2" 
-                        style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
-                        Lorem ipsum dolor sit amet. (Spring 2019) 
-                        <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
-                        <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
-                      </p>
-
-                      <div className="row">
-                        <div className = "col-sm-11 pr-0">
-                            <TextareaAutosize
-                              className="w-100 pl-2"
-                              minRows={2}
-                              maxRows={10}
-                              placeholder="Write Your Notes..."
-                              onChange={(e)=>this.handleInputChangeTwo(e)}
-                              style = {{borderRadius: "5px", borderColor:"white"}}/>
-                        </div>
-                        <div className = "col-sm-1 pl-0">
-                          <button 
-                            className="bubbly-button" 
-                            style = {{borderRadius: "5px", fontFamily: 'Montserrat'}} 
-                            type="save" 
-                            onClick={(event)=>{this.handleSaveClicked(); this.animateButton(event)}}>Save
-                          </button>
-                        </div>
-                      </div>
-                    
-                    </div>
-                </div>
-                <div>
-                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>How hard it is?</h5>
-                    <form className="form-inline my-2 my-lg-0"/>
-                    <div class="mb-3">
-                      <p 
-                        className="pl-2" 
-                        style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Spring 2019) 
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
-                      </p>
-                      <p 
-                        className="pl-2" 
-                        style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
-                        Lorem ipsum dolor sit amet. (Spring 2019) 
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
-                      </p>
-
-                      <div className="row">
-                        <div className = "col-sm-11 pr-0">
-                            <TextareaAutosize
-                              className="w-100 pl-2"
-                              minRows={2}
-                              maxRows={10}
-                              placeholder="Write Your Notes..."
-                              onChange={(e)=>this.handleInputChangeTwo(e)}
-                              style = {{borderRadius: "5px", borderColor:"white"}}/>
-                        </div>
-                        <div className = "col-sm-1 pl-0">
-                          <button 
-                            className="bubbly-button" 
-                            style = {{borderRadius: "5px", fontFamily: 'Montserrat'}} 
-                            type="save" 
-                            onClick={(event)=>{this.handleSaveClicked(); this.animateButton(event)}}>Save
-                          </button>
-                        </div>
-                      </div>
-                    
-                    </div>
-                </div>
-            
-            </div>
+                  </div>
+                  ))}
+          </div>
         )
-    }
+    };
 }
+
 const noteBookStyle = {
     background: '#FFFFFF',
     border: '5px solid rgba(65, 158, 244, 0.27)',
     boxSizing: 'border-box',
     borderRadius: '2rem'
 }
+
 const mapStateToProps = state =>({
     course: state.course.course
   });
