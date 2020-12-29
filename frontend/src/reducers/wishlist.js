@@ -1,4 +1,4 @@
-import { ADD_COURSE_TO_WISH} from "../actions/types.js";
+import { ADD_COURSE_TO_WISH, REMOVE_COURSE_FROM_WISH} from "../actions/types.js";
 const initialState = {
     wishlistCourseBag: [],
 };
@@ -32,11 +32,30 @@ function addNewCourseToWish(state, action)
     });
     return tempArray;
 }
+
+function removeCourseFromWish(state, action)
+{
+    var tempArray = [...state.wishlistCourseBag];
+
+    tempArray = state.wishlistCourseBag.filter((item) =>
+        item.id != action.id);
+
+    for (let i = 0; i < tempArray.length; i++)
+    {
+        tempArray[i].id = i+1; 
+    }
+
+    return tempArray;
+}
 export default function (state = initialState, action) {
 	switch (action.type) {
 		case ADD_COURSE_TO_WISH:
 			return { 
                 wishlistCourseBag: addNewCourseToWish(state, action)
+            };
+        case REMOVE_COURSE_FROM_WISH:
+            return { 
+                wishlistCourseBag: removeCourseFromWish(state, action)
             };
 
 		default:
