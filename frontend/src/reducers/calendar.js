@@ -7,31 +7,43 @@ import {
   ADD_CUS_EVENT_IN_CAL, 
 } from "../actions/types.js";
 const initialState = {
-  calendarCourseBag: [],
-  // calendarCourseBag: [{title:"test",
-  //       start: new Date(2015, 3, 12, 11, 25, 0),
-  //       end: new Date(2015, 3, 12, 12, 25, 0),
-  //       allDay: false,
-  //       resource: null,
-  //       raw:{selectedCourseArray:null}
-  // }
+  // calendarCourseBag: [],
+  calendarCourseBag: [{title:"test",
+        start: new Date(2015, 3, 12, 11, 25, 0),
+        end: new Date(2015, 3, 12, 12, 25, 0),
+        allDay: false,
+        resource: null,
+        raw:{selectedCourseArray:null}
+  }]
 };
 
-function alignDate(weekDayIndex) {
-  let today = new Date(2015, 3, 13);
-  today.setDate(today.getDate() + weekDayIndex);
-  return today;
+
+function getMonday(d) {
+	d = new Date(d);
+	var day = d.getDay(),
+		diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+	return new Date(d.setDate(diff));
+}
+
+
+const today = new Date();
+
+function alignDate(weekDayIndex, timestamp) {
+  let date = new Date( today.toDateString() + ", " + timestamp);
+  return new Date(
+		getMonday(date).setDate(getMonday(date).getDate() + weekDayIndex)
+	);
 }
 
 function addNewCourseToBag(state, action, update) {
-  var tempArray = [...state.calendarCourseBag];
+  var newBag = [...state.calendarCourseBag];
 
   const selectedCourse = action.selectedCourseArray.find(
     ({ crn }) => crn === action.selectedCRN
   );
 
   if (update) {
-    tempArray = state.calendarCourseBag.filter(
+    newBag = state.calendarCourseBag.filter(
       (item) => item.title != selectedCourse.course_meta.name
     );
   }
@@ -40,20 +52,12 @@ function addNewCourseToBag(state, action, update) {
   let newId = state.calendarCourseBag.length == 0 ? 0 : Math.max(...idList) + 1;
 
   selectedCourse.time.map((timeslot)=>{
-    let startTime = alignDate(timeslot.weekday);
-    startTime.setHours(parseFloat(timeslot.start_at.split(":")[0]));
-    startTime.setMinutes(parseFloat(timeslot.start_at.split(":")[1]));
-
-    let endTime = alignDate(timeslot.weekday);
-    endTime.setHours(parseFloat(timeslot.end_at.split(":")[0]));
-    endTime.setMinutes(parseFloat(timeslot.end_at.split(":")[1]));
-
-    tempArray.push({
+    newBag.push({
       id: newId,
       title: selectedCourse.course_meta.title,
       allDay: false,
-      start: startTime,
-      end: endTime,
+      start: alignDate(timeslot.weekday, timeslot.start_at),
+      end: alignDate(timeslot.weekday, timeslot.end_at),
       raw: {
         crn: selectedCourse.course_meta.crn,
         name: selectedCourse.course_meta.name,
@@ -63,7 +67,7 @@ function addNewCourseToBag(state, action, update) {
       },
     });
   });
-  return tempArray;
+  return newBag;
 }
 
 function previewNewCourseToBag(state, action) {

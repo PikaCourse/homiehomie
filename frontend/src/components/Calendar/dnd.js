@@ -18,7 +18,7 @@ let formats = {
   dayFormat: (date, culture, localizer) =>
     moment.utc(date).format('ddd') //https://devhints.io/moment
 }
-
+const today = new Date();
 class Dnd extends React.Component {
   constructor(props) {
     super(props);
@@ -126,7 +126,8 @@ class Dnd extends React.Component {
       fontSize:'80%',
       borderRadius: "0px",
       border: "none",
-      boxShadow:"none"
+      boxShadow:"none",
+      zIndex:"10"
     };
 
     if (isSelected){
@@ -144,8 +145,8 @@ class Dnd extends React.Component {
   render() {
     return (
       <DragAndDropCalendar
-        min={new Date(2015, 3, 12, 7, 0, 0)}
-        max={new Date(2015, 3, 12, 22, 0, 0)}
+        min={new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 0, 0)}
+        max={new Date(today.getFullYear(), today.getMonth(), today.getDate(), 22, 0, 0)}
         showMultiDayTimes = {false}
         formats = {formats}
         style={{ height: 1000 }}
@@ -158,7 +159,7 @@ class Dnd extends React.Component {
         onSelectSlot={this.newEvent}
         onDragStart={console.log}
         defaultView={Views.WEEK}
-        defaultDate={new Date(2015, 3, 12)}
+        defaultDate={today}
         popup={true}
         dragFromOutsideItem={
           this.state.displayDragItemInCell ? this.dragFromOutsideItem : null
