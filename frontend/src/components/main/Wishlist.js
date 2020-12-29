@@ -86,15 +86,6 @@ const columns = [
   //   dataIndex: ["course_meta","tags"],
   // },
 ];
-// const data = [];
-// for (let i = 0; i < 5; i++) {
-//   data.push({
-//     key: i,
-//     name: `Edward King ${i}`,
-//     age: 32,
-//     address: `London, Park Lane no. ${i}`,
-//   });
-// }
 
 
 
@@ -105,12 +96,6 @@ export class Wishlist extends Component {
       selectedRowKeys: [], // Check here to configure the default column
       loading: false,
     };
-
-    // this.setState({
-    //   data: store.getState().course.selectedCourseArray.find(
-    //     ({ crn }) => crn === store.getState().course.selectedCRN
-    //   )
-    // }); 
   }
   
   start = () => {
@@ -122,22 +107,17 @@ export class Wishlist extends Component {
         loading: false,
       });
     }, 1000);
-    console.log("start ran"); 
+    // console.log("start ran"); 
     // console.log(this.state.data); 
     // console.log(this.props.selectedCourseArray); 
-    console.log(store.getState().course.selectedCourseArray); 
     // console.log(store.getState().course.selectedCourseArray.find(
     //   ({ crn }) => crn === store.getState().course.selectedCRN
     // )); 
-    console.log(store.getState().wishlist.wishlistCourseBag); 
-    console.log(this.start.data); 
   };
 
-  onSelectChange = (selectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
-    this.setState({ 
-      // data: [store.getState().wishlist.wishlistCourseBag], 
-      selectedRowKeys });
+  onSelectChange = selectedRowKeys => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys);
+    this.setState({ selectedRowKeys });
   };
 
   static propTypes = {
