@@ -10,7 +10,7 @@ const { Panel } = Collapse;
 import { Table, Button, Switch, Space, Radio, Divider } from "antd";
 import {removeCurrCourseFromWish} from "../../actions/wishlist"
 
-const columns = [
+var columns = [
   {
     title: '',
     key: 'operation',
@@ -25,6 +25,17 @@ const columns = [
             >Add</Button></div>,
                   
   },
+  {
+    title: <span><Button type="primary">test</Button></span>,
+    // render: (text, record) => <Button
+    //           type="primary"
+    //           onClick={this.start}
+    //           disabled={!hasSelected}
+    //           loading={loading}
+    //         >
+    //           Add All
+    //         </Button>,
+  }, 
   {
     title: "id",
     dataIndex: "id",
@@ -107,6 +118,7 @@ export class Wishlist extends Component {
         loading: false,
       });
     }, 1000);
+    console.log(columns[1].title); 
   };
 
   onSelectChange = selectedRowKeys => {
@@ -148,7 +160,7 @@ export class Wishlist extends Component {
                 disabled={!hasSelected}
                 loading={loading}
               >
-                Reload
+                Add All
               </Button>
               <span style={{ marginLeft: 8 }}>
                 {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
