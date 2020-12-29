@@ -50,7 +50,6 @@ export class WikiSummary extends Component {
     setTimeout(function () {
       e.target.classList.remove("animate");
     }, 700);
-    console.log("animate triggered");
   }
 
   previewInputChange(checked) {
@@ -64,7 +63,6 @@ export class WikiSummary extends Component {
   wishlistCheckDuplicate() {
     const curr = store.getState().wishlist.wishlistCourseBag.find(
       ({ crn }) => crn === store.getState().course.selectedCRN);
-    console.log( "curr: " + curr);
 
     // console.log( "curr.length: " + curr.length);
     

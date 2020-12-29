@@ -107,12 +107,6 @@ export class Wishlist extends Component {
         loading: false,
       });
     }, 1000);
-    // console.log("start ran"); 
-    // console.log(this.state.data); 
-    // console.log(this.props.selectedCourseArray); 
-    // console.log(store.getState().course.selectedCourseArray.find(
-    //   ({ crn }) => crn === store.getState().course.selectedCRN
-    // )); 
   };
 
   onSelectChange = selectedRowKeys => {
