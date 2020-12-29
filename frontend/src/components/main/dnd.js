@@ -2,7 +2,7 @@ import React from "react";
 import { Calendar, Views, momentLocalizer } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
-const localizer = momentLocalizer(moment);
+const mlocalizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
 import "react-big-calendar/lib/sass/styles.scss";
@@ -12,6 +12,12 @@ import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
 import {addCustomEvent} from "../../actions/calendar"
 import store from "../../store";
+
+let formats = {
+
+  dayFormat: (date, culture, localizer) =>
+    moment.utc(date).format('ddd') //https://devhints.io/moment
+}
 
 class Dnd extends React.Component {
   constructor(props) {
@@ -116,9 +122,13 @@ class Dnd extends React.Component {
   render() {
     return (
       <DragAndDropCalendar
+        min={new Date(2015, 3, 12, 7, 0, 0)}
+        max={new Date(2015, 3, 12, 22, 0, 0)}
+        showMultiDayTimes = {false}
+        formats = {formats}
         style={{ height: 1000 }}
         selectable
-        localizer={localizer}
+        localizer={mlocalizer}
         events={this.props.courselist} //data input
         onEventDrop={this.moveEvent}
         resizable={true}
@@ -133,6 +143,8 @@ class Dnd extends React.Component {
         }
         onDropFromOutside={this.onDropFromOutside}
         handleDragStart={this.handleDragStart}
+        views={{ week: true }}
+        toolbar={false}
       />
     );
   }

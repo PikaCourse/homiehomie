@@ -1,22 +1,49 @@
-.rbc-timeslot-group{
-    border-bottom: 1px solid #fff;
+.rbc-timeslot-group {
+  border-bottom: 1px solid #fff;
 }
 
-.rbc-time-content{
-    border-left: 2px solid rgba(89, 108, 126, 0.05);
+.rbc-time-content {
+  border-left: none;
+  border-top: none;
 }
 
-.rbc-event.rbc-selected{
-    border-color:none;
-    background-color:rgba(65, 158, 244, 1);
-    color: white;
-    box-shadow: 6px 4px 30px rgba(65, 158, 244, 0.81);
+.rbc-event.rbc-selected {
+  border-color: none;
+  background-color: rgba(65, 158, 244, 1);
+  color: white;
+  box-shadow: 6px 4px 30px rgba(65, 158, 244, 0.81);
 }
-.rbc-day-slot .rbc-event{
-    border:none;
+.rbc-day-slot .rbc-event {
+  border: none;
 }
-.rbc-event{
-    border:none;
-    background-color:rgba(65, 158, 244, 0.3);
-    color: rgba(65, 158, 244, 1);
+.rbc-day-slot .rbc-time-slot {
+  border: none;
+}
+.rbc-time-content > .rbc-time-gutter {
+  border-right: 3px solid rgba(89, 108, 126, 0.22);
+}
+.rbc-event {
+  border: none;
+  background-color: rgba(65, 158, 244, 0.3);
+  color: rgba(65, 158, 244, 1);
+}
+
+.rbc-header{
+    font-size: 110%;
+    color: rgba(89, 108, 126, 1);
+}
+.rbc-time-view,
+.rbc-time-header-content,
+.rbc-header {
+  border: none;
+}
+.rbc-header + .rbc-header {
+  border: none;
+}
+
+.rbc-allday-cell {
+  display: none;
+}
+.rbc-time-view .rbc-header {
+  border-bottom: none;
 }
