@@ -6,6 +6,7 @@ const localizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
 import "react-big-calendar/lib/sass/styles.scss";
+import '../../../static/scss/calendar.scss'
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
