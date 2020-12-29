@@ -119,6 +119,27 @@ class Dnd extends React.Component {
     store.dispatch(addCustomEvent(hour)); 
   }
 
+  eventStyleHandler = (event, start, end, isSelected) => {
+    let newStyle = {
+      backgroundColor: 'rgba(65, 158, 244, 0.3)',
+      color: 'rgba(65, 158, 244, 1)',
+      borderRadius: "0px",
+      border: "none",
+      boxShadow:"none"
+    };
+
+    if (isSelected){
+      newStyle.backgroundColor = 'rgba(65, 158, 244, 1)';
+      newStyle.color = 'white';
+      newStyle.boxShadow = "6px 4px 30px rgba(65, 158, 244, 0.81)"
+    }
+
+    return {
+      className: "",
+      style: newStyle
+    };
+  }
+
   render() {
     return (
       <DragAndDropCalendar
@@ -145,6 +166,8 @@ class Dnd extends React.Component {
         handleDragStart={this.handleDragStart}
         views={{ week: true }}
         toolbar={false}
+
+        eventPropGetter={this.eventStyleHandler}
       />
     );
   }
