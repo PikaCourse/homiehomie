@@ -13,6 +13,8 @@ import { setCourse } from "../../actions/course";
 import {addCustomEvent} from "../../actions/calendar"
 import store from "../../store";
 import {EventComponent} from "./EventComponent"
+import {colors} from "./color.js";
+
 let formats = {
 
   dayFormat: (date, culture, localizer) =>
@@ -120,10 +122,11 @@ class Dnd extends React.Component {
   }
 
   eventStyleHandler = (event, start, end, isSelected) => {
+    console.log(colors);
     let newStyle = {
-      backgroundColor: 'rgba(65, 158, 244, 0.3)',
-      color: 'rgba(65, 158, 244, 1)',
-      fontSize:'80%',
+      backgroundColor: colors[event.id].weak,
+      color: colors[event.id].strong,
+      fontSize:'70%',
       borderRadius: "0px",
       border: "none",
       boxShadow:"none",
@@ -131,9 +134,9 @@ class Dnd extends React.Component {
     };
 
     if (isSelected){
-      newStyle.backgroundColor = 'rgba(65, 158, 244, 1)';
+      newStyle.backgroundColor = colors[event.id].strong;
       newStyle.color = 'white';
-      newStyle.boxShadow = "6px 4px 30px rgba(65, 158, 244, 0.81)"
+      newStyle.boxShadow = "6px 4px 30px " + colors[event.id].weak;
     }
 
     return {
