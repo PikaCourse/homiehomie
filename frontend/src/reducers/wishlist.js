@@ -14,6 +14,7 @@ function addNewCourseToWish(state, action)
     let timeStr = 'yet to implement'; //need to be edited 
     let semesterStr = selectedCourse.year + selectedCourse.semester; 
     tempArray.push({
+        key: state.wishlistCourseBag.length + 1,
         id: state.wishlistCourseBag.length + 1,
         crn: selectedCourse.crn, 
         time: timeStr, 
