@@ -31,10 +31,27 @@ def get_packet_details(exc):
     return packet
 
 
-class InvalidFormKey(APIException):
+class InvalidForm(APIException):
+    """
+    Raise when the submitted form is invalid
+    """
     status_code = status.HTTP_400_BAD_REQUEST
-    default_code = 'invalid_key'
-    default_detail = 'Invalid form key'
+    default_code = 'invalid_form'
+    default_detail = 'Invalid form'
+
+    def __init__(self, detail=None, code=None):
+        if detail is not None:
+            self.detail = force_str(detail)
+        super().__init__(detail, code)
+
+
+class InvalidPathParam(APIException):
+    """
+    Raise when the path parameters does not meet with specification
+    """
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'invalid_path'
+    default_detail = 'Invalid path param'
 
     def __init__(self, detail=None, code=None):
         if detail is not None:
@@ -43,9 +60,26 @@ class InvalidFormKey(APIException):
 
 
 class InvalidQueryValue(APIException):
+    """
+    Raise when the query value not matched with validation
+    """
     status_code = status.HTTP_400_BAD_REQUEST
     default_code = 'invalid_value'
     default_detail = 'Invalid query value'
+
+    def __init__(self, detail=None, code=None):
+        if detail is not None:
+            self.detail = force_str(detail)
+        super().__init__(detail, code)
+
+
+class MissingQueryKey(APIException):
+    """
+    Raise when a required key is missing for query
+    """
+    status_code = status.HTTP_400_BAD_REQUEST
+    default_code = 'miss_key'
+    default_detail = 'Missing required query key'
 
     def __init__(self, detail=None, code=None):
         if detail is not None:

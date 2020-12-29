@@ -128,7 +128,7 @@ class Question(models.Model):
     is_pin = models.BooleanField(default=False)
     pin_order = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
-    tags = models.JSONField(default=list, blank=True)
+    tags = models.JSONField(default=list)
 
     def __str__(self):
         return "_".join([str(self.course_meta), self.title])
@@ -160,7 +160,7 @@ class Note(models.Model):
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
     content = models.TextField(blank=True)    # In markdown
-    tags = models.JSONField(default=list, blank=True)
+    tags = models.JSONField(default=list)
 
     def __str__(self):
         return "_".join([str(self.course), self.question.title, self.title])
@@ -191,7 +191,7 @@ class Post(models.Model):
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
     content = models.TextField()  # In markdown
-    tags = models.JSONField(default=list, blank=True)
+    tags = models.JSONField(default=list)
 
     def __str__(self):
         return "_".join([str(self.course), self.title])
@@ -247,7 +247,7 @@ class Schedule(models.Model):
     name = models.CharField(max_length=200)
     note = models.TextField()
     coursesid = models.JSONField(default=list)
-    tags = models.JSONField(default=list, blank=True)
+    tags = models.JSONField(default=list)
 
     def __str__(self):
         return str(self.user) + "_" + str(self.year) + "_" + self.semester + "_" + self.name

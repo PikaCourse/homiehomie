@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.exceptions import *
 from scheduler.utils import *
 from urllib.parse import urlencode
+import json
 import random
 
 COURSE_META_NUM_ENTRIES = 20
@@ -189,6 +190,190 @@ def check_multi_query(test_case, url, test_dict):
     # Which should be nearly impossible, assuming the pseudorandom algor is fairly uniform
     test_case.assertNotEqual(100, count)
 
+
+def check_order(test_case, arr, key, descending=True):
+    prev_count = None
+    for obj in arr:
+        if prev_count is None:
+            prev_count = obj[key]
+            continue
+        else:
+            cur_count = obj[key]
+            if descending:
+                test_case.assertLessEqual(cur_count, prev_count, msg=f"Key: {key}\tdescending: {descending}\t"
+                                                                     f"Prev: {prev_count}\tCur: {cur_count}")
+            else:
+                test_case.assertGreaterEqual(cur_count, prev_count, msg=f"Key: {key}\tdescending: {descending}\t"
+                                                                     f"Prev: {prev_count}\tCur: {cur_count}")
+            prev_count = cur_count
+
+
+def check_post_success(test_case, url, detail_url_name, test_data, json_fields=("tags",), ignore_fields=[]):
+    test_data = test_data.copy()
+    # Encode any json fields
+    for json_field in json_fields:
+        test_data[json_field] = json.dumps(test_data[json_field])
+    test_data_encoded = urlencode(test_data)
+    # Decode for assertion
+    for json_field in json_fields:
+        test_data[json_field] = json.loads(test_data[json_field])
+
+    # Send post
+    response = test_case.client.post(url,
+                                data=test_data_encoded,
+                                content_type='application/x-www-form-urlencoded')
+    # Assert code and msg
+    test_case.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=f"Message: {response.data}")
+
+    # Test if the post is successful
+    id = response.data["question"]
+    path_params = {"pk": id}
+    url = reverse(detail_url_name, kwargs=path_params)
+    response = test_case.client.get(url)
+    test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+    obj = response.data
+    for key in test_data:
+        if key in ignore_fields:
+            continue
+        test_case.assertEqual(obj[key], test_data[key], msg=f"Field: {key}")
+
+
+def check_post_error(test_case, url, test_data, error_class=InvalidForm):
+    """
+    Expecting error on post submission
+    :param test_case:
+    :param url:
+    :param test_data:
+    :param error_class:
+    :return:
+    """
+    test_form_encoded = urlencode(test_data)
+    response = test_case.client.post(url,
+                                data=test_form_encoded,
+                                content_type='application/x-www-form-urlencoded')
+    test_case.assertEqual(response.status_code, error_class.status_code, msg=f"Test Data: {test_data}")
+    test_case.assertEqual(response.data, get_packet_details(error_class()))
+
+
+def check_put_success(test_case, detail_url_name, path_params, test_data, json_fields=("tags",), ignore_fields=[]):
+    """
+    Create a successful put request
+    :param test_case:
+    :param detail_url_name:
+    :param pk:
+    :param test_data:
+    :param json_fields:
+    :param ignore_fields:
+    :return:
+    """
+    url = reverse(detail_url_name, kwargs=path_params)
+    test_data = test_data.copy()
+    # Encode any json fields
+    for json_field in json_fields:
+        test_data[json_field] = json.dumps(test_data[json_field])
+    test_data_encoded = urlencode(test_data)
+    # Decode for assertion
+    for json_field in json_fields:
+        test_data[json_field] = json.loads(test_data[json_field])
+
+    # Send put request
+    response = test_case.client.put(url,
+                                    data=test_data_encoded,
+                                    content_type='application/x-www-form-urlencoded')
+
+    # Assert code and msg
+    test_case.assertEqual(response.status_code, status.HTTP_200_OK, msg=f"Message: {response.data}")
+
+    # Test if the put actually change the data
+    response = test_case.client.get(url)
+    test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+    obj = response.data
+    for key in test_data:
+        if key in ignore_fields:
+            continue
+        test_case.assertEqual(obj[key], test_data[key], msg=f"Field: {key}")
+
+
+def check_put_error(test_case, detail_url_name, path_params, test_data, error_class=NotFound):
+    """
+    Expecting error on post submission
+    :param test_case:
+    :param detail_url_name:
+    :param path_params:
+    :param test_data:
+    :param error_class:
+    :return:
+    """
+    url = reverse(detail_url_name, kwargs=path_params)
+    test_form_encoded = urlencode(test_data)
+    response = test_case.client.put(url,
+                                    data=test_form_encoded,
+                                    content_type='application/x-www-form-urlencoded')
+    test_case.assertEqual(response.status_code, error_class.status_code, msg=f"Test Data: {test_data}")
+    test_case.assertEqual(response.data, get_packet_details(error_class()))
+
+
+def check_delete_success(test_case, detail_url_name, path_params):
+    """
+    Test successful delete
+    :param test_case:
+    :param detail_url_name:
+    :param path_params:
+    :return:
+    """
+    url = reverse(detail_url_name, kwargs=path_params)
+
+    # Make sure the instance is in the db
+    response = test_case.client.get(url)
+    test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    # Perform delete operation
+    response = test_case.client.delete(url)
+    test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    # Check db via get to see if the instance is deleted
+    response = test_case.client.get(url)
+    test_case.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+def check_delete_error(test_case, detail_url_name, path_params, error_class=NotFound):
+    """
+    Test unsuccessful delete
+    :param test_case:
+    :param detail_url_name:
+    :param path_params:
+    :return:
+    """
+    url = reverse(detail_url_name, kwargs=path_params)
+
+    # Perform delete operation
+    response = test_case.client.delete(url)
+    test_case.assertEqual(response.status_code, error_class.status_code)
+    test_case.assertEqual(response.data, get_packet_details(error_class()))
+
+
+def check_method_not_allowed(test_case, url, method):
+    """
+    Check if proper exception is raised for not allowed HTTP methods
+    :param test_case:
+    :param url:
+    :param method:
+    :return:
+    """
+    if method == "POST":
+        response = test_case.client.post(url)
+    elif method == "PUT":
+        response = test_case.client.put(url)
+    elif method == "PATCH":
+        response = test_case.client.patch(url)
+    elif method == "DELETE":
+        response = test_case.client.delete(url)
+    else:
+        raise ValueError(f"Invalid HTTP method name: {method}")
+    test_case.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+    test_case.assertEqual(response.data,
+                          get_packet_details(MethodNotAllowed(method)))
+
 """
 Begin TestCase Cases
 """
@@ -232,7 +417,7 @@ class CourseMetaViewSetTests(APITestCase):
 
     def test_course_meta_list_single_filter_not_exist(self):
         """
-        Prepopulated database with data and test if it can be search by school name
+        Prepopulated database with data
         Test if return empty list for non existing filter value
         :return:
         """
@@ -489,10 +674,7 @@ class CourseMetaViewSetTests(APITestCase):
         :return:
         """
         url = reverse("api:coursesmeta-list")
-        response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data,
-                         get_packet_details(MethodNotAllowed('POST')))
+        check_method_not_allowed(self, url, "POST")
 
     # UpdateView testing
     def test_course_meta_update(self):
@@ -502,10 +684,7 @@ class CourseMetaViewSetTests(APITestCase):
         """
         params = {"pk": 1}
         url = reverse("api:coursesmeta-detail", kwargs=params)
-        response = self.client.put(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data,
-                         get_packet_details(MethodNotAllowed('PUT')))
+        check_method_not_allowed(self, url, "PUT")
 
     # PartialUpdateView testing
     def test_course_meta_partial_update(self):
@@ -515,10 +694,7 @@ class CourseMetaViewSetTests(APITestCase):
         """
         params = {"pk": 1}
         url = reverse("api:coursesmeta-detail", kwargs=params)
-        response = self.client.patch(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data,
-                         get_packet_details(MethodNotAllowed('PATCH')))
+        check_method_not_allowed(self, url, "PATCH")
 
     # DestroyView testing
     def test_course_meta_destroy(self):
@@ -528,10 +704,7 @@ class CourseMetaViewSetTests(APITestCase):
         """
         params = {"pk": 1}
         url = reverse("api:coursesmeta-detail", kwargs=params)
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data,
-                         get_packet_details(MethodNotAllowed('DELETE')))
+        check_method_not_allowed(self, url, "DELETE")
 
 
 class CourseViewSetTests(APITestCase):
@@ -864,10 +1037,7 @@ class CourseViewSetTests(APITestCase):
         :return:
         """
         url = reverse("api:courses-list")
-        response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data,
-                         get_packet_details(MethodNotAllowed('POST')))
+        check_method_not_allowed(self, url, "POST")
 
     # UpdateView testing
     def test_course_update(self):
@@ -877,23 +1047,17 @@ class CourseViewSetTests(APITestCase):
         """
         params = {"pk": 1}
         url = reverse("api:courses-detail", kwargs=params)
-        response = self.client.put(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data,
-                         get_packet_details(MethodNotAllowed('PUT')))
+        check_method_not_allowed(self, url, "PUT")
 
     # PartialUpdateView testing
     def test_course_partial_update(self):
         """
-        Update/PUT not supported, should expect 405 method not allowed
+        Partial Update/PATCH not supported, should expect 405 method not allowed
         :return:
         """
         params = {"pk": 1}
         url = reverse("api:courses-detail", kwargs=params)
-        response = self.client.patch(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data,
-                         get_packet_details(MethodNotAllowed('PATCH')))
+        check_method_not_allowed(self, url, "PATCH")
 
     # DestroyView testing
     def test_course_destroy(self):
@@ -903,10 +1067,7 @@ class CourseViewSetTests(APITestCase):
         """
         params = {"pk": 1}
         url = reverse("api:courses-detail", kwargs=params)
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertEqual(response.data,
-                         get_packet_details(MethodNotAllowed('DELETE')))
+        check_method_not_allowed(self, url, "DELETE")
 
 
 class QuestionViewSetTests(APITestCase):
@@ -925,17 +1086,142 @@ class QuestionViewSetTests(APITestCase):
     """
 
     # ListView testing
-    # TODO Test empty db
+    def test_question_list_length(self):
+        """
+        Since there are 6 entries in the fixtures, expected 6 entries
+        :return:
+        """
+        url = reverse("api:questions-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), QUESTION_NUM_ENTRIES)
 
-    # TODO Test proper return object structure
+    def test_question_list_format(self):
+        """
+        Test whether the objects iin the returned list has the fields
+        specified by the API documentation
+        :return:
+        """
+        url = reverse("api:questions-list")
+        fields = ["id", "course_meta", "created_by", "created_at",
+                  "last_answered", "last_edited", "like_count",
+                  "star_count", "dislike_count", "is_pin", "pin_order",
+                  "title", "tags"]
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for obj in response.data:
+            check_fields(self, obj, fields)
 
-    # TODO Test proper single filtering
+    def test_question_single_filter_coursemetaid(self):
+        """
+        Test whether the backend respond properly according to
+        the given coursemetaid
+        :return:
+        """
+        test_course_meta_id = 1
+        url = reverse("api:questions-list")
+        response = self.client.get(url, {"coursemetaid": test_course_meta_id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(response.data, [])
+        for obj in response.data:
+            self.assertEqual(obj["course_meta"], test_course_meta_id)
 
-    # TODO Test proper multiple filter constraint
+    def test_question_single_filter_coursemetaid_invalid_out_range(self):
+        """
+        Test whether the backend respond properly according to
+        the given coursemetaid
+        Since out of possible range, expecting empty response
+        :return:
+        """
+        test_course_meta_id = 25
+        url = reverse("api:questions-list")
+        response = self.client.get(url, {"coursemetaid": test_course_meta_id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, [])
 
-    # TODO Test improper: nonexisting filter search
+        test_course_meta_id = -1
+        url = reverse("api:questions-list")
+        response = self.client.get(url, {"coursemetaid": test_course_meta_id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, [])
 
-    # TODO Test improper: filter fields constraint
+    def test_question_single_filter_coursemetaid_invalid_not_integer(self):
+        """
+        Test whether the backend respond properly according to
+        the given coursemetaid
+        Since not a number, expecting bad request and raise InvalidQueryValue exception
+        :return:
+        """
+        test_course_meta_id = 3.23
+        url = reverse("api:questions-list")
+        response = self.client.get(url, {"coursemetaid": test_course_meta_id})
+        self.assertEqual(response.status_code, InvalidQueryValue.default_code)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+        test_course_meta_id = "test"
+        url = reverse("api:questions-list")
+        response = self.client.get(url, {"coursemetaid": test_course_meta_id})
+        self.assertEqual(response.status_code, InvalidQueryValue.default_code)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+    def test_question_single_filter_sortby_default(self):
+        """
+        Test whether the returned list is sorted by default to be
+        descending and by like_count field
+        :return:
+        """
+        url = reverse("api:questions-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(response.data, [])
+        check_order(self, arr=response.data, key="like_count", descending=True)
+
+    def test_question_pair_filter_sortby_descending_possible_keys(self):
+        """
+        Check if sortby works for other valid options
+        :return:
+        """
+        url = reverse("api:questions-list")
+        sortby_options = ["like_count", "dislike_count", "star_count"]
+        descending_options = [True, False]
+        for sortby_option in sortby_options:
+            for descending_option in descending_options:
+                response = self.client.get(url, {"sortby": sortby_option, "descending": descending_option})
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertNotEqual(response.data, [])
+                check_order(self, arr=response.data, key=sortby_option, descending=descending_option)
+
+    def test_question_pair_filter_sortby_descending_invalid(self):
+        """
+        Check whether sortby raise exception for invalid sortby or descending value
+        Expecting 400 and
+        :return:
+        """
+        url = reverse("api:questions-list")
+        test_sortby = "invalid"
+        test_descending = "invalid"
+
+        # Individual
+        response = self.client.get(url, {"sortby": test_sortby})
+        self.assertEqual(response.status_code, InvalidQueryValue.status_code)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+        response = self.client.get(url, {"descending": test_descending})
+        self.assertEqual(response.status_code, InvalidQueryValue.status_code)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+        # Combined
+        response = self.client.get(url, {"sortby": test_sortby, "descending": True})
+        self.assertEqual(response.status_code, InvalidQueryValue.status_code)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+        response = self.client.get(url, {"sortby": "like_count", "descending": test_descending})
+        self.assertEqual(response.status_code, InvalidQueryValue.status_code)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+        response = self.client.get(url, {"sortby": test_sortby, "descending": test_descending})
+        self.assertEqual(response.status_code, InvalidQueryValue.status_code)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
 
     def test_question_list_single_filter_limit(self):
         """
@@ -997,15 +1283,274 @@ class QuestionViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
 
+    def test_question_list_multi_filter(self):
+        """
+        Test that the query param works for multiple query key
+        :return:
+        """
+        url = reverse("api:questions-list")
+        test_query_keys = ["coursemetaid", "sortby", "descending", "limit"]
+        test_query_values = {
+            "coursemetaid": list(range(1, COURSE_META_NUM_ENTRIES + 1)),
+            "sortby": ["like_count", "star_count", "dislike_count"],
+            "descending": [True, False],
+            "limit": list(range(1, QUESTION_NUM_ENTRIES + 1))
+        }
+
+        # Perform 100 random query and test if the result is expected
+        count = 0
+        for _ in range(100):
+            # Randomly select keys from the test_dict to perform query
+            num_pair = random.randint(1, len(test_query_keys))
+            query_keys = random.sample(test_query_keys, num_pair)
+            query_params = {}
+            for query_key in query_keys:
+                options = test_query_values[query_key]
+                query_params[query_key] = options[random.randrange(len(options))]
+            response = self.client.get(url, query_params)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            if "limit" in query_params:
+                self.assertLessEqual(len(response.data), query_params["limit"])
+            if response.data is not []:
+                # Check course meta id
+                if "coursemetaid" in query_params:
+                    test_meta_id = query_params["coursemetaid"]
+                    for obj in response.data:
+                        self.assertEqual(obj["course_meta"], test_meta_id)
+                # check order
+                check_order(self, response.data,
+                            query_params.get("sortby", "like_count"),
+                            query_params.get("descending", True))
+            else:
+                count += 1
+
+    def test_question_list_non_existing_filter(self):
+        """
+        Since there are 20 entries in the fixtures, expected 20 entries
+        :return:
+        """
+        url = reverse("api:questions-list")
+        response = self.client.get(url, {"nonexisted": "Purdue"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), QUESTION_NUM_ENTRIES)
+
     # DetailView/RetrieveView testing
+    def test_question_retrieve(self):
+        """
+        Test accessing single question object
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:questions-detail", kwargs=path_params)
+        fields = ["id", "course_meta", "created_by", "created_at",
+                  "last_answered", "last_edited", "like_count",
+                  "star_count", "dislike_count", "is_pin", "pin_order",
+                  "title", "tags"]
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        obj = response.data
+        check_fields(self, obj, fields)
+
+    def test_question_retrieve_not_found(self):
+        """
+        Test accessing single question object with invalid id
+        expecting a 404 not found
+        :return:
+        """
+        path_params = {"pk": 25}
+        url = reverse("api:questions-detail", kwargs=path_params)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
+
+        path_params = {"pk": -1}
+        url = reverse("api:questions-detail", kwargs=path_params)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     # TODO Rest of tests need to add permission check after introducing user
+
     # CreateView testing
+    def test_question_create(self):
+        """
+        Test success create view and able to access via get
+        :return:
+        """
+        url = reverse("api:questions-list")
+        detail_url_name = "api:questions-detail"
+        # Encode json field
+        test_data = {'course_meta': 1, 'title': 'Test question', 'tags': ["tags"]}
+
+        check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"])
+
+    def test_question_create_extra_field(self):
+        """
+        Test success create view and able to access via get with extra fields
+        :return:
+        """
+        url = reverse("api:questions-list")
+        detail_url_name = "api:questions-detail"
+        # Encode json field
+        test_data = {'course_meta': 1, 'title': 'Test question',
+                     'tags': ["tags"], "extra": "extra"}
+
+        check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"], ignore_fields=["extra"])
+
+    def test_question_create_invalid_missing_fields(self):
+        """
+        Test invalid form with missing fields, should raise 400 error
+        :return:
+        """
+        url = reverse("api:questions-list")
+        detail_url_name = "api:questions-detail"
+        # Encode json field
+        test_data = {'course_meta': 1, 'title': 'Test question',
+                     'tags': []}
+
+        # Try 20 form submission with missing fields
+        for _ in range(20):
+            num_pair = random.randint(0, len(test_data.keys()) - 1)
+            form_fields = random.sample(test_data.keys(), num_pair)
+            form = {form_field: test_data[form_field] for form_field in form_fields}
+
+            check_post_error(self, url, form)
+
+    def test_question_create_invalid_empty_fields(self):
+        """
+        Test empty fields (course_meta, title), should raise 400 error
+        :return:
+        """
+        url = reverse("api:questions-list")
+        detail_url_name = "api:questions-detail"
+        # Encode json field
+        test_data = {'course_meta': 1, 'title': 'Test question',
+                     'tags': []}
+
+        # Test empty course_meta
+        form = {'course_meta': '', 'title': 'Test', 'tags': []}
+        check_post_error(self, url, form)
+
+        # Test empty title
+        form = {'course_meta': 1, 'title': '', 'tags': []}
+        check_post_error(self, url, form)
+
+        # Test empty tags
+        form = {'course_meta': 1, 'title': 'Test', 'tags': ''}
+        check_post_error(self, url, form)
 
     # UpdateView testing
+    def test_question_update(self):
+        """
+        Test successful update question
+        :return:
+        """
+        detail_url_name = "api:questions-detail"
+        path_params = {"pk": 1}
+        test_data = {"title": "Changed", "tags": ["changed", "changed tag"]}
+
+        check_put_success(self, detail_url_name, path_params, test_data)
+
+    def test_question_update_invalid_pk(self):
+        """
+        Test with invalid pk or question id, expect errors
+        :return:
+        """
+        detail_url_name = "api:questions-detail"
+        test_data = {"title": "Changed", "tags": ["changed", "changed tag"]}
+
+        # Out of range
+        path_params = {"pk": 100}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=NotFound)
+
+        # Not an integer
+        path_params = {"pk": 3.44}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+
+        # Not an integer
+        path_params = {"pk": "I am invalid"}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+
+
+    def test_question_update_extra_field(self):
+        """
+        Test update question with extra field, which should be ignored
+        :return:
+        """
+        detail_url_name = "api:questions-detail"
+        path_params = {"pk": 1}
+        test_data = {"title": "Changed", "tags": ["changed", "changed tag"], "extra": "extra"}
+
+        check_put_success(self, detail_url_name, path_params, test_data, ignore_fields=["extra"])
+
+    def test_question_update_invalid_missing_field(self):
+        """
+        Test with missing fields, expecting 400 error
+        :return:
+        """
+        detail_url_name = "api:questions-detail"
+        path_params = {"pk": 1}
+        test_data = {"title": "Changed", "tags": ["changed", "changed tag"]}
+
+        # Try 20 form submission with missing fields
+        for _ in range(20):
+            num_pair = random.randint(0, len(test_data.keys()) - 1)
+            form_fields = random.sample(test_data.keys(), num_pair)
+            form = {form_field: test_data[form_field] for form_field in form_fields}
+
+            check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+
+    def test_question_update_invalid_field_constraint(self):
+        """
+        Test against form field constraint
+        :return:
+        """
+        detail_url_name = "api:questions-detail"
+        path_params = {"pk": 1}
+
+        # Empty title
+        form = {"title": "", "tags": ["changed", "changed tag"]}
+        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+
+        # Not a json
+        form = {"title": "Test", "tags": "Not json"}
+        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
 
     # DestroyView testing
-    # Should be redirect to user instance called 'deleted'
+    def test_question_destroy(self):
+        """
+        Test successful delete
+        :return:
+        """
+        detail_url_name = "api:questions-detail"
+        path_params = {"pk": 1}
+
+        check_delete_success(self, detail_url_name, path_params)
+
+    def test_question_destroy_invalid_not_existing(self):
+        """
+        Test invalid delete: out of range pk
+        :return:
+        """
+        detail_url_name = "api:questions-detail"
+        path_params = {"pk": 100}
+
+        check_delete_error(self, detail_url_name, path_params)
+
+    def test_question_destroy_invalid_path_params(self):
+        """
+        Test invalid delete: not an integer
+        :return:
+        """
+        detail_url_name = "api:questions-detail"
+
+        path_params = {"pk": 3.4}
+        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+
+        ath_params = {"pk": "Not integer"}
+        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
 
     """
     Begin invalid view testing/invalid http method
@@ -1013,6 +1558,14 @@ class QuestionViewSetTests(APITestCase):
     django rest framework automatic method on ModelViewSet
     """
     # PartialUpdateView testing
+    def test_question_partial_update(self):
+        """
+        Partial update/PATCH not supported
+        :return:
+        """
+        params = {"pk": 1}
+        url = reverse("api:questions-detail", kwargs=params)
+        check_method_not_allowed(self, url, "PATCH")
 
 
 class NoteViewSetTests(APITestCase):

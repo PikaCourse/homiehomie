@@ -151,7 +151,7 @@ class EmptyQuestionViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_question_create_missing_course_meta(self):
         """
@@ -164,7 +164,7 @@ class EmptyQuestionViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_question_create_missing_title(self):
         """
@@ -177,7 +177,7 @@ class EmptyQuestionViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_question_update(self):
         """
@@ -251,7 +251,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_note_create_missing_course(self):
         """
@@ -265,7 +265,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_note_create_missing_question(self):
         """
@@ -279,7 +279,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_note_create_missing_title(self):
         """
@@ -293,7 +293,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_note_create_missing_content(self):
         """
@@ -307,7 +307,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_note_create_missing_tags(self):
         """
@@ -321,7 +321,7 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_note_update(self):
         """
@@ -394,7 +394,7 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_post_create_missing_course(self):
         """
@@ -408,7 +408,7 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_post_create_missing_title(self):
         """
@@ -422,7 +422,7 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_post_create_missing_content(self):
         """
@@ -436,7 +436,7 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_post_create_missing_tags(self):
         """
@@ -450,7 +450,7 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
     def test_post_update(self):
         """

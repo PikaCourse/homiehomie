@@ -73,7 +73,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = Course.objects.all()
 
         # TODO Better way?
-        # TODO Query parameter Vaildation
+        # TODO Query parameter Validation with validator?
         school      = self.request.query_params.get("school", None)
         title       = self.request.query_params.get("title", None)
         crn         = self.request.query_params.get("crn", None)
@@ -139,10 +139,12 @@ class QuestionViewSet(viewsets.ModelViewSet):
         sortby          = self.request.query_params.get("sortby", None)
         descending      = self.request.query_params.get("descending", None)
         if descending is not None:
-            if descending == "true":
+            if str(descending).lower() == "true":
                 descending = True
-            else:
+            elif str(descending).lower() == "false":
                 descending = False
+            else:
+                raise InvalidQueryValue()
         else:
             descending = True
         limit = self.request.query_params.get("limit", None)
@@ -177,7 +179,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
             error_pack = {"code": 'success', "detail": "successfully created question",
                           "status": status.HTTP_201_CREATED, "question": question.id}
             return Response(error_pack, status=status.HTTP_201_CREATED)
-        raise InvalidFormKey()
+        raise InvalidForm()
 
     # PUT method used to update existing question
     # TODO Add permission control to allow only owner or admin to modify
@@ -196,7 +198,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         except Question.DoesNotExist:
             # Invalid question id
             raise NotFound()
-        raise InvalidFormKey()
+        raise InvalidForm()
 
 
 class NoteViewSet(viewsets.ModelViewSet):
@@ -257,7 +259,7 @@ class NoteViewSet(viewsets.ModelViewSet):
             error_pack = {"code": 'success', "detail": "successfully created note",
                           "status": status.HTTP_201_CREATED, "note": note.id}
             return Response(error_pack, status=status.HTTP_201_CREATED)
-        raise InvalidFormKey()
+        raise InvalidForm()
 
     # PUT method used to update existing question
     def update(self, request, pk=None, *args, **kwargs):
@@ -276,7 +278,7 @@ class NoteViewSet(viewsets.ModelViewSet):
         except Note.DoesNotExist:
             # Invalid note id
             raise NotFound()
-        raise InvalidFormKey()
+        raise InvalidForm()
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -337,7 +339,7 @@ class PostViewSet(viewsets.ModelViewSet):
             error_pack = {"code": "success", "errmsg": "successfully created post",
                           "post": post.id, "status": status.HTTP_201_CREATED}
             return Response(error_pack, status=status.HTTP_201_CREATED)
-        raise InvalidFormKey()
+        raise InvalidForm()
 
     # PUT method used to update existing question
     def update(self, request, pk=None, *args, **kwargs):
@@ -355,7 +357,7 @@ class PostViewSet(viewsets.ModelViewSet):
         except Post.DoesNotExist:
             # Invalid note id
             raise NotFound()
-        raise InvalidFormKey()
+        raise InvalidForm()
 
     @action(detail=True, methods=['get'])
     def answers(self, request, pk=None):
@@ -379,7 +381,7 @@ class PostViewSet(viewsets.ModelViewSet):
         except Post.DoesNotExist:
             # Invalid post id path
             raise NotFound()
-        raise InvalidFormKey()
+        raise InvalidForm()
 
     @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>\d+)")
     def detail_answer(self, request, pk=None, answerid=None):
@@ -415,7 +417,7 @@ class PostViewSet(viewsets.ModelViewSet):
             # Invalid question answer id
             raise NotFound()
         # Invalid form key
-        raise InvalidFormKey()
+        raise InvalidForm()
 
     @detail_answer.mapping.delete
     def destroy_answer(self, request, pk=None, answerid=None):
@@ -437,7 +439,7 @@ class PostViewSet(viewsets.ModelViewSet):
             raise NotFound()
 
         # Invalid form key
-        raise InvalidFormKey()
+        raise InvalidForm()
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
