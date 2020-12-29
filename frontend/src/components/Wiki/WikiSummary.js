@@ -113,6 +113,7 @@ export class WikiSummary extends Component {
       if (!Array.isArray(course) || !course.length) {
         // course different crn
         addButtonText = "Change CRN";
+        enableRemove = false;
       } else {
         // course same crn
         enableAdd = false;
@@ -129,6 +130,7 @@ export class WikiSummary extends Component {
           onClick={(event) => {
             //this.animateButton(event);
             this.props.dispatch(addCurrCourse());
+            this.forceUpdate();
           }}
         >
           <FontAwesomeIcon className="mr-2" icon={faPlus} />
@@ -143,6 +145,7 @@ export class WikiSummary extends Component {
           onClick={(event) => {
             this.props.dispatch(removeCurrCourse());
             // this.animateButton(event);
+            this.forceUpdate();
           }}
         >
           <FontAwesomeIcon className="mr-2" icon={faMinus} />

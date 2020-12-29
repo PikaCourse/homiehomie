@@ -4,6 +4,7 @@ import {
   UPDATE_COURSE_IN_CAL,
   PREVIEW_COURSE_IN_CAL,
   CLEAR_PREVIEW_COURSE_IN_CAL,
+  ADD_CUS_EVENT_IN_CAL, 
 } from "../actions/types.js";
 const initialState = {
   calendarCourseBag: [],
@@ -106,6 +107,21 @@ function previewNewCourseToBag(state, action) {
   return tempArray;
 }
 
+function addNewEventToBag(state, action) {
+  var tempArray = [...state.calendarCourseBag];
+
+  tempArray = state.calendarCourseBag.filter((item) => item.calendarId != -1);
+
+  let id = 0;
+  if (state.calendarCourseBag.length != 0) {
+    id = state.calendarCourseBag[state.calendarCourseBag.length - 1].id + 1;
+  }
+  action.event.id = id; 
+  tempArray.push(action.event); 
+
+  return tempArray;
+}
+
 export default function (state = initialState, action) {
   switch (action.type) {
     case ADD_COURSE_TO_CAL:
@@ -139,6 +155,12 @@ export default function (state = initialState, action) {
         calendarCourseBag: state.calendarCourseBag.filter(
           (item) => item.calendarId != -1
         ),
+      };
+
+      case ADD_CUS_EVENT_IN_CAL:
+      return {
+        ...state,
+        calendarCourseBag: addNewEventToBag(state, action),
       };
 
     default:

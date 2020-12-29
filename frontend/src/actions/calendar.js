@@ -1,4 +1,4 @@
-import {ADD_COURSE_TO_CAL, REMOVE_COURSE_FROM_CAL, UPDATE_COURSE_IN_CAL, PREVIEW_COURSE_IN_CAL, CLEAR_PREVIEW_COURSE_IN_CAL} from './types'
+import {ADD_COURSE_TO_CAL, REMOVE_COURSE_FROM_CAL, UPDATE_COURSE_IN_CAL, PREVIEW_COURSE_IN_CAL, CLEAR_PREVIEW_COURSE_IN_CAL, ADD_CUS_EVENT_IN_CAL} from './types'
 import store from '../store'
 
 export const addCurrCourse = ()  =>
@@ -58,4 +58,12 @@ export const previewCurrCourse = (previewSwitch) =>
     }
 
 }
+
+export const addCustomEvent = (inputEvent) => 
+{
+    return {
+        type: ADD_CUS_EVENT_IN_CAL,
+        event: inputEvent,
+    }; 
+} 
 

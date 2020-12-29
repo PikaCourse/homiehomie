@@ -9,6 +9,7 @@ import "react-big-calendar/lib/sass/styles.scss";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
+import {addCustomEvent} from "../../actions/calendar"
 import store from "../../store";
 
 class Dnd extends React.Component {
@@ -108,6 +109,7 @@ class Dnd extends React.Component {
     this.setState({
       events: this.state.events.concat([hour]),
     });
+    store.dispatch(addCustomEvent(hour)); 
   }
 
   render() {
