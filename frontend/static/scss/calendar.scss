@@ -1,0 +1,22 @@
+.rbc-timeslot-group{
+    border-bottom: 1px solid #fff;
+}
+
+.rbc-time-content{
+    border-left: 2px solid rgba(89, 108, 126, 0.05);
+}
+
+.rbc-event.rbc-selected{
+    border-color:none;
+    background-color:rgba(65, 158, 244, 1);
+    color: white;
+    box-shadow: 6px 4px 30px rgba(65, 158, 244, 0.81);
+}
+.rbc-day-slot .rbc-event{
+    border:none;
+}
+.rbc-event{
+    border:none;
+    background-color:rgba(65, 158, 244, 0.3);
+    color: rgba(65, 158, 244, 1);
+}
