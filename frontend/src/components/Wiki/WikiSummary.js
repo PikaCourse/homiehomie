@@ -176,8 +176,6 @@ export class WikiSummary extends Component {
     // console.log("componentDidUpdate");
 
     if (this.state.previewSwitch) {
-      console.log("test");
-
       store.dispatch(previewCurrCourse(true));
     }
 
@@ -187,7 +185,6 @@ export class WikiSummary extends Component {
       const curr = this.props.wishlistCourseBag.find(
       ({ crn }) => crn === store.getState().course.selectedCRN);
         this.setState({starButton: (curr != null)});
-      console.log(curr);
     }
   }
 
@@ -213,9 +210,7 @@ export class WikiSummary extends Component {
                 style={{ color: "#419EF4", display: "inline" }}
               >
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).course_meta.title
+                  this.props.selectedCourse.course_meta.title
                 }
               </h1>
 
@@ -240,9 +235,7 @@ export class WikiSummary extends Component {
             </div>
             <h1>
               {
-                this.props.selectedCourseArray.find(
-                  ({ crn }) => crn === this.props.selectedCRN
-                ).course_meta.name
+                this.props.selectedCourse.course_meta.name
               }
             </h1>
 
@@ -252,9 +245,7 @@ export class WikiSummary extends Component {
                   <span
                     className={weekdayToClass(
                       index,
-                      this.props.selectedCourseArray.find(
-                        ({ crn }) => crn === this.props.selectedCRN
-                      ).time
+                      this.props.selectedCourse.time
                     )}
                   >
                     {day}
@@ -264,45 +255,33 @@ export class WikiSummary extends Component {
 
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).professor
+                  this.props.selectedCourse.professor
                 }{" "}
                 -{" "}
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).time[0].start_at
+                  this.props.selectedCourse.time[0].start_at
                 }
                 -
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).time[0].end_at
+                  this.props.selectedCourse.time[0].end_at
                 }{" "}
                 -{" "}
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).location
+                  this.props.selectedCourse.location
                 }
               </p>
 
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 Credit Hour:{" "}
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).course_meta.credit_hours
+                  this.props.selectedCourse.course_meta.credit_hours
                 }
               </p>
 
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 Capacity:{" "}
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).capacity
+                  this.props.selectedCourse.capacity
                 }
               </p>
 
@@ -332,6 +311,7 @@ export class WikiSummary extends Component {
 const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCRN: state.course.selectedCRN,
+  selectedCourse: state.course.selectedCourse,
   wishlistCourseBag:state.wishlist.wishlistCourseBag
 });
 

@@ -4,64 +4,53 @@ import {
   UPDATE_COURSE_IN_CAL,
   PREVIEW_COURSE_IN_CAL,
   CLEAR_PREVIEW_COURSE_IN_CAL,
-  ADD_CUS_EVENT_IN_CAL, 
+  ADD_CUS_EVENT_IN_CAL,
 } from "../actions/types.js";
 const initialState = {
   // calendarCourseBag: [],
-  calendarCourseBag: [{title:"test",
-        start: new Date(2015, 3, 12, 11, 25, 0),
-        end: new Date(2015, 3, 12, 12, 25, 0),
-        allDay: false,
-        resource: null,
-        raw:{selectedCourseArray:null}
-  }]
+  calendarCourseBag: [],
 };
 
-
 function getMonday(d) {
-	d = new Date(d);
-	var day = d.getDay(),
-		diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
-	return new Date(d.setDate(diff));
+  d = new Date(d);
+  var day = d.getDay(),
+    diff = d.getDate() - day + (day == 0 ? -6 : 1); // adjust when day is sunday
+  return new Date(d.setDate(diff));
 }
-
 
 const today = new Date();
 
 function alignDate(weekDayIndex, timestamp) {
-  let date = new Date( today.toDateString() + ", " + timestamp);
+  let date = new Date(today.toDateString() + ", " + timestamp);
   return new Date(
-		getMonday(date).setDate(getMonday(date).getDate() + weekDayIndex)
-	);
+    getMonday(date).setDate(getMonday(date).getDate() + weekDayIndex)
+  );
 }
 
 function addNewCourseToBag(state, action, update) {
-  var newBag = [...state.calendarCourseBag];
-
-  const selectedCourse = action.selectedCourseArray.find(
-    ({ crn }) => crn === action.selectedCRN
-  );
-
-  if (update) {
-    newBag = state.calendarCourseBag.filter(
-      (item) => item.title != selectedCourse.course_meta.name
-    );
-  }
-
+  let newBag = update
+    ? state.calendarCourseBag.filter(
+        (item) => item.raw.selectedCourseArray != action.selectedCourseArray
+      )
+    : [...state.calendarCourseBag];
   let idList = state.calendarCourseBag.map((a) => a.id);
-  let newId = state.calendarCourseBag.length == 0 ? 0 : Math.max(...idList) + 1;
+  let newId = update
+    ? action.oldId
+    : state.calendarCourseBag.length == 0
+    ? 0
+    : Math.max(...idList) + 1;
 
-  selectedCourse.time.map((timeslot)=>{
+  action.selectedCourse.time.map((timeslot) => {
     newBag.push({
       id: newId,
-      title: selectedCourse.course_meta.title,
+      title: action.selectedCourse.course_meta.title,
       allDay: false,
       start: alignDate(timeslot.weekday, timeslot.start_at),
       end: alignDate(timeslot.weekday, timeslot.end_at),
       raw: {
-        crn: selectedCourse.course_meta.crn,
-        name: selectedCourse.course_meta.name,
-        instructor: selectedCourse.professor,
+        crn: action.selectedCourse.course_meta.crn,
+        name: action.selectedCourse.course_meta.name,
+        instructor: action.selectedCourse.professor,
         course: action.selectedCourse,
         selectedCourseArray: action.selectedCourseArray,
       },
@@ -122,8 +111,8 @@ function addNewEventToBag(state, action) {
   if (state.calendarCourseBag.length != 0) {
     id = state.calendarCourseBag[state.calendarCourseBag.length - 1].id + 1;
   }
-  action.event.id = id; 
-  tempArray.push(action.event); 
+  action.event.id = id;
+  tempArray.push(action.event);
 
   return tempArray;
 }
@@ -163,7 +152,7 @@ export default function (state = initialState, action) {
         ),
       };
 
-      case ADD_CUS_EVENT_IN_CAL:
+    case ADD_CUS_EVENT_IN_CAL:
       return {
         ...state,
         calendarCourseBag: addNewEventToBag(state, action),
