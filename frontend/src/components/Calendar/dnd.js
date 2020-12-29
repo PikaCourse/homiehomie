@@ -12,7 +12,7 @@ import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
 import {addCustomEvent} from "../../actions/calendar"
 import store from "../../store";
-
+import {EventComponent} from "./EventComponent"
 let formats = {
 
   dayFormat: (date, culture, localizer) =>
@@ -123,6 +123,7 @@ class Dnd extends React.Component {
     let newStyle = {
       backgroundColor: 'rgba(65, 158, 244, 0.3)',
       color: 'rgba(65, 158, 244, 1)',
+      fontSize:'80%',
       borderRadius: "0px",
       border: "none",
       boxShadow:"none"
@@ -166,7 +167,9 @@ class Dnd extends React.Component {
         handleDragStart={this.handleDragStart}
         views={{ week: true }}
         toolbar={false}
-
+        components={{
+          event: EventComponent
+        }}
         eventPropGetter={this.eventStyleHandler}
       />
     );

@@ -5,7 +5,7 @@ import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 
 import Scheduler from "./main/Scheduler";
-import Dnd from "./main/dnd";
+import Dnd from "./Calendar/dnd";
 
 import Wiki from "./main/Wiki";
 import Wishlist from "./main/Wishlist";

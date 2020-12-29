@@ -49,7 +49,9 @@ function addNewCourseToBag(state, action, update) {
     tempArray.push({
       id: id,
       calendarId: id,
-      title: selectedCourse.course_meta.name,
+      title: selectedCourse.course_meta.title,
+      name: selectedCourse.course_meta.name,
+      instructor: selectedCourse.professor,
       allDay: false,
       start: startTime,
       end: endTime,
