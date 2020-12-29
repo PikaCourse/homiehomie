@@ -8,6 +8,13 @@ import {
 } from "../actions/types.js";
 const initialState = {
   calendarCourseBag: [],
+  // calendarCourseBag: [{title:"test",
+  //       start: new Date(2015, 3, 12, 11, 25, 0),
+  //       end: new Date(2015, 3, 12, 12, 25, 0),
+  //       allDay: false,
+  //       resource: null,
+  //       raw:{selectedCourseArray:null}
+  // }
 };
 
 function alignDate(weekDayIndex) {
@@ -29,40 +36,33 @@ function addNewCourseToBag(state, action, update) {
     );
   }
 
-  let id = 0;
-  if (state.calendarCourseBag.length != 0) {
-    id = state.calendarCourseBag[state.calendarCourseBag.length - 1].id + 1;
-  }
+  let idList = state.calendarCourseBag.map((a) => a.id);
+  let newId = state.calendarCourseBag.length == 0 ? 0 : Math.max(...idList) + 1;
 
-  var timeArray = selectedCourse.time;
-  for (var i = 0; i < timeArray.length; i++) {
-    let startTime = alignDate(timeArray[i].weekday);
-    let tempStartArray = timeArray[i].start_at.split(":");
-    startTime.setHours(parseFloat(tempStartArray[0]));
-    startTime.setMinutes(parseFloat(tempStartArray[1]));
+  selectedCourse.time.map((timeslot)=>{
+    let startTime = alignDate(timeslot.weekday);
+    startTime.setHours(parseFloat(timeslot.start_at.split(":")[0]));
+    startTime.setMinutes(parseFloat(timeslot.start_at.split(":")[1]));
 
-    let endTime = alignDate(timeArray[i].weekday);
-    tempStartArray = timeArray[i].end_at.split(":");
-    endTime.setHours(parseFloat(tempStartArray[0]));
-    endTime.setMinutes(parseFloat(tempStartArray[1]));
+    let endTime = alignDate(timeslot.weekday);
+    endTime.setHours(parseFloat(timeslot.end_at.split(":")[0]));
+    endTime.setMinutes(parseFloat(timeslot.end_at.split(":")[1]));
 
     tempArray.push({
-      id: id,
-      calendarId: id,
+      id: newId,
       title: selectedCourse.course_meta.title,
-      name: selectedCourse.course_meta.name,
-      instructor: selectedCourse.professor,
       allDay: false,
       start: startTime,
       end: endTime,
-      crn: selectedCourse.course_meta.crn,
       raw: {
-        selectedCRN: action.selectedCRN,
+        crn: selectedCourse.course_meta.crn,
+        name: selectedCourse.course_meta.name,
+        instructor: selectedCourse.professor,
+        course: action.selectedCourse,
         selectedCourseArray: action.selectedCourseArray,
       },
     });
-  }
-
+  });
   return tempArray;
 }
 

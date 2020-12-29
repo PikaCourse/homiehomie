@@ -15,6 +15,7 @@ export const addCurrCourse = ()  =>
         return {
             type: ADD_COURSE_TO_CAL,
             selectedCRN: store.getState().course.selectedCRN,
+            selectedCourse: store.getState().course,
             selectedCourseArray: store.getState().course.selectedCourseArray,
         };  
     }
@@ -24,6 +25,7 @@ export const addCurrCourse = ()  =>
         return {
             type: UPDATE_COURSE_IN_CAL,
             selectedCRN: store.getState().course.selectedCRN,
+            selectedCourse: store.getState().course,
             selectedCourseArray: store.getState().course.selectedCourseArray,
         };  
 
