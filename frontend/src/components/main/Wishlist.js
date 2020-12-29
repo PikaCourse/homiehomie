@@ -7,9 +7,24 @@ import { Collapse } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 
 const { Panel } = Collapse;
-import { Table, Button, Switch, Space } from "antd";
+import { Table, Button, Switch, Space, Radio, Divider } from "antd";
+import {removeCurrCourseFromWish} from "../../actions/wishlist"
 
 const columns = [
+  {
+    title: '',
+    key: 'operation',
+    fixed: 'left',
+    //width: 30,
+    render: (text, record) => <div><Button
+              onClick={(e) => {
+                console.log('print record: '+record); 
+                store.dispatch(removeCurrCourseFromWish(record.id, e)); 
+              }}
+            >Remove</Button><Button
+            >Add</Button></div>,
+                  
+  },
   {
     title: "id",
     dataIndex: "id",
@@ -81,11 +96,12 @@ const columns = [
 //   });
 // }
 
+
+
 export class Wishlist extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [store.getState().wishlist.wishlistCourseBag],
       selectedRowKeys: [], // Check here to configure the default column
       loading: false,
     };
@@ -102,7 +118,6 @@ export class Wishlist extends Component {
     // ajax request after empty completing
     setTimeout(() => {
       this.setState({
-        data: [store.getState().wishlist.wishlistCourseBag], 
         selectedRowKeys: [],
         loading: false,
       });
@@ -147,7 +162,7 @@ export class Wishlist extends Component {
               <Button
                 type="primary"
                 onClick={this.start}
-                //disabled={!hasSelected}
+                disabled={!hasSelected}
                 loading={loading}
               >
                 Reload
