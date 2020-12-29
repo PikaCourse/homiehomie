@@ -7,6 +7,7 @@ export const EventComponent = (event) => {
       <div>
         <p className="mt-1 mb-0" style = {{fontFamily:'Montserrat'}}><strong>{event.title}</strong> </p>
         {/* <span>{event.event.name}</span> */}
+        
         <p className="" style = {{fontFamily:'Montserrat'}}>{event.event.raw.instructor}</p>
       </div>
     );
