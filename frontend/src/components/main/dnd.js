@@ -4,21 +4,30 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 const localizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(Calendar);
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
-import 'react-big-calendar/lib/sass/styles.scss'
-
+import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
+import "react-big-calendar/lib/sass/styles.scss";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { setCourse } from "../../actions/course";
+import store from "../../store";
 
 class Dnd extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: [],
+      events: this.props.courselist, //[],
       displayDragItemInCell: true,
     };
 
     this.moveEvent = this.moveEvent.bind(this);
     this.newEvent = this.newEvent.bind(this);
   }
+
+  static propTypes = {
+    course: PropTypes.array.isRequired,
+    calendar: PropTypes.array.isRequired,
+    courselist: PropTypes.array.isRequired,
+  };
 
   handleDragStart = (event) => {
     this.setState({ draggedEvent: event });
@@ -89,10 +98,12 @@ class Dnd extends React.Component {
     console.log(newId);
     let hour = {
       id: newId,
-      title: "New Event",
+      title: event.title,
       allDay: event.slots.length == 1,
       start: event.start,
       end: event.end,
+      crn: event.crn,
+      raw: event.raw,
     };
     this.setState({
       events: this.state.events.concat([hour]),
@@ -105,13 +116,13 @@ class Dnd extends React.Component {
         style={{ height: 1000 }}
         selectable
         localizer={localizer}
-        events={this.state.events}
+        events={this.props.courselist} //data input
         onEventDrop={this.moveEvent}
         resizable={true}
         onEventResize={this.resizeEvent}
         onSelectSlot={this.newEvent}
         onDragStart={console.log}
-        defaultView={Views.MONTH}
+        defaultView={Views.WEEK}
         defaultDate={new Date(2015, 3, 12)}
         popup={true}
         dragFromOutsideItem={
@@ -124,4 +135,11 @@ class Dnd extends React.Component {
   }
 }
 
-export default Dnd;
+const mapStateToProps = (state) => ({
+  course: state.course.course,
+  calendar: state.calendar,
+  courselist: state.calendar.calendarCourseBag,
+  //preview: state.preview
+});
+
+export default connect(mapStateToProps)(Dnd);

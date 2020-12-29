@@ -127,7 +127,7 @@ export class WikiSummary extends Component {
           type="primary"
           size="large"
           onClick={(event) => {
-            this.animateButton(event);
+            //this.animateButton(event);
             this.props.dispatch(addCurrCourse());
           }}
         >
