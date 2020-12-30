@@ -182,7 +182,7 @@ export class WikiSummary extends Component {
     else {
       store.dispatch(previewCurrCourse(false));
     }
-    console.log("previewSwitch: "+this.state.previewSwitch); 
+    //console.log("previewSwitch: "+this.state.previewSwitch); 
 
     if (prevProps.wishlistCourseBag !== this.props.wishlistCourseBag
       || prevProps.selectedCRN !== this.props.selectedCRN

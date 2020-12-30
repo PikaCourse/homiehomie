@@ -34,53 +34,53 @@ export class WikiNotebook extends Component {
   };
 
   handleSaveClicked(nbObj) {
-    const form = new FormData();
-    form.append("course", nbObj.question.course_meta);
-    form.append("question", nbObj.question.id); //store.getState().notes.questionIDarray[i])
-    form.append("title", "whatever");
-    form.append("content", this.state.value);
-    form.append("tags", []);
-    //console.log(this.state.value);
-    axios.post("api/notes", form).then((result) => alert(result));
+    axios.post("api/notes", {
+      course: nbObj.question.course_meta,
+      question:nbObj.question.id,
+      title: "whatever",
+      content: this.state.value,
+      tags: ["hi"]
+    }).then((result) => alert(result));
     //this.props.dispatch(getNotes(this.state.inputVal));
   }
 
   onChange = ({ target: { value } }) => {
     this.setState({ value });
-    console.log({ value });
+    //console.log({ value });
   };
 
-  addNewNotesInput = () => {
-
+  addNewQueInput = () => {
+    //new question, note and a post bottom
   }
 
-  componentDidMount() {
-    console.log(store.getState().course.selectedCourse);
-    if (this.props.selectedCourse.crn)
+  componentDidUpdate(prevProps) {
+    //console.log(store.getState().course.selectedCourse);
+    // prevProps.wishlistCourseBag !== this.props.wishlistCourseBag
+    if (this.props.selectedCourse.crn && prevProps.selectedCourse.crn !== this.props.selectedCourse.crn){
       store.dispatch(
-        getQuestion(store.getState().course.selectedCourse.course_meta.id)
+        getQuestion(this.props.selectedCourse.course_meta.id)
       );
+    }
   }
+
   render() {
     const { value } = this.state;
     return (
       <div className="p-3" style={noteBookStyle}>
-        <Tooltip title="add new notes">
-          <Button size="medium" type="primary" onClick = {this.addNewNotesInput}>
+        <Tooltip title="add new question">
+          <Button size="medium" type="primary" onClick = {this.addNewQueInput}>
             <FontAwesomeIcon className="" icon={faPlus} />
           </Button>
         </Tooltip>
 
         {/* Question */}
-        {store.getState().question.noteBag.map((nbObj) => (
+        {this.props.noteBag.map((nbObj) => (
           <div>
-            {console.log(store.getState().question.noteBag)}
             <h5 style={{ fontFamily: "Montserrat", color: "#596C7E" }}>
               {nbObj.question.title}
             </h5>
-            <form className="form-inline my-2 my-lg-0" />
             <div class="mb-3">
-              {nbObj.note.map((noteObj) => (
+              {nbObj.notes.map((noteObj) => (
                 <p
                   className="pl-2"
                   style={{ fontFamily: "Montserrat", color: "#596C7E" }}
@@ -93,6 +93,7 @@ export class WikiNotebook extends Component {
               {/* writing part */}
               <div className="row">
                 <div className="col-sm-11 pr-0">
+                <form className="form-inline my-2 my-lg-0">
                   <TextArea
                     value={value}
                     onChange={this.onChange}
@@ -100,6 +101,7 @@ export class WikiNotebook extends Component {
                     autoSize={{ minRows: 3, maxRows: 5 }}
                     style={{ borderRadius: "5px", borderColor: "white" }}
                   />
+                  </form>
                 </div>
                 <div className="col-sm-1 pl-0">
                   <Button
@@ -129,5 +131,6 @@ const noteBookStyle = {
 };
 const mapStateToProps = (state) => ({
   selectedCourse: state.course.selectedCourse,
+  noteBag: state.question.noteBag
 });
 export default connect(mapStateToProps)(WikiNotebook);

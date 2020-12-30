@@ -91,14 +91,14 @@ class Dnd extends React.Component {
       events: nextEvents,
     });
 
-    console.log("moveEvent"); 
-    console.log(nextEvents);
+    //console.log("moveEvent"); 
+    //console.log(nextEvents);
 
     // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
   };
 
   resizeEvent = ({ event, start, end }) => {
-    console.log("resizeEvent"); 
+    //console.log("resizeEvent"); 
     const { events } = this.state;
 
     const nextEvents = events.map((existingEvent) => {
@@ -126,7 +126,7 @@ class Dnd extends React.Component {
       events: nextEvents,
     });
     // store.dispatch(addCustomEvent(nextEvents));
-    console.log(nextEvents);
+    //console.log(nextEvents);
 
     // alert(`${event.title} was resized to ${start}-${end}`);
   };
@@ -152,8 +152,8 @@ class Dnd extends React.Component {
       events: this.state.events.concat([hour]),
     });
     store.dispatch(addCustomEvent(hour)); 
-    console.log("newEvent"); 
-    console.log(hour); 
+    //console.log("newEvent"); 
+    //console.log(hour); 
   }
 
   eventStyleHandler = (event, start, end, isSelected) => {

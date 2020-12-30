@@ -2,11 +2,6 @@ import {GET_QUE} from '../actions/types.js'
 
 const initialState = {
     noteBag:[
-        {
-            id:0,
-            question:{},
-            note:[]
-        }
     ]
 }
 
@@ -19,7 +14,7 @@ export default function(state = initialState, action) {
     switch (action.type) {
         case GET_QUE:
             //action.payload: note array to one question
-            let newBag2 = {...state.noteBag};
+            let newBag2 = [...state.noteBag];
             newBag2.push(action.noteBagItem);
             return{
                 ...state,

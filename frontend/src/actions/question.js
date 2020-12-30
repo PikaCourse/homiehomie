@@ -24,23 +24,22 @@ export const getQuestion = (metaid) => dispatch =>
 {
     //console.log("getQuestions");
     //get question array depend on coursemetaid
-    axios.get('api/questions?coursemetaid='+metaid)
+    axios.get('api/questions?=coursemetaid='+metaid)
         //res = question array -> json
         .then(questions=>{
-            for(var i = 0; i<questions.data.length; i++){
-                //question id has to be unique
-                axios.get('api/notes?questionid='+questions.data.question.id)
+            questions.data.map((item, index)=>{
+                axios.get('api/notes?=questionid='+item.id)
                     .then(notes=>{
                         dispatch({
                             type: GET_QUE,
                             noteBagItem:{
-                                id: i,
-                                question: questions.data,
+                                id: index,
+                                question: item,
                                 notes: notes.data
                             }
                         });
-                    }).catch(err => console.log(err));
-            }
+                    }).catch(err => console.log(err));     
+            })
         }).catch(err =>console.log(err));
 }
 
