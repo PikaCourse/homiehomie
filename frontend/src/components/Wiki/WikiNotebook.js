@@ -67,7 +67,7 @@ export class WikiNotebook extends Component {
   render() {
     const { value } = this.state;
     return (
-      <div className="m-2" style={noteBookStyle}>
+      <div className="p-3" style={noteBookStyle}>
         <h1
           className="mr-2 align-middle"
           style={{ color: "#419EF4", display: "inline" }}

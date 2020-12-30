@@ -60,7 +60,6 @@ export class WikiSummary extends Component {
     });
   }
 
-
   buttonLoader() {
     const courseArray = store
       .getState()
@@ -173,7 +172,7 @@ export class WikiSummary extends Component {
         {typeof this.props.selectedCourseArray.find(
           ({ crn }) => crn === this.props.selectedCRN
         ) != "undefined" ? (
-          <div className="p-2">
+          <div className="p-3">
             <div className="mb-4">
               <Search
                 placeholder="Search subject, CRN or course name"
