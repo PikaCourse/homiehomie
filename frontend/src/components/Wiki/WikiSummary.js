@@ -6,14 +6,14 @@ import {
   removeCurrCourse,
   previewCurrCourse,
 } from "../../actions/calendar";
-import {addCurrCourseToWish} from "../../actions/wishlist"
+import { addCurrCourseToWish } from "../../actions/wishlist";
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus, faStar } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-import { Switch, Select, Input, Button } from "antd";
+import { Switch, Select, Input, Button, Tooltip } from "antd";
 
 import { getCourse } from "../../actions/course";
 import "antd/lib/style/themes/default.less";
@@ -35,7 +35,7 @@ export class WikiSummary extends Component {
 
     this.state = {
       previewSwitch: true,
-      starButton:false,
+      starButton: false,
     };
 
     this.previewInputChange = this.previewInputChange.bind(this);
@@ -53,7 +53,7 @@ export class WikiSummary extends Component {
   }
 
   previewInputChange(checked) {
-    console.log("checked: "+checked); 
+    console.log("checked: " + checked);
     store.dispatch(previewCurrCourse(checked));
     this.setState({
       previewSwitch: checked,
@@ -93,46 +93,49 @@ export class WikiSummary extends Component {
 
     return (
       <div>
-        <Button
-          disabled={!enableAdd}
-          className="mr-1 bubbly-button"
-          type="primary"
-          size="large"
-          onClick={(event) => {
-            //this.animateButton(event);
-            this.props.dispatch(addCurrCourse());
-            this.forceUpdate();
-          }}
-        >
-          <FontAwesomeIcon className="mr-2" icon={faPlus} />
-          {addButtonText}
-        </Button>
+        <Tooltip title={addButtonText}>
+          <Button
+            disabled={!enableAdd}
+            className="mr-1 bubbly-button"
+            type="primary"
+            size="large"
+            onClick={(event) => {
+              //this.animateButton(event);
+              this.props.dispatch(addCurrCourse());
+              this.forceUpdate();
+            }}
+          >
+            <FontAwesomeIcon className="" icon={faPlus} />
+          </Button>
+        </Tooltip>
+        <Tooltip title="Remove">
+          <Button
+            className="mx-1"
+            type="primary"
+            size="large"
+            disabled={!enableRemove}
+            onClick={(event) => {
+              this.props.dispatch(removeCurrCourse());
+              this.forceUpdate();
+            }}
+          >
+            <FontAwesomeIcon className="" icon={faMinus} />
+          </Button>
+        </Tooltip>
 
-        <Button
-          className="mx-1"
-          type="primary"
-          size="large"
-          disabled={!enableRemove}
-          onClick={(event) => {
-            this.props.dispatch(removeCurrCourse());
-            // this.animateButton(event);
-            this.forceUpdate();
-          }}
-        >
-          <FontAwesomeIcon className="mr-2" icon={faMinus} />
-          Remove
-        </Button>
-
-  
-        <Button className="mx-1" type="primary" size="large" 
-          onClick={(event) => {
-            store.dispatch(addCurrCourseToWish());
-          }}
-          disabled={this.state.starButton}
-        >
-          <FontAwesomeIcon icon={faStar} />
-          Add to Wishlist
-        </Button>
+        <Tooltip title="Add to Wishlist">
+          <Button
+            className="mx-1"
+            type="primary"
+            size="large"
+            onClick={(event) => {
+              store.dispatch(addCurrCourseToWish());
+            }}
+            disabled={this.state.starButton}
+          >
+            <FontAwesomeIcon icon={faStar} />
+          </Button>
+        </Tooltip>
 
         <Switch defaultChecked onChange={this.previewInputChange} />
       </div>
@@ -148,18 +151,19 @@ export class WikiSummary extends Component {
 
     if (this.state.previewSwitch) {
       store.dispatch(previewCurrCourse(true));
-    }
-    else {
+    } else {
       store.dispatch(previewCurrCourse(false));
     }
-    //console.log("previewSwitch: "+this.state.previewSwitch); 
+    //console.log("previewSwitch: "+this.state.previewSwitch);
 
-    if (prevProps.wishlistCourseBag !== this.props.wishlistCourseBag
-      || prevProps.selectedCRN !== this.props.selectedCRN
-      ) {
+    if (
+      prevProps.wishlistCourseBag !== this.props.wishlistCourseBag ||
+      prevProps.selectedCRN !== this.props.selectedCRN
+    ) {
       const curr = this.props.wishlistCourseBag.find(
-      ({ crn }) => crn === store.getState().course.selectedCRN);
-        this.setState({starButton: (curr != null)});
+        ({ crn }) => crn === store.getState().course.selectedCRN
+      );
+      this.setState({ starButton: curr != null });
     }
   }
 
@@ -184,9 +188,7 @@ export class WikiSummary extends Component {
                 className="mr-2 align-middle"
                 style={{ color: "#419EF4", display: "inline" }}
               >
-                {
-                  this.props.selectedCourse.course_meta.title
-                }
+                {this.props.selectedCourse.course_meta.title}
               </h1>
 
               <Select
@@ -209,11 +211,7 @@ export class WikiSummary extends Component {
                 ))}
               </Select>
             </div>
-            <h1>
-              {
-                this.props.selectedCourse.course_meta.name
-              }
-            </h1>
+            <h1>{this.props.selectedCourse.course_meta.name}</h1>
 
             <div className="">
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
@@ -230,35 +228,19 @@ export class WikiSummary extends Component {
               </p>
 
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
-                {
-                  this.props.selectedCourse.professor
-                }{" "}
-                -{" "}
-                {
-                  this.props.selectedCourse.time[0].start_at
-                }
-                -
-                {
-                  this.props.selectedCourse.time[0].end_at
-                }{" "}
-                -{" "}
-                {
-                  this.props.selectedCourse.location
-                }
+                {this.props.selectedCourse.professor} -{" "}
+                {this.props.selectedCourse.time[0].start_at}-
+                {this.props.selectedCourse.time[0].end_at} -{" "}
+                {this.props.selectedCourse.location}
               </p>
 
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 Credit Hour:{" "}
-                {
-                  this.props.selectedCourse.course_meta.credit_hours
-                }
+                {this.props.selectedCourse.course_meta.credit_hours}
               </p>
 
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
-                Capacity:{" "}
-                {
-                  this.props.selectedCourse.capacity
-                }
+                Capacity: {this.props.selectedCourse.capacity}
               </p>
 
               {/* <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
@@ -288,7 +270,7 @@ const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCRN: state.course.selectedCRN,
   selectedCourse: state.course.selectedCourse,
-  wishlistCourseBag:state.wishlist.wishlistCourseBag
+  wishlistCourseBag: state.wishlist.wishlistCourseBag,
 });
 
 export default connect(mapStateToProps)(WikiSummary);
