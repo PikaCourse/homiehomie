@@ -6,12 +6,12 @@ on:
     paths-ignore: 
       - 'README.md'
       - '.gitignore'
-      - '.github/'
+      - '.github/**'
   pull_request:
     paths-ignore: 
       - 'README.md'
       - '.gitignore'
-      - '.github/'
+      - '.github/**'
     branches: [ main ]
     
   workflow_dispatch:
