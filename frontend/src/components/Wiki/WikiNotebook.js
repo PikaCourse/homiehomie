@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faThumbsUp,
   faThumbsDown,
-  faPlus,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
@@ -67,58 +67,94 @@ export class WikiNotebook extends Component {
   render() {
     const { value } = this.state;
     return (
-      <div className="p-3" style={noteBookStyle}>
-        <Tooltip title="add new question">
-          <Button size="medium" type="primary" onClick={this.addNewQueInput}>
-            <FontAwesomeIcon className="" icon={faPlus} />
-          </Button>
-        </Tooltip>
+      <div className="m-2" style={noteBookStyle}>
+        <h1
+          className="mr-2 align-middle"
+          style={{ color: "#419EF4", display: "inline" }}
+        >
+          NoteBook
+        </h1>
 
-        {/* Question */}
-        {this.props.noteBag.map((nbObj) => (
+        <div>
           <Card
             hoverable
-            title={nbObj.question.title}
+            title=""
             bordered={true}
             className="my-2"
             style={{ fontFamily: "Montserrat", color: "#596C7E" }}
           >
-            {nbObj.notes.map((noteObj) => (
-              <p
-                className="pl-2"
-                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+            <p
+              className="text-center"
+              style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+            >
+              <FontAwesomeIcon icon={faPen} />
+              ADD NOTE
+            </p>
+
+            {/*  
+              <Tooltip title="add a note">
+              <Button
+                className="align-middle"
+                size="large"
+                type="primary"
+                shape="circle"
+                onClick={this.addNewQueInput}
+                style={{
+                  backgroundColor: "rgba(255, 175, 115, 1)",
+                  border: "none",
+                }}
               >
-                {noteObj.content}
-                <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
-                <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> 1
-              </p>
-            ))}
-            <div className="row">
-              <div className="col-sm-11 pr-0">
-                <form className="form-inline my-2 my-lg-0">
-                  <TextArea
-                    value={value}
-                    onChange={this.onChange}
-                    placeholder="Controlled autosize"
-                    autoSize={{ minRows: 3, maxRows: 5 }}
-                    style={{ borderRadius: "5px", borderColor: "white" }}
-                  />
-                </form>
-              </div>
-              <div className="col-sm-1 pl-0">
-                <Button
-                  size="medium"
-                  type="primary"
-                  onClick={(event) => {
-                    this.handleSaveClicked(nbObj);
-                  }}
-                >
-                  save
-                </Button>
-              </div>
-            </div>
+                <FontAwesomeIcon className="" icon={faPen} />
+              </Button> 
+            </Tooltip>
+          */}
           </Card>
-        ))}
+          {/* Question */}
+          {this.props.noteBag.map((nbObj) => (
+            <Card
+              hoverable
+              title={nbObj.question.title}
+              bordered={true}
+              className="my-2"
+              style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+            >
+              {nbObj.notes.map((noteObj) => (
+                <p
+                  className="pl-2"
+                  style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                >
+                  {noteObj.content}
+                  <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
+                  <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> 1
+                </p>
+              ))}
+              <div className="row">
+                <div className="col-sm-11 pr-0">
+                  <form className="form-inline my-2 my-lg-0">
+                    <TextArea
+                      value={value}
+                      onChange={this.onChange}
+                      placeholder="Controlled autosize"
+                      autoSize={{ minRows: 3, maxRows: 5 }}
+                      style={{ borderRadius: "5px", borderColor: "white" }}
+                    />
+                  </form>
+                </div>
+                <div className="col-sm-1 pl-0">
+                  <Button
+                    size="medium"
+                    type="primary"
+                    onClick={(event) => {
+                      this.handleSaveClicked(nbObj);
+                    }}
+                  >
+                    save
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
@@ -126,7 +162,7 @@ export class WikiNotebook extends Component {
 
 const noteBookStyle = {
   background: "#FFFFFF",
-  border: "5px solid rgba(65, 158, 244, 0.27)",
+  // border: "5px solid rgba(65, 158, 244, 0.27)",
   boxSizing: "border-box",
   borderRadius: "2rem",
 };

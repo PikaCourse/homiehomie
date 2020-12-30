@@ -14,8 +14,10 @@ export class Wiki extends Component {
   render() {
     return (
       <Fragment>
+        <div className="overflow-auto">
         <WikiSummary/>
         <WikiNotebook />
+        </div>
       </Fragment>
     );
   }
