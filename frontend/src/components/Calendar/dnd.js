@@ -129,6 +129,7 @@ class Dnd extends React.Component {
   };
 
   newEvent(event) {
+    const title = window.prompt('New Event name')
     let idList = store.getState().calendar.calenderCusEventBag.map((a) => a.id);
     // if (store.getState().calendar.calenderCusEventBag == 0) {
     //   var newId = 0;
@@ -143,7 +144,7 @@ class Dnd extends React.Component {
     let hour = {
       type: "custom",
       id: newId,
-      title: event.title,
+      title: title,
       allDay: event.slots.length == 1,
       start: event.start,
       end: event.end,
@@ -163,7 +164,7 @@ class Dnd extends React.Component {
     let newStyle = {
       backgroundColor: colors[(event.id % 10) + 1].weak,
       color: colors[(event.id % 10) + 1].strong,
-      fontSize: "70%",
+      fontSize: "100%",
       borderRadius: "0px",
       border: "none",
       boxShadow: "none",
@@ -257,8 +258,6 @@ const mapStateToProps = (state) => ({
   calendar: state.calendar,
   calendarCourseBag: state.calendar.calendarCourseBag,
   calenderCusEventBag: state.calendar.calenderCusEventBag,
-  // courselist: [...state.calendar.calendarCourseBag, ...state.calendar.calenderCusEventBag], //state.calendar.calendarCourseBag.concat([state.calendar.calenderCusEventBag]),
-  //preview: state.preview
 });
 
 export default connect(mapStateToProps)(Dnd);
