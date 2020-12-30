@@ -159,8 +159,8 @@ class Dnd extends React.Component {
   eventStyleHandler = (event, start, end, isSelected) => {
     // console.log(colors);
     let newStyle = {
-      backgroundColor: colors[event.id].weak,
-      color: colors[event.id].strong,
+      backgroundColor: colors[event.id%10].weak,
+      color: colors[event.id%10].strong,
       fontSize:'70%',
       borderRadius: "0px",
       border: "none",
