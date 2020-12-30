@@ -217,6 +217,7 @@ export class WikiSummary extends Component {
               <Select
                 className="col-sm-3 mx-0 px-0 align-middle"
                 defaultValue={this.props.selectedCRN}
+                value={this.props.selectedCRN}
                 style={{ width: 120 }}
                 size="large"
                 onChange={(value) => {

@@ -30,6 +30,7 @@ function addNewCourseToWish(state, action)
         description: selectedCourse.course_meta.description, 
         tags: selectedCourse.course_meta.tags, 
         college: selectedCourse.course_meta.college, 
+        selectedCourseArray: action.selectedCourseArray, 
     });
     return tempArray;
 }

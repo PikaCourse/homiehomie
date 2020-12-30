@@ -9,8 +9,9 @@ import { CaretRightOutlined } from "@ant-design/icons";
 const { Panel } = Collapse;
 import { Table, Button, Switch, Space, Radio, Divider } from "antd";
 import {removeCurrCourseFromWish} from "../../actions/wishlist"
+import {setCourse, getCourse} from "../../actions/course"
 
-var columns = [
+const columns = [
   {
     title: '',
     key: 'operation',
@@ -21,21 +22,26 @@ var columns = [
                 console.log('print record: '+record); 
                 store.dispatch(removeCurrCourseFromWish(record.id, e)); 
               }}
-            >Remove</Button><Button
-            >Add</Button></div>,
+            >Remove</Button>
+            <Button
+            onClick={(e) => {
+              console.log('print record: '+record); 
+              store.dispatch(removeCurrCourseFromWish(record.id, e)); 
+            }} 
+            >Add</Button>
+            <Button
+            onClick={(e) => {
+              store.dispatch(
+                setCourse({
+                  selectedCRN: record.crn,
+                  selectedCourseArray: record.selectedCourseArray,
+                })
+              );
+            }}
+            >View</Button>
+            </div>,
                   
   },
-  {
-    title: <span><Button type="primary">test</Button></span>,
-    // render: (text, record) => <Button
-    //           type="primary"
-    //           onClick={this.start}
-    //           disabled={!hasSelected}
-    //           loading={loading}
-    //         >
-    //           Add All
-    //         </Button>,
-  }, 
   {
     title: "id",
     dataIndex: "id",
@@ -106,7 +112,8 @@ export class Wishlist extends Component {
     this.state = {
       selectedRowKeys: [], // Check here to configure the default column
       loading: false,
-    };
+    }; 
+    
   }
   
   start = () => {
@@ -138,6 +145,14 @@ export class Wishlist extends Component {
       onChange: this.onSelectChange,
     };
     const hasSelected = selectedRowKeys.length > 0;
+    columns[0].title = <span><Button
+        type="primary"
+        onClick={this.start}
+        disabled={!hasSelected}
+        loading={loading}
+      >
+        Add All
+      </Button></span>;
     return (
 
       <div id="app" className="col-sm-12">
@@ -153,7 +168,7 @@ export class Wishlist extends Component {
             key="1"
             className="site-collapse-custom-panel"
           >
-            <div style={{ marginBottom: 16 }}>
+            {/* <div style={{ marginBottom: 16 }}>
               <Button
                 type="primary"
                 onClick={this.start}
@@ -165,7 +180,7 @@ export class Wishlist extends Component {
               <span style={{ marginLeft: 8 }}>
                 {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
               </span>
-            </div>
+            </div> */}
             <Table
               rowSelection={rowSelection}
               columns={columns}
