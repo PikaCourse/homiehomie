@@ -87,8 +87,10 @@ export class WikiNotebook extends Component {
               className="text-center"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
             >
-              <FontAwesomeIcon icon={faPen} />
-              ADD NOTE
+              <span style={{ borderBottom: "4px solid rgba(65, 158, 244, 1)" }}>
+                <FontAwesomeIcon icon={faPen} />
+                ADD NOTE
+              </span>
             </p>
 
             {/*  

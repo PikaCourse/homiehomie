@@ -6,20 +6,18 @@ const mlocalizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
 import "react-big-calendar/lib/sass/styles.scss";
-import '../../../static/scss/calendar.scss'
+import "../../../static/scss/calendar.scss";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
-import {addCustomEvent} from "../../actions/calendar"
+import { addCustomEvent } from "../../actions/calendar";
 import store from "../../store";
-import {EventComponent} from "./EventComponent"
-import {colors} from "./color.js";
+import { EventComponent } from "./EventComponent";
+import { colors } from "./color.js";
 
 let formats = {
-
-  dayFormat: (date, culture, localizer) =>
-    moment.utc(date).format('ddd') //https://devhints.io/moment
-}
+  dayFormat: (date, culture, localizer) => moment.utc(date).format("ddd"), //https://devhints.io/moment
+};
 const today = new Date();
 class Dnd extends React.Component {
   constructor(props) {
@@ -76,10 +74,9 @@ class Dnd extends React.Component {
     }
 
     const nextEvents = events.map((existingEvent) => {
-      if (existingEvent.id == event.id)
-      {
-        existingEvent.start = start; 
-        existingEvent.end = end; 
+      if (existingEvent.id == event.id) {
+        existingEvent.start = start;
+        existingEvent.end = end;
         store.dispatch(addCustomEvent(existingEvent));
       }
       return existingEvent;
@@ -92,29 +89,28 @@ class Dnd extends React.Component {
       events: nextEvents,
     });
 
-    //console.log("moveEvent"); 
+    //console.log("moveEvent");
     //console.log(nextEvents);
 
     // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
   };
 
   resizeEvent = ({ event, start, end }) => {
-    //console.log("resizeEvent"); 
+    //console.log("resizeEvent");
     const { events } = this.state;
 
     const nextEvents = events.map((existingEvent) => {
       // console.log("existingEvent");
       // console.log(existingEvent);
       // console.log("event");
-      // console.log(event); 
-      // console.log("existingEvent.id: "+existingEvent.id); 
-      // console.log("event.id: "+event.id); 
+      // console.log(event);
+      // console.log("existingEvent.id: "+existingEvent.id);
+      // console.log("event.id: "+event.id);
       // console.log("start: "+start);
-      // console.log("end: "+end); 
-      if (existingEvent.id == event.id)
-      {
-        existingEvent.start = start; 
-        existingEvent.end = end; 
+      // console.log("end: "+end);
+      if (existingEvent.id == event.id) {
+        existingEvent.start = start;
+        existingEvent.end = end;
         store.dispatch(addCustomEvent(existingEvent));
       }
       return existingEvent;
@@ -140,92 +136,118 @@ class Dnd extends React.Component {
     // else {
     //   var newId = store.getState().calendar.calenderCusEventBag[store.getState().calendar.calenderCusEventBag.length -  1].id + 1;
     // } //this.state.events.length == 0 ? 0 : Math.max(...idList) + 1;
-    var newId = store.getState().calendar.calenderCusEventBag.length == 0 ? 0 : Math.max(...idList) + 1;
+    var newId =
+      store.getState().calendar.calenderCusEventBag.length == 0
+        ? 0
+        : Math.max(...idList) + 1;
     let hour = {
-      type: 'custom', 
+      type: "custom",
       id: newId,
       title: event.title,
       allDay: event.slots.length == 1,
       start: event.start,
       end: event.end,
       crn: -1,
-      raw: {selectedCourseArray: []},
+      raw: { selectedCourseArray: [] },
     };
     this.setState({
       events: this.state.events.concat([hour]),
     });
-    store.dispatch(addCustomEvent(hour)); 
-    //console.log("newEvent"); 
-    //console.log(hour); 
+    store.dispatch(addCustomEvent(hour));
+    //console.log("newEvent");
+    //console.log(hour);
   }
 
   eventStyleHandler = (event, start, end, isSelected) => {
     // console.log(colors);
     let newStyle = {
-      backgroundColor: colors[event.id%10+1].weak,
-      color: colors[event.id%10+1].strong,
-      fontSize:'70%',
+      backgroundColor: colors[(event.id % 10) + 1].weak,
+      color: colors[(event.id % 10) + 1].strong,
+      fontSize: "70%",
       borderRadius: "0px",
       border: "none",
-      boxShadow:"none",
-      zIndex:"10"
+      boxShadow: "none",
+      zIndex: "10",
     };
 
-    if (isSelected){
-      newStyle.backgroundColor = colors[event.id%10+1].strong;
-      newStyle.color = 'white';
-      newStyle.boxShadow = "6px 4px 30px " + colors[event.id%10+1].weak;
-      if (event.type != 'custom')
-      store.dispatch(
-        setCourse({
-          selectedCRN: event.raw.crn,
-          selectedCourseArray: event.raw.selectedCourseArray,
-        })
-      );
+    if (isSelected) {
+      newStyle.backgroundColor = colors[(event.id % 10) + 1].strong;
+      newStyle.color = "white";
+      newStyle.boxShadow = "6px 4px 30px " + colors[(event.id % 10) + 1].weak;
+      if (event.type != "custom")
+        store.dispatch(
+          setCourse({
+            selectedCRN: event.raw.crn,
+            selectedCourseArray: event.raw.selectedCourseArray,
+          })
+        );
     }
 
     return {
       className: "",
-      style: newStyle
+      style: newStyle,
     };
-  }
+  };
 
   render() {
-    console.log("render start"); 
-    console.log(this.props.courselist); 
-    console.log(store.getState().calendar.calendarCourseBag); 
-    console.log(store.getState().calendar.calenderCusEventBag); 
-    console.log("render end"); 
+    console.log("render start");
+    console.log(this.props.courselist);
+    console.log(store.getState().calendar.calendarCourseBag);
+    console.log(store.getState().calendar.calenderCusEventBag);
+    console.log("render end");
     return (
-      <DragAndDropCalendar
-        min={new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 0, 0)}
-        max={new Date(today.getFullYear(), today.getMonth(), today.getDate(), 22, 0, 0)}
-        showMultiDayTimes = {false}
-        formats = {formats}
-        style={{ height: 1000 }}
-        selectable
-        localizer={mlocalizer}
-        events={[...this.props.calendarCourseBag, ...this.props.calenderCusEventBag]} //data input
-        onEventDrop={this.moveEvent}
-        resizable={true}
-        onEventResize={this.resizeEvent}
-        onSelectSlot={this.newEvent}
-        onDragStart={console.log}
-        defaultView={Views.WEEK}
-        defaultDate={today}
-        popup={true}
-        dragFromOutsideItem={
-          this.state.displayDragItemInCell ? this.dragFromOutsideItem : null
-        }
-        onDropFromOutside={this.onDropFromOutside}
-        handleDragStart={this.handleDragStart}
-        views={{ week: true }}
-        toolbar={false}
-        components={{
-          event: EventComponent
-        }}
-        eventPropGetter={this.eventStyleHandler}
-      />
+      <div className="p-2">
+        <DragAndDropCalendar
+          min={
+            new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate(),
+              7,
+              0,
+              0
+            )
+          }
+          max={
+            new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate(),
+              22,
+              0,
+              0
+            )
+          }
+          showMultiDayTimes={false}
+          formats={formats}
+          style={{ height: "80vh" }}
+          selectable
+          localizer={mlocalizer}
+          events={[
+            ...this.props.calendarCourseBag,
+            ...this.props.calenderCusEventBag,
+          ]} //data input
+          onEventDrop={this.moveEvent}
+          resizable={true}
+          onEventResize={this.resizeEvent}
+          onSelectSlot={this.newEvent}
+          onDragStart={console.log}
+          defaultView={Views.WEEK}
+          defaultDate={today}
+          popup={true}
+          dragFromOutsideItem={
+            this.state.displayDragItemInCell ? this.dragFromOutsideItem : null
+          }
+          onDropFromOutside={this.onDropFromOutside}
+          handleDragStart={this.handleDragStart}
+          views={{ week: true }}
+          toolbar={false}
+          components={{
+            event: EventComponent,
+          }}
+          eventPropGetter={this.eventStyleHandler}
+        />
+      </div>
     );
   }
 }
@@ -233,8 +255,8 @@ class Dnd extends React.Component {
 const mapStateToProps = (state) => ({
   course: state.course.course,
   calendar: state.calendar,
-  calendarCourseBag: state.calendar.calendarCourseBag, 
-  calenderCusEventBag: state.calendar.calenderCusEventBag, 
+  calendarCourseBag: state.calendar.calendarCourseBag,
+  calenderCusEventBag: state.calendar.calenderCusEventBag,
   // courselist: [...state.calendar.calendarCourseBag, ...state.calendar.calenderCusEventBag], //state.calendar.calendarCourseBag.concat([state.calendar.calenderCusEventBag]),
   //preview: state.preview
 });

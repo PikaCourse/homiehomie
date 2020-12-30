@@ -41,7 +41,7 @@ export class Header extends Component {
   }
   render() {
     return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-4 pt-4">
+      <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
         <a className="navbar-brand mx-auto" href="#" style={selectedStyle}>
           Scheduler Beta
         </a>

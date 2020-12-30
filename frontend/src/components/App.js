@@ -7,28 +7,25 @@ import Dnd from "./Calendar/dnd";
 import Wiki from "./main/Wiki";
 import Wishlist from "./main/Wishlist";
 
-
-import {Provider} from 'react-redux';
-import store from '../store';
-import '../../static/scss/button.scss'
+import { Provider } from "react-redux";
+import store from "../store";
+import "../../static/scss/button.scss";
 
 class App extends Component {
   render() {
     return (
-      <Provider store = {store}>
+      <Provider store={store}>
         <Fragment>
           <Header />
           <div className="container-fluid">
             <div className="row">
-              
-              
-                <Wishlist />             
+              <Wishlist />
             </div>
             <div className="row">
-              <div id="app" className="col-md-6 m-3">
+              <div id="app" className="col-md-6">
                 <Dnd />
               </div>
-              <div id="app" className="col-md-5">
+              <div id="app" className="col-md-6">
                 <Wiki />
               </div>
             </div>
@@ -36,7 +33,6 @@ class App extends Component {
           <Footer />
         </Fragment>
       </Provider>
-
     );
   }
 }
