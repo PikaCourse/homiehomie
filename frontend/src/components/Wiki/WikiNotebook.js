@@ -34,13 +34,15 @@ export class WikiNotebook extends Component {
   };
 
   handleSaveClicked(nbObj) {
-    axios.post("api/notes", {
-      course: nbObj.question.course_meta,
-      question:nbObj.question.id,
-      title: "whatever",
-      content: this.state.value,
-      tags: ["hi"]
-    }).then((result) => alert(result));
+    axios
+      .post("api/notes", {
+        course: nbObj.question.course_meta,
+        question: nbObj.question.id,
+        title: "whatever",
+        content: this.state.value,
+        tags: ["hi"],
+      })
+      .then((result) => alert(result));
     //this.props.dispatch(getNotes(this.state.inputVal));
   }
 
@@ -51,15 +53,14 @@ export class WikiNotebook extends Component {
 
   addNewQueInput = () => {
     //new question, note and a post bottom
-  }
+  };
 
   componentDidUpdate(prevProps) {
-    //console.log(store.getState().course.selectedCourse);
-    // prevProps.wishlistCourseBag !== this.props.wishlistCourseBag
-    if (this.props.selectedCourse.crn && prevProps.selectedCourse.crn !== this.props.selectedCourse.crn){
-      store.dispatch(
-        getQuestion(this.props.selectedCourse.course_meta.id)
-      );
+    if (
+      this.props.selectedCourse.crn &&
+      prevProps.selectedCourse.crn !== this.props.selectedCourse.crn
+    ) {
+      store.dispatch(getQuestion(this.props.selectedCourse.course_meta.id));
     }
   }
 
@@ -68,7 +69,7 @@ export class WikiNotebook extends Component {
     return (
       <div className="p-3" style={noteBookStyle}>
         <Tooltip title="add new question">
-          <Button size="medium" type="primary" onClick = {this.addNewQueInput}>
+          <Button size="medium" type="primary" onClick={this.addNewQueInput}>
             <FontAwesomeIcon className="" icon={faPlus} />
           </Button>
         </Tooltip>
@@ -93,14 +94,14 @@ export class WikiNotebook extends Component {
               {/* writing part */}
               <div className="row">
                 <div className="col-sm-11 pr-0">
-                <form className="form-inline my-2 my-lg-0">
-                  <TextArea
-                    value={value}
-                    onChange={this.onChange}
-                    placeholder="Controlled autosize"
-                    autoSize={{ minRows: 3, maxRows: 5 }}
-                    style={{ borderRadius: "5px", borderColor: "white" }}
-                  />
+                  <form className="form-inline my-2 my-lg-0">
+                    <TextArea
+                      value={value}
+                      onChange={this.onChange}
+                      placeholder="Controlled autosize"
+                      autoSize={{ minRows: 3, maxRows: 5 }}
+                      style={{ borderRadius: "5px", borderColor: "white" }}
+                    />
                   </form>
                 </div>
                 <div className="col-sm-1 pl-0">
@@ -131,6 +132,6 @@ const noteBookStyle = {
 };
 const mapStateToProps = (state) => ({
   selectedCourse: state.course.selectedCourse,
-  noteBag: state.question.noteBag
+  noteBag: state.question.noteBag,
 });
 export default connect(mapStateToProps)(WikiNotebook);
