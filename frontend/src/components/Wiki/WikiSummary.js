@@ -61,36 +61,6 @@ export class WikiSummary extends Component {
   }
 
 
-  wishlistCheckDuplicate() {
-    const curr = store.getState().wishlist.wishlistCourseBag.find(
-      ({ crn }) => crn === store.getState().course.selectedCRN);
-
-    // console.log( "curr.length: " + curr.length);
-    
-      return false;
-    // if (store.getState().wishlist.wishlistCourseBag.length == 0)
-    // {
-    //   console.log('ran empty'); 
-    //   return false; 
-    // }
-    // else {
-    //   console.log('ran 1');
-    // const selectedCourse = store.getState().course.selectedCourseArray.find(
-    //     ({ crn }) => crn === store.getState().course.selectedCRN
-    // );
-    // console.log('ran 2');
-    // let checkDuplicate = store.getState().wishlist.wishlistCourseBag.find( 
-    //     ({crn}) => crn == selectedCourse.crn
-    // ); 
-    // console.log('ran 3'); 
-    // console.log(typeof checkDuplicate === 'undefined'); 
-    // return (typeof checkDuplicate === 'undefined'); 
-
-    // }
-    
-  }
-
-
   buttonLoader() {
     const courseArray = store
       .getState()

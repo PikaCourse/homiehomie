@@ -9,6 +9,7 @@ import {
 const initialState = {
   // calendarCourseBag: [],
   calendarCourseBag: [],
+  calenderCusEventbag: [], 
 };
 
 function getMonday(d) {
@@ -62,7 +63,7 @@ function addNewCourseToBag(state, action, update) {
 function previewNewCourseToBag(state, action) {
   var newBag = [...state.calendarCourseBag];
 
-  newBag = state.calendarCourseBag.filter((item) => item.id != -1);
+  newBag = state.calendarCourseBag.filter((item) => ((item.id != -1) && (item.raw.crn != action.selectedCourse.crn)));
 
   console.log(action.selectedCourse); 
 

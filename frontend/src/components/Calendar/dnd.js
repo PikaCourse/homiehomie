@@ -145,7 +145,7 @@ class Dnd extends React.Component {
       allDay: event.slots.length == 1,
       start: event.start,
       end: event.end,
-      crn: event.crn,
+      crn: -1,
       raw: {selectedCourseArray: []},
     };
     this.setState({

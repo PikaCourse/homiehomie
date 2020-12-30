@@ -13,10 +13,11 @@ export const addCurrCourse = () => {
     .getState()
     .calendar.calendarCourseBag.filter(
       (item) =>
-        (item.raw.selectedCourseArray ==
-        store.getState().course.selectedCourseArray)//||(item.id != -1)
+        ((item.raw.selectedCourseArray ==
+        store.getState().course.selectedCourseArray) && (item.id != -1))
     );
-  // console.log("test");
+  console.log("test");
+  console.log(!Array.isArray(courseArray) || !courseArray.length); 
   if (!Array.isArray(courseArray) || !courseArray.length) {
     // add new course
     return {
