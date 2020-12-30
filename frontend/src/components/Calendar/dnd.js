@@ -146,7 +146,7 @@ class Dnd extends React.Component {
       start: event.start,
       end: event.end,
       crn: event.crn,
-      raw: event.raw,
+      raw: {selectedCourseArray: []},
     };
     this.setState({
       events: this.state.events.concat([hour]),

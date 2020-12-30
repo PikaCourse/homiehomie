@@ -1,4 +1,4 @@
-import{GET_NOTES} from './types'
+ import{GET_NOTES} from './types'
 import{GET_QUE} from './types'
 import axios from 'axios'
 
