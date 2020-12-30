@@ -92,24 +92,6 @@ export class WikiNotebook extends Component {
                 ADD NOTE
               </span>
             </p>
-
-            {/*  
-              <Tooltip title="add a note">
-              <Button
-                className="align-middle"
-                size="large"
-                type="primary"
-                shape="circle"
-                onClick={this.addNewQueInput}
-                style={{
-                  backgroundColor: "rgba(255, 175, 115, 1)",
-                  border: "none",
-                }}
-              >
-                <FontAwesomeIcon className="" icon={faPen} />
-              </Button> 
-            </Tooltip>
-          */}
           </Card>
           {/* Question */}
           {this.props.noteBag.map((nbObj) => (
