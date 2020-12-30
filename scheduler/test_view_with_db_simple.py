@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.exceptions import *
 from scheduler.utils import *
 from urllib.parse import urlencode
+from datetime import datetime
 import json
 import random
 
@@ -293,6 +294,7 @@ def check_post_success(test_case, url, detail_url_name, test_data, json_fields=(
                                 content_type='application/x-www-form-urlencoded')
     # Assert code and msg
     test_case.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=f"Message: {response.data}")
+    post_result = response.data
 
     # Test if the post is successful
     id = response.data[id_fields]
@@ -305,6 +307,8 @@ def check_post_success(test_case, url, detail_url_name, test_data, json_fields=(
         if key in ignore_fields:
             continue
         test_case.assertEqual(obj[key], test_data[key], msg=f"Field: {key}")
+
+    return post_result
 
 
 def check_post_error(test_case, url, test_data, error_class=InvalidForm):
@@ -354,6 +358,7 @@ def check_put_success(test_case, detail_url_name, path_params, test_data, json_f
 
     # Assert code and msg
     test_case.assertEqual(response.status_code, status.HTTP_200_OK, msg=f"Message: {response.data}")
+    put_result = response.data
 
     # Test if the put actually change the data
     response = test_case.client.get(url)
@@ -363,6 +368,8 @@ def check_put_success(test_case, detail_url_name, path_params, test_data, json_f
         if key in ignore_fields:
             continue
         test_case.assertEqual(obj[key], test_data[key], msg=f"Field: {key}")
+
+    return put_result
 
 
 def check_put_error(test_case, detail_url_name, path_params, test_data, error_class=NotFound):
@@ -1907,7 +1914,21 @@ class NoteViewSetTests(APITestCase):
         test_data = {'course': 1, 'question': 1, 'title': 'Test note tile',
                      'content': 'Test content', 'tags': ["tags"]}
 
-        check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"], id_fields="note")
+        data = check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"], id_fields="note")
+
+        # Check if the linked question is updated properly
+        url = reverse("api:notes-detail", kwargs={"pk": data["note"]})
+        response = self.client.get(url)
+        time_note = datetime.fromisoformat(response.data["last_edited"][:-1])
+
+        url = reverse("api:questions-detail", kwargs={"pk": 1})
+        response = self.client.get(url)
+        time_question = datetime.fromisoformat(response.data["last_answered"][:-1])
+
+        # Check if the update time is within 10 second and note should be edited first
+        time_diff_seconds = (time_question - time_note).total_seconds()
+        self.assertLessEqual(time_diff_seconds, 10, msg=f"Overtime")
+        self.assertLessEqual(0, time_diff_seconds, msg=f"Question gets updated before note")
 
     def test_note_create_extra_field(self):
         """
@@ -1962,7 +1983,7 @@ class NoteViewSetTests(APITestCase):
             form[key] = ""
             check_post_error(self, url, form)
 
-    def test_qnote_create_invalid_field_constraints(self):
+    def test_note_create_invalid_field_constraints(self):
         """
         Test empty fields (course_meta, title), should raise 400 error
         :return:
@@ -2000,7 +2021,21 @@ class NoteViewSetTests(APITestCase):
         path_params = {"pk": 1}
         test_data = {"title": "Changed", "content": "Changed Content", "tags": ["changed", "changed tag"]}
 
-        check_put_success(self, detail_url_name, path_params, test_data)
+        data = check_put_success(self, detail_url_name, path_params, test_data)
+
+        # Check if the linked question is updated properly
+        url = reverse("api:notes-detail", kwargs={"pk": data["note"]})
+        response = self.client.get(url)
+        time_note = datetime.fromisoformat(response.data["last_edited"][:-1])
+
+        url = reverse("api:questions-detail", kwargs={"pk": 1})
+        response = self.client.get(url)
+        time_question = datetime.fromisoformat(response.data["last_answered"][:-1])
+
+        # Check if the update time is within 10 second and note should be edited first
+        time_diff_seconds = (time_question - time_note).total_seconds()
+        self.assertLessEqual(time_diff_seconds, 10, msg=f"Overtime")
+        self.assertLessEqual(0, time_diff_seconds, msg=f"Question gets updated before note")
 
     def test_note_update_invalid_pk(self):
         """
