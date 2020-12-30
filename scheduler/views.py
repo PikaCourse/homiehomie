@@ -3,7 +3,7 @@ from django.db.models import Model
 from scheduler.models import *
 from scheduler.forms import *
 from scheduler.serializers import *
-from scheduler.utils import *
+from scheduler.exceptions import *
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request

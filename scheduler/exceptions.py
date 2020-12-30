@@ -18,19 +18,6 @@ def custom_exception_hdr(exc, context):
     return response
 
 
-def get_packet_details(exc):
-    """
-    Helper function in test to return the expected exception error packet
-    :param exc: expected exception instance
-    :return:
-    """
-    packet = dict()
-    packet['code'] = exc.get_codes()
-    packet['detail'] = str(exc.detail)
-    packet['status'] = exc.status_code
-    return packet
-
-
 class InvalidForm(APIException):
     """
     Raise when the submitted form is invalid
