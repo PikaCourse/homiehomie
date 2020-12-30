@@ -4,9 +4,8 @@ import ReactDOM from "react-dom";
 import Header from "./layout/Header";
 import Footer from "./layout/Footer";
 
-import Dashboard from "./main/Dashboard";
-import Calendar from "./main/Scheduler";
-import Leads from "./main/Leads";
+import Scheduler from "./main/Scheduler";
+import Dnd from "./Calendar/dnd";
 
 import Wiki from "./main/Wiki";
 import Wishlist from "./main/Wishlist";
@@ -30,7 +29,7 @@ class App extends Component {
             </div>
             <div className="row">
               <div id="app" className="col-md-6 m-3">
-                <Calendar />
+                <Dnd />
               </div>
               <div id="app" className="col-md-5">
                 <Wiki />

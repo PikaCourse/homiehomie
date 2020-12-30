@@ -19,6 +19,9 @@ export const setCourse = (courseBag)  =>
    return {
     type:SET_COURSE,
     selectedCRN: courseBag.selectedCRN,
+    selectedCourse: courseBag.selectedCourseArray.find(
+        ({ crn }) => crn === courseBag.selectedCRN
+    ),
     selectedCourseArray: courseBag.selectedCourseArray,
    }
 }

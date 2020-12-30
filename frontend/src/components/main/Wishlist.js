@@ -7,42 +7,97 @@ import { Collapse } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 
 const { Panel } = Collapse;
-import { Table, Button } from "antd";
+import { Table, Button, Switch, Space, Radio, Divider } from "antd";
+import {removeCurrCourseFromWish} from "../../actions/wishlist"
 
 const columns = [
   {
-    title: "Name",
+    title: '',
+    key: 'operation',
+    fixed: 'left',
+    //width: 30,
+    render: (text, record) => <div><Button
+              onClick={(e) => {
+                console.log('print record: '+record); 
+                store.dispatch(removeCurrCourseFromWish(record.id, e)); 
+              }}
+            >Remove</Button><Button
+            >Add</Button></div>,
+                  
+  },
+  {
+    title: "id",
+    dataIndex: "id",
+  },
+  {
+    title: "crn",
+    dataIndex: "crn",
+  },
+  {
+    title: "time",
+    dataIndex: "time",
+  },
+  {
+    title: "capacity",
+    dataIndex: "capacity",
+  },
+  {
+    title: "registered",
+    dataIndex: "registered",
+  },
+  {
+    title: "type",
+    dataIndex: "type", //need to be merged with semester 
+  },
+  {
+    title: "professor",
+    dataIndex: "professor",
+  },
+  {
+    title: "location",
+    dataIndex: "location",
+  },
+  {
+    title: "title",
+    dataIndex: "title",
+  },
+  {
+    title: "name",
     dataIndex: "name",
   },
   {
-    title: "Age",
-    dataIndex: "age",
+    title: "credit_hours",
+    dataIndex: "credit_hours",
   },
   {
-    title: "Address",
-    dataIndex: "address",
+    title: "description",
+    dataIndex: "description",
   },
+  {
+    title: "tags",
+    dataIndex: "tags",
+  },
+  {
+    title: "college",
+    dataIndex: "college",
+  },
+  // {
+  //   title: "tags",
+  //   dataIndex: ["course_meta","tags"],
+  // },
 ];
-const data = [];
-for (let i = 0; i < 5; i++) {
-  data.push({
-    key: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    address: `London, Park Lane no. ${i}`,
-  });
-}
+
+
 
 export class Wishlist extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: store.getState().course.selectedCourseArray,
       selectedRowKeys: [], // Check here to configure the default column
       loading: false,
     };
   }
-
+  
   start = () => {
     this.setState({ loading: true });
     // ajax request after empty completing
@@ -54,13 +109,14 @@ export class Wishlist extends Component {
     }, 1000);
   };
 
-  onSelectChange = (selectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", selectedRowKeys);
+  onSelectChange = selectedRowKeys => {
+    console.log('selectedRowKeys changed: ', selectedRowKeys);
     this.setState({ selectedRowKeys });
   };
 
   static propTypes = {
     selectedCourseArray: PropTypes.array.isRequired,
+    //wishlistCourseBag: PropTypes.array.isRequired,
   };
 
   render() {
@@ -101,7 +157,11 @@ export class Wishlist extends Component {
             <Table
               rowSelection={rowSelection}
               columns={columns}
-              dataSource={data}
+              dataSource={store.getState().wishlist.wishlistCourseBag}
+              // dataSource={[store.getState().course.selectedCourseArray.find(
+              //   ({ crn }) => crn === store.getState().course.selectedCRN
+              // )]}
+              scroll={{ x:  'max-content' }} //api: https://ant.design/components/table/#scroll
             />
           </Panel>
         </Collapse>
@@ -113,6 +173,7 @@ export class Wishlist extends Component {
 const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCRN: state.course.selectedCRN,
+  wishlistCourseBag: state.wishlist.wishlistCourseBag
 });
 
 export default connect(mapStateToProps)(Wishlist);

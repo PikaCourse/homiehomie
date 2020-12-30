@@ -6,6 +6,7 @@ import {
   removeCurrCourse,
   previewCurrCourse,
 } from "../../actions/calendar";
+import {addCurrCourseToWish} from "../../actions/wishlist"
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
@@ -33,7 +34,8 @@ export class WikiSummary extends Component {
     super(props);
 
     this.state = {
-      previewSwitch: true,
+      previewSwitch: false,
+      starButton:false,
     };
 
     this.previewInputChange = this.previewInputChange.bind(this);
@@ -48,7 +50,6 @@ export class WikiSummary extends Component {
     setTimeout(function () {
       e.target.classList.remove("animate");
     }, 700);
-    console.log("animate triggered");
   }
 
   previewInputChange(checked) {
@@ -57,6 +58,37 @@ export class WikiSummary extends Component {
       previewSwitch: checked,
     });
   }
+
+
+  wishlistCheckDuplicate() {
+    const curr = store.getState().wishlist.wishlistCourseBag.find(
+      ({ crn }) => crn === store.getState().course.selectedCRN);
+
+    // console.log( "curr.length: " + curr.length);
+    
+      return false;
+    // if (store.getState().wishlist.wishlistCourseBag.length == 0)
+    // {
+    //   console.log('ran empty'); 
+    //   return false; 
+    // }
+    // else {
+    //   console.log('ran 1');
+    // const selectedCourse = store.getState().course.selectedCourseArray.find(
+    //     ({ crn }) => crn === store.getState().course.selectedCRN
+    // );
+    // console.log('ran 2');
+    // let checkDuplicate = store.getState().wishlist.wishlistCourseBag.find( 
+    //     ({crn}) => crn == selectedCourse.crn
+    // ); 
+    // console.log('ran 3'); 
+    // console.log(typeof checkDuplicate === 'undefined'); 
+    // return (typeof checkDuplicate === 'undefined'); 
+
+    // }
+    
+  }
+
 
   buttonLoader() {
     const courseArray = store
@@ -81,11 +113,13 @@ export class WikiSummary extends Component {
       if (!Array.isArray(course) || !course.length) {
         // course different crn
         addButtonText = "Change CRN";
+        enableRemove = false;
       } else {
         // course same crn
         enableAdd = false;
       }
     }
+
     return (
       <div>
         <Button
@@ -94,8 +128,9 @@ export class WikiSummary extends Component {
           type="primary"
           size="large"
           onClick={(event) => {
-            this.animateButton(event);
+            //this.animateButton(event);
             this.props.dispatch(addCurrCourse());
+            this.forceUpdate();
           }}
         >
           <FontAwesomeIcon className="mr-2" icon={faPlus} />
@@ -110,14 +145,22 @@ export class WikiSummary extends Component {
           onClick={(event) => {
             this.props.dispatch(removeCurrCourse());
             // this.animateButton(event);
+            this.forceUpdate();
           }}
         >
           <FontAwesomeIcon className="mr-2" icon={faMinus} />
           Remove
         </Button>
 
-        <Button className="mx-1" type="primary" size="large">
+  
+        <Button className="mx-1" type="primary" size="large" 
+          onClick={(event) => {
+            store.dispatch(addCurrCourseToWish());
+          }}
+          disabled={this.state.starButton}
+        >
           <FontAwesomeIcon icon={faStar} />
+          Add to Wishlist
         </Button>
 
         <Switch defaultChecked onChange={this.previewInputChange} />
@@ -130,12 +173,18 @@ export class WikiSummary extends Component {
   };
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
-    console.log("componentDidUpdate");
+    // console.log("componentDidUpdate");
 
     if (this.state.previewSwitch) {
-      console.log("test");
-
       store.dispatch(previewCurrCourse(true));
+    }
+
+    if (prevProps.wishlistCourseBag !== this.props.wishlistCourseBag
+      || prevProps.selectedCRN !== this.props.selectedCRN
+      ) {
+      const curr = this.props.wishlistCourseBag.find(
+      ({ crn }) => crn === store.getState().course.selectedCRN);
+        this.setState({starButton: (curr != null)});
     }
   }
 
@@ -161,9 +210,7 @@ export class WikiSummary extends Component {
                 style={{ color: "#419EF4", display: "inline" }}
               >
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).course_meta.title
+                  this.props.selectedCourse.course_meta.title
                 }
               </h1>
 
@@ -188,9 +235,7 @@ export class WikiSummary extends Component {
             </div>
             <h1>
               {
-                this.props.selectedCourseArray.find(
-                  ({ crn }) => crn === this.props.selectedCRN
-                ).course_meta.name
+                this.props.selectedCourse.course_meta.name
               }
             </h1>
 
@@ -200,9 +245,7 @@ export class WikiSummary extends Component {
                   <span
                     className={weekdayToClass(
                       index,
-                      this.props.selectedCourseArray.find(
-                        ({ crn }) => crn === this.props.selectedCRN
-                      ).time
+                      this.props.selectedCourse.time
                     )}
                   >
                     {day}
@@ -212,45 +255,33 @@ export class WikiSummary extends Component {
 
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).professor
+                  this.props.selectedCourse.professor
                 }{" "}
                 -{" "}
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).time[0].start_at
+                  this.props.selectedCourse.time[0].start_at
                 }
                 -
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).time[0].end_at
+                  this.props.selectedCourse.time[0].end_at
                 }{" "}
                 -{" "}
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).location
+                  this.props.selectedCourse.location
                 }
               </p>
 
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 Credit Hour:{" "}
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).course_meta.credit_hours
+                  this.props.selectedCourse.course_meta.credit_hours
                 }
               </p>
 
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 Capacity:{" "}
                 {
-                  this.props.selectedCourseArray.find(
-                    ({ crn }) => crn === this.props.selectedCRN
-                  ).capacity
+                  this.props.selectedCourse.capacity
                 }
               </p>
 
@@ -280,6 +311,8 @@ export class WikiSummary extends Component {
 const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCRN: state.course.selectedCRN,
+  selectedCourse: state.course.selectedCourse,
+  wishlistCourseBag:state.wishlist.wishlistCourseBag
 });
 
 export default connect(mapStateToProps)(WikiSummary);

@@ -34,7 +34,7 @@ export class Scheduler extends Component {
 
     calendarRef = React.createRef();
 
-    componentDidMount() 
+    componentDidUpdate() 
     {
         const calendarInstance = this.calendarRef.current.getInstance();
         //use map to reduce redundance 
