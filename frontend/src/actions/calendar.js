@@ -37,6 +37,39 @@ export const addCurrCourse = () => {
   }
 };
 
+export const addSelectCourse = (crnPara, selectedCourseArrayPara) => {
+  const courseArray = store
+    .getState()
+    .calendar.calendarCourseBag.filter(
+      (item) =>
+        item.raw.selectedCourseArray ==
+        selectedCourseArrayPara
+    );
+
+  const selectedCoursePara = selectedCourseArrayPara.find(
+    ({ crn }) => crn === crnPara
+  );
+
+  if (!Array.isArray(courseArray) || !courseArray.length) {
+    // add new course
+    return {
+      type: ADD_COURSE_TO_CAL,
+      selectedCRN: crnPara,
+      selectedCourse: selectedCoursePara,
+      selectedCourseArray: selectedCourseArrayPara,
+    };
+  } else {
+    // add same course different crn
+    return {
+      type: UPDATE_COURSE_IN_CAL,
+      selectedCRN: crnPara,
+      selectedCourse: selectedCoursePara,
+      selectedCourseArray: selectedCourseArrayPara,
+      oldId: courseArray[0].id,
+    };
+  }
+};
+
 export const removeCurrCourse = () => {
   return {
     type: REMOVE_COURSE_FROM_CAL,

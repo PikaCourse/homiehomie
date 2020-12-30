@@ -104,14 +104,44 @@ function previewNewCourseToBag(state, action) {
 
 function addNewEventToBag(state, action) {
   var tempArray = [...state.calendarCourseBag];
+  let update = false; 
 
-  tempArray = state.calendarCourseBag.filter((item) => item.calendarId != -1);
-
-  let id = 0;
-  if (state.calendarCourseBag.length != 0) {
-    id = state.calendarCourseBag[state.calendarCourseBag.length - 1].id + 1;
+  tempArray = tempArray.map((existingEvent) => {
+    if (existingEvent.id == action.event.id)
+    {
+      existingEvent.start = action.event.start; 
+      existingEvent.end = action.event.end; 
+      update = true; 
+    }
+    return existingEvent;
+    // return existingEvent.id == event.id
+    //   ? { ...existingEvent, start, end }
+    //   : existingEvent;
+  });
+  if (update) {
+    return tempArray; 
   }
-  action.event.id = id;
+
+  // tempArray = tempArray.filter(
+  //   (item) =>
+  //     item.id !=
+  //     action.event.id
+  // ); 
+
+  // console.log(tempArray); 
+  
+  // console.log(tempArray); 
+  //tempArray = state.calendarCourseBag.filter((item) => item.calendarId != -1);
+
+  // let id = 0;
+  // if (state.calendarCourseBag.length != 0) {
+  //   id = state.calendarCourseBag[state.calendarCourseBag.length - 1].id + 1;
+  // }
+  let idList = state.calendarCourseBag.map((a) => a.id);
+  let newId = state.calendarCourseBag.length == 0
+    ? 0
+    : Math.max(...idList) + 1;
+  action.event.id = newId;
   tempArray.push(action.event);
 
   return tempArray;

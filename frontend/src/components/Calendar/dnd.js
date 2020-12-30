@@ -25,7 +25,7 @@ class Dnd extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: this.props.courselist, //[],
+      events: [],
       displayDragItemInCell: true,
     };
 
@@ -41,6 +41,7 @@ class Dnd extends React.Component {
 
   handleDragStart = (event) => {
     this.setState({ draggedEvent: event });
+    store.dispatch(addCustomEvent(event));
   };
 
   dragFromOutsideItem = () => {
@@ -74,38 +75,70 @@ class Dnd extends React.Component {
     }
 
     const nextEvents = events.map((existingEvent) => {
-      return existingEvent.id == event.id
-        ? { ...existingEvent, start, end }
-        : existingEvent;
+      if (existingEvent.id == event.id)
+      {
+        existingEvent.start = start; 
+        existingEvent.end = end; 
+        store.dispatch(addCustomEvent(existingEvent));
+      }
+      return existingEvent;
+      // return existingEvent.id == event.id
+      //   ? { ...existingEvent, start, end }
+      //   : existingEvent;
     });
 
     this.setState({
       events: nextEvents,
     });
+
+    console.log("moveEvent"); 
+    console.log(nextEvents);
 
     // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
   };
 
   resizeEvent = ({ event, start, end }) => {
+    console.log("resizeEvent"); 
     const { events } = this.state;
 
     const nextEvents = events.map((existingEvent) => {
-      return existingEvent.id == event.id
-        ? { ...existingEvent, start, end }
-        : existingEvent;
+      // console.log("existingEvent");
+      // console.log(existingEvent);
+      // console.log("event");
+      // console.log(event); 
+      // console.log("existingEvent.id: "+existingEvent.id); 
+      // console.log("event.id: "+event.id); 
+      // console.log("start: "+start);
+      // console.log("end: "+end); 
+      if (existingEvent.id == event.id)
+      {
+        existingEvent.start = start; 
+        existingEvent.end = end; 
+        store.dispatch(addCustomEvent(existingEvent));
+      }
+      return existingEvent;
+      // return existingEvent.id == event.id
+      //   ? { ...existingEvent, start, end }
+      //   : existingEvent;
     });
 
     this.setState({
       events: nextEvents,
     });
+    // store.dispatch(addCustomEvent(nextEvents));
+    console.log(nextEvents);
 
     // alert(`${event.title} was resized to ${start}-${end}`);
   };
 
   newEvent(event) {
     let idList = this.state.events.map((a) => a.id);
-    let newId = this.state.events.length == 0 ? 0 : Math.max(...idList) + 1;
-    console.log(newId);
+    if (this.props.courselist.length == 0) {
+      var newId = 0;
+    }
+    else {
+      var newId = this.props.courselist[this.props.courselist.length -  1].id + 1;
+    } //this.state.events.length == 0 ? 0 : Math.max(...idList) + 1;
     let hour = {
       id: newId,
       title: event.title,
@@ -119,10 +152,12 @@ class Dnd extends React.Component {
       events: this.state.events.concat([hour]),
     });
     store.dispatch(addCustomEvent(hour)); 
+    console.log("newEvent"); 
+    console.log(hour); 
   }
 
   eventStyleHandler = (event, start, end, isSelected) => {
-    console.log(colors);
+    // console.log(colors);
     let newStyle = {
       backgroundColor: colors[event.id].weak,
       color: colors[event.id].strong,
