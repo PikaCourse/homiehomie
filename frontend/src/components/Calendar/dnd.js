@@ -129,34 +129,31 @@ class Dnd extends React.Component {
   };
 
   newEvent(event) {
-    const title = window.prompt('New Event name')
-    let idList = store.getState().calendar.calenderCusEventBag.map((a) => a.id);
-    // if (store.getState().calendar.calenderCusEventBag == 0) {
-    //   var newId = 0;
-    // }
-    // else {
-    //   var newId = store.getState().calendar.calenderCusEventBag[store.getState().calendar.calenderCusEventBag.length -  1].id + 1;
-    // } //this.state.events.length == 0 ? 0 : Math.max(...idList) + 1;
-    var newId =
-      store.getState().calendar.calenderCusEventBag.length == 0
-        ? 0
-        : Math.max(...idList) + 1;
-    let hour = {
-      type: "custom",
-      id: newId,
-      title: title,
-      allDay: event.slots.length == 1,
-      start: event.start,
-      end: event.end,
-      crn: -1,
-      raw: { selectedCourseArray: [] },
-    };
-    this.setState({
-      events: this.state.events.concat([hour]),
-    });
-    store.dispatch(addCustomEvent(hour));
-    //console.log("newEvent");
-    //console.log(hour);
+    const title = window.prompt("New Event Name");
+    console.log(title);
+    if (title != null && title != "") {
+      let idList = store
+        .getState()
+        .calendar.calenderCusEventBag.map((a) => a.id);
+      var newId =
+        store.getState().calendar.calenderCusEventBag.length == 0
+          ? 0
+          : Math.max(...idList) + 1;
+      let hour = {
+        type: "custom",
+        id: newId,
+        title: title,
+        allDay: event.slots.length == 1,
+        start: event.start,
+        end: event.end,
+        crn: -1,
+        raw: { selectedCourseArray: [] },
+      };
+      this.setState({
+        events: this.state.events.concat([hour]),
+      });
+      store.dispatch(addCustomEvent(hour));
+    }
   }
 
   eventStyleHandler = (event, start, end, isSelected) => {
