@@ -2,12 +2,16 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
+import {
+  faThumbsUp,
+  faThumbsDown,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
 import { getQuestion } from "../../actions/question.js";
 
-import { Button, Input } from "antd";
+import { Button, Input, Tooltip } from "antd";
 
 const { TextArea } = Input;
 
@@ -46,16 +50,27 @@ export class WikiNotebook extends Component {
     console.log({ value });
   };
 
+  addNewNotesInput = () => {
+
+  }
+
   componentDidMount() {
     console.log(store.getState().course.selectedCourse);
-    if(this.props.selectedCourse.crn) store.dispatch(
-      getQuestion(store.getState().course.selectedCourse.course_meta.id)
-    );
+    if (this.props.selectedCourse.crn)
+      store.dispatch(
+        getQuestion(store.getState().course.selectedCourse.course_meta.id)
+      );
   }
   render() {
     const { value } = this.state;
     return (
       <div className="p-3" style={noteBookStyle}>
+        <Tooltip title="add new notes">
+          <Button size="medium" type="primary" onClick = {this.addNewNotesInput}>
+            <FontAwesomeIcon className="" icon={faPlus} />
+          </Button>
+        </Tooltip>
+
         {/* Question */}
         {store.getState().question.noteBag.map((nbObj) => (
           <div>
@@ -92,7 +107,6 @@ export class WikiNotebook extends Component {
                     type="primary"
                     onClick={(event) => {
                       this.handleSaveClicked(nbObj);
-                      this.animateButton(event);
                     }}
                   >
                     save
