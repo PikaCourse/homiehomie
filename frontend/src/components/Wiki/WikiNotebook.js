@@ -6,9 +6,6 @@ import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
 import { getQuestion } from "../../actions/question.js";
-import { getNotes } from "../../actions/notes.js";
-
-import TextareaAutosize from "react-textarea-autosize";
 
 import { Button, Input } from "antd";
 
