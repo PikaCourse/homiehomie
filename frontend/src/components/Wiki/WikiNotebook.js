@@ -11,7 +11,7 @@ import store from "../../store";
 import axios from "axios";
 import { getQuestion } from "../../actions/question.js";
 
-import { Button, Input, Tooltip } from "antd";
+import { Button, Input, Tooltip, Card } from "antd";
 
 const { TextArea } = Input;
 
@@ -76,48 +76,48 @@ export class WikiNotebook extends Component {
 
         {/* Question */}
         {this.props.noteBag.map((nbObj) => (
-          <div>
-            <h5 style={{ fontFamily: "Montserrat", color: "#596C7E" }}>
-              {nbObj.question.title}
-            </h5>
-            <div class="mb-3">
-              {nbObj.notes.map((noteObj) => (
-                <p
-                  className="pl-2"
-                  style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+          <Card
+            hoverable
+            title={nbObj.question.title}
+            bordered={true}
+            className="my-2"
+            style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+          >
+            {nbObj.notes.map((noteObj) => (
+              <p
+                className="pl-2"
+                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+              >
+                {noteObj.content}
+                <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
+                <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> 1
+              </p>
+            ))}
+            <div className="row">
+              <div className="col-sm-11 pr-0">
+                <form className="form-inline my-2 my-lg-0">
+                  <TextArea
+                    value={value}
+                    onChange={this.onChange}
+                    placeholder="Controlled autosize"
+                    autoSize={{ minRows: 3, maxRows: 5 }}
+                    style={{ borderRadius: "5px", borderColor: "white" }}
+                  />
+                </form>
+              </div>
+              <div className="col-sm-1 pl-0">
+                <Button
+                  size="medium"
+                  type="primary"
+                  onClick={(event) => {
+                    this.handleSaveClicked(nbObj);
+                  }}
                 >
-                  {noteObj.content}
-                  <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
-                  <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> 1
-                </p>
-              ))}
-              {/* writing part */}
-              <div className="row">
-                <div className="col-sm-11 pr-0">
-                  <form className="form-inline my-2 my-lg-0">
-                    <TextArea
-                      value={value}
-                      onChange={this.onChange}
-                      placeholder="Controlled autosize"
-                      autoSize={{ minRows: 3, maxRows: 5 }}
-                      style={{ borderRadius: "5px", borderColor: "white" }}
-                    />
-                  </form>
-                </div>
-                <div className="col-sm-1 pl-0">
-                  <Button
-                    size="medium"
-                    type="primary"
-                    onClick={(event) => {
-                      this.handleSaveClicked(nbObj);
-                    }}
-                  >
-                    save
-                  </Button>
-                </div>
+                  save
+                </Button>
               </div>
             </div>
-          </div>
+          </Card>
         ))}
       </div>
     );
