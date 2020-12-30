@@ -4,6 +4,11 @@ const initialState = {
     noteBag:[
         {
             id:0,
+            question:{},
+            note:[]
+        },
+        {
+            id:0,
             question:{
                 "id": 0,
                 "course_meta": 0,
@@ -20,8 +25,9 @@ const initialState = {
                 "tags": [
                   "string"
                 ]
-              },
-            note:[{
+            },
+            note:[
+                {
                 "course": 0,
                 "question": 0,
                 "id": 0,
@@ -60,6 +66,9 @@ const initialState = {
         }
     ]
 }
+
+// [1, 2, 3] 
+// {}
 
 export default function(state = initialState, action) {
     //console.log(action.payload);
