@@ -159,8 +159,8 @@ class Dnd extends React.Component {
   eventStyleHandler = (event, start, end, isSelected) => {
     // console.log(colors);
     let newStyle = {
-      backgroundColor: colors[event.id%10].weak,
-      color: colors[event.id%10].strong,
+      backgroundColor: colors[event.id%10+1].weak,
+      color: colors[event.id%10+1].strong,
       fontSize:'70%',
       borderRadius: "0px",
       border: "none",
@@ -169,9 +169,9 @@ class Dnd extends React.Component {
     };
 
     if (isSelected){
-      newStyle.backgroundColor = colors[event.id%10].strong;
+      newStyle.backgroundColor = colors[event.id%10+1].strong;
       newStyle.color = 'white';
-      newStyle.boxShadow = "6px 4px 30px " + colors[event.id%10].weak;
+      newStyle.boxShadow = "6px 4px 30px " + colors[event.id%10+1].weak;
       store.dispatch(
         setCourse({
           selectedCRN: event.raw.crn,

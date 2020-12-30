@@ -13,8 +13,8 @@ export const addCurrCourse = () => {
     .getState()
     .calendar.calendarCourseBag.filter(
       (item) =>
-        item.raw.selectedCourseArray ==
-        store.getState().course.selectedCourseArray
+        (item.raw.selectedCourseArray ==
+        store.getState().course.selectedCourseArray)//||(item.id != -1)
     );
   // console.log("test");
   if (!Array.isArray(courseArray) || !courseArray.length) {
@@ -82,12 +82,14 @@ export const previewCurrCourse = (previewSwitch) => {
     return {
       type: PREVIEW_COURSE_IN_CAL,
       selectedCRN: store.getState().course.selectedCRN,
+      selectedCourse: store.getState().course.selectedCourse,
       selectedCourseArray: store.getState().course.selectedCourseArray,
     };
   } else {
     return {
       type: CLEAR_PREVIEW_COURSE_IN_CAL,
       selectedCRN: store.getState().course.selectedCRN,
+      selectedCourse: store.getState().course.selectedCourse,
       selectedCourseArray: store.getState().course.selectedCourseArray,
     };
   }
