@@ -75,7 +75,7 @@ jobs:
   deploy_test:
     # TODO Ignore deploy on pull request and commit with [skip deploy]
     # Current deploy only when message contains `[deploy]`
-    if: "contains(github.event.commits[0].message, '[deploy]') && !contains(github.event.action, 'pull_request')"
+    if: "contains(github.event.commits.*.message, '[deploy]') && !contains(github.event.action, 'pull_request')"
     name: Deploy code to test server via dokku
     runs-on: ubuntu-latest
     needs: [test_backend, test_frontend]
