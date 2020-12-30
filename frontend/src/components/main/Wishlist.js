@@ -10,6 +10,7 @@ const { Panel } = Collapse;
 import { Table, Button, Switch, Space, Radio, Divider } from "antd";
 import {removeCurrCourseFromWish} from "../../actions/wishlist"
 import {setCourse, getCourse} from "../../actions/course"
+import {addSelectCourse} from "../../actions/calendar"
 
 const columns = [
   {
@@ -19,14 +20,12 @@ const columns = [
     //width: 30,
     render: (text, record) => <div><Button
               onClick={(e) => {
-                console.log('print record: '+record); 
                 store.dispatch(removeCurrCourseFromWish(record.id, e)); 
               }}
             >Remove</Button>
             <Button
             onClick={(e) => {
-              console.log('print record: '+record); 
-              store.dispatch(removeCurrCourseFromWish(record.id, e)); 
+              store.dispatch(addSelectCourse(record.crn, record.selectedCourseArray)); 
             }} 
             >Add</Button>
             <Button
