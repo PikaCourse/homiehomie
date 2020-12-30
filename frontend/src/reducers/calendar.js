@@ -7,7 +7,6 @@ import {
   ADD_CUS_EVENT_IN_CAL,
 } from "../actions/types.js";
 const initialState = {
-  // calendarCourseBag: [],
   calendarCourseBag: [],
 };
 
