@@ -5,10 +5,10 @@ import {
   PREVIEW_COURSE_IN_CAL,
   CLEAR_PREVIEW_COURSE_IN_CAL,
   ADD_CUS_EVENT_IN_CAL,
+  DO_NOTHING, 
 } from "../actions/types.js";
 const initialState = {
   calendarCourseBag: [],
-  calenderCusEventBag: [], 
 };
 
 function getMonday(d) {
@@ -28,21 +28,21 @@ function alignDate(weekDayIndex, timestamp) {
 }
 
 function addNewCourseToBag(state, action, update) {
-  let newBag = update
-    ? state.calendarCourseBag.filter(
-        (item) => (item.raw.selectedCourseArray != action.selectedCourseArray)//||(item.id != -1)
-      )
-    : [...state.calendarCourseBag];
+  let newBag = update ?
+    state.calendarCourseBag.filter(
+      (item) => (item.raw.selectedCourseArray != action.selectedCourseArray) && (item.type != 'preview')
+    ) :
+    [...state.calendarCourseBag];
   let idList = state.calendarCourseBag.map((a) => a.id);
-  let newId = update
-    ? action.oldId
-    : state.calendarCourseBag.length == 0
-    ? 0
-    : Math.max(...idList) + 1;
+  let newId = update ?
+    action.oldId :
+    state.calendarCourseBag.length == 0 ?
+    0 :
+    Math.max(...idList) + 1;
 
   action.selectedCourse.time.map((timeslot) => {
     newBag.push({
-      type: 'course', 
+      type: 'course',
       id: newId,
       title: action.selectedCourse.course_meta.title,
       allDay: false,
@@ -63,13 +63,13 @@ function addNewCourseToBag(state, action, update) {
 function previewNewCourseToBag(state, action) {
   var newBag = [...state.calendarCourseBag];
 
-  newBag = state.calendarCourseBag.filter((item) => ((item.id != -1) && (item.raw.crn != action.selectedCourse.crn)));
+  newBag = state.calendarCourseBag.filter((item) => ((item.type != 'preview') && (item.raw.crn != action.selectedCourse.crn)));
 
-  console.log(action.selectedCourse); 
+  // console.log(action.selectedCourse);
 
   action.selectedCourse.time.map((timeslot) => {
     newBag.push({
-      type: 'preview', 
+      type: 'preview',
       id: -1,
       title: action.selectedCourse.course_meta.title,
       allDay: false,
@@ -89,16 +89,15 @@ function previewNewCourseToBag(state, action) {
 }
 
 function addNewCusEventToBag(state, action) {
-  console.log("add cus in reducer"); 
-  var tempArray = [...state.calenderCusEventBag];
-  let update = false; 
+  console.log("add cus in reducer");
+  var tempArray = [...state.calendarCourseBag];
+  let update = false;
 
   tempArray = tempArray.map((existingEvent) => {
-    if (existingEvent.id == action.event.id)
-    {
-      existingEvent.start = action.event.start; 
-      existingEvent.end = action.event.end; 
-      update = true; 
+    if (existingEvent.id == action.event.id) {
+      existingEvent.start = action.event.start;
+      existingEvent.end = action.event.end;
+      update = true;
     }
     return existingEvent;
     // return existingEvent.id == event.id
@@ -106,7 +105,7 @@ function addNewCusEventToBag(state, action) {
     //   : existingEvent;
   });
   if (update) {
-    return tempArray; 
+    return tempArray;
   }
 
   // tempArray = tempArray.filter(
@@ -116,7 +115,7 @@ function addNewCusEventToBag(state, action) {
   // ); 
 
   // console.log(tempArray); 
-  
+
   // console.log(tempArray); 
   //tempArray = state.calendarCourseBag.filter((item) => item.calendarId != -1);
 
@@ -125,9 +124,9 @@ function addNewCusEventToBag(state, action) {
   //   id = state.calendarCourseBag[state.calendarCourseBag.length - 1].id + 1;
   // }
   let idList = state.calendarCourseBag.map((a) => a.id);
-  let newId = state.calendarCourseBag.length == 0
-    ? 0
-    : Math.max(...idList) + 1;
+  let newId = state.calendarCourseBag.length == 0 ?
+    0 :
+    Math.max(...idList) + 1;
   action.event.id = newId;
   tempArray.push(action.event);
 
@@ -146,8 +145,8 @@ export default function (state = initialState, action) {
       return {
         ...state,
         calendarCourseBag: state.calendarCourseBag.filter(
-          (item) => item.raw.selectedCRN != action.selectedCRN
-        ), //assume CRN is unique!!
+            (item) => item.raw.selectedCRN != action.selectedCRN
+          ), //assume CRN is unique!!
       };
     case UPDATE_COURSE_IN_CAL:
       return {
@@ -172,7 +171,13 @@ export default function (state = initialState, action) {
     case ADD_CUS_EVENT_IN_CAL:
       return {
         ...state,
-        calenderCusEventBag: addNewCusEventToBag(state, action),
+        calendarCourseBag: addNewCusEventToBag(state, action),
+      };
+    
+    case DO_NOTHING:
+      return {
+        ...state,
+        calendarCourseBag: [...state.calendarCourseBag],
       };
 
     default:
