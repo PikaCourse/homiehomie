@@ -308,10 +308,12 @@ class PostViewSet(viewsets.ModelViewSet):
         sortby      = self.request.query_params.get("sortby", None)
         descending  = self.request.query_params.get("descending", None)
         if descending is not None:
-            if descending == "true":
+            if descending.lower() == "true":
                 descending = True
-            else:
+            elif descending.lower() == "false":
                 descending = False
+            else:
+                raise InvalidQueryValue()
         else:
             descending = True
         limit = self.request.query_params.get("limit", None)
@@ -319,7 +321,7 @@ class PostViewSet(viewsets.ModelViewSet):
         if courseid is not None:
             queryset = queryset.filter(course_id=courseid)
         if userid is not None:
-            queryset = queryset.filter(user_id=userid)
+            queryset = queryset.filter(poster__user_id=userid)
         if sortby is not None:
             queryset = queryset.order_by(("-" if descending else "") + sortby)
         else:

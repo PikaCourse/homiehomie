@@ -190,7 +190,7 @@ class Post(models.Model):
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
-    content = models.TextField()  # In markdown
+    content = models.TextField(blank=True)  # In markdown
     tags = models.JSONField(default=list)
 
     def __str__(self):

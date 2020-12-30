@@ -1,9 +1,9 @@
 [
 {
     "model": "user.student",
-    "pk": 2,
+    "pk": 1,
     "fields": {
-        "user": 2,
+        "user": 1,
         "school": "",
         "major": "",
         "majors": [],
@@ -16,9 +16,9 @@
 },
 {
     "model": "user.student",
-    "pk": 3,
+    "pk": 2,
     "fields": {
-        "user": 3,
+        "user": 2,
         "school": null,
         "major": null,
         "majors": [],
