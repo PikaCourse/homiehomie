@@ -157,6 +157,15 @@ def check_query_istartswith(test_case, url, test_dict):
 
 
 def check_multi_query(test_case, url, test_dict):
+    """
+    TODO Change to v2
+    Perform a series of random query with valid keys and values
+    and see if the returned results match with the given constraint
+    :param test_case:   test_case instance
+    :param url:         test list url
+    :param test_dict:   test data
+    :return:
+    """
     # Perform 100 random query and test if the result is expected
     count = 0
     for _ in range(100):
@@ -191,6 +200,66 @@ def check_multi_query(test_case, url, test_dict):
     test_case.assertNotEqual(100, count)
 
 
+def check_multi_query_v2(test_case, url, test_query_keys, test_query_values, query_key_mapping, query_num=100):
+    """
+    V2 of checking multi query return result
+    :param test_case:           test_case instance
+    :param url:                 test list url
+    :param test_query_keys:     possible query keys
+    :param test_query_values:   all possible query values for the keys
+    :param query_key_mapping:   dict mapping query key to field in return object for checking,
+                                e.g. {"coursemetaid": "course_meta"}
+                                key is the query key name and value is the object field match with query key
+    :param query_num:           number of queries to perform
+    :return:
+    """
+
+    count = 0
+    for _ in range(query_num):
+        # Randomly select keys from the test_dict to perform query
+        num_pair = random.randint(1, len(test_query_keys))
+        query_keys = random.sample(test_query_keys, num_pair)
+        query_params = {}
+        for query_key in query_keys:
+            options = test_query_values[query_key]
+            query_params[query_key] = options[random.randrange(len(options))]
+        response = test_case.client.get(url, query_params)
+
+        test_case.assertEqual(response.status_code, status.HTTP_200_OK)
+        if "limit" in query_params:
+            test_case.assertLessEqual(len(response.data), query_params["limit"])
+        if response.data is not []:
+            for obj in response.data:
+                # Check field for each obj in returned list
+                for field in query_key_mapping:
+                    # iterate through keys that required matching check
+                    if field in query_params:
+                        # if the field is used in query
+                        test_expected_val = query_params[field]
+                        test_case.assertEqual(obj[query_key_mapping[field]], test_expected_val)
+            # check order
+            check_order(test_case, response.data,
+                        query_params.get("sortby", "like_count"),
+                        query_params.get("descending", True))
+        else:
+            count += 1
+    test_case.assertNotEqual(count, query_num)
+
+
+def check_query_filter_error(test_case, url, query_params=None, error_class=InvalidQueryValue):
+    """
+    Check if proper error is raised
+    :param test_case:
+    :param url:
+    :param query_params:
+    :param error_class:
+    :return:
+    """
+    response = test_case.client.get(url, query_params)
+    test_case.assertEqual(response.status_code, error_class.default_code)
+    test_case.assertEqual(response.data, get_packet_details(error_class()))
+
+
 def check_order(test_case, arr, key, descending=True):
     prev_count = None
     for obj in arr:
@@ -208,7 +277,7 @@ def check_order(test_case, arr, key, descending=True):
             prev_count = cur_count
 
 
-def check_post_success(test_case, url, detail_url_name, test_data, json_fields=("tags",), ignore_fields=[]):
+def check_post_success(test_case, url, detail_url_name, test_data, json_fields=("tags",), ignore_fields=[], id_fields="question"):
     test_data = test_data.copy()
     # Encode any json fields
     for json_field in json_fields:
@@ -226,7 +295,7 @@ def check_post_success(test_case, url, detail_url_name, test_data, json_fields=(
     test_case.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=f"Message: {response.data}")
 
     # Test if the post is successful
-    id = response.data["question"]
+    id = response.data[id_fields]
     path_params = {"pk": id}
     url = reverse(detail_url_name, kwargs=path_params)
     response = test_case.client.get(url)
@@ -241,12 +310,14 @@ def check_post_success(test_case, url, detail_url_name, test_data, json_fields=(
 def check_post_error(test_case, url, test_data, error_class=InvalidForm):
     """
     Expecting error on post submission
+    Note anything in test_data that is json should be encoded first
     :param test_case:
     :param url:
     :param test_data:
     :param error_class:
     :return:
     """
+    test_data = test_data.copy()
     test_form_encoded = urlencode(test_data)
     response = test_case.client.post(url,
                                 data=test_form_encoded,
@@ -1296,38 +1367,15 @@ class QuestionViewSetTests(APITestCase):
             "descending": [True, False],
             "limit": list(range(1, QUESTION_NUM_ENTRIES + 1))
         }
+        query_key_mapping = dict()
+        query_key_mapping["coursemetaid"] = "course_meta"
 
         # Perform 100 random query and test if the result is expected
-        count = 0
-        for _ in range(100):
-            # Randomly select keys from the test_dict to perform query
-            num_pair = random.randint(1, len(test_query_keys))
-            query_keys = random.sample(test_query_keys, num_pair)
-            query_params = {}
-            for query_key in query_keys:
-                options = test_query_values[query_key]
-                query_params[query_key] = options[random.randrange(len(options))]
-            response = self.client.get(url, query_params)
-
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            if "limit" in query_params:
-                self.assertLessEqual(len(response.data), query_params["limit"])
-            if response.data is not []:
-                # Check course meta id
-                if "coursemetaid" in query_params:
-                    test_meta_id = query_params["coursemetaid"]
-                    for obj in response.data:
-                        self.assertEqual(obj["course_meta"], test_meta_id)
-                # check order
-                check_order(self, response.data,
-                            query_params.get("sortby", "like_count"),
-                            query_params.get("descending", True))
-            else:
-                count += 1
+        check_multi_query_v2(self, url, test_query_keys, test_query_values, query_key_mapping)
 
     def test_question_list_non_existing_filter(self):
         """
-        Since there are 20 entries in the fixtures, expected 20 entries
+        Since there are 6 entries in the fixtures, expected 6 entries
         :return:
         """
         url = reverse("api:questions-list")
@@ -1408,7 +1456,7 @@ class QuestionViewSetTests(APITestCase):
         detail_url_name = "api:questions-detail"
         # Encode json field
         test_data = {'course_meta': 1, 'title': 'Test question',
-                     'tags': []}
+                     'tags': json.dumps(["test"])}
 
         # Try 20 form submission with missing fields
         for _ in range(20):
@@ -1441,6 +1489,21 @@ class QuestionViewSetTests(APITestCase):
         form = {'course_meta': 1, 'title': 'Test', 'tags': ''}
         check_post_error(self, url, form)
 
+    def test_question_create_invalid_field_constraint(self):
+        """
+        Test field constraint
+        :return:
+        """
+        url = reverse("api:questions-list")
+        detail_url_name = "api:questions-detail"
+        # Encode json field
+        test_data = {'course_meta': 1, 'title': 'Test question',
+                     'tags': "Not a json"}
+
+        # Test not a json
+        form = test_data
+        check_post_error(self, url, form, error_class=InvalidForm)
+
     # UpdateView testing
     def test_question_update(self):
         """
@@ -1459,7 +1522,7 @@ class QuestionViewSetTests(APITestCase):
         :return:
         """
         detail_url_name = "api:questions-detail"
-        test_data = {"title": "Changed", "tags": ["changed", "changed tag"]}
+        test_data = {"title": "Changed", "tags": json.dumps(["changed", "changed tag"])}
 
         # Out of range
         path_params = {"pk": 100}
@@ -1472,7 +1535,6 @@ class QuestionViewSetTests(APITestCase):
         # Not an integer
         path_params = {"pk": "I am invalid"}
         check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
-
 
     def test_question_update_extra_field(self):
         """
@@ -1492,7 +1554,7 @@ class QuestionViewSetTests(APITestCase):
         """
         detail_url_name = "api:questions-detail"
         path_params = {"pk": 1}
-        test_data = {"title": "Changed", "tags": ["changed", "changed tag"]}
+        test_data = {"title": "Changed", "tags": json.dumps(["changed", "changed tag"])}
 
         # Try 20 form submission with missing fields
         for _ in range(20):
@@ -1511,7 +1573,7 @@ class QuestionViewSetTests(APITestCase):
         path_params = {"pk": 1}
 
         # Empty title
-        form = {"title": "", "tags": ["changed", "changed tag"]}
+        form = {"title": "", "tags": json.dumps(["changed", "changed tag"])}
         check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
 
         # Not a json
@@ -1585,17 +1647,127 @@ class NoteViewSetTests(APITestCase):
     """
 
     # ListView testing
-    # TODO Test empty db
+    def test_note_list_length(self):
+        """
+        Since there are 8 entries in the fixtures, expected 8 entries
+        :return:
+        """
+        url = reverse("api:notes-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), NOTE_NUM_ENTRIES)
 
-    # TODO Test proper return object structure
+    def test_note_list_format(self):
+        """
+        Test whether the objects in the returned list has the fields
+        specified by the API documentation
+        :return:
+        """
+        url = reverse("api:notes-list")
+        fields = ["course", "question", "id", "created_at",
+                  "created_by", "last_edited", "like_count",
+                  "star_count", "dislike_count", "title", "content",
+                  "tags"]
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for obj in response.data:
+            check_fields(self, obj, fields)
 
-    # TODO Test proper single filtering
+    def test_note_single_filter_courseid(self):
+        """
+        Test whether the backend respond properly according to
+        the given courseid
+        :return:
+        """
+        test_course_id = 1
+        url = reverse("api:notes-list")
+        response = self.client.get(url, {"courseid": test_course_id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(response.data, [])
+        for obj in response.data:
+            self.assertEqual(obj["course"], test_course_id)
 
-    # TODO Test proper multiple filter constraint
+    def test_note_single_filter_courseid_invalid_out_range(self):
+        """
+        Test out of range courseid, expecting empty return list
+        :return:
+        """
+        test_course_id = 25
+        url = reverse("api:notes-list")
+        response = self.client.get(url, {"courseid": test_course_id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, [])
 
-    # TODO Test improper: nonexisting filter search
+        test_course_id = -1
+        url = reverse("api:notes-list")
+        response = self.client.get(url, {"courseid": test_course_id})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, [])
 
-    # TODO Test improper: filter fields constraint
+    def test_note_single_filter_courseid_invalid_not_integer(self):
+        """
+        Test whether the backend respond properly according to
+        the given courseid
+        Since not a number, expecting bad request and raise InvalidQueryValue exception
+        :return:
+        """
+        url = reverse("api:notes-list")
+
+        test_course_id = 3.23
+        query_params = {"courseid": test_course_id}
+        check_query_filter_error(self, url, query_params, error_class=InvalidQueryValue)
+
+        test_course_id = "test"
+        query_params = {"courseid": test_course_id}
+        check_query_filter_error(self, url, query_params, error_class=InvalidQueryValue)
+
+    def test_note_single_filter_sortby_default(self):
+        """
+        Test default return order
+        :return:
+        """
+        url = reverse("api:notes-list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(response.data, [])
+        check_order(self, arr=response.data, key="like_count", descending=True)
+
+    def test_note_pair_filter_sortby_descending_possible_keys(self):
+        """
+        Check if sortby works for other valid options
+        :return:
+        """
+        url = reverse("api:notes-list")
+        sortby_options = ["like_count", "dislike_count", "star_count"]
+        descending_options = [True, False]
+        for sortby_option in sortby_options:
+            for descending_option in descending_options:
+                response = self.client.get(url, {"sortby": sortby_option, "descending": descending_option})
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertNotEqual(response.data, [])
+                check_order(self, arr=response.data, key=sortby_option, descending=descending_option)
+
+    def test_note_pair_filter_sortby_descending_invalid(self):
+        """
+        Check whether sortby raise exception for invalid sortby or descending value
+        Expecting 400 and
+        :return:
+        """
+        url = reverse("api:notes-list")
+        test_sortby = "invalid"
+        test_descending = "invalid"
+
+        # Individual
+        query_params_list = [
+            {"sortby": test_sortby},
+            {"descending": test_descending},
+            {"sortby": test_sortby, "descending": True},
+            {"sortby": "like_count", "descending": test_descending},
+            {"sortby": test_sortby, "descending": test_descending}
+        ]
+        for query_params in query_params_list:
+            check_query_filter_error(self, url, query_params, error_class=InvalidQueryValue)
+
     def test_note_list_single_filter_limit(self):
         """
         Prepopulated database with data
@@ -1656,16 +1828,281 @@ class NoteViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
 
+    def test_note_list_multi_filter(self):
+        """
+        Test that the query param works for multiple query key
+        :return:
+        """
+        url = reverse("api:notes-list")
+        test_query_keys = ["courseid", "sortby", "descending", "limit"]
+        test_query_values = {
+            "courseid": list(range(1, COURSE_NUM_ENTRIES + 1)),
+            "sortby": ["like_count", "star_count", "dislike_count"],
+            "descending": [True, False],
+            "limit": list(range(1, NOTE_NUM_ENTRIES + 1))
+        }
+
+        query_key_mapping = dict()
+        query_key_mapping["courseid"] = "course"
+
+        # Perform 100 random query and test if the result is expected
+        check_multi_query_v2(self, url, test_query_keys, test_query_values, query_key_mapping)
+
+    def test_note_list_non_existing_filter(self):
+        """
+        Since there are 8 entries in the fixtures, expected 8 entries
+        :return:
+        """
+        url = reverse("api:notes-list")
+        response = self.client.get(url, {"nonexisted": "Purdue"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), NOTE_NUM_ENTRIES)
+
     # DetailView/RetrieveView testing
+    def test_note_retrieve(self):
+        """
+        Test accessing single note object
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:notes-detail", kwargs=path_params)
+        fields = ["course", "question", "id", "created_at",
+                  "created_by", "last_edited", "like_count",
+                  "star_count", "dislike_count", "title", "content",
+                  "tags"]
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        obj = response.data
+        check_fields(self, obj, fields)
+
+    def test_note_retrieve_not_found(self):
+        """
+        Test accessing note question object with invalid id
+        expecting a 404 not found
+        :return:
+        """
+        path_params = {"pk": NOTE_NUM_ENTRIES + 1}
+        url = reverse("api:notes-detail", kwargs=path_params)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
+
+        path_params = {"pk": -1}
+        url = reverse("api:notes-detail", kwargs=path_params)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, get_packet_details(NotFound()))
 
     # TODO Rest of tests need to add permission check after introducing user
     # CreateView testing
+    def test_note_create(self):
+        """
+        Test success create view and able to access via get
+        :return:
+        """
+        url = reverse("api:notes-list")
+        detail_url_name = "api:notes-detail"
+        # Encode json field
+        test_data = {'course': 1, 'question': 1, 'title': 'Test note tile',
+                     'content': 'Test content', 'tags': ["tags"]}
 
-    # TODO Check adding note with question and course point to different coursemeta
+        check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"], id_fields="note")
+
+    def test_note_create_extra_field(self):
+        """
+        Test success create view and able to access via get with extra fields
+        :return:
+        """
+        url = reverse("api:notes-list")
+        detail_url_name = "api:notes-detail"
+        # Encode json field
+        test_data = {'course': 1, 'question': 1, 'title': 'Test note tile',
+                     'content': 'Test content', 'tags': ["tags"], "extra": "extra"}
+
+        check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"], ignore_fields=["extra"], id_fields="note")
+
+    def test_note_create_invalid_missing_fields(self):
+        """
+        Test invalid form with missing fields, should raise 400 error
+        :return:
+        """
+        url = reverse("api:notes-list")
+        detail_url_name = "api:notes-detail"
+        # Encode json field
+        test_data = {'course': 1, 'question': 1, 'title': 'Test note title',
+                     'content': 'Test content', 'tags': json.dumps(["tags"])}
+
+        # Try 20 form submission with missing fields
+        for _ in range(20):
+            num_pair = random.randint(0, len(test_data.keys()) - 1)
+            form_fields = random.sample(test_data.keys(), num_pair)
+            form = {form_field: test_data[form_field] for form_field in form_fields}
+            if "content" in form:
+                # Since content is allow to be empty
+                # Meaning at least one other field is missing
+                check_post_error(self, url, form)
+
+    def test_note_create_invalid_empty_fields(self):
+        """
+        Test empty fields (course_meta, title), should raise 400 error
+        :return:
+        """
+        url = reverse("api:notes-list")
+        detail_url_name = "api:notes-detail"
+        # Encode json field
+        test_data = {'course': 1, 'question': 1, 'title': 'Test note title',
+                     'content': 'Test content', 'tags': json.dumps(["tags"])}
+
+        # Test empty fields
+        for key in test_data:
+            if key == "content":
+                continue
+            form = test_data.copy()
+            form[key] = ""
+            check_post_error(self, url, form)
+
+    def test_qnote_create_invalid_field_constraints(self):
+        """
+        Test empty fields (course_meta, title), should raise 400 error
+        :return:
+        """
+        url = reverse("api:notes-list")
+        detail_url_name = "api:notes-detail"
+        # Encode json field
+        test_data = {'course': 1, 'question': 1, 'title': 'Test note title',
+                     'content': 'Test content', 'tags': json.dumps(["tags"])}
+
+        form = test_data
+        form["tags"] = "Not json"
+        check_post_error(self, url, form, error_class=InvalidForm)
+
+    def test_note_create_invalid_mismatch_course_question(self):
+        """
+        Check adding note with question and course point to different coursemeta
+        Should raise 400 invalid form error
+        :return:
+        """
+        url = reverse("api:notes-list")
+        detail_url_name = "api:notes-detail"
+        # Encode json field
+        test_data = {'course': 2, 'question': 1, 'title': 'Test note title',
+                     'content': 'Test content', 'tags': json.dumps(["tags"])}
+        check_post_error(self, url, test_data, error_class=InvalidForm)
 
     # UpdateView testing
+    def test_note_update(self):
+        """
+        Test successful update note
+        :return:
+        """
+        detail_url_name = "api:notes-detail"
+        path_params = {"pk": 1}
+        test_data = {"title": "Changed", "content": "Changed Content", "tags": ["changed", "changed tag"]}
+
+        check_put_success(self, detail_url_name, path_params, test_data)
+
+    def test_note_update_invalid_pk(self):
+        """
+        Test with invalid pk or note id, expect errors
+        :return:
+        """
+        detail_url_name = "api:notes-detail"
+        test_data = {"title": "Changed", "content": "Changed Content", "tags": json.dumps(["changed", "changed tag"])}
+
+        # Out of range
+        path_params = {"pk": 100}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=NotFound)
+
+        # Not an integer
+        path_params = {"pk": 3.44}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+
+        # Not an integer
+        path_params = {"pk": "I am invalid"}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+
+    def test_note_update_extra_field(self):
+        """
+        Test update note with extra field, which should be ignored
+        :return:
+        """
+        detail_url_name = "api:notes-detail"
+        path_params = {"pk": 1}
+        test_data = {"title": "Changed", "content": "Changed Content",
+                     "tags": ["changed", "changed tag"], "extra": "extra"}
+
+        check_put_success(self, detail_url_name, path_params, test_data, ignore_fields=["extra"])
+
+    def test_note_update_invalid_missing_field(self):
+        """
+        Test with missing fields, expecting 400 error
+        :return:
+        """
+        detail_url_name = "api:notes-detail"
+        path_params = {"pk": 1}
+        test_data = {"title": "Changed", "content": "Changed Content",
+                     "tags": json.dumps(["changed", "changed tag"])}
+
+        # Try 20 form submission with missing fields
+        for _ in range(20):
+            num_pair = random.randint(0, len(test_data.keys()) - 1)
+            form_fields = random.sample(test_data.keys(), num_pair)
+            form = {form_field: test_data[form_field] for form_field in form_fields}
+            if "content" in form:
+                # Since if content in form, that means at least
+                # one other attribute is missing
+                check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+
+    def test_note_update_invalid_field_constraint(self):
+        """
+        Test against form field constraint
+        :return:
+        """
+        detail_url_name = "api:notes-detail"
+        path_params = {"pk": 1}
+
+        # Empty title
+        form = {"title": "", "content": "Changed Content", "tags": json.dumps(["changed", "changed tag"])}
+        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+
+        # Not a json
+        form = {"title": "Test", "content": "Changed Content", "tags": "Not json"}
+        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
 
     # DestroyView testing
+    def test_note_destroy(self):
+        """
+        Test successful delete
+        :return:
+        """
+        detail_url_name = "api:notes-detail"
+        path_params = {"pk": 1}
+
+        check_delete_success(self, detail_url_name, path_params)
+
+    def test_note_destroy_invalid_not_existing(self):
+        """
+        Test invalid delete: out of range pk
+        :return:
+        """
+        detail_url_name = "api:notes-detail"
+        path_params = {"pk": 100}
+
+        check_delete_error(self, detail_url_name, path_params)
+
+    def test_note_destroy_invalid_path_params(self):
+        """
+        Test invalid delete: not an integer
+        :return:
+        """
+        detail_url_name = "api:notes-detail"
+
+        path_params = {"pk": 3.4}
+        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+
+        ath_params = {"pk": "Not integer"}
+        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
 
     """
     Begin invalid view testing/invalid http method
@@ -1673,6 +2110,14 @@ class NoteViewSetTests(APITestCase):
     django rest framework automatic method on ModelViewSet
     """
     # PartialUpdateView testing
+    def test_note_partial_update(self):
+        """
+        Partial update/PATCH not supported
+        :return:
+        """
+        params = {"pk": 1}
+        url = reverse("api:notes-detail", kwargs=params)
+        check_method_not_allowed(self, url, "PATCH")
 
 
 class PostViewSetTests(APITestCase):

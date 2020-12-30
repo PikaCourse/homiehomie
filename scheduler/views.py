@@ -218,10 +218,12 @@ class NoteViewSet(viewsets.ModelViewSet):
         sortby      = self.request.query_params.get("sortby", None)
         descending  = self.request.query_params.get("descending", None)
         if descending is not None:
-            if descending == "true":
+            if descending.lower() == "true":
                 descending = True
-            else:
+            elif descending.lower() == "false":
                 descending = False
+            else:
+                raise InvalidQueryValue()
         else:
             descending = True
         limit = self.request.query_params.get("limit", None)
@@ -255,10 +257,16 @@ class NoteViewSet(viewsets.ModelViewSet):
         note = request.data
         f = NoteCreationForm(note, request=request)
         if f.is_valid():
-            note = f.save(debug=True)
-            error_pack = {"code": 'success', "detail": "successfully created note",
-                          "status": status.HTTP_201_CREATED, "note": note.id}
-            return Response(error_pack, status=status.HTTP_201_CREATED)
+            # Verify that the course and question point to same course meta
+            course = f.cleaned_data["course"]
+            question = f.cleaned_data["question"]
+            if course.course_meta_id != question.course_meta_id:
+                raise InvalidForm()
+            else:
+                note = f.save(debug=True)
+                error_pack = {"code": 'success', "detail": "successfully created note",
+                              "status": status.HTTP_201_CREATED, "note": note.id}
+                return Response(error_pack, status=status.HTTP_201_CREATED)
         raise InvalidForm()
 
     # PUT method used to update existing question
