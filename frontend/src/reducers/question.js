@@ -1,7 +1,13 @@
 import {GET_QUE} from '../actions/types.js'
 
 const initialState = {
-    question:[]
+    question:[
+        {
+            id:0,
+            question:[],
+            notes:[]
+        }
+    ]
 }
 
 export default function(state = initialState, action) {
