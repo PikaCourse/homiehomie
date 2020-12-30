@@ -36,7 +36,8 @@ class Dnd extends React.Component {
   static propTypes = {
     course: PropTypes.array.isRequired,
     calendar: PropTypes.array.isRequired,
-    courselist: PropTypes.array.isRequired,
+    calendarCourseBag: PropTypes.array.isRequired,
+    calenderCusEventBag: PropTypes.array.isRequired,
   };
 
   handleDragStart = (event) => {
@@ -132,14 +133,16 @@ class Dnd extends React.Component {
   };
 
   newEvent(event) {
-    let idList = this.state.events.map((a) => a.id);
-    if (this.props.courselist.length == 0) {
-      var newId = 0;
-    }
-    else {
-      var newId = this.props.courselist[this.props.courselist.length -  1].id + 1;
-    } //this.state.events.length == 0 ? 0 : Math.max(...idList) + 1;
+    let idList = store.getState().calendar.calenderCusEventBag.map((a) => a.id);
+    // if (store.getState().calendar.calenderCusEventBag == 0) {
+    //   var newId = 0;
+    // }
+    // else {
+    //   var newId = store.getState().calendar.calenderCusEventBag[store.getState().calendar.calenderCusEventBag.length -  1].id + 1;
+    // } //this.state.events.length == 0 ? 0 : Math.max(...idList) + 1;
+    var newId = store.getState().calendar.calenderCusEventBag.length == 0 ? 0 : Math.max(...idList) + 1;
     let hour = {
+      type: 'custom', 
       id: newId,
       title: event.title,
       allDay: event.slots.length == 1,
@@ -172,6 +175,7 @@ class Dnd extends React.Component {
       newStyle.backgroundColor = colors[event.id%10+1].strong;
       newStyle.color = 'white';
       newStyle.boxShadow = "6px 4px 30px " + colors[event.id%10+1].weak;
+      if (event.type != 'custom')
       store.dispatch(
         setCourse({
           selectedCRN: event.raw.crn,
@@ -187,6 +191,11 @@ class Dnd extends React.Component {
   }
 
   render() {
+    console.log("render start"); 
+    console.log(this.props.courselist); 
+    console.log(store.getState().calendar.calendarCourseBag); 
+    console.log(store.getState().calendar.calenderCusEventBag); 
+    console.log("render end"); 
     return (
       <DragAndDropCalendar
         min={new Date(today.getFullYear(), today.getMonth(), today.getDate(), 7, 0, 0)}
@@ -196,7 +205,7 @@ class Dnd extends React.Component {
         style={{ height: 1000 }}
         selectable
         localizer={mlocalizer}
-        events={this.props.courselist} //data input
+        events={[...this.props.calendarCourseBag, ...this.props.calenderCusEventBag]} //data input
         onEventDrop={this.moveEvent}
         resizable={true}
         onEventResize={this.resizeEvent}
@@ -224,7 +233,9 @@ class Dnd extends React.Component {
 const mapStateToProps = (state) => ({
   course: state.course.course,
   calendar: state.calendar,
-  courselist: state.calendar.calendarCourseBag,
+  calendarCourseBag: state.calendar.calendarCourseBag, 
+  calenderCusEventBag: state.calendar.calenderCusEventBag, 
+  // courselist: [...state.calendar.calendarCourseBag, ...state.calendar.calenderCusEventBag], //state.calendar.calendarCourseBag.concat([state.calendar.calenderCusEventBag]),
   //preview: state.preview
 });
 

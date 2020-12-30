@@ -9,7 +9,7 @@ import {
 const initialState = {
   // calendarCourseBag: [],
   calendarCourseBag: [],
-  calenderCusEventbag: [], 
+  calenderCusEventBag: [], 
 };
 
 function getMonday(d) {
@@ -43,6 +43,7 @@ function addNewCourseToBag(state, action, update) {
 
   action.selectedCourse.time.map((timeslot) => {
     newBag.push({
+      type: 'course', 
       id: newId,
       title: action.selectedCourse.course_meta.title,
       allDay: false,
@@ -69,6 +70,7 @@ function previewNewCourseToBag(state, action) {
 
   action.selectedCourse.time.map((timeslot) => {
     newBag.push({
+      type: 'preview', 
       id: -1,
       title: action.selectedCourse.course_meta.title,
       allDay: false,
@@ -87,8 +89,9 @@ function previewNewCourseToBag(state, action) {
   return newBag;
 }
 
-function addNewEventToBag(state, action) {
-  var tempArray = [...state.calendarCourseBag];
+function addNewCusEventToBag(state, action) {
+  console.log("add cus in reducer"); 
+  var tempArray = [...state.calenderCusEventBag];
   let update = false; 
 
   tempArray = tempArray.map((existingEvent) => {
@@ -170,7 +173,7 @@ export default function (state = initialState, action) {
     case ADD_CUS_EVENT_IN_CAL:
       return {
         ...state,
-        calendarCourseBag: addNewEventToBag(state, action),
+        calenderCusEventBag: addNewCusEventToBag(state, action),
       };
 
     default:
