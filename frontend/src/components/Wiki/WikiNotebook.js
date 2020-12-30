@@ -12,7 +12,7 @@ import store from "../../store";
 import axios from "axios";
 import { getQuestion } from "../../actions/question.js";
 
-import { Button, Input, Tooltip, Card } from "antd";
+import { Button, Input, Card, Form } from "antd";
 
 const { TextArea } = Input;
 
@@ -108,23 +108,31 @@ export class WikiNotebook extends Component {
                 bordered={true}
                 className="my-2"
                 style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-                extra={
-                  <Button
-                    type="ghost"
-                    size="medium"
-                    onClick={() => {
-                      this.setState({ addNewCard: false });
-                    }}
-                  >
-                    <FontAwesomeIcon className="" icon={faTimes} />
-                  </Button>
-                }
               >
+                <Button
+                  type="ghost"
+                  size="medium"
+                  onClick={() => {
+                    this.setState({ addNewCard: false });
+                  }}
+                  style={{ float: "right" }}
+                >
+                  <FontAwesomeIcon className="" icon={faTimes} />
+                </Button>
+                <br />
                 <form className="form-inline my-2 my-lg-0">
+                  <TextArea
+                    className="mb-2"
+                    value={value}
+                    onChange={this.onChange}
+                    placeholder="write a title"
+                    autoSize={{ minRows: 1, maxRows: 3 }}
+                    style={{ borderRadius: "5px", borderColor: "white" }}
+                  />
                   <TextArea
                     value={value}
                     onChange={this.onChange}
-                    placeholder="Controlled autosize"
+                    placeholder="write some notes"
                     autoSize={{ minRows: 3, maxRows: 5 }}
                     style={{ borderRadius: "5px", borderColor: "white" }}
                   />
@@ -141,14 +149,13 @@ export class WikiNotebook extends Component {
               bordered={true}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-              key = {nbObj.id}
-
+              key={nbObj.id}
             >
               {nbObj.notes.map((noteObj) => (
                 <p
                   className="pl-2"
                   style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-                  key = {noteObj.id}
+                  key={noteObj.id}
                 >
                   {noteObj.content}
                   <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
