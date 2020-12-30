@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
         "post": 1,
-        "postee": 3,
+        "postee": 2,
         "created_at": "2020-12-24T22:11:18.498Z",
         "last_edited": "2020-12-24T22:11:18.498Z",
         "like_count": 8,
@@ -18,7 +18,7 @@
     "pk": 2,
     "fields": {
         "post": 1,
-        "postee": 2,
+        "postee": 1,
         "created_at": "2020-12-24T22:15:45.391Z",
         "last_edited": "2020-12-24T22:27:40.984Z",
         "like_count": 0,
@@ -31,7 +31,7 @@
     "model": "scheduler.postanswer",
     "pk": 3,
     "fields": {
-        "post": 2,
+        "post": 1,
         "postee": 1,
         "created_at": "2020-12-24T22:11:18.498Z",
         "last_edited": "2020-12-24T22:11:18.498Z",
@@ -45,8 +45,8 @@
     "model": "scheduler.postanswer",
     "pk": 4,
     "fields": {
-        "post": 2,
-        "postee": 2,
+        "post": 1,
+        "postee": 1,
         "created_at": "2020-12-24T22:15:45.391Z",
         "last_edited": "2020-12-24T22:27:40.984Z",
         "like_count": 0,
@@ -60,7 +60,7 @@
     "pk": 5,
     "fields": {
         "post": 3,
-        "postee": 3,
+        "postee": 2,
         "created_at": "2020-12-24T22:11:18.498Z",
         "last_edited": "2020-12-24T22:11:18.498Z",
         "like_count": 8,
@@ -74,7 +74,7 @@
     "pk": 6,
     "fields": {
         "post": 3,
-        "postee": 2,
+        "postee": 1,
         "created_at": "2020-12-24T22:15:45.391Z",
         "last_edited": "2020-12-24T22:27:40.984Z",
         "like_count": 0,
@@ -102,7 +102,7 @@
     "pk": 8,
     "fields": {
         "post": 4,
-        "postee": 2,
+        "postee": 1,
         "created_at": "2020-12-24T22:15:45.391Z",
         "last_edited": "2020-12-24T22:27:40.984Z",
         "like_count": 0,

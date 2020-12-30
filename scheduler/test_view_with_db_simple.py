@@ -18,6 +18,7 @@ COURSE_NUM_ENTRIES = 22
 QUESTION_NUM_ENTRIES = 6
 NOTE_NUM_ENTRIES = 8
 POST_NUM_ENTRIES = 4
+POST_ANSWER_NUM_ENTRIES_1 = 4 # num of post answer related to first post
 POST_ANSWER_NUM_ENTRIES = 8
 USER_NUM_ENTRIES = 2
 
@@ -250,7 +251,7 @@ def check_multi_query_v2(test_case, url, test_query_keys, test_query_values, que
 
 def check_query_filter_error(test_case, url, query_params=None, error_class=InvalidQueryValue):
     """
-    Check if proper error is raised
+    Check if proper error is raised for a given get request
     :param test_case:
     :param url:
     :param query_params:
@@ -258,7 +259,7 @@ def check_query_filter_error(test_case, url, query_params=None, error_class=Inva
     :return:
     """
     response = test_case.client.get(url, query_params)
-    test_case.assertEqual(response.status_code, error_class.default_code)
+    test_case.assertEqual(response.status_code, error_class.status_code, msg=f"URL: {url}\tQuery: {query_params}")
     test_case.assertEqual(response.data, get_packet_details(error_class()))
 
 
@@ -279,7 +280,24 @@ def check_order(test_case, arr, key, descending=True):
             prev_count = cur_count
 
 
-def check_post_success(test_case, url, detail_url_name, test_data, json_fields=("tags",), ignore_fields=[], id_fields="question"):
+def check_post_success(test_case, url, detail_url_name, test_data,
+                       json_fields=("tags",), ignore_fields=[], id_fields="question",
+                       detail_pk_name="pk", detail_path_params={}):
+    """
+    Create a post request and expect successful output
+    :param test_case:           API test case instance
+    :param url:                 Post URL
+    :param detail_url_name:     Retrieve URL, will be used to check if the content created is correct
+    :param test_data:           Test data/request content
+    :param json_fields:         JSON field name list that need json encode
+    :param ignore_fields:       Fields to ignore in retrieve object check, used to test if extra fields will not affect
+                                post
+    :param id_fields:           name of the returned object field that contain the pk of the created instance
+    :param detail_pk_name:      Path pk to the instance
+    :param detail_path_params:  Additional path param to be used by checker to verify the successful creation
+                                of instance
+    :return:
+    """
     test_data = test_data.copy()
     # Encode any json fields
     for json_field in json_fields:
@@ -294,12 +312,14 @@ def check_post_success(test_case, url, detail_url_name, test_data, json_fields=(
                                 data=test_data_encoded,
                                 content_type='application/x-www-form-urlencoded')
     # Assert code and msg
-    test_case.assertEqual(response.status_code, status.HTTP_201_CREATED, msg=f"Message: {response.data}")
+    test_case.assertEqual(response.status_code, status.HTTP_201_CREATED,
+                          msg=f"Message: {response.data}\tURL: {url}")
     post_result = response.data
 
-    # Test if the post is successful
+    # Checker: Test if the post is successful
     id = response.data[id_fields]
-    path_params = {"pk": id}
+    path_params = detail_path_params
+    path_params[detail_pk_name] = id
     url = reverse(detail_url_name, kwargs=path_params)
     response = test_case.client.get(url)
     test_case.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -2590,7 +2610,7 @@ class PostViewSetTests(APITestCase):
     # UpdateView testing
     def test_post_update(self):
         """
-        Test successful update note
+        Test successful update post
         :return:
         """
         detail_url_name = "api:posts-detail"
@@ -2631,7 +2651,7 @@ class PostViewSetTests(APITestCase):
 
     def test_post_update_extra_field(self):
         """
-        Test update note with extra field, which should be ignored
+        Test update post with extra field, which should be ignored
         :return:
         """
         detail_url_name = "api:posts-detail"
@@ -2701,7 +2721,7 @@ class PostViewSetTests(APITestCase):
         path_params = {"pk": 3.4}
         check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
 
-        ath_params = {"pk": "Not integer"}
+        path_params = {"pk": "Not an integer"}
         check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
 
     """
@@ -2728,7 +2748,7 @@ class PostAnswerViewSetTests(APITestCase):
     fixtures = ['scheduler/test_coursemeta_simple.json',
                 'scheduler/test_course_simple.json',
                 'scheduler/test_post_simple.json',
-                'scheduler/test_post_answer_simple.json',
+                'scheduler/test_postanswer_simple.json',
                 'user/test_user_simple.json',
                 'user/test_student_simple.json']
 
@@ -2738,26 +2758,424 @@ class PostAnswerViewSetTests(APITestCase):
     """
 
     # ListView testing
-    # TODO Test empty db
+    def test_post_answer_list_length(self):
+        """
+        Test if the returned list length matched with expected
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), POST_ANSWER_NUM_ENTRIES_1)
 
-    # TODO Test proper return object structure
+    def test_post_answer_list_length_empty(self):
+        """
+        Test if the returned list length matched with expected
+        Post 2 does not have post answer associated with,
+        expecting empty list and 200 OK
+        :return:
+        """
+        path_params = {"pk": 2}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, [])
 
-    # TODO Test proper single filtering
+    def test_post_answer_list_format(self):
+        """
+        Test whether the objects in the returned list has the fields
+        specified by the API documentation
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        fields = ["post", "postee", "created_at",
+                  "last_edited", "like_count", "star_count",
+                  "dislike_count", "content"]
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for obj in response.data:
+            check_fields(self, obj, fields)
 
-    # TODO Test proper multiple filter constraint
+    def test_post_answer_list_invalid_post_id_out_of_range(self):
+        """
+        Test if provided incorrect pk the response will be not found
+        :return:
+        """
+        path_params = {"pk": POST_NUM_ENTRIES + 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        check_query_filter_error(self, url, error_class=NotFound)
 
-    # TODO Test improper: nonexisting filter search
+        path_params = {"pk": -1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        check_query_filter_error(self, url, error_class=NotFound)
 
-    # TODO Test improper: filter fields constraint
+    def test_post_answer_list_invalid_post_id_not_integer(self):
+        """
+        Test if provided incorrect pk not following the constraint
+        expecting InvalidPathParam error
+        :return:
+        """
+        path_params = {"pk": 3.45}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        check_query_filter_error(self, url, error_class=InvalidPathParam)
+
+        path_params = {"pk": "I am not valid"}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        check_query_filter_error(self, url, error_class=InvalidPathParam)
+
+    def test_post_answer_single_filter_sortby_default(self):
+        """
+        Test default return order
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotEqual(response.data, [])
+        check_order(self, arr=response.data, key="like_count", descending=True)
+
+    def test_post_answer_pair_filter_sortby_descending_possible_keys(self):
+        """
+        Check if sortby works for other valid options
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        sortby_options = ["like_count", "dislike_count", "star_count"]
+        descending_options = [True, False]
+        for sortby_option in sortby_options:
+            for descending_option in descending_options:
+                response = self.client.get(url, {"sortby": sortby_option, "descending": descending_option})
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertNotEqual(response.data, [])
+                check_order(self, arr=response.data, key=sortby_option, descending=descending_option)
+
+    def test_post_answer_pair_filter_sortby_descending_invalid(self):
+        """
+        Check whether sortby raise exception for invalid sortby or descending value
+        Expecting 400 and raise InvalidQueryValue exception
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        test_sortby = "invalid"
+        test_descending = "invalid"
+
+        # Individual
+        query_params_list = [
+            {"sortby": test_sortby},
+            {"descending": test_descending},
+            {"sortby": test_sortby, "descending": True},
+            {"sortby": "like_count", "descending": test_descending},
+            {"sortby": test_sortby, "descending": test_descending}
+        ]
+        for query_params in query_params_list:
+            check_query_filter_error(self, url, query_params, error_class=InvalidQueryValue)
+
+    def test_post_answer_list_single_filter_limit(self):
+        """
+        Prepopulated database with data
+        Test whether the limit parameter is working
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+
+        test_limit = POST_ANSWER_NUM_ENTRIES_1 - 1
+        response = self.client.get(url, {"limit": test_limit})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(test_limit, len(response.data))
+
+    def test_post_answer_list_single_filter_limit_invalid_zero(self):
+        """
+        Prepopulated database with data
+        Test whether the limit parameter is working
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+
+        # Test limit 0
+        test_limit = 0
+        response = self.client.get(url, {"limit": test_limit})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+    def test_post_answer_list_single_filter_limit_invalid_negative(self):
+        """
+        Prepopulated database with data
+        Test whether the limit parameter is working
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+
+        # Test limit -1
+        test_limit = -1
+        response = self.client.get(url, {"limit": test_limit})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+    def test_post_answer_list_single_filter_limit_invalid_not_integer(self):
+        """
+        Prepopulated database with data
+        Test whether the limit parameter is working
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+
+        # Test limit float
+        test_limit = 3.545
+        response = self.client.get(url, {"limit": test_limit})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+        # Test limit not a number
+        test_limit = "limit?"
+        response = self.client.get(url, {"limit": test_limit})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+    def test_post_answer_list_multi_filter(self):
+        """
+        Test that the query param works for multiple query key
+        :return:
+        """
+        url = reverse("api:posts-answers", kwargs={"pk": 1})
+        test_query_keys = ["sortby", "descending", "limit"]
+        test_query_values = {
+            "sortby": ["like_count", "star_count", "dislike_count"],
+            "descending": [True, False],
+            "limit": list(range(1, POST_ANSWER_NUM_ENTRIES_1 + 1))
+        }
+
+        query_key_mapping = dict()
+
+        # Perform 100 random query and test if the result is expected
+        check_multi_query_v2(self, url, test_query_keys, test_query_values, query_key_mapping)
+
+    def test_post_answer_list_non_existing_filter(self):
+        """
+        Test if applying an extra filter will not affect the query
+        :return:
+        """
+        url = reverse("api:posts-answers", kwargs={"pk": 1})
+        response = self.client.get(url, {"nonexisted": "Purdue"})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), POST_ANSWER_NUM_ENTRIES_1)
 
     # DetailView/RetrieveView testing
+    def test_post_answer_retrieve(self):
+        """
+        Test accessing single post answer object
+        :return:
+        """
+        path_params = {"pk": 1, "answerid": 1}
+        url = reverse("api:posts-detail-answer", kwargs=path_params)
+        fields = ["post", "postee", "created_at",
+                  "last_edited", "like_count", "star_count",
+                  "dislike_count", "content"]
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        obj = response.data
+        check_fields(self, obj, fields)
+
+    def test_post_answer_retrieve_not_found(self):
+        """
+        Test accessing post object with invalid id
+        expecting a 404 not found
+        :return:
+        """
+        pk_list = [POST_NUM_ENTRIES + 1, -1, 1]
+        answerid_list = [1, POST_ANSWER_NUM_ENTRIES_1 + 1, -1]
+        for pk in pk_list:
+            for answerid in answerid_list:
+                path_params = {"pk": pk, "answerid": answerid}
+                url = reverse("api:posts-detail-answer", kwargs=path_params)
+                check_query_filter_error(self, url, error_class=NotFound)
+
+    def test_post_answer_retrieve_invalid_not_link(self):
+        """
+        Test accessing a post answer id that does not point to the
+        given post id, expecting 404 not found
+        :return:
+        """
+        path_params = {"pk": 1, "answerid": 5}
+        url = reverse("api:posts-detail-answer", kwargs=path_params)
+        check_query_filter_error(self, url, error_class=NotFound)
 
     # TODO Rest of tests need to add permission check after introducing user
     # CreateView testing
+    def test_post_answer_create(self):
+        """
+        Test success create view and able to access via get
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        detail_url_name = "api:posts-detail-answer"
+        # Encode json field
+        test_data = {'content': 'Test post content'}
+
+        check_post_success(self, url, detail_url_name, test_data, json_fields=[], id_fields="answer",
+                           detail_pk_name="answerid", detail_path_params=path_params)
+
+    def test_post_answer_create_extra_field(self):
+        """
+        Test submit post request with extra field, should be ignored
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        detail_url_name = "api:posts-detail-answer"
+        # Encode json field
+        test_data = {'content': 'Test content', "extra": "extra"}
+
+        check_post_success(self, url, detail_url_name, test_data, json_fields=[], ignore_fields=["extra"],
+                           id_fields="answer", detail_pk_name="answerid", detail_path_params=path_params)
+
+    def test_post_answer_create_invalid_missing_fields(self):
+        """
+        Test post request with missing field names
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        detail_url_name = "api:posts-detail-answer"
+        # Encode json field
+        test_data = {}
+
+        check_post_error(self, url, test_data)
+
+    def test_post_answer_create_invalid_empty_fields(self):
+        """
+        Test post request with empty field, expecting error since
+        this is the only user enter field
+        :return:
+        """
+        path_params = {"pk": 1}
+        url = reverse("api:posts-answers", kwargs=path_params)
+        detail_url_name = "api:posts-detail-answer"
+        # Encode json field
+        test_data = {'content': ''}
+
+        check_post_error(self, url, test_data)
 
     # UpdateView testing
+    def test_post_answer_update(self):
+        """
+        Test successful update post answer
+        :return:
+        """
+        detail_url_name = "api:posts-detail-answer"
+        path_params = {"pk": 1, "answerid": 1}
+        test_data = {"content": "Changed Content"}
+        time_test = datetime.now()
+
+        check_put_success(self, detail_url_name, path_params, test_data, json_fields=[])
+
+        # Check if the last edited fields get updated as well
+        url = reverse("api:posts-detail-answer", kwargs=path_params)
+        response = self.client.get(url)
+        time_post_answer = datetime.fromisoformat(response.data["last_edited"][:-1])
+        time_diff_seconds = (time_post_answer - time_test).total_seconds()
+        self.assertLessEqual(time_diff_seconds, 10, msg=f"Overtime")
+        self.assertLessEqual(0, time_diff_seconds, msg=f"Post answer gets updated back in time")
+
+        # Check if the corresponding post last_answered field gets updated as well
+        url = reverse("api:posts-detail", kwargs={"pk": 1})
+        response = self.client.get(url)
+        time_post = datetime.fromisoformat(response.data["last_answered"][:-1])
+
+        # Check if the update time is within 10 second and note should be edited first
+        time_diff_seconds = (time_post - time_post_answer).total_seconds()
+        self.assertLessEqual(time_diff_seconds, 10, msg=f"Overtime")
+        self.assertLessEqual(0, time_diff_seconds, msg=f"Post gets updated before answer")
+
+    def test_post_answer_update_invalid_pk(self):
+        """
+        Test with invalid pk or answer id, expecting errors
+        :return:
+        """
+        detail_url_name = "api:posts-detail-answer"
+        test_data = {"content": "Changed answer Content"}
+
+        # Out of range
+        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES + 1}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=NotFound)
+
+        # Mismatch
+        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=NotFound)
+
+        # Not an integer
+        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+
+        # Not an integer
+        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+
+    def test_post_answer_update_extra_field(self):
+        """
+        Test update post answer with extra field, which should be ignored
+        :return:
+        """
+        detail_url_name = "api:posts-detail-answer"
+        path_params = {"pk": 1, "answerid": 1}
+        test_data = {"content": "Changed Content", "extra": "extra"}
+
+        check_put_success(self, detail_url_name, path_params, test_data, json_fields=[], ignore_fields=["extra"])
+
+    def test_post_answer_update_invalid_missing_field(self):
+        """
+        Test update post answer with missing fields, expecting 400 InvalidForm
+        :return:
+        """
+        detail_url_name = "api:posts-detail-answer"
+        path_params = {"pk": 1, "answerid": 1}
+        test_data = {}
+        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidForm)
 
     # DestroyView testing
+    def test_post_answer_destroy(self):
+        """
+        Test successful delete
+        :return:
+        """
+        detail_url_name = "api:posts-detail-answer"
+        path_params = {"pk": 1, "answerid": 1}
+
+        check_delete_success(self, detail_url_name, path_params)
+
+    def test_post_answer_destroy_invalid_not_existing(self):
+        """
+        Test invalid delete: out of range pk
+        :return:
+        """
+        detail_url_name = "api:posts-detail-answer"
+        path_params = {"pk": 1, "answerid": 100}
+        check_delete_error(self, detail_url_name, path_params)
+
+    def test_post_answer_destroy_invalid_path_params(self):
+        """
+        Test invalid delete: not an integer, no linked
+        :return:
+        """
+        detail_url_name = "api:posts-detail-answer"
+
+        path_params = {"pk": 1, "answerid": 3.4}
+        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+
+        path_params = {"pk": 1, "answerid": "Not an integer"}
+        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+
+        path_params = {"pk": 1, "answerid": 5}
+        check_delete_error(self, detail_url_name, path_params, error_class=NotFound)
 
     """
     Begin invalid view testing/invalid http method
@@ -2765,6 +3183,23 @@ class PostAnswerViewSetTests(APITestCase):
     django rest framework automatic method on ModelViewSet
     """
     # PartialUpdateView testing
+    def test_post_answer_partial_update(self):
+        """
+        Partial update/PATCH not supported
+        :return:
+        """
+        params = {"pk": 1, "answerid": 1}
+        url = reverse("api:posts-detail-answer", kwargs=params)
+        check_method_not_allowed(self, url, "PATCH")
+
+    def test_post_answer_partial_update_no_match(self):
+        """
+        Partial update/PATCH not supported
+        :return:
+        """
+        params = {"pk": 1, "answerid": 5}
+        url = reverse("api:posts-detail-answer", kwargs=params)
+        check_method_not_allowed(self, url, "PATCH")
 
 
 # TODO Test permission

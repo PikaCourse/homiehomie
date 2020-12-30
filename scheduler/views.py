@@ -395,6 +395,8 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>\d+)")
     def detail_answer(self, request, pk=None, answerid=None):
+        # TODO Check for post id as well
+        # TODO Verify that the post answer and post is related
         queryset = PostAnswer.objects.all()
         post_answer = get_object_or_404(queryset, id=answerid)
         serializer = PostAnswerSerializer(post_answer, many=False)
@@ -431,7 +433,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
     @detail_answer.mapping.delete
     def destroy_answer(self, request, pk=None, answerid=None):
-        answer = request.data
+        # No request body
         try:
             old_answer = PostAnswer.objects.get(id=answerid)
 
@@ -442,7 +444,7 @@ class PostViewSet(viewsets.ModelViewSet):
             # Delete post answer
             old_answer.delete()
             error_pack = {"code": "success", "detail": "successfully deleted post answer",
-                          "answer": answer.id, "status": status.HTTP_200_OK}
+                          "answer": answerid, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
         except PostAnswer.DoesNotExist:
             # Invalid question answer id
