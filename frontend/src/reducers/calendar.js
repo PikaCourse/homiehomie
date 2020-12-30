@@ -48,7 +48,7 @@ function addNewCourseToBag(state, action, update) {
       start: alignDate(timeslot.weekday, timeslot.start_at),
       end: alignDate(timeslot.weekday, timeslot.end_at),
       raw: {
-        crn: action.selectedCourse.course_meta.crn,
+        crn: action.selectedCourse.crn,
         name: action.selectedCourse.course_meta.name,
         instructor: action.selectedCourse.professor,
         course: action.selectedCourse,

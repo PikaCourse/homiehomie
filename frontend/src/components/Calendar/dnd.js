@@ -169,9 +169,15 @@ class Dnd extends React.Component {
     };
 
     if (isSelected){
-      newStyle.backgroundColor = colors[event.id].strong;
+      newStyle.backgroundColor = colors[event.id%10].strong;
       newStyle.color = 'white';
-      newStyle.boxShadow = "6px 4px 30px " + colors[event.id].weak;
+      newStyle.boxShadow = "6px 4px 30px " + colors[event.id%10].weak;
+      store.dispatch(
+        setCourse({
+          selectedCRN: event.raw.crn,
+          selectedCourseArray: event.raw.selectedCourseArray,
+        })
+      );
     }
 
     return {
