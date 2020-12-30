@@ -6,6 +6,7 @@ import {
   faThumbsUp,
   faThumbsDown,
   faPen,
+  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
@@ -26,6 +27,7 @@ export class WikiNotebook extends Component {
     this.state = {
       value: "",
       courseIndex: 0,
+      addNewCard: false,
     };
   }
 
@@ -76,41 +78,61 @@ export class WikiNotebook extends Component {
         </h1>
 
         <div>
-          <Card
-            hoverable
-            title=""
-            bordered={true}
-            className="my-2"
-            style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-          >
-            <p
-              className="text-center"
+          <div onClick={() => this.setState({ addNewCard: true })}>
+            <Card
+              hoverable
+              title=""
+              bordered={true}
+              className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
             >
-              <span style={{ borderBottom: "4px solid rgba(65, 158, 244, 1)" }}>
-                <FontAwesomeIcon icon={faPen} />
-                ADD NOTE
-              </span>
-            </p>
-
-            {/*  
-              <Tooltip title="add a note">
-              <Button
-                className="align-middle"
-                size="large"
-                type="primary"
-                shape="circle"
-                onClick={this.addNewQueInput}
-                style={{
-                  backgroundColor: "rgba(255, 175, 115, 1)",
-                  border: "none",
-                }}
+              <p
+                className="text-center"
+                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
               >
-                <FontAwesomeIcon className="" icon={faPen} />
-              </Button> 
-            </Tooltip>
-          */}
-          </Card>
+                <span
+                  style={{ borderBottom: "4px solid rgba(65, 158, 244, 1)" }}
+                >
+                  <FontAwesomeIcon icon={faPen} />
+                  ADD NOTE
+                </span>
+              </p>
+            </Card>
+          </div>
+          {
+            /* New Card */
+            this.state.addNewCard ? (
+              <Card
+                hoverable
+                title=""
+                bordered={true}
+                className="my-2"
+                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                extra={
+                  <Button
+                    type="ghost"
+                    size="medium"
+                    onClick={() => {
+                      this.setState({ addNewCard: false });
+                    }}
+                  >
+                    <FontAwesomeIcon className="" icon={faTimes} />
+                  </Button>
+                }
+              >
+                <form className="form-inline my-2 my-lg-0">
+                  <TextArea
+                    value={value}
+                    onChange={this.onChange}
+                    placeholder="Controlled autosize"
+                    autoSize={{ minRows: 3, maxRows: 5 }}
+                    style={{ borderRadius: "5px", borderColor: "white" }}
+                  />
+                </form>
+              </Card>
+            ) : null
+          }
+
           {/* Question */}
           {this.props.noteBag.map((nbObj) => (
             <Card
@@ -119,11 +141,14 @@ export class WikiNotebook extends Component {
               bordered={true}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+              key = {nbObj.id}
+
             >
               {nbObj.notes.map((noteObj) => (
                 <p
                   className="pl-2"
                   style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                  key = {noteObj.id}
                 >
                   {noteObj.content}
                   <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
