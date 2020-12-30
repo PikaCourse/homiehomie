@@ -36,10 +36,8 @@ export class Header extends Component {
     //getQuestion: store question_array of question_objects -> can find question_id
     //getNotes: store a notes_array depends on a question id array
     this.props.dispatch(getCourse(this.state.inputVal));
-    this.props.dispatch(
-      getQuestion(store.getState().course.selectedCourseArray[0].course_meta.id)
+    this.props.dispatch(getQuestion(store.getState().course.selectedCourseArray[0].course_meta.id)
     );
-    this.props.dispatch(getNotes(store.getState().question.question));
   }
   render() {
     return (

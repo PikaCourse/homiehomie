@@ -3,96 +3,115 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faThumbsUp, faThumbsDown } from "@fortawesome/free-solid-svg-icons";
-import store from '../../store'
+import store from "../../store";
+import axios from "axios";
+import { getQuestion } from "../../actions/question.js";
 
+import { Button, Input } from "antd";
 
-import TextareaAutosize from "react-textarea-autosize";
-
-import { Button } from "antd";
+const { TextArea } = Input;
 
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
 
 export class WikiNotebook extends Component {
+  constructor(props) {
+    super(props);
 
-    constructor(props) {
-        super(props)
-      
-        this.state = {
-          inputVal: '',
-          courseIndex: 0
-        }
-      }
-    
-      static propTypes = {
-        course:PropTypes.array.isRequired
-      }
-
-handleInputChangeTwo({ target }) {
-        this.setState({inputVal: target.value}); 
-      }
-    
-      handleSaveClicked() {
-        console.log(this.state.inputVal); 
-        //this.props.dispatch(getNotes(this.state.inputVal));
-      }
-      animateButton(e) {
-        e.preventDefault;
-        //reset animation
-        e.target.classList.remove('animate');
-        
-        e.target.classList.add('animate');
-        setTimeout(function(){
-          e.target.classList.remove('animate');
-        },700);
-        console.log("animateButton");
-    }
-
-    render() {
-        return (
-            <div className ="p-3" style = {noteBookStyle}>
-                    {/* Question */}
-                    {store.getState().notes.questionIDarray.map((question, index) => (
-                      <div>
-                    <h5 style={{fontFamily: 'Montserrat', color:'#596C7E'}}>{question}</h5>
-                    <form className="form-inline my-2 my-lg-0"/>
-                    <div class="mb-3">
-                    {store.getState().notes.notes[index].map((content) => (
-                      <p
-                        className="pl-2"
-                        style={{fontFamily: 'Montserrat', color:'#596C7E'}}>
-                          {content}
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsUp}/> 15
-                          <FontAwesomeIcon className="mx-1" icon={faThumbsDown}/> 1
-                      </p>
-                    ))}
-                      {/* writing part */}
-                      <div className="row">
-                        <div className = "col-sm-11 pr-0">
-                            <TextareaAutosize
-                              className="w-100 pl-2"
-                              minRows={2}
-                              maxRows={10}
-                              placeholder="Write Your Notes..."
-                              onChange={(e)=>this.handleInputChangeTwo(e)}
-                              style = {{borderRadius: "5px", borderColor:"white"}}/>
-                        </div>
-                        <div className = "col-sm-1 pl-0">
-                          <button 
-                            className="bubbly-button" 
-                            style = {{borderRadius: "5px", fontFamily: 'Montserrat'}} 
-                            type="save" 
-                            onClick={(event)=>{this.handleSaveClicked(); this.animateButton(event)}}>Save
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  ))}
-          </div>
-        )
+    this.state = {
+      value: "",
+      courseIndex: 0,
     };
+  }
+
+  static propTypes = {
+    course: PropTypes.array.isRequired,
+  };
+
+  handleSaveClicked(nbObj) {
+    const form = new FormData();
+    form.append("course", nbObj.question.course_meta);
+    form.append("question", nbObj.question.id); //store.getState().notes.questionIDarray[i])
+    form.append("title", "whatever");
+    form.append("content", this.state.value);
+    form.append("tags", []);
+    //console.log(this.state.value);
+    axios.post("api/notes", form).then((result)=>alert(result));
+    //this.props.dispatch(getNotes(this.state.inputVal));
+  }
+
+  onChange = ({ target: { value } }) => {
+    this.setState({ value });
+    console.log({ value });
+  };
+
+  componentDidMount() {
+    console.log(store.getState().course.selectedCourseArray);
+    store.dispatch(
+      getQuestion(
+        store
+          .getState()
+          .course.selectedCourseArray.find(
+            ({ crn }) => crn === store.getState().course.selectedCRN
+          ).course_meta.id
+      )
+    );
+    //store.dispatch(getNotes(store.getState().question.question));
+  }
+  render() {
+    const { value } = this.state;
+    return (
+      <div className="p-3" style={noteBookStyle}>
+        {/* Question */}
+        {store.getState().question.noteBag.map((nbObj) => (
+          <div>
+            {console.log(store.getState().question.noteBag)}
+            <h5 style={{ fontFamily: "Montserrat", color: "#596C7E" }}>{nbObj.question.title}</h5>
+            <form className="form-inline my-2 my-lg-0" />
+            <div class="mb-3">
+              {nbObj.note.map((noteObj) => (
+                <p
+                  className="pl-2"
+                  style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                >
+                  {noteObj.content}
+                  <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
+                  <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> 1
+                </p>
+              ))}
+              {/* writing part */}
+              <div className="row">
+                
+                <div className="col-sm-11 pr-0">
+                  <TextArea
+                    value={value}
+                    onChange={this.onChange}
+                    placeholder="Controlled autosize"
+                    autoSize={{ minRows: 3, maxRows: 5 }}
+                    style={{ borderRadius: "5px", borderColor: "white" }}
+                  />
+                </div>
+                <div className="col-sm-1 pl-0">
+                  <Button
+                    size="medium"
+                    type="primary"
+                    onClick={(event) => {
+                      this.handleSaveClicked(nbObj);
+                      this.animateButton(event);
+                    }}
+                  >
+                    save
+                  </Button>
+                </div>
+               
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 }
 
 const noteBookStyle = {
