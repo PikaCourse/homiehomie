@@ -32,22 +32,15 @@ export class WikiNotebook extends Component {
     course: PropTypes.array.isRequired,
   };
 
-  handleSaveClicked(i, q) {
+  handleSaveClicked(nbObj) {
     const form = new FormData();
-    form.append(
-      "course",
-      store
-        .getState()
-        .course.selectedCourseArray.find(
-          ({ crn }) => crn === store.getState().course.selectedCRN
-        ).course_meta.id
-    );
-    form.append("question", q); //store.getState().notes.questionIDarray[i])
+    form.append("course", nbObj.question.course_meta);
+    form.append("question", nbObj.question.id); //store.getState().notes.questionIDarray[i])
     form.append("title", "whatever");
     form.append("content", this.state.value);
     form.append("tags", []);
     //console.log(this.state.value);
-    axios.post("api/notes", form);
+    axios.post("api/notes", form).then((result)=>alert(result));
     //this.props.dispatch(getNotes(this.state.inputVal));
   }
 
@@ -55,6 +48,7 @@ export class WikiNotebook extends Component {
     this.setState({ value });
     console.log({ value });
   };
+
   componentDidMount() {
     console.log(store.getState().course.selectedCourseArray);
     store.dispatch(
@@ -66,31 +60,32 @@ export class WikiNotebook extends Component {
           ).course_meta.id
       )
     );
-    store.dispatch(getNotes(store.getState().question.question));
+    //store.dispatch(getNotes(store.getState().question.question));
   }
   render() {
     const { value } = this.state;
     return (
       <div className="p-3" style={noteBookStyle}>
         {/* Question */}
-        {store.getState().notes.questionIDarray.map((queID, index) => (
+        {store.getState().question.noteBag.map((nbObj) => (
           <div>
-            {console.log(store.getState().question.question[index])}
-            <h5 style={{ fontFamily: "Montserrat", color: "#596C7E" }}>hi</h5>
+            {console.log(store.getState().question.noteBag)}
+            <h5 style={{ fontFamily: "Montserrat", color: "#596C7E" }}>{nbObj.question.title}</h5>
             <form className="form-inline my-2 my-lg-0" />
             <div class="mb-3">
-              {store.getState().notes.notes[index].map((content) => (
+              {nbObj.note.map((noteObj) => (
                 <p
                   className="pl-2"
                   style={{ fontFamily: "Montserrat", color: "#596C7E" }}
                 >
-                  {content}
+                  {noteObj.content}
                   <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
                   <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> 1
                 </p>
               ))}
               {/* writing part */}
               <div className="row">
+                
                 <div className="col-sm-11 pr-0">
                   <TextArea
                     value={value}
@@ -105,13 +100,14 @@ export class WikiNotebook extends Component {
                     size="medium"
                     type="primary"
                     onClick={(event) => {
-                      this.handleSaveClicked(index, queID);
+                      this.handleSaveClicked(nbObj);
                       this.animateButton(event);
                     }}
                   >
                     save
                   </Button>
                 </div>
+               
               </div>
             </div>
           </div>
