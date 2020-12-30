@@ -12,7 +12,7 @@ import store from "../../store";
 import axios from "axios";
 import { getQuestion } from "../../actions/question.js";
 
-import { Button, Input, Card, Form } from "antd";
+import { Button, Input, Card, Form, Checkbox } from "antd";
 
 const { TextArea } = Input;
 
@@ -20,12 +20,19 @@ import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
 
+const formItemLayout = {
+  wrapperCol: {
+    span: 20,
+    offset: 2,
+  },
+};
+
 export class WikiNotebook extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      value: "",
+      value: [{ question: "" }, { note: "" }],
       courseIndex: 0,
       addNewCard: false,
     };
@@ -50,7 +57,6 @@ export class WikiNotebook extends Component {
 
   onChange = ({ target: { value } }) => {
     this.setState({ value });
-    //console.log({ value });
   };
 
   addNewQueInput = () => {
@@ -115,28 +121,77 @@ export class WikiNotebook extends Component {
                   onClick={() => {
                     this.setState({ addNewCard: false });
                   }}
-                  style={{ float: "right" }}
+                  style={{ float: "right", display: "block" }}
                 >
                   <FontAwesomeIcon className="" icon={faTimes} />
                 </Button>
-                <br />
+
+                <Form
+                  {...formItemLayout}
+                  layout="vertical"
+                  name="basic"
+                  initialValues={{ remember: true }}
+                >
+                  <Form.Item
+                    name="question"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your title!",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea
+                      placeholder="an amazing title"
+                      autoSize={{ minRows: 1, maxRows: 3 }}
+                      style={{ borderRadius: "5px", borderColor: "white" }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="note"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your title!",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea
+                      placeholder="write a note"
+                      autoSize={{ minRows: 3, maxRows: 5 }}
+                      style={{ borderRadius: "5px", borderColor: "white" }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item name="remember" valuePropName="checked">
+                    <Checkbox>Public</Checkbox>
+                  </Form.Item>
+
+                  <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                      Save
+                    </Button>
+                  </Form.Item>
+                </Form>
+                {/* 
                 <form className="form-inline my-2 my-lg-0">
                   <TextArea
                     className="mb-2"
-                    value={value}
+                    allowClear
                     onChange={this.onChange}
                     placeholder="write a title"
                     autoSize={{ minRows: 1, maxRows: 3 }}
                     style={{ borderRadius: "5px", borderColor: "white" }}
                   />
                   <TextArea
-                    value={value}
+                    allowClear
                     onChange={this.onChange}
                     placeholder="write some notes"
                     autoSize={{ minRows: 3, maxRows: 5 }}
                     style={{ borderRadius: "5px", borderColor: "white" }}
                   />
-                </form>
+              </form> */}
               </Card>
             ) : null
           }
@@ -166,7 +221,6 @@ export class WikiNotebook extends Component {
                 <div className="col-sm-11 pr-0">
                   <form className="form-inline my-2 my-lg-0">
                     <TextArea
-                      value={value}
                       onChange={this.onChange}
                       placeholder="Controlled autosize"
                       autoSize={{ minRows: 3, maxRows: 5 }}
