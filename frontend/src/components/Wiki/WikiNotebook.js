@@ -37,7 +37,7 @@ export class WikiNotebook extends Component {
     form.append("content", this.state.value);
     form.append("tags", []);
     //console.log(this.state.value);
-    axios.post("api/notes", form).then((result)=>alert(result));
+    axios.post("api/notes", form).then((result) => alert(result));
     //this.props.dispatch(getNotes(this.state.inputVal));
   }
 
@@ -47,17 +47,10 @@ export class WikiNotebook extends Component {
   };
 
   componentDidMount() {
-    console.log(store.getState().course.selectedCourseArray);
-    store.dispatch(
-      getQuestion(
-        store
-          .getState()
-          .course.selectedCourseArray.find(
-            ({ crn }) => crn === store.getState().course.selectedCRN
-          ).course_meta.id
-      )
+    console.log(store.getState().course.selectedCourse);
+    if(this.props.selectedCourse.crn) store.dispatch(
+      getQuestion(store.getState().course.selectedCourse.course_meta.id)
     );
-    //store.dispatch(getNotes(store.getState().question.question));
   }
   render() {
     const { value } = this.state;
@@ -67,7 +60,9 @@ export class WikiNotebook extends Component {
         {store.getState().question.noteBag.map((nbObj) => (
           <div>
             {console.log(store.getState().question.noteBag)}
-            <h5 style={{ fontFamily: "Montserrat", color: "#596C7E" }}>{nbObj.question.title}</h5>
+            <h5 style={{ fontFamily: "Montserrat", color: "#596C7E" }}>
+              {nbObj.question.title}
+            </h5>
             <form className="form-inline my-2 my-lg-0" />
             <div class="mb-3">
               {nbObj.note.map((noteObj) => (
@@ -82,7 +77,6 @@ export class WikiNotebook extends Component {
               ))}
               {/* writing part */}
               <div className="row">
-                
                 <div className="col-sm-11 pr-0">
                   <TextArea
                     value={value}
@@ -104,7 +98,6 @@ export class WikiNotebook extends Component {
                     save
                   </Button>
                 </div>
-               
               </div>
             </div>
           </div>
@@ -121,6 +114,6 @@ const noteBookStyle = {
   borderRadius: "2rem",
 };
 const mapStateToProps = (state) => ({
-  course: state.course.course,
+  selectedCourse: state.course.selectedCourse,
 });
 export default connect(mapStateToProps)(WikiNotebook);
