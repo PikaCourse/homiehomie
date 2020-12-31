@@ -1,4 +1,4 @@
-import { GET_QUE, CLEAR_QUE } from "../actions/types.js";
+import { GET_QUE, CLEAR_QUE, ADD_QUE } from "../actions/types.js";
 
 const initialState = {
   noteBag: [],
@@ -22,6 +22,18 @@ export default function (state = initialState, action) {
       return {
         noteBag: [],
       };
+    case ADD_QUE:
+        let newBag3 = [...state.noteBag];
+        let newnbObj = action.notebagObj;
+        let newnotebookObj = action.notebookObj;
+        newnbObj.notes.push(newnotebookObj);
+        let newBag4 = newBag3.filter(obj => obj.question.id != newnbObj.question.id);
+        console.log("from que");
+        console.log(newBag4);
+        newBag4.push(newnbObj);
+        return{
+            noteBag: newBag4
+        }
     default:
       return state;
   }

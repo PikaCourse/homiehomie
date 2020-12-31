@@ -1,0 +1,154 @@
+[
+{
+    "model": "scheduler.note",
+    "pk": 1,
+    "fields": {
+        "course": 1,
+        "question": 1,
+        "created_at": "2020-12-27T15:59:13.404Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:59:13.404Z",
+        "like_count": 2,
+        "star_count": 1,
+        "dislike_count": 0,
+        "title": "Professor Tweet Search is the best",
+        "content": "Blabla blablabla blah.",
+        "tags": [
+            "professor"
+        ]
+    }
+},
+{
+    "model": "scheduler.note",
+    "pk": 2,
+    "fields": {
+        "course": 1,
+        "question": 2,
+        "created_at": "2020-12-27T15:59:13.404Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:59:13.404Z",
+        "like_count": 3,
+        "star_count": 5,
+        "dislike_count": 0,
+        "title": "Probably in spring",
+        "content": "I only got B- in spring while my friend got A- in fall",
+        "tags": [
+            "professor"
+        ]
+    }
+},
+{
+    "model": "scheduler.note",
+    "pk": 3,
+    "fields": {
+        "course": 1,
+        "question": 2,
+        "created_at": "2020-12-27T15:59:13.404Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:59:13.404Z",
+        "like_count": 8,
+        "star_count": 6,
+        "dislike_count": 0,
+        "title": "Probably in fall",
+        "content": "Usually it is easier in spring",
+        "tags": [
+            "professor"
+        ]
+    }
+},
+{
+    "model": "scheduler.note",
+    "pk": 4,
+    "fields": {
+        "course": 1,
+        "question": 3,
+        "created_at": "2020-12-27T15:59:13.404Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:59:13.404Z",
+        "like_count": 10,
+        "star_count": 7,
+        "dislike_count": 0,
+        "title": "Professor is great",
+        "content": "Easy course, friendly prof, easy A!",
+        "tags": [
+            "professor"
+        ]
+    }
+},
+{
+    "model": "scheduler.note",
+    "pk": 5,
+    "fields": {
+        "course": 12,
+        "question": 4,
+        "created_at": "2020-12-27T15:59:13.404Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:59:13.404Z",
+        "like_count": 2,
+        "star_count": 1,
+        "dislike_count": 0,
+        "title": "Professor Tweet Search is the best",
+        "content": "Blabla blablabla blah.",
+        "tags": [
+            "professor"
+        ]
+    }
+},
+{
+    "model": "scheduler.note",
+    "pk": 6,
+    "fields": {
+        "course": 12,
+        "question": 5,
+        "created_at": "2020-12-27T15:59:13.404Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:59:13.404Z",
+        "like_count": 3,
+        "star_count": 5,
+        "dislike_count": 0,
+        "title": "Probably in spring",
+        "content": "I only got B- in spring while my friend got A- in fall",
+        "tags": [
+            "professor"
+        ]
+    }
+},
+{
+    "model": "scheduler.note",
+    "pk": 7,
+    "fields": {
+        "course": 12,
+        "question": 5,
+        "created_at": "2020-12-27T15:59:13.404Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:59:13.404Z",
+        "like_count": 8,
+        "star_count": 6,
+        "dislike_count": 0,
+        "title": "Probably in fall",
+        "content": "Usually it is easier in spring",
+        "tags": [
+            "professor"
+        ]
+    }
+},
+{
+    "model": "scheduler.note",
+    "pk": 8,
+    "fields": {
+        "course": 12,
+        "question": 4,
+        "created_at": "2020-12-27T15:59:13.404Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:59:13.404Z",
+        "like_count": 10,
+        "star_count": 7,
+        "dislike_count": 0,
+        "title": "Professor is great",
+        "content": "Easy course, friendly prof, easy A!",
+        "tags": [
+            "professor"
+        ]
+    }
+}
+]

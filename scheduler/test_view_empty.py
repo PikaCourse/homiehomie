@@ -5,7 +5,8 @@ from django.shortcuts import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.exceptions import *
-from scheduler.utils import *
+from scheduler.exceptions import *
+from scheduler.test_utils import *
 from urllib.parse import urlencode
 
 
@@ -13,7 +14,7 @@ class EmptyCourseMetaViewSetTests(APITestCase):
     """
     All tests here test when the database is empty
     """
-    def test_empty_course_meta_list(self):
+    def test_course_meta_list(self):
         """
         If no instance in db, should expect an empty array of course meta
         :return:
@@ -23,7 +24,7 @@ class EmptyCourseMetaViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertListEqual(response.data, [])
 
-    def test_empty_course_meta_retrieve(self):
+    def test_course_meta_retrieve(self):
         """
         If no instance in db, should expect an empty array of course meta
         :return:
@@ -34,12 +35,66 @@ class EmptyCourseMetaViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
+    # CreateView testing
+    def test_course_meta_create(self):
+        """
+        Create/POST not supported, should expect 405 method not allowed
+        :return:
+        """
+        url = reverse("api:coursesmeta-list")
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.data,
+                         get_packet_details(MethodNotAllowed('POST')))
+
+        # UpdateView testing
+
+    def test_course_meta_update(self):
+        """
+        Update/PUT not supported, should expect 405 method not allowed
+        :return:
+        """
+        params = {"pk": 1}
+        url = reverse("api:coursesmeta-detail", kwargs=params)
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.data,
+                         get_packet_details(MethodNotAllowed('PUT')))
+
+        # PartialUpdateView testing
+
+    def test_course_meta_partial_update(self):
+        """
+        Update/PUT not supported, should expect 405 method not allowed
+        :return:
+        """
+        params = {"pk": 1}
+        url = reverse("api:coursesmeta-detail", kwargs=params)
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.data,
+                         get_packet_details(MethodNotAllowed('PATCH')))
+
+        # DestroyView testing
+
+    def test_course_meta_destroy(self):
+        """
+        Update/PUT not supported, should expect 405 method not allowed
+        :return:
+        """
+        params = {"pk": 1}
+        url = reverse("api:coursesmeta-detail", kwargs=params)
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.data,
+                         get_packet_details(MethodNotAllowed('DELETE')))
+
 
 class EmptyCourseViewSetTests(APITestCase):
     """
     All tests here test when the database is empty
     """
-    def test_empty_course_list(self):
+    def test_course_list(self):
         """
         If no instance in db, should expect an empty array of course
         :return:
@@ -49,7 +104,7 @@ class EmptyCourseViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertListEqual(response.data, [])
 
-    def test_empty_course_retrieve(self):
+    def test_course_retrieve(self):
         """
         If no instance in db, should expect 404
         :return:
@@ -65,7 +120,7 @@ class EmptyQuestionViewSetTests(APITestCase):
     """
     All tests here test when the database is empty
     """
-    def test_empty_question_list(self):
+    def test_question_list(self):
         """
         If no instance in db, should expect an empty array of question
         :return:
@@ -75,7 +130,7 @@ class EmptyQuestionViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertListEqual(response.data, [])
 
-    def test_empty_question_retrieve(self):
+    def test_question_retrieve(self):
         """
         If no instance in db, should expect 404 not found
         :return:
@@ -86,7 +141,7 @@ class EmptyQuestionViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_question_create(self):
+    def test_question_create(self):
         """
         Expect a 400 response since no valid course meta id exists
         :return:
@@ -97,9 +152,9 @@ class EmptyQuestionViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_question_create_missing_course_meta(self):
+    def test_question_create_missing_course_meta(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -110,9 +165,9 @@ class EmptyQuestionViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_question_create_missing_title(self):
+    def test_question_create_missing_title(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -123,9 +178,9 @@ class EmptyQuestionViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_question_update(self):
+    def test_question_update(self):
         """
         Since no instance in db, should expect 404 not found
         :return:
@@ -136,7 +191,7 @@ class EmptyQuestionViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_question_partial_update(self):
+    def test_question_partial_update(self):
         """
         Partial_update/PATCH not supported, should expect 405 method not allowed
         :return:
@@ -148,7 +203,7 @@ class EmptyQuestionViewSetTests(APITestCase):
         self.assertEqual(response.data,
                          get_packet_details(MethodNotAllowed('PATCH')))
 
-    def test_empty_question_destroy(self):
+    def test_question_destroy(self):
         """
         Since no instance in db, should expect 404 not found
         :return:
@@ -164,7 +219,7 @@ class EmptyNoteViewSetTests(APITestCase):
     """
     All tests here test when the database is empty
     """
-    def test_empty_note_list(self):
+    def test_note_list(self):
         """
         If no instance in db, should expect an empty array of note
         :return:
@@ -174,7 +229,7 @@ class EmptyNoteViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertListEqual(response.data, [])
 
-    def test_empty_note_retrieve(self):
+    def test_note_retrieve(self):
         """
         If no instance in db, should expect 404 not found
         :return:
@@ -185,7 +240,7 @@ class EmptyNoteViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_note_create(self):
+    def test_note_create(self):
         """
         Expect a 400 response since no valid course id or question id exists
         :return:
@@ -197,9 +252,9 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_note_create_missing_course(self):
+    def test_note_create_missing_course(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -211,9 +266,9 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_note_create_missing_question(self):
+    def test_note_create_missing_question(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -225,9 +280,9 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_note_create_missing_title(self):
+    def test_note_create_missing_title(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -239,9 +294,9 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_note_create_missing_content(self):
+    def test_note_create_missing_content(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -253,9 +308,9 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_note_create_missing_tags(self):
+    def test_note_create_missing_tags(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -267,9 +322,9 @@ class EmptyNoteViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_note_update(self):
+    def test_note_update(self):
         """
         Since no instance in db, should expect 404 not found
         :return:
@@ -280,7 +335,7 @@ class EmptyNoteViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_note_partial_update(self):
+    def test_note_partial_update(self):
         """
         Partial_update/PATCH not supported, should expect 405 method not allowed
         :return:
@@ -291,7 +346,7 @@ class EmptyNoteViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         self.assertEqual(response.data, get_packet_details(MethodNotAllowed('PATCH')))
 
-    def test_empty_note_destroy(self):
+    def test_note_destroy(self):
         """
         Since no instance in db, should expect 404 not found
         :return:
@@ -307,7 +362,7 @@ class EmptyPostViewSetTests(APITestCase):
     """
     All tests here test when the database is empty
     """
-    def test_empty_post_list(self):
+    def test_post_list(self):
         """
         If no instance in db, should expect an empty array of post
         :return:
@@ -317,7 +372,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertListEqual(response.data, [])
 
-    def test_empty_post_retrieve(self):
+    def test_post_retrieve(self):
         """
         If no instance in db, should expect 404 not found
         :return:
@@ -328,7 +383,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_post_create(self):
+    def test_post_create(self):
         """
         Expect a 400 response since no valid course id exists
         :return:
@@ -340,9 +395,9 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_post_create_missing_course(self):
+    def test_post_create_missing_course(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -354,9 +409,9 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_post_create_missing_title(self):
+    def test_post_create_missing_title(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -368,9 +423,9 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_post_create_missing_content(self):
+    def test_post_create_missing_content(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -382,9 +437,9 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_post_create_missing_tags(self):
+    def test_post_create_missing_tags(self):
         """
         Expect a 400 response due to invalid form key
         :return:
@@ -396,9 +451,9 @@ class EmptyPostViewSetTests(APITestCase):
                                     content_type='application/x-www-form-urlencoded')
         # Assert response code and msg
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, get_packet_details(InvalidFormKey()))
+        self.assertEqual(response.data, get_packet_details(InvalidForm()))
 
-    def test_empty_post_update(self):
+    def test_post_update(self):
         """
         Since no instance in db, should expect 404 not found
         :return:
@@ -409,7 +464,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_post_partial_update(self):
+    def test_post_partial_update(self):
         """
         Partial_update/PATCH not supported, should expect 405 method not allowed
         :return:
@@ -420,7 +475,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         self.assertEqual(response.data, get_packet_details(MethodNotAllowed("PATCH")))
 
-    def test_empty_post_destroy(self):
+    def test_post_destroy(self):
         """
         Since no instance in db, should expect 404 not found
         :return:
@@ -431,7 +486,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_post_answer_list(self):
+    def test_post_answer_list(self):
         """
         If no instance in db, should expect 404 since post does not exist
         :return:
@@ -442,7 +497,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_post_answer_retrieve(self):
+    def test_post_answer_retrieve(self):
         """
         If no instance in db, should expect 404 not found
         :return:
@@ -453,7 +508,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_post_answer_create(self):
+    def test_post_answer_create(self):
         """
         Expect a 404 response since no valid post id exists
         :return:
@@ -467,7 +522,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_post_answer_create_missing_content(self):
+    def test_post_answer_create_missing_content(self):
         """
         Expect a 404 response due to empty db
         :return:
@@ -481,7 +536,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_post_answer_update(self):
+    def test_post_answer_update(self):
         """
         Since no instance in db, should expect 404 not found
         :return:
@@ -495,7 +550,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data, get_packet_details(NotFound()))
 
-    def test_empty_post_answer_partial_update(self):
+    def test_post_answer_partial_update(self):
         """
         Partial_update/PATCH not supported, should expect 405 method not allowed
         :return:
@@ -506,7 +561,7 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         self.assertEqual(response.data, get_packet_details(MethodNotAllowed("PATCH")))
 
-    def test_empty_post_answer_destroy(self):
+    def test_post_answer_destroy(self):
         """
         Since no instance in db, should expect 404 not found
         :return:

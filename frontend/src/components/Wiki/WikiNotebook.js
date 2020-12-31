@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
-import { getQuestion } from "../../actions/question.js";
+import { getQuestion, addQuestion } from "../../actions/question.js";
 
 import { Button, Input, Card, Form, Checkbox, message } from "antd";
 
@@ -44,14 +44,18 @@ export class WikiNotebook extends Component {
   };
 
   handleSaveClicked(nbObj) {
-    axios
-      .post("api/notes", {
+    let notebookObj = {
         course: this.props.selectedCourse.course_meta.id,
         question: nbObj.question.id,
         title: "whatever",
         content: this.state.value,
         tags: ["hi"],
-      })
+    }
+    store.dispatch(addQuestion(nbObj, notebookObj));
+    console.log("now the notebad is:");
+    console.log(this.props.noteBag);
+    axios
+      .post("api/notes", notebookObj)
       .then((result) => {});
   }
 
