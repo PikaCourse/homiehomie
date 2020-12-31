@@ -52,7 +52,7 @@ export class WikiNotebook extends Component {
         content: this.state.value,
         tags: ["hi"],
       })
-      .then((result) => alert(result));
+      .then((result) => {});
   }
 
   onChange = ({ target: { value } }) => {

@@ -79,19 +79,11 @@ class Dnd extends React.Component {
         store.dispatch(addCustomEvent(existingEvent));
       }
       return existingEvent;
-      // return existingEvent.id == event.id
-      //   ? { ...existingEvent, start, end }
-      //   : existingEvent;
     });
 
     this.setState({
       events: nextEvents,
     });
-
-    //console.log("moveEvent");
-    //console.log(nextEvents);
-
-    // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
   };
 
   resizeEvent = ({ event, start, end }) => {
@@ -136,7 +128,6 @@ class Dnd extends React.Component {
   }
 
   eventStyleHandler = (event, start, end, isSelected) => {
-    // console.log(colors);
     let currColor =
       event.type == "preview" ? pcolors[0] : colors[(event.id % 10) + 1];
     let newStyle = {
@@ -155,6 +146,8 @@ class Dnd extends React.Component {
       newStyle.color = "white";
       newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
       newStyle.border = event.type == "preview" ? "2px dashed " + currColor.weak : "none";
+      newStyle.border =
+        event.type == "preview" ? "2px dashed " + currColor.weak : "none";
     }
 
     return {
