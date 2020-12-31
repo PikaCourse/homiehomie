@@ -112,7 +112,6 @@ class Dnd extends React.Component {
 
   newEvent(event) {
     const title = window.prompt("New Event Name");
-    console.log(title);
     if (title != null && title != "") {
       let idList = store.getState().calendar.calendarCourseBag.map((a) => a.id);
       var newId =
@@ -172,10 +171,6 @@ class Dnd extends React.Component {
   };
 
   render() {
-    // console.log("render start");
-    // console.log(this.props.courselist);
-    // console.log(store.getState().calendar.calendarCourseBag);
-    // console.log("render end");
     return (
       <div className="p-2">
         <DragAndDropCalendar
