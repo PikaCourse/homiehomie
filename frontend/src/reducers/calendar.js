@@ -6,6 +6,7 @@ import {
   CLEAR_PREVIEW_COURSE_IN_CAL,
   ADD_CUS_EVENT_IN_CAL,
   DO_NOTHING, 
+  REMOVE_CUS_EVENT_IN_CAL, 
 } from "../actions/types.js";
 const initialState = {
   calendarCourseBag: [],
@@ -180,6 +181,17 @@ export default function (state = initialState, action) {
         calendarCourseBag: [...state.calendarCourseBag],
       };
 
+    case REMOVE_CUS_EVENT_IN_CAL:
+      // title: action.selectedCourse.course_meta.title,
+      // allDay: false,
+      // start: alignDate(timeslot.weekday, timeslot.start_at),
+      // end: alignDate(timeslot.weekday, timeslot.end_at),
+      return {
+        ...state,
+        calendarCourseBag: state.calendarCourseBag.filter(
+          (item) => (item.id != action.event.id) 
+        ),
+      };
     default:
       return state;
   }
