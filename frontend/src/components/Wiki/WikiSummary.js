@@ -79,7 +79,7 @@ export class WikiSummary extends Component {
       const course = store
         .getState()
         .calendar.calendarCourseBag.filter(
-          (item) => (item.raw.selectedCRN == this.props.selectedCRN) && (item.type != 'preview')
+          (item) => (item.raw.crn == this.props.selectedCRN) //&& (item.type != 'preview')
         );
       // course in calendarbag
       if (!Array.isArray(course) || !course.length) {
