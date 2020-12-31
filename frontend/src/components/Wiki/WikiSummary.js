@@ -5,6 +5,7 @@ import {
   addCurrCourse,
   removeCurrCourse,
   previewCurrCourse,
+  updatePreviewCourse
 } from "../../actions/calendar";
 import { addCurrCourseToWish } from "../../actions/wishlist";
 import { setCourse } from "../../actions/course";
@@ -172,17 +173,16 @@ export class WikiSummary extends Component {
     selectedCourseArray: PropTypes.array.isRequired,
   };
   componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    // console.log("componentDidUpdate");
-
-    store.dispatch(previewCurrCourse(this.state.previewSwitch));
-
-    //console.log("previewSwitch: "+this.state.previewSwitch);
+    if (prevProps.selectedCRN !== this.props.selectedCRN)
+    {
+        store.dispatch(updatePreviewCourse(this.state.previewSwitch));
+    }
 
     if (
       prevProps.wishlistCourseBag !== this.props.wishlistCourseBag ||
       prevProps.selectedCRN !== this.props.selectedCRN
     ) {
+
       const curr = this.props.wishlistCourseBag.find(
         ({ crn }) => crn === store.getState().course.selectedCRN
       );

@@ -7,6 +7,8 @@ import {
   ADD_CUS_EVENT_IN_CAL,
   DO_NOTHING, 
   REMOVE_CUS_EVENT_IN_CAL, 
+  UPDATE_PREVIEW,
+  CLEAR_PREVIEW
 } from "../actions/types.js";
 const initialState = {
   calendarCourseBag: [],
@@ -31,7 +33,7 @@ function alignDate(weekDayIndex, timestamp) {
 function addNewCourseToBag(state, action, update) {
   let newBag = update ?
     state.calendarCourseBag.filter(
-      (item) => (item.raw.selectedCourseArray != action.selectedCourseArray) && (item.type != 'preview')
+      (item) => (item.raw.selectedCourseArray != action.selectedCourseArray)
     ) :
     [...state.calendarCourseBag];
   let idList = state.calendarCourseBag.map((a) => a.id);
@@ -63,10 +65,7 @@ function addNewCourseToBag(state, action, update) {
 
 function previewNewCourseToBag(state, action) {
   var newBag = [...state.calendarCourseBag];
-
-  newBag = state.calendarCourseBag.filter((item) => ((item.type != 'preview') && (item.raw.crn != action.selectedCourse.crn)));
-
-  // console.log(action.selectedCourse);
+  newBag = state.calendarCourseBag.filter((item) => ((item.type != 'preview') ));
 
   action.selectedCourse.time.map((timeslot) => {
     newBag.push({
@@ -155,17 +154,17 @@ export default function (state = initialState, action) {
         calendarCourseBag: addNewCourseToBag(state, action, true),
       };
 
-    case PREVIEW_COURSE_IN_CAL:
+    case UPDATE_PREVIEW:
       return {
         ...state,
         calendarCourseBag: previewNewCourseToBag(state, action),
       };
 
-    case CLEAR_PREVIEW_COURSE_IN_CAL:
+    case CLEAR_PREVIEW:
       return {
         ...state,
         calendarCourseBag: state.calendarCourseBag.filter(
-          (item) => item.id != -1
+          (item) => item.type != "preview"
         ),
       };
 
