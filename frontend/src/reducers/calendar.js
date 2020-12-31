@@ -145,7 +145,7 @@ export default function (state = initialState, action) {
       return {
         ...state,
         calendarCourseBag: state.calendarCourseBag.filter(
-            (item) => item.raw.selectedCRN != action.selectedCRN
+            (item) => item.raw.crn != action.selectedCRN
           ), //assume CRN is unique!!
       };
     case UPDATE_COURSE_IN_CAL:
