@@ -241,8 +241,8 @@ export class WikiNotebook extends Component {
                   key={noteObj.id}
                 >
                   {noteObj.content}
-                  <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
-                  <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> 1
+                  {/* <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> {noteObj.like_count}
+                  <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> {noteObj.dislike_count} */}
                 </p>
               ))}
               <div className="row">
