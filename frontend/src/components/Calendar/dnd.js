@@ -13,7 +13,7 @@ import { setCourse } from "../../actions/course";
 import { addCustomEvent } from "../../actions/calendar";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
-import { colors, pcolors} from "./color.js";
+import { colors, pcolors } from "./color.js";
 
 let formats = {
   dayFormat: (date, culture, localizer) => moment.utc(date).format("ddd"), //https://devhints.io/moment
@@ -113,9 +113,7 @@ class Dnd extends React.Component {
   newEvent(event) {
     const title = window.prompt("New Event Name");
     if (title != null && title != "") {
-      let idList = store
-        .getState()
-        .calendar.calendarCourseBag.map((a) => a.id);
+      let idList = store.getState().calendar.calendarCourseBag.map((a) => a.id);
       var newId =
         store.getState().calendar.calendarCourseBag.length == 0
           ? 0
@@ -139,13 +137,15 @@ class Dnd extends React.Component {
 
   eventStyleHandler = (event, start, end, isSelected) => {
     // console.log(colors);
-    let currColor = event.type == "preview" ? pcolors[0] : colors[(event.id % 10) + 1]; 
+    let currColor =
+      event.type == "preview" ? pcolors[0] : colors[(event.id % 10) + 1];
     let newStyle = {
       backgroundColor: currColor.weak,
       color: currColor.strong,
       fontSize: "100%",
       borderRadius: "0px",
-      border: "none",
+      border:
+        event.type == "preview" ? "2px dashed " + currColor.strong : "none",
       boxShadow: "none",
       zIndex: "10",
     };
@@ -154,6 +154,7 @@ class Dnd extends React.Component {
       newStyle.backgroundColor = currColor.strong;
       newStyle.color = "white";
       newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
+      newStyle.border = event.type == "preview" ? "2px dashed " + currColor.weak : "none";
     }
 
     return {

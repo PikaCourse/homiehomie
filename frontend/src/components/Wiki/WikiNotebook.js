@@ -53,7 +53,6 @@ export class WikiNotebook extends Component {
         tags: ["hi"],
       })
       .then((result) => alert(result));
-    //this.props.dispatch(getNotes(this.state.inputVal));
   }
 
   onChange = ({ target: { value } }) => {
