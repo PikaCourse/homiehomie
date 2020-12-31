@@ -86,19 +86,19 @@ export const previewCurrCourse = (previewSwitch) => {
     ({type, raw}) => type != 'preview' && raw.crn === store.getState().course.selectedCourse.crn
   );
   let foundCourse = (typeof foundCourseArray != "undefined" && store.getState().calendar.calendarCourseBag.length != 0); 
-  console.log("preview condition start"); 
+  // console.log("preview condition start"); 
   // console.log(typeof foundCourse != "undefined"); 
   // console.log(store.getState().calendar.calendarCourseBag); 
   // console.log(store.getState().calendar.calendarCourseBag.length == 0); 
   // console.log((typeof foundCourse != "undefined" || store.getState().calendar.calendarCourseBag.length == 0)); 
   // console.log((typeof foundCourse != "undefined" || store.getState().calendar.calendarCourseBag.length == 0) && previewSwitch); 
   // console.log(typeof foundCourse == "undefined" && store.getState().calendar.calendarCourseBag.length != 0); 
-  console.log(typeof foundCourseArray != "undefined"); 
-  console.log(store.getState().calendar.calendarCourseBag); 
+  // console.log(typeof foundCourseArray != "undefined"); 
+  // console.log(store.getState().calendar.calendarCourseBag); 
   // console.log(foundCourseArray); 
   // console.log(store.getState().calendar.calendarCourseBag); 
   // console.log(store.getState().course.selectedCourse.crn); 
-  console.log("preview condition end"); 
+  // console.log("preview condition end"); 
 
   if (previewSwitch && foundCourse) {
     return {

@@ -64,12 +64,14 @@ export class WikiSummary extends Component {
     const courseArray = store
       .getState()
       .calendar.calendarCourseBag.filter(
-        (item) => item.raw.selectedCourseArray == this.props.selectedCourseArray
+        (item) => ((item.raw.selectedCourseArray == this.props.selectedCourseArray) && (item.type != 'preview'))
       );
 
     let enableAdd = true;
     let enableRemove = true;
     let addButtonText = "Add Course";
+    console.log("courseArray"); 
+    console.log(courseArray); 
     if (!Array.isArray(courseArray) || !courseArray.length) {
       // course not in calendarbag
       enableRemove = false;
@@ -77,7 +79,7 @@ export class WikiSummary extends Component {
       const course = store
         .getState()
         .calendar.calendarCourseBag.filter(
-          (item) => item.raw.selectedCRN == this.props.selectedCRN
+          (item) => (item.raw.selectedCRN == this.props.selectedCRN) && (item.type != 'preview')
         );
       // course in calendarbag
       if (!Array.isArray(course) || !course.length) {
