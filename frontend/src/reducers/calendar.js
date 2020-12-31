@@ -2,13 +2,13 @@ import {
   ADD_COURSE_TO_CAL,
   REMOVE_COURSE_FROM_CAL,
   UPDATE_COURSE_IN_CAL,
-  PREVIEW_COURSE_IN_CAL,
-  CLEAR_PREVIEW_COURSE_IN_CAL,
+  // PREVIEW_COURSE_IN_CAL,
+  // CLEAR_PREVIEW_COURSE_IN_CAL,
   ADD_CUS_EVENT_IN_CAL,
   DO_NOTHING, 
   REMOVE_CUS_EVENT_IN_CAL, 
-  UPDATE_PREVIEW,
-  CLEAR_PREVIEW
+  // UPDATE_PREVIEW,
+  // CLEAR_PREVIEW
 } from "../actions/types.js";
 const initialState = {
   calendarCourseBag: [],
@@ -63,30 +63,30 @@ function addNewCourseToBag(state, action, update) {
   return newBag;
 }
 
-function previewNewCourseToBag(state, action) {
-  var newBag = [...state.calendarCourseBag];
-  newBag = state.calendarCourseBag.filter((item) => ((item.type != 'preview') ));
+// function previewNewCourseToBag(state, action) {
+//   var newBag = [...state.calendarCourseBag];
+//   newBag = state.calendarCourseBag.filter((item) => ((item.type != 'preview') ));
 
-  action.selectedCourse.time.map((timeslot) => {
-    newBag.push({
-      type: 'preview',
-      id: -1,
-      title: action.selectedCourse.course_meta.title,
-      allDay: false,
-      start: alignDate(timeslot.weekday, timeslot.start_at),
-      end: alignDate(timeslot.weekday, timeslot.end_at),
-      raw: {
-        crn: action.selectedCourse.crn,
-        name: action.selectedCourse.course_meta.name,
-        instructor: action.selectedCourse.professor,
-        course: action.selectedCourse,
-        selectedCourseArray: action.selectedCourseArray,
-      },
-    });
-  });
+//   action.selectedCourse.time.map((timeslot) => {
+//     newBag.push({
+//       type: 'preview',
+//       id: -1,
+//       title: action.selectedCourse.course_meta.title,
+//       allDay: false,
+//       start: alignDate(timeslot.weekday, timeslot.start_at),
+//       end: alignDate(timeslot.weekday, timeslot.end_at),
+//       raw: {
+//         crn: action.selectedCourse.crn,
+//         name: action.selectedCourse.course_meta.name,
+//         instructor: action.selectedCourse.professor,
+//         course: action.selectedCourse,
+//         selectedCourseArray: action.selectedCourseArray,
+//       },
+//     });
+//   });
 
-  return newBag;
-}
+//   return newBag;
+// }
 
 function addNewCusEventToBag(state, action) {
   console.log("add cus in reducer");
@@ -154,19 +154,19 @@ export default function (state = initialState, action) {
         calendarCourseBag: addNewCourseToBag(state, action, true),
       };
 
-    case UPDATE_PREVIEW:
-      return {
-        ...state,
-        calendarCourseBag: previewNewCourseToBag(state, action),
-      };
+    // case UPDATE_PREVIEW:
+    //   return {
+    //     ...state,
+    //     calendarCourseBag: previewNewCourseToBag(state, action),
+    //   };
 
-    case CLEAR_PREVIEW:
-      return {
-        ...state,
-        calendarCourseBag: state.calendarCourseBag.filter(
-          (item) => item.type != "preview"
-        ),
-      };
+    // case CLEAR_PREVIEW:
+    //   return {
+    //     ...state,
+    //     calendarCourseBag: state.calendarCourseBag.filter(
+    //       (item) => item.type != "preview"
+    //     ),
+    //   };
 
     case ADD_CUS_EVENT_IN_CAL:
       return {

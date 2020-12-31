@@ -4,8 +4,8 @@ import PropTypes from "prop-types";
 import {
   addCurrCourse,
   removeCurrCourse,
-  previewCurrCourse,
-  updatePreviewCourse
+  // previewCurrCourse,
+  // updatePreviewCourse
 } from "../../actions/calendar";
 import { addCurrCourseToWish } from "../../actions/wishlist";
 import { setCourse } from "../../actions/course";
@@ -35,11 +35,11 @@ export class WikiSummary extends Component {
     super(props);
 
     this.state = {
-      previewSwitch: true,
+      // previewSwitch: true,
       starButton: false,
     };
 
-    this.previewInputChange = this.previewInputChange.bind(this);
+    // this.previewInputChange = this.previewInputChange.bind(this);
   }
 
   animateButton(e) {
@@ -53,19 +53,19 @@ export class WikiSummary extends Component {
     }, 700);
   }
 
-  previewInputChange(checked) {
-    // console.log("checked: " + checked);
-    store.dispatch(previewCurrCourse(checked));
-    this.setState({
-      previewSwitch: checked,
-    });
-  }
+  // previewInputChange(checked) {
+  //   // console.log("checked: " + checked);
+  //   store.dispatch(previewCurrCourse(checked));
+  //   this.setState({
+  //     previewSwitch: checked,
+  //   });
+  // }
 
   buttonLoader() {
     const courseArray = store
       .getState()
       .calendar.calendarCourseBag.filter(
-        (item) => ((item.raw.selectedCourseArray == this.props.selectedCourseArray) && (item.type != 'preview'))
+        (item) => (item.raw.selectedCourseArray == this.props.selectedCourseArray) //&& (item.type != 'preview'))
       );
 
     let enableAdd = true;
@@ -164,7 +164,7 @@ export class WikiSummary extends Component {
           </Button>
         </Tooltip>
 
-        <Switch defaultChecked onChange={this.previewInputChange} />
+        {/* <Switch defaultChecked onChange={this.previewInputChange} /> */}
       </div>
     );
   }
@@ -173,10 +173,10 @@ export class WikiSummary extends Component {
     selectedCourseArray: PropTypes.array.isRequired,
   };
   componentDidUpdate(prevProps) {
-    if (prevProps.selectedCRN !== this.props.selectedCRN)
-    {
-        store.dispatch(updatePreviewCourse(this.state.previewSwitch));
-    }
+    // if (prevProps.selectedCRN !== this.props.selectedCRN)
+    // {
+    //     store.dispatch(updatePreviewCourse(this.state.previewSwitch));
+    // }
 
     if (
       prevProps.wishlistCourseBag !== this.props.wishlistCourseBag ||
