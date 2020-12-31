@@ -154,13 +154,6 @@ class Dnd extends React.Component {
       newStyle.backgroundColor = currColor.strong;
       newStyle.color = "white";
       newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
-      if (event.type != "custom")
-        store.dispatch(
-          setCourse({
-            selectedCRN: event.raw.crn,
-            selectedCourseArray: event.raw.selectedCourseArray,
-          })
-        );
     }
 
     return {
@@ -168,6 +161,17 @@ class Dnd extends React.Component {
       style: newStyle,
     };
   };
+
+  onSelect = (event, e) => {
+    if (event.type != "custom") {
+      store.dispatch(
+        setCourse({
+          selectedCRN: event.raw.crn,
+          selectedCourseArray: event.raw.selectedCourseArray,
+        })
+      );
+    }
+  }
 
   render() {
     return (
@@ -218,6 +222,7 @@ class Dnd extends React.Component {
             event: EventComponent,
           }}
           eventPropGetter={this.eventStyleHandler}
+          onSelectEvent={this.onSelect}
         />
       </div>
     );
