@@ -1,0 +1,124 @@
+[
+{
+    "model": "scheduler.question",
+    "pk": 1,
+    "fields": {
+        "course_meta": 1,
+        "created_at": "2020-12-27T15:47:35.325Z",
+        "created_by": 1,
+        "last_edited": "2020-12-27T15:47:35.325Z",
+        "last_answered": "2020-12-27T15:47:35.325Z",
+        "like_count": 4,
+        "star_count": 0,
+        "dislike_count": 0,
+        "is_pin": true,
+        "pin_order": 0,
+        "title": "How is the professor of this course?",
+        "tags": [
+            "professor"
+        ]
+    }
+},
+{
+    "model": "scheduler.question",
+    "pk": 2,
+    "fields": {
+        "course_meta": 1,
+        "created_at": "2020-12-27T15:48:20.482Z",
+        "created_by": 1,
+        "last_edited": "2020-12-27T15:48:20.482Z",
+        "last_answered": "2020-12-27T15:48:20.482Z",
+        "like_count": 10,
+        "star_count": 2,
+        "dislike_count": 3,
+        "is_pin": false,
+        "pin_order": 0,
+        "title": "Is the course usually harder in spring or fall?",
+        "tags": [
+            "difficulty",
+            "course"
+        ]
+    }
+},
+{
+    "model": "scheduler.question",
+    "pk": 3,
+    "fields": {
+        "course_meta": 1,
+        "created_at": "2020-12-27T15:49:21.663Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:49:21.663Z",
+        "last_answered": "2020-12-27T15:49:21.663Z",
+        "like_count": 1,
+        "star_count": 1,
+        "dislike_count": 10,
+        "is_pin": false,
+        "pin_order": 0,
+        "title": "Can someone help me with this?",
+        "tags": [
+            "help"
+        ]
+    }
+},
+{
+    "model": "scheduler.question",
+    "pk": 4,
+    "fields": {
+        "course_meta": 11,
+        "created_at": "2020-12-27T15:47:35.325Z",
+        "created_by": 1,
+        "last_edited": "2020-12-27T15:47:35.325Z",
+        "last_answered": "2020-12-27T15:47:35.325Z",
+        "like_count": 8,
+        "star_count": 0,
+        "dislike_count": 0,
+        "is_pin": true,
+        "pin_order": 0,
+        "title": "How is the professor of this course?",
+        "tags": [
+            "professor"
+        ]
+    }
+},
+{
+    "model": "scheduler.question",
+    "pk": 5,
+    "fields": {
+        "course_meta": 11,
+        "created_at": "2020-12-27T15:48:20.482Z",
+        "created_by": 1,
+        "last_edited": "2020-12-27T15:48:20.482Z",
+        "last_answered": "2020-12-27T15:48:20.482Z",
+        "like_count": 15,
+        "star_count": 2,
+        "dislike_count": 3,
+        "is_pin": false,
+        "pin_order": 0,
+        "title": "Is the course usually harder in spring or fall?",
+        "tags": [
+            "difficulty",
+            "course"
+        ]
+    }
+},
+{
+    "model": "scheduler.question",
+    "pk": 6,
+    "fields": {
+        "course_meta": 11,
+        "created_at": "2020-12-27T15:49:21.663Z",
+        "created_by": 2,
+        "last_edited": "2020-12-27T15:49:21.663Z",
+        "last_answered": "2020-12-27T15:49:21.663Z",
+        "like_count": 5,
+        "star_count": 1,
+        "dislike_count": 10,
+        "is_pin": false,
+        "pin_order": 0,
+        "title": "Can someone help me with this?",
+        "tags": [
+            "help"
+        ]
+    }
+}
+]

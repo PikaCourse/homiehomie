@@ -66,10 +66,12 @@ class NoteCreationForm(ModelForm):
             note.created_by_id = self.request.user.id if self.request.user.id is not None else Student.get_tester_user().id
         else:
             note.created_by_id = self.request.user.id
-        question = Question.objects.get(id=note.question_id)
-        question.last_answered = timezone.now()
         if commit:
             note.save()
+
+            # Question gets update later
+            question = Question.objects.get(id=note.question_id)
+            question.last_answered = timezone.now()
             question.save()
         return note
 

@@ -73,6 +73,7 @@
             4. [ ] superuser
         2. [ ] Permission
             1. Add isOwnerOrReadOnly Permission
+        3. Require permissions on all api scope
     5. [ ] User Profile
         1. [ ] Student information
         2. [ ] Link with scheduler app

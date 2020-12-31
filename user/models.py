@@ -44,6 +44,7 @@ class Student(models.Model):
 
 # Create student instance upon new user and link with it
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
+def create_user_profile(sender, instance, created, raw, **kwargs):
+    # Prevent creating instance upon loading fixtures, which is used for testing
+    if created and not raw:
         Student.objects.create(user=instance)

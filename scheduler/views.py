@@ -3,22 +3,17 @@ from django.db.models import Model
 from scheduler.models import *
 from scheduler.forms import *
 from scheduler.serializers import *
-from scheduler.utils import *
+from scheduler.exceptions import *
 from rest_framework import viewsets, status, permissions
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser, FormParser
-
 from datetime import datetime
 
-# Create your views here.
+
 # TODO Add isOwnerOrReadOnly Permission
-
-def scheduler(request):
-    return render(request, 'templates/base.html', {})
-
 
 """
 API Definition below
@@ -43,21 +38,23 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
         limit       = self.request.query_params.get("limit", None)
 
         if school is not None:
-            queryset = queryset.filter(school=school)
+            queryset = queryset.filter(school__istartswith=school)
         if major is not None:
-            queryset = queryset.filter(major=major)
+            queryset = queryset.filter(major__istartswith=major)
         if name is not None:
-            queryset = queryset.filter(name__contains=name)
+            queryset = queryset.filter(name__icontains=name)
         if college is not None:
-            queryset = queryset.filter(college__contains=college)
+            queryset = queryset.filter(college__icontains=college)
         if title is not None:
-            queryset = queryset.filter(title__startswith=title)
+            queryset = queryset.filter(title__istartswith=title)
         if limit is not None:
             try:
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
                 queryset = queryset[0:int(limit)]
             except ValueError as err:
-                error_pack = {"errcode": 1000, "errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:200]
 
@@ -76,7 +73,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = Course.objects.all()
 
         # TODO Better way?
-        # TODO Query parameter Vaildation
+        # TODO Query parameter Validation with validator?
         school      = self.request.query_params.get("school", None)
         title       = self.request.query_params.get("title", None)
         crn         = self.request.query_params.get("crn", None)
@@ -88,25 +85,33 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         limit       = self.request.query_params.get("limit", None)
 
         if school is not None:
-            queryset = queryset.filter(course_meta__school=school)
+            queryset = queryset.filter(course_meta__school__istartswith=school)
         if title is not None:
-            queryset = queryset.filter(course_meta__title=title)
+            queryset = queryset.filter(course_meta__title__istartswith=title)
         if crn is not None:
-            queryset = queryset.filter(crn__startswith=crn)
+            queryset = queryset.filter(crn__istartswith=crn)
         if major is not None:
-            queryset = queryset.filter(course_meta__major=major)
+            queryset = queryset.filter(course_meta__major__istartswith=major)
         if year is not None:
-            queryset = queryset.filter(year=year)
+            try:
+                year = int(year)
+                if year < 1970 or year > 2100:
+                    raise ValueError
+                queryset = queryset.filter(year=year)
+            except ValueError:
+                raise InvalidQueryValue()
         if semester is not None:
-            queryset = queryset.filter(semester=semester)
+            queryset = queryset.filter(semester__iexact=semester)
         if professor is not None:
-            queryset = queryset.filter(professor=professor)
+            queryset = queryset.filter(professor__istartswith=professor)
         if limit is not None:
             try:
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
                 queryset = queryset[0:int(limit)]
             except ValueError as err:
-                error_pack = {"errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:200]
 
@@ -121,6 +126,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
 
+    # TODO Better way to valdiate query param
+    # Supported fields for sortby option
+    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
+
     # TODO Tmp disable to ease debugging
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
@@ -133,27 +142,36 @@ class QuestionViewSet(viewsets.ModelViewSet):
         coursemetaid    = self.request.query_params.get("coursemetaid", None)
         sortby          = self.request.query_params.get("sortby", None)
         descending      = self.request.query_params.get("descending", None)
-        if descending is not None:
-            if descending == "true":
-                descending = True
-            else:
-                descending = False
-        else:
-            descending = True
         limit = self.request.query_params.get("limit", None)
 
+        if descending is not None:
+            if str(descending).lower() == "true":
+                descending = True
+            elif str(descending).lower() == "false":
+                descending = False
+            else:
+                raise InvalidQueryValue()
+        else:
+            descending = True
         if coursemetaid is not None:
-            queryset = queryset.filter(course_meta_id=coursemetaid)
+            try:
+                queryset = queryset.filter(course_meta_id=coursemetaid)
+            except ValueError:
+                raise InvalidQueryValue()
         if sortby is not None:
+            if sortby not in self.supported_sortby_options:
+                raise InvalidQueryValue()
             queryset = queryset.order_by(("-" if descending else "") + sortby)
         else:
             queryset = queryset.order_by(("-" if descending else "") + "like_count")
         if limit is not None:
             try:
-                queryset = queryset[0:int(limit)]
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
+                queryset = queryset[0:limit]
             except ValueError as err:
-                error_pack = {"errcode": 1000, "errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:50]
 
@@ -170,26 +188,33 @@ class QuestionViewSet(viewsets.ModelViewSet):
             error_pack = {"code": 'success', "detail": "successfully created question",
                           "status": status.HTTP_201_CREATED, "question": question.id}
             return Response(error_pack, status=status.HTTP_201_CREATED)
-        raise InvalidFormKey()
+        raise InvalidForm()
 
     # PUT method used to update existing question
     # TODO Add permission control to allow only owner or admin to modify
     def update(self, request, pk=None, *args, **kwargs):
         # TODO Verify the user is the owner
         question = request.data
-        try:
-            old_question = Question.objects.get(id=pk)
 
-            # Update question
-            f = QuestionModificationForm(question, instance=old_question)
-            if f.is_valid():
-                question = f.save()
-                error_pack = {"errcode": 0, "errmsg": "successfully updated question", "question": question.id}
-                return Response(error_pack, status=status.HTTP_200_OK)
-        except Question.DoesNotExist:
-            # Invalid question id
-            raise NotFound()
-        raise InvalidFormKey()
+        # Get the object via DRF
+        old_question = self.get_object()
+
+        # Update question
+        f = QuestionModificationForm(question, instance=old_question)
+        if f.is_valid():
+            question = f.save()
+            error_pack = {"code": "success", "detail": "successfully updated question",
+                          "question": question.id, "status": status.HTTP_200_OK}
+            return Response(error_pack, status=status.HTTP_200_OK)
+        raise InvalidForm()
+
+    # Override existing delete method provided by DRF for customized return error packet
+    def destroy(self, request, *args, **kwargs):
+        question = self.get_object()
+        self.perform_destroy(question)
+        error_pack = {"code": "success", "detail": "successfully deleted question",
+                      "question": question.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)
 
 
 class NoteViewSet(viewsets.ModelViewSet):
@@ -197,7 +222,12 @@ class NoteViewSet(viewsets.ModelViewSet):
 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
+    parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+
+    # TODO Better way to valdiate query param
+    # Supported fields for sortby option
+    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
 
     def list(self, request, *args, **kwargs):
         queryset = Note.objects.all()
@@ -209,28 +239,42 @@ class NoteViewSet(viewsets.ModelViewSet):
         sortby      = self.request.query_params.get("sortby", None)
         descending  = self.request.query_params.get("descending", None)
         if descending is not None:
-            if descending == "true":
+            if descending.lower() == "true":
                 descending = True
-            else:
+            elif descending.lower() == "false":
                 descending = False
+            else:
+                raise InvalidQueryValue()
         else:
             descending = True
         limit = self.request.query_params.get("limit", None)
 
         if courseid is not None:
+            try:
+                courseid = int(courseid)
+            except ValueError:
+                raise InvalidQueryValue()
             queryset = queryset.filter(course_id=courseid)
         if questionid is not None:
+            try:
+                questionid = int(questionid)
+            except ValueError:
+                raise InvalidQueryValue()
             queryset = queryset.filter(question_id=questionid)
         if sortby is not None:
+            if sortby not in self.supported_sortby_options:
+                raise InvalidQueryValue()
             queryset = queryset.order_by(("-" if descending else "") + sortby)
         else:
             queryset = queryset.order_by(("-" if descending else "") + "like_count")
         if limit is not None:
             try:
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
                 queryset = queryset[0:int(limit)]
             except ValueError as err:
-                error_pack = {"errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:50]
 
@@ -244,30 +288,40 @@ class NoteViewSet(viewsets.ModelViewSet):
         note = request.data
         f = NoteCreationForm(note, request=request)
         if f.is_valid():
-            note = f.save(debug=True)
-            error_pack = {"code": 'success', "detail": "successfully created note",
-                          "status": status.HTTP_201_CREATED, "note": note.id}
-            return Response(error_pack, status=status.HTTP_201_CREATED)
-        raise InvalidFormKey()
+            # Verify that the course and question point to same course meta
+            course = f.cleaned_data["course"]
+            question = f.cleaned_data["question"]
+            if course.course_meta_id != question.course_meta_id:
+                raise InvalidForm()
+            else:
+                note = f.save(debug=True)
+                error_pack = {"code": 'success', "detail": "successfully created note",
+                              "status": status.HTTP_201_CREATED, "note": note.id}
+                return Response(error_pack, status=status.HTTP_201_CREATED)
+        raise InvalidForm()
 
     # PUT method used to update existing question
     def update(self, request, pk=None, *args, **kwargs):
         # TODO Verify the user is the owner
         note = request.data
-        try:
-            old_note = Note.objects.get(id=pk)
+        old_note = self.get_object()
 
-            # Update note
-            f = NoteModificationForm(note, instance=old_note)
-            if f.is_valid():
-                note = f.save()
-                error_pack = {"code": "success", "detail": "successfully updated note",
-                              "note": note.id, "status": status.HTTP_200_OK}
-                return Response(error_pack, status=status.HTTP_200_OK)
-        except Note.DoesNotExist:
-            # Invalid note id
-            raise NotFound()
-        raise InvalidFormKey()
+        # Update note
+        f = NoteModificationForm(note, instance=old_note)
+        if f.is_valid():
+            note = f.save()
+            error_pack = {"code": "success", "detail": "successfully updated note",
+                          "note": note.id, "status": status.HTTP_200_OK}
+            return Response(error_pack, status=status.HTTP_200_OK)
+        raise InvalidForm()
+
+    # Override existing delete method provided by DRF for customized return error packet
+    def destroy(self, request, *args, **kwargs):
+        note = self.get_object()
+        self.perform_destroy(note)
+        error_pack = {"code": "success", "detail": "successfully deleted note",
+                      "note": note.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -277,7 +331,12 @@ class PostViewSet(viewsets.ModelViewSet):
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+
+    # TODO Better way to valdiate query param
+    # Supported fields for sortby option
+    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
 
     def list(self, request, *args, **kwargs):
         queryset = Post.objects.all()
@@ -289,28 +348,42 @@ class PostViewSet(viewsets.ModelViewSet):
         sortby      = self.request.query_params.get("sortby", None)
         descending  = self.request.query_params.get("descending", None)
         if descending is not None:
-            if descending == "true":
+            if descending.lower() == "true":
                 descending = True
-            else:
+            elif descending.lower() == "false":
                 descending = False
+            else:
+                raise InvalidQueryValue()
         else:
             descending = True
         limit = self.request.query_params.get("limit", None)
 
         if courseid is not None:
-            queryset = queryset.filter(course_id=courseid)
+            try:
+                courseid = int(courseid)
+                queryset = queryset.filter(course_id=courseid)
+            except ValueError:
+                raise InvalidQueryValue()
         if userid is not None:
-            queryset = queryset.filter(user_id=userid)
+            try:
+                userid = int(userid)
+                queryset = queryset.filter(poster__user_id=userid)
+            except ValueError:
+                raise InvalidQueryValue()
         if sortby is not None:
+            if sortby not in self.supported_sortby_options:
+                raise InvalidQueryValue()
             queryset = queryset.order_by(("-" if descending else "") + sortby)
         else:
             queryset = queryset.order_by(("-" if descending else "") + "like_count")
         if limit is not None:
             try:
-                queryset = queryset[0:int(limit)]
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
+                queryset = queryset[0:limit]
             except ValueError as err:
-                error_pack = {"errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:1000]
 
@@ -328,31 +401,72 @@ class PostViewSet(viewsets.ModelViewSet):
             error_pack = {"code": "success", "errmsg": "successfully created post",
                           "post": post.id, "status": status.HTTP_201_CREATED}
             return Response(error_pack, status=status.HTTP_201_CREATED)
-        raise InvalidFormKey()
+        raise InvalidForm()
 
     # PUT method used to update existing question
     def update(self, request, pk=None, *args, **kwargs):
         # TODO Verify the user is the owner
         post = request.data
-        try:
-            old_post = Post.objects.get(id=pk)
+        old_post = self.get_object()
 
-            # Update note
-            f = PostModificationForm(post, instance=old_post)
-            if f.is_valid():
-                post = f.save()
-                error_pack = {"errcode": 0, "errmsg": "successfully updated post", "post": post.id}
-                return Response(error_pack, status=status.HTTP_200_OK)
-        except Post.DoesNotExist:
-            # Invalid note id
-            raise NotFound()
-        raise InvalidFormKey()
+        # Update note
+        f = PostModificationForm(post, instance=old_post)
+        if f.is_valid():
+            post = f.save()
+            error_pack = {"errcode": 0, "errmsg": "successfully updated post", "post": post.id}
+            return Response(error_pack, status=status.HTTP_200_OK)
+        raise InvalidForm()
+
+    # Override existing delete method provided by DRF for customized return error packet
+    def destroy(self, request, *args, **kwargs):
+        post = self.get_object()
+        self.perform_destroy(post)
+        error_pack = {"code": "success", "detail": "successfully deleted post",
+                      "post": post.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)
 
     @action(detail=True, methods=['get'])
     def answers(self, request, pk=None):
         queryset = PostAnswer.objects.all()
-        post_answers = get_list_or_404(queryset, post_id=pk)
-        serializer = PostAnswerSerializer(post_answers, many=True)
+
+        # Verify that post with id pk exist in db
+        post = self.get_object()
+
+        # Parse Params
+        queryset = queryset.filter(post_id=pk)
+        sortby = self.request.query_params.get("sortby", None)
+        descending = self.request.query_params.get("descending", None)
+        limit = self.request.query_params.get("limit", None)
+
+        # TODO Better way to do the query params validation
+        if descending is not None:
+            if str(descending).lower() == "true":
+                descending = True
+            elif str(descending).lower() == "false":
+                descending = False
+            else:
+                raise InvalidQueryValue()
+        else:
+            descending = True
+        if sortby is not None:
+            if sortby not in self.supported_sortby_options:
+                raise InvalidQueryValue()
+            queryset = queryset.order_by(("-" if descending else "") + sortby)
+        else:
+            queryset = queryset.order_by(("-" if descending else "") + "like_count")
+        if limit is not None:
+            try:
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
+                queryset = queryset[0:limit]
+            except ValueError as err:
+                raise InvalidQueryValue()
+        else:
+            queryset = queryset[:50]
+
+
+        serializer = PostAnswerSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @answers.mapping.post
@@ -370,12 +484,14 @@ class PostViewSet(viewsets.ModelViewSet):
         except Post.DoesNotExist:
             # Invalid post id path
             raise NotFound()
-        raise InvalidFormKey()
+        raise InvalidForm()
 
-    @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>\d+)")
+    @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>[^/.]+)")
     def detail_answer(self, request, pk=None, answerid=None):
+        # TODO Check for post id as well
+        # TODO Verify that the post answer and post is related
         queryset = PostAnswer.objects.all()
-        post_answer = get_object_or_404(queryset, id=answerid)
+        post_answer = get_object_or_404(queryset, id=answerid, post_id=pk)
         serializer = PostAnswerSerializer(post_answer, many=False)
         return Response(serializer.data)
 
@@ -383,6 +499,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def modify_answer(self, request, pk=None, answerid=None):
         answer = request.data
         try:
+            # Cannot use self.get_object since it is not in PostAnswer viewset
             old_answer = PostAnswer.objects.get(id=answerid)
 
             # Check post answer and the post is linked
@@ -405,30 +522,38 @@ class PostViewSet(viewsets.ModelViewSet):
         except PostAnswer.DoesNotExist:
             # Invalid question answer id
             raise NotFound()
+        except ValidationError:
+            raise NotFound()
         # Invalid form key
-        raise InvalidFormKey()
+        raise InvalidForm()
 
     @detail_answer.mapping.delete
     def destroy_answer(self, request, pk=None, answerid=None):
-        answer = request.data
+        # No request body
         try:
+            answerid = int(answerid)
             old_answer = PostAnswer.objects.get(id=answerid)
+            post = self.get_object()
 
             # Check post answer and the post is linked
-            if eval(pk) != old_answer.post_id:
+            if post.id != old_answer.post_id:
                 raise ValidationError("mismatch between given post id and answer post id",
                                       code="mismatch")
             # Delete post answer
             old_answer.delete()
             error_pack = {"code": "success", "detail": "successfully deleted post answer",
-                          "answer": answer.id, "status": status.HTTP_200_OK}
+                          "answer": answerid, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
         except PostAnswer.DoesNotExist:
             # Invalid question answer id
             raise NotFound()
+        except ValueError:
+            raise NotFound()
+        except ValidationError:
+            raise NotFound()
 
         # Invalid form key
-        raise InvalidFormKey()
+        raise InvalidForm()
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
