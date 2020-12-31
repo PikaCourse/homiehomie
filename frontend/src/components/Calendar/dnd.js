@@ -40,10 +40,12 @@ class Dnd extends React.Component {
 
   componentDidMount() {
     document.addEventListener("keydown", this.deleteKeyDown, false);
+    document.addEventListener("mousedown", this.pageClick, false);
   }
 
   componentWillUnmount() {
     document.removeEventListener("keydown", this.deleteKeyDown, false);
+    document.removeEventListener("mousedown", this.pageClick, false);
   }
 
   handleDragStart = (event) => {
@@ -72,15 +74,6 @@ class Dnd extends React.Component {
 
   moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
     const { events } = this.state;
-
-    let allDay = event.allDay;
-
-    if (!event.allDay && droppedOnAllDaySlot) {
-      allDay = true;
-    } else if (event.allDay && !droppedOnAllDaySlot) {
-      allDay = false;
-    }
-
     const nextEvents = events.map((existingEvent) => {
       if (existingEvent.id == event.id) {
         existingEvent.start = start;
@@ -150,7 +143,7 @@ class Dnd extends React.Component {
       zIndex: "10",
     };
 
-    if (isSelected || event.id == this.state.selected.id) {
+    if (event.id == this.state.selected.id) {
       newStyle.backgroundColor = currColor.strong;
       newStyle.color = "white";
       newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
@@ -181,11 +174,17 @@ class Dnd extends React.Component {
   };
 
   deleteKeyDown = (e) => {
-    console.log("selected");
-    console.log(this.state.selected);
     if (e.keyCode === 8 && this.state.selected.type == "custom") {
       store.dispatch(removeCustomEvent(this.state.selected));
     }
+  };
+
+  pageClick = (e) => {
+    // https://stackoverflow.com/questions/23821768/how-to-listen-for-click-events-that-are-outside-of-a-component
+    console.log("pageClick");
+    this.setState({
+      selected: {},
+    });
   };
 
   render() {
