@@ -35,7 +35,6 @@ class Dnd extends React.Component {
     course: PropTypes.array.isRequired,
     calendar: PropTypes.array.isRequired,
     calendarCourseBag: PropTypes.array.isRequired,
-    calenderCusEventBag: PropTypes.array.isRequired,
   };
 
   handleDragStart = (event) => {
@@ -134,9 +133,9 @@ class Dnd extends React.Component {
     if (title != null && title != "") {
       let idList = store
         .getState()
-        .calendar.calenderCusEventBag.map((a) => a.id);
+        .calendar.calendarCourseBag.map((a) => a.id);
       var newId =
-        store.getState().calendar.calenderCusEventBag.length == 0
+        store.getState().calendar.calendarCourseBag.length == 0
           ? 0
           : Math.max(...idList) + 1;
       let hour = {
@@ -188,11 +187,10 @@ class Dnd extends React.Component {
   };
 
   render() {
-    console.log("render start");
-    console.log(this.props.courselist);
-    console.log(store.getState().calendar.calendarCourseBag);
-    console.log(store.getState().calendar.calenderCusEventBag);
-    console.log("render end");
+    // console.log("render start");
+    // console.log(this.props.courselist);
+    // console.log(store.getState().calendar.calendarCourseBag);
+    // console.log("render end");
     return (
       <div className="p-2">
         <DragAndDropCalendar
@@ -221,10 +219,7 @@ class Dnd extends React.Component {
           style={{ height: "80vh" }}
           selectable
           localizer={mlocalizer}
-          events={[
-            ...this.props.calendarCourseBag,
-            ...this.props.calenderCusEventBag,
-          ]} //data input
+          events={this.props.calendarCourseBag} //data input
           onEventDrop={this.moveEvent}
           resizable={true}
           onEventResize={this.resizeEvent}
@@ -254,7 +249,6 @@ const mapStateToProps = (state) => ({
   course: state.course.course,
   calendar: state.calendar,
   calendarCourseBag: state.calendar.calendarCourseBag,
-  calenderCusEventBag: state.calendar.calenderCusEventBag,
 });
 
 export default connect(mapStateToProps)(Dnd);

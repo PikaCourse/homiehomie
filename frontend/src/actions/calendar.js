@@ -5,6 +5,7 @@ import {
   PREVIEW_COURSE_IN_CAL,
   CLEAR_PREVIEW_COURSE_IN_CAL,
   ADD_CUS_EVENT_IN_CAL,
+  DO_NOTHING, 
 } from "./types";
 import store from "../store";
 
@@ -14,10 +15,11 @@ export const addCurrCourse = () => {
     .calendar.calendarCourseBag.filter(
       (item) =>
         ((item.raw.selectedCourseArray ==
-        store.getState().course.selectedCourseArray) && (item.id != -1))
+        store.getState().course.selectedCourseArray) && (item.type != 'preview'))
     );
-  console.log("test");
-  console.log(!Array.isArray(courseArray) || !courseArray.length); 
+  // console.log("addCurrCourse start");
+  // console.log(!Array.isArray(courseArray) || !courseArray.length); 
+  // console.log("addCurrCourse end");
   if (!Array.isArray(courseArray) || !courseArray.length) {
     // add new course
     return {
@@ -42,9 +44,7 @@ export const addSelectCourse = (crnPara, selectedCourseArrayPara) => {
   const courseArray = store
     .getState()
     .calendar.calendarCourseBag.filter(
-      (item) =>
-        item.raw.selectedCourseArray ==
-        selectedCourseArrayPara
+      (item) => (item.raw.selectedCourseArray == selectedCourseArrayPara) || (item.type == 'preview')
     );
 
   const selectedCoursePara = selectedCourseArrayPara.find(
@@ -79,7 +79,35 @@ export const removeCurrCourse = () => {
 };
 
 export const previewCurrCourse = (previewSwitch) => {
-  if (previewSwitch) {
+  // let foundCourseArray = store.getState().calendar.calendarCourseBag.find((existingEvent) => {
+  //   (existingEvent.raw.crn == store.getState().course.selectedCourse.crn)
+  // });
+  let foundCourseArray = store.getState().calendar.calendarCourseBag.find(
+    ({type, raw}) => type != 'preview' && raw.crn === store.getState().course.selectedCourse.crn
+  );
+  let foundCourse = (typeof foundCourseArray != "undefined" && store.getState().calendar.calendarCourseBag.length != 0); 
+  console.log("preview condition start"); 
+  // console.log(typeof foundCourse != "undefined"); 
+  // console.log(store.getState().calendar.calendarCourseBag); 
+  // console.log(store.getState().calendar.calendarCourseBag.length == 0); 
+  // console.log((typeof foundCourse != "undefined" || store.getState().calendar.calendarCourseBag.length == 0)); 
+  // console.log((typeof foundCourse != "undefined" || store.getState().calendar.calendarCourseBag.length == 0) && previewSwitch); 
+  // console.log(typeof foundCourse == "undefined" && store.getState().calendar.calendarCourseBag.length != 0); 
+  console.log(typeof foundCourseArray != "undefined"); 
+  console.log(store.getState().calendar.calendarCourseBag); 
+  // console.log(foundCourseArray); 
+  // console.log(store.getState().calendar.calendarCourseBag); 
+  // console.log(store.getState().course.selectedCourse.crn); 
+  console.log("preview condition end"); 
+
+  if (previewSwitch && foundCourse) {
+    return {
+      type: CLEAR_PREVIEW_COURSE_IN_CAL,
+      selectedCRN: store.getState().course.selectedCRN,
+      selectedCourse: store.getState().course.selectedCourse,
+      selectedCourseArray: store.getState().course.selectedCourseArray,
+    }; 
+  } else if (previewSwitch) {
     return {
       type: PREVIEW_COURSE_IN_CAL,
       selectedCRN: store.getState().course.selectedCRN,

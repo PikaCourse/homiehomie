@@ -53,7 +53,7 @@ export class WikiSummary extends Component {
   }
 
   previewInputChange(checked) {
-    console.log("checked: " + checked);
+    // console.log("checked: " + checked);
     store.dispatch(previewCurrCourse(checked));
     this.setState({
       previewSwitch: checked,
@@ -173,11 +173,8 @@ export class WikiSummary extends Component {
     // Typical usage (don't forget to compare props):
     // console.log("componentDidUpdate");
 
-    if (this.state.previewSwitch) {
-      store.dispatch(previewCurrCourse(true));
-    } else {
-      store.dispatch(previewCurrCourse(false));
-    }
+    store.dispatch(previewCurrCourse(this.state.previewSwitch));
+
     //console.log("previewSwitch: "+this.state.previewSwitch);
 
     if (
