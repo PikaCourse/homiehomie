@@ -389,23 +389,26 @@ def check_put_success(test_case, detail_url_name, path_params, test_data, json_f
     return put_result
 
 
-def check_put_error(test_case, detail_url_name, path_params, test_data, error_class=NotFound):
+def check_put_error(test_case, detail_url_name=None, path_params={}, url=None, test_data={}, error_class=NotFound):
     """
-    Expecting error on post submission
+    Expecting error on put submission
     :param test_case:
     :param detail_url_name:
     :param path_params:
+    :param url:
     :param test_data:
     :param error_class:
     :return:
     """
-    url = reverse(detail_url_name, kwargs=path_params)
+    if url is None:
+        url = reverse(detail_url_name, kwargs=path_params)
+
     test_form_encoded = urlencode(test_data)
     response = test_case.client.put(url,
                                     data=test_form_encoded,
                                     content_type='application/x-www-form-urlencoded')
-    test_case.assertEqual(response.status_code, error_class.status_code, msg=f"Test Data: {test_data}")
-    test_case.assertEqual(response.data, get_packet_details(error_class()))
+    test_case.assertEqual(response.status_code, error_class.status_code, msg=f"Test Data: {test_data}\tURL: {url}")
+    test_case.assertEqual(response.data, get_packet_details(error_class()), msg=f"Response: {response}\tURL: {url}")
 
 
 def check_put_missing_fields(test_case, detail_url_name, path_params, test_data, blank_fields=("content",), num_put=20):
@@ -435,7 +438,7 @@ def check_put_missing_fields(test_case, detail_url_name, path_params, test_data,
         form_fields = random.sample(test_data.keys(), num_pair)
         form = {form_field: test_data[form_field] for form_field in form_fields}
 
-        check_put_error(test_case, detail_url_name, path_params, form, error_class=InvalidForm)
+        check_put_error(test_case, detail_url_name, path_params, test_data=form, error_class=InvalidForm)
         count += 1
     test_case.assertGreater(count, 0)
 
@@ -463,20 +466,24 @@ def check_delete_success(test_case, detail_url_name, path_params):
     test_case.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-def check_delete_error(test_case, detail_url_name, path_params, error_class=NotFound):
+def check_delete_error(test_case, detail_url_name=None, path_params={}, url=None, error_class=NotFound):
     """
     Test unsuccessful delete
     :param test_case:
     :param detail_url_name:
     :param path_params:
+    :param url:
+    :param error_class:
     :return:
     """
-    url = reverse(detail_url_name, kwargs=path_params)
+    if url is None:
+        url = reverse(detail_url_name, kwargs=path_params)
 
     # Perform delete operation
     response = test_case.client.delete(url)
     test_case.assertEqual(response.status_code, error_class.status_code)
     test_case.assertEqual(response.data, get_packet_details(error_class()))
+
 
 
 def check_method_not_allowed(test_case, url, method):

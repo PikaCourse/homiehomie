@@ -126,6 +126,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
 
+    # TODO Better way to valdiate query param
+    # Supported fields for sortby option
+    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
+
     # TODO Tmp disable to ease debugging
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
@@ -138,6 +142,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
         coursemetaid    = self.request.query_params.get("coursemetaid", None)
         sortby          = self.request.query_params.get("sortby", None)
         descending      = self.request.query_params.get("descending", None)
+        limit = self.request.query_params.get("limit", None)
+
         if descending is not None:
             if str(descending).lower() == "true":
                 descending = True
@@ -147,11 +153,14 @@ class QuestionViewSet(viewsets.ModelViewSet):
                 raise InvalidQueryValue()
         else:
             descending = True
-        limit = self.request.query_params.get("limit", None)
-
         if coursemetaid is not None:
-            queryset = queryset.filter(course_meta_id=coursemetaid)
+            try:
+                queryset = queryset.filter(course_meta_id=coursemetaid)
+            except ValueError:
+                raise InvalidQueryValue()
         if sortby is not None:
+            if sortby not in self.supported_sortby_options:
+                raise InvalidQueryValue()
             queryset = queryset.order_by(("-" if descending else "") + sortby)
         else:
             queryset = queryset.order_by(("-" if descending else "") + "like_count")
@@ -186,19 +195,26 @@ class QuestionViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None, *args, **kwargs):
         # TODO Verify the user is the owner
         question = request.data
-        try:
-            old_question = Question.objects.get(id=pk)
 
-            # Update question
-            f = QuestionModificationForm(question, instance=old_question)
-            if f.is_valid():
-                question = f.save()
-                error_pack = {"errcode": 0, "errmsg": "successfully updated question", "question": question.id}
-                return Response(error_pack, status=status.HTTP_200_OK)
-        except Question.DoesNotExist:
-            # Invalid question id
-            raise NotFound()
+        # Get the object via DRF
+        old_question = self.get_object()
+
+        # Update question
+        f = QuestionModificationForm(question, instance=old_question)
+        if f.is_valid():
+            question = f.save()
+            error_pack = {"code": "success", "detail": "successfully updated question",
+                          "question": question.id, "status": status.HTTP_200_OK}
+            return Response(error_pack, status=status.HTTP_200_OK)
         raise InvalidForm()
+
+    # Override existing delete method provided by DRF for customized return error packet
+    def destroy(self, request, *args, **kwargs):
+        question = self.get_object()
+        self.perform_destroy(question)
+        error_pack = {"code": "success", "detail": "successfully deleted question",
+                      "question": question.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)
 
 
 class NoteViewSet(viewsets.ModelViewSet):
@@ -206,7 +222,12 @@ class NoteViewSet(viewsets.ModelViewSet):
 
     queryset = Note.objects.all()
     serializer_class = NoteSerializer
+    parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+
+    # TODO Better way to valdiate query param
+    # Supported fields for sortby option
+    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
 
     def list(self, request, *args, **kwargs):
         queryset = Note.objects.all()
@@ -229,10 +250,20 @@ class NoteViewSet(viewsets.ModelViewSet):
         limit = self.request.query_params.get("limit", None)
 
         if courseid is not None:
+            try:
+                courseid = int(courseid)
+            except ValueError:
+                raise InvalidQueryValue()
             queryset = queryset.filter(course_id=courseid)
         if questionid is not None:
+            try:
+                questionid = int(questionid)
+            except ValueError:
+                raise InvalidQueryValue()
             queryset = queryset.filter(question_id=questionid)
         if sortby is not None:
+            if sortby not in self.supported_sortby_options:
+                raise InvalidQueryValue()
             queryset = queryset.order_by(("-" if descending else "") + sortby)
         else:
             queryset = queryset.order_by(("-" if descending else "") + "like_count")
@@ -273,20 +304,24 @@ class NoteViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None, *args, **kwargs):
         # TODO Verify the user is the owner
         note = request.data
-        try:
-            old_note = Note.objects.get(id=pk)
+        old_note = self.get_object()
 
-            # Update note
-            f = NoteModificationForm(note, instance=old_note)
-            if f.is_valid():
-                note = f.save()
-                error_pack = {"code": "success", "detail": "successfully updated note",
-                              "note": note.id, "status": status.HTTP_200_OK}
-                return Response(error_pack, status=status.HTTP_200_OK)
-        except Note.DoesNotExist:
-            # Invalid note id
-            raise NotFound()
+        # Update note
+        f = NoteModificationForm(note, instance=old_note)
+        if f.is_valid():
+            note = f.save()
+            error_pack = {"code": "success", "detail": "successfully updated note",
+                          "note": note.id, "status": status.HTTP_200_OK}
+            return Response(error_pack, status=status.HTTP_200_OK)
         raise InvalidForm()
+
+    # Override existing delete method provided by DRF for customized return error packet
+    def destroy(self, request, *args, **kwargs):
+        note = self.get_object()
+        self.perform_destroy(note)
+        error_pack = {"code": "success", "detail": "successfully deleted note",
+                      "note": note.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -296,6 +331,7 @@ class PostViewSet(viewsets.ModelViewSet):
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
 
     def list(self, request, *args, **kwargs):
@@ -355,18 +391,14 @@ class PostViewSet(viewsets.ModelViewSet):
     def update(self, request, pk=None, *args, **kwargs):
         # TODO Verify the user is the owner
         post = request.data
-        try:
-            old_post = Post.objects.get(id=pk)
+        old_post = self.get_object()
 
-            # Update note
-            f = PostModificationForm(post, instance=old_post)
-            if f.is_valid():
-                post = f.save()
-                error_pack = {"errcode": 0, "errmsg": "successfully updated post", "post": post.id}
-                return Response(error_pack, status=status.HTTP_200_OK)
-        except Post.DoesNotExist:
-            # Invalid note id
-            raise NotFound()
+        # Update note
+        f = PostModificationForm(post, instance=old_post)
+        if f.is_valid():
+            post = f.save()
+            error_pack = {"errcode": 0, "errmsg": "successfully updated post", "post": post.id}
+            return Response(error_pack, status=status.HTTP_200_OK)
         raise InvalidForm()
 
     @action(detail=True, methods=['get'])
@@ -406,6 +438,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def modify_answer(self, request, pk=None, answerid=None):
         answer = request.data
         try:
+            # Cannot use self.get_object since it is not in PostAnswer viewset
             old_answer = PostAnswer.objects.get(id=answerid)
 
             # Check post answer and the post is linked

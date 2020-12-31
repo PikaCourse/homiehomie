@@ -802,17 +802,13 @@ class QuestionViewSetTests(APITestCase):
         Since not a number, expecting bad request and raise InvalidQueryValue exception
         :return:
         """
-        test_course_meta_id = 3.23
         url = reverse("api:questions-list")
-        response = self.client.get(url, {"coursemetaid": test_course_meta_id})
-        self.assertEqual(response.status_code, InvalidQueryValue.default_code)
-        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+
+        test_course_meta_id = 3.23
+        check_query_filter_error(self, url, {"coursemetaid": test_course_meta_id})
 
         test_course_meta_id = "test"
-        url = reverse("api:questions-list")
-        response = self.client.get(url, {"coursemetaid": test_course_meta_id})
-        self.assertEqual(response.status_code, InvalidQueryValue.default_code)
-        self.assertEqual(response.data, get_packet_details(InvalidQueryValue()))
+        check_query_filter_error(self, url,  {"coursemetaid": test_course_meta_id})
 
     def test_question_single_filter_sortby_default(self):
         """
@@ -1107,6 +1103,7 @@ class QuestionViewSetTests(APITestCase):
     def test_question_update_invalid_pk(self):
         """
         Test with invalid pk or question id, expect errors
+        either InvalidPathParam or NotFound should be good
         :return:
         """
         detail_url_name = "api:questions-detail"
@@ -1114,15 +1111,16 @@ class QuestionViewSetTests(APITestCase):
 
         # Out of range
         path_params = {"pk": 100}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=NotFound)
+        url = "api/questions/100"
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
         # Not an integer
-        path_params = {"pk": 3.44}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+        url = "/api/questions/3.4"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
         # Not an integer
-        path_params = {"pk": "I am invalid"}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+        url = "/api/questions/not_valid"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
     def test_question_update_extra_field(self):
         """
@@ -1158,11 +1156,11 @@ class QuestionViewSetTests(APITestCase):
 
         # Empty title
         form = {"title": "", "tags": json.dumps(["changed", "changed tag"])}
-        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+        check_put_error(self, detail_url_name, path_params, test_data=form, error_class=InvalidForm)
 
         # Not a json
         form = {"title": "Test", "tags": "Not json"}
-        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+        check_put_error(self, detail_url_name, path_params, test_data=form, error_class=InvalidForm)
 
     # DestroyView testing
     def test_question_destroy(self):
@@ -1188,15 +1186,16 @@ class QuestionViewSetTests(APITestCase):
     def test_question_destroy_invalid_path_params(self):
         """
         Test invalid delete: not an integer
+        Expecting either InvalidPathParam or NotFound
         :return:
         """
-        detail_url_name = "api:questions-detail"
 
-        path_params = {"pk": 3.4}
-        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+        # Not using reverse since it prevents pass noninteger path params
+        url = "/api/questions/3.4"
+        check_delete_error(self, url=url, error_class=NotFound)
 
-        ath_params = {"pk": "Not integer"}
-        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+        url = "/api/questions/not_integer"
+        check_delete_error(self, url=url, error_class=NotFound)
 
     """
     Begin invalid view testing/invalid http method
@@ -1629,15 +1628,15 @@ class NoteViewSetTests(APITestCase):
 
         # Out of range
         path_params = {"pk": 100}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=NotFound)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
         # Not an integer
-        path_params = {"pk": 3.44}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+        url = "/api/notes/3.4"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
         # Not an integer
-        path_params = {"pk": "I am invalid"}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+        url = "/api/notes/I am invalid"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
     def test_note_update_extra_field(self):
         """
@@ -1675,11 +1674,11 @@ class NoteViewSetTests(APITestCase):
 
         # Empty title
         form = {"title": "", "content": "Changed Content", "tags": json.dumps(["changed", "changed tag"])}
-        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+        check_put_error(self, detail_url_name, path_params, test_data=form, error_class=InvalidForm)
 
         # Not a json
         form = {"title": "Test", "content": "Changed Content", "tags": "Not json"}
-        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+        check_put_error(self, detail_url_name, path_params, test_data=form, error_class=InvalidForm)
 
     # DestroyView testing
     def test_note_destroy(self):
@@ -1700,20 +1699,19 @@ class NoteViewSetTests(APITestCase):
         detail_url_name = "api:notes-detail"
         path_params = {"pk": 100}
 
-        check_delete_error(self, detail_url_name, path_params)
+        check_delete_error(self, detail_url_name, path_params, error_class=NotFound)
 
     def test_note_destroy_invalid_path_params(self):
         """
         Test invalid delete: not an integer
         :return:
         """
-        detail_url_name = "api:notes-detail"
 
-        path_params = {"pk": 3.4}
-        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+        url = "/api/notes/3.4"
+        check_delete_error(self, url=url, error_class=NotFound)
 
-        ath_params = {"pk": "Not integer"}
-        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+        url = "/api/notes/not integer"
+        check_delete_error(self, url=url, error_class=NotFound)
 
     """
     Begin invalid view testing/invalid http method
@@ -2158,15 +2156,15 @@ class PostViewSetTests(APITestCase):
 
         # Out of range
         path_params = {"pk": POST_NUM_ENTRIES + 1}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=NotFound)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
         # Not an integer
         path_params = {"pk": 3.44}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidPathParam)
 
         # Not an integer
         path_params = {"pk": "I am invalid"}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidPathParam)
 
     def test_post_update_extra_field(self):
         """
@@ -2203,11 +2201,11 @@ class PostViewSetTests(APITestCase):
 
         # Empty title
         form = {"title": "", "content": "Changed Content", "tags": json.dumps(["changed", "changed tag"])}
-        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+        check_put_error(self, detail_url_name, path_params, test_data=form, error_class=InvalidForm)
 
         # Not a json
         form = {"title": "Test", "content": "Changed Content", "tags": "Not json"}
-        check_put_error(self, detail_url_name, path_params, form, error_class=InvalidForm)
+        check_put_error(self, detail_url_name, path_params, test_data=form, error_class=InvalidForm)
 
     # DestroyView testing
     def test_post_destroy(self):
@@ -2625,19 +2623,19 @@ class PostAnswerViewSetTests(APITestCase):
 
         # Out of range
         path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES + 1}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=NotFound)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
         # Mismatch
         path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=NotFound)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
         # Not an integer
         path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidPathParam)
 
         # Not an integer
         path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidPathParam)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidPathParam)
 
     def test_post_answer_update_extra_field(self):
         """
@@ -2658,7 +2656,7 @@ class PostAnswerViewSetTests(APITestCase):
         detail_url_name = "api:posts-detail-answer"
         path_params = {"pk": 1, "answerid": 1}
         test_data = {}
-        check_put_error(self, detail_url_name, path_params, test_data, error_class=InvalidForm)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidForm)
 
     # DestroyView testing
     def test_post_answer_destroy(self):
