@@ -1,5 +1,5 @@
 import { GET_NOTES } from "./types";
-import { GET_QUE, CLEAR_QUE } from "./types";
+import { GET_QUE, CLEAR_QUE, ADD_QUE } from "./types";
 import axios from "axios";
 
 export const getNotes = (noteBag) => (dispatch) => {
@@ -31,7 +31,7 @@ export const getQuestion = (metaid) => (dispatch) => {
     .get("api/questions?coursemetaid=" + metaid)
     //res = question array -> json
     .then((questions) => {
-      console.log(questions.data);
+      //console.log(questions.data);
       questions.data.map((item, index) => {
         axios
           .get("api/notes?questionid=" + item.id)
@@ -51,4 +51,11 @@ export const getQuestion = (metaid) => (dispatch) => {
     .catch((err) => console.log(err));
 };
 
-//for loop (getNote(Qid) => reducer)
+export const addQuestion = (nbObj, notebookObj) => (dispatch) =>{
+    console.log("get to addquestion")
+    dispatch({
+        type: ADD_QUE,
+        notebagObj: nbObj,
+        notebookObj: notebookObj
+    })
+}

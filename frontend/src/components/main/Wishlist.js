@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import store from "../../store";
 
-import { Collapse } from "antd";
+import { Collapse, Tag } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 
 const { Panel } = Collapse;
@@ -46,20 +46,39 @@ const columns = [
     dataIndex: "id",
   },
   {
-    title: "crn",
-    dataIndex: "crn",
+    title: "tags",
+    dataIndex: "tags",
+    /* render: tags => (
+      <>
+        {tags.map(tag => {
+          let color = tag.length > 5 ? 'geekblue' : 'green';
+          if (tag === 'loser') {
+            color = 'volcano';
+          }
+          return (
+            <Tag color={color} key={tag}>
+              {tag.toUpperCase()}
+            </Tag>
+          );
+        })}
+      </>
+    ), */
   },
   {
     title: "time",
     dataIndex: "time",
   },
   {
-    title: "capacity",
-    dataIndex: "capacity",
+    title: "crn",
+    dataIndex: "crn",
   },
   {
     title: "registered",
     dataIndex: "registered",
+  },
+  {
+    title: "capacity",
+    dataIndex: "capacity",
   },
   {
     title: "type",
@@ -88,10 +107,6 @@ const columns = [
   {
     title: "description",
     dataIndex: "description",
-  },
-  {
-    title: "tags",
-    dataIndex: "tags",
   },
   {
     title: "college",
