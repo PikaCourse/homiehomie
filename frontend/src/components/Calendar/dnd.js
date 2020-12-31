@@ -13,7 +13,7 @@ import { setCourse } from "../../actions/course";
 import { addCustomEvent } from "../../actions/calendar";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
-import { colors } from "./color.js";
+import { colors, pcolors} from "./color.js";
 
 let formats = {
   dayFormat: (date, culture, localizer) => moment.utc(date).format("ddd"), //https://devhints.io/moment
@@ -140,9 +140,10 @@ class Dnd extends React.Component {
 
   eventStyleHandler = (event, start, end, isSelected) => {
     // console.log(colors);
+    let currColor = event.type == "preview" ? pcolors[0] : colors[(event.id % 10) + 1]; 
     let newStyle = {
-      backgroundColor: colors[(event.id % 10) + 1].weak,
-      color: colors[(event.id % 10) + 1].strong,
+      backgroundColor: currColor.weak,
+      color: currColor.strong,
       fontSize: "100%",
       borderRadius: "0px",
       border: "none",
@@ -151,9 +152,9 @@ class Dnd extends React.Component {
     };
 
     if (isSelected) {
-      newStyle.backgroundColor = colors[(event.id % 10) + 1].strong;
+      newStyle.backgroundColor = currColor.strong;
       newStyle.color = "white";
-      newStyle.boxShadow = "6px 4px 30px " + colors[(event.id % 10) + 1].weak;
+      newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
       if (event.type != "custom")
         store.dispatch(
           setCourse({
