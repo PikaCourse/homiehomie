@@ -5,7 +5,8 @@ from django.shortcuts import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.exceptions import *
-from scheduler.utils import *
+from scheduler.exceptions import *
+from scheduler.test_utils import *
 from urllib.parse import urlencode
 
 
