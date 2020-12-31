@@ -255,7 +255,9 @@ def check_query_filter_error(test_case, url, query_params=None, error_class=Inva
     :return:
     """
     response = test_case.client.get(url, query_params)
-    test_case.assertEqual(response.status_code, error_class.status_code, msg=f"URL: {url}\tQuery: {query_params}")
+    test_case.assertEqual(response.status_code, error_class.status_code,
+                          msg=f"URL: {url}\tQuery: {query_params}\t"
+                              f"Data: {response.data}")
     test_case.assertEqual(response.data, get_packet_details(error_class()))
 
 
@@ -482,7 +484,7 @@ def check_delete_error(test_case, detail_url_name=None, path_params={}, url=None
     # Perform delete operation
     response = test_case.client.delete(url)
     test_case.assertEqual(response.status_code, error_class.status_code)
-    test_case.assertEqual(response.data, get_packet_details(error_class()))
+    test_case.assertEqual(response.data, get_packet_details(error_class()), msg=f"URL: {url}")
 
 
 

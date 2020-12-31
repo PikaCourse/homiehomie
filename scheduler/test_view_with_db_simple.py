@@ -2159,12 +2159,12 @@ class PostViewSetTests(APITestCase):
         check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
         # Not an integer
-        path_params = {"pk": 3.44}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidPathParam)
+        url = "/api/posts/3.5"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
         # Not an integer
-        path_params = {"pk": "I am invalid"}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidPathParam)
+        url = "/api/posts/not an integer"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
     def test_post_update_extra_field(self):
         """
@@ -2235,11 +2235,11 @@ class PostViewSetTests(APITestCase):
         """
         detail_url_name = "api:posts-detail"
 
-        path_params = {"pk": 3.4}
-        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+        url = "/api/posts/3.4"
+        check_delete_error(self, url=url, error_class=NotFound)
 
-        path_params = {"pk": "Not an integer"}
-        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+        url = "/api/posts/Not an integer"
+        check_delete_error(self, url=url, error_class=NotFound)
 
     """
     Begin invalid view testing/invalid http method
@@ -2334,13 +2334,12 @@ class PostAnswerViewSetTests(APITestCase):
         expecting InvalidPathParam error
         :return:
         """
-        path_params = {"pk": 3.45}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        check_query_filter_error(self, url, error_class=InvalidPathParam)
 
-        path_params = {"pk": "I am not valid"}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        check_query_filter_error(self, url, error_class=InvalidPathParam)
+        url = "/api/posts/3 4 5/answers"
+        check_query_filter_error(self, url, error_class=NotFound)
+
+        url = "/api/posts/I am not Valid/answers"
+        check_query_filter_error(self, url, error_class=NotFound)
 
     def test_post_answer_single_filter_sortby_default(self):
         """
@@ -2511,6 +2510,8 @@ class PostAnswerViewSetTests(APITestCase):
         answerid_list = [1, POST_ANSWER_NUM_ENTRIES_1 + 1, -1]
         for pk in pk_list:
             for answerid in answerid_list:
+                if pk == 1 and answerid == 1:
+                    continue
                 path_params = {"pk": pk, "answerid": answerid}
                 url = reverse("api:posts-detail-answer", kwargs=path_params)
                 check_query_filter_error(self, url, error_class=NotFound)
@@ -2631,11 +2632,11 @@ class PostAnswerViewSetTests(APITestCase):
 
         # Not an integer
         path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidPathParam)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
         # Not an integer
         path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidPathParam)
+        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
     def test_post_answer_update_extra_field(self):
         """
@@ -2685,11 +2686,11 @@ class PostAnswerViewSetTests(APITestCase):
         """
         detail_url_name = "api:posts-detail-answer"
 
-        path_params = {"pk": 1, "answerid": 3.4}
-        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+        url = "/api/posts/1/answers/3.4"
+        check_delete_error(self, url=url, error_class=NotFound)
 
-        path_params = {"pk": 1, "answerid": "Not an integer"}
-        check_delete_error(self, detail_url_name, path_params, error_class=InvalidPathParam)
+        url = "/api/posts/1/answers/not an integer"
+        check_delete_error(self, url=url, error_class=NotFound)
 
         path_params = {"pk": 1, "answerid": 5}
         check_delete_error(self, detail_url_name, path_params, error_class=NotFound)

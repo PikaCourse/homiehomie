@@ -169,7 +169,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
                 limit = int(limit)
                 if limit <= 0:
                     raise ValueError
-                queryset = queryset[0:int(limit)]
+                queryset = queryset[0:limit]
             except ValueError as err:
                 raise InvalidQueryValue()
         else:
@@ -334,6 +334,10 @@ class PostViewSet(viewsets.ModelViewSet):
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
 
+    # TODO Better way to valdiate query param
+    # Supported fields for sortby option
+    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
+
     def list(self, request, *args, **kwargs):
         queryset = Post.objects.all()
 
@@ -355,19 +359,31 @@ class PostViewSet(viewsets.ModelViewSet):
         limit = self.request.query_params.get("limit", None)
 
         if courseid is not None:
-            queryset = queryset.filter(course_id=courseid)
+            try:
+                courseid = int(courseid)
+                queryset = queryset.filter(course_id=courseid)
+            except ValueError:
+                raise InvalidQueryValue()
         if userid is not None:
-            queryset = queryset.filter(poster__user_id=userid)
+            try:
+                userid = int(userid)
+                queryset = queryset.filter(poster__user_id=userid)
+            except ValueError:
+                raise InvalidQueryValue()
         if sortby is not None:
+            if sortby not in self.supported_sortby_options:
+                raise InvalidQueryValue()
             queryset = queryset.order_by(("-" if descending else "") + sortby)
         else:
             queryset = queryset.order_by(("-" if descending else "") + "like_count")
         if limit is not None:
             try:
-                queryset = queryset[0:int(limit)]
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
+                queryset = queryset[0:limit]
             except ValueError as err:
-                error_pack = {"errmsg": "invalid query param: limit"}
-                return Response(error_pack, status=status.HTTP_400_BAD_REQUEST)
+                raise InvalidQueryValue()
         else:
             queryset = queryset[:1000]
 
@@ -401,11 +417,56 @@ class PostViewSet(viewsets.ModelViewSet):
             return Response(error_pack, status=status.HTTP_200_OK)
         raise InvalidForm()
 
+    # Override existing delete method provided by DRF for customized return error packet
+    def destroy(self, request, *args, **kwargs):
+        post = self.get_object()
+        self.perform_destroy(post)
+        error_pack = {"code": "success", "detail": "successfully deleted post",
+                      "post": post.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)
+
     @action(detail=True, methods=['get'])
     def answers(self, request, pk=None):
         queryset = PostAnswer.objects.all()
-        post_answers = get_list_or_404(queryset, post_id=pk)
-        serializer = PostAnswerSerializer(post_answers, many=True)
+
+        # Verify that post with id pk exist in db
+        post = self.get_object()
+
+        # Parse Params
+        queryset = queryset.filter(post_id=pk)
+        sortby = self.request.query_params.get("sortby", None)
+        descending = self.request.query_params.get("descending", None)
+        limit = self.request.query_params.get("limit", None)
+
+        # TODO Better way to do the query params validation
+        if descending is not None:
+            if str(descending).lower() == "true":
+                descending = True
+            elif str(descending).lower() == "false":
+                descending = False
+            else:
+                raise InvalidQueryValue()
+        else:
+            descending = True
+        if sortby is not None:
+            if sortby not in self.supported_sortby_options:
+                raise InvalidQueryValue()
+            queryset = queryset.order_by(("-" if descending else "") + sortby)
+        else:
+            queryset = queryset.order_by(("-" if descending else "") + "like_count")
+        if limit is not None:
+            try:
+                limit = int(limit)
+                if limit <= 0:
+                    raise ValueError
+                queryset = queryset[0:limit]
+            except ValueError as err:
+                raise InvalidQueryValue()
+        else:
+            queryset = queryset[:50]
+
+
+        serializer = PostAnswerSerializer(queryset, many=True)
         return Response(serializer.data)
 
     @answers.mapping.post
@@ -425,12 +486,12 @@ class PostViewSet(viewsets.ModelViewSet):
             raise NotFound()
         raise InvalidForm()
 
-    @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>\d+)")
+    @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>[^/.]+)")
     def detail_answer(self, request, pk=None, answerid=None):
         # TODO Check for post id as well
         # TODO Verify that the post answer and post is related
         queryset = PostAnswer.objects.all()
-        post_answer = get_object_or_404(queryset, id=answerid)
+        post_answer = get_object_or_404(queryset, id=answerid, post_id=pk)
         serializer = PostAnswerSerializer(post_answer, many=False)
         return Response(serializer.data)
 
@@ -461,6 +522,8 @@ class PostViewSet(viewsets.ModelViewSet):
         except PostAnswer.DoesNotExist:
             # Invalid question answer id
             raise NotFound()
+        except ValidationError:
+            raise NotFound()
         # Invalid form key
         raise InvalidForm()
 
@@ -468,10 +531,12 @@ class PostViewSet(viewsets.ModelViewSet):
     def destroy_answer(self, request, pk=None, answerid=None):
         # No request body
         try:
+            answerid = int(answerid)
             old_answer = PostAnswer.objects.get(id=answerid)
+            post = self.get_object()
 
             # Check post answer and the post is linked
-            if eval(pk) != old_answer.post_id:
+            if post.id != old_answer.post_id:
                 raise ValidationError("mismatch between given post id and answer post id",
                                       code="mismatch")
             # Delete post answer
@@ -481,6 +546,10 @@ class PostViewSet(viewsets.ModelViewSet):
             return Response(error_pack, status=status.HTTP_200_OK)
         except PostAnswer.DoesNotExist:
             # Invalid question answer id
+            raise NotFound()
+        except ValueError:
+            raise NotFound()
+        except ValidationError:
             raise NotFound()
 
         # Invalid form key
