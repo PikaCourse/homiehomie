@@ -13,7 +13,7 @@ import { setCourse } from "../../actions/course";
 import { addCustomEvent } from "../../actions/calendar";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
-import { colors } from "./color.js";
+import { colors, pcolors } from "./color.js";
 
 let formats = {
   dayFormat: (date, culture, localizer) => moment.utc(date).format("ddd"), //https://devhints.io/moment
@@ -79,61 +79,33 @@ class Dnd extends React.Component {
         store.dispatch(addCustomEvent(existingEvent));
       }
       return existingEvent;
-      // return existingEvent.id == event.id
-      //   ? { ...existingEvent, start, end }
-      //   : existingEvent;
     });
 
     this.setState({
       events: nextEvents,
     });
-
-    //console.log("moveEvent");
-    //console.log(nextEvents);
-
-    // alert(`${event.title} was dropped onto ${updatedEvent.start}`)
   };
 
   resizeEvent = ({ event, start, end }) => {
-    //console.log("resizeEvent");
     const { events } = this.state;
 
     const nextEvents = events.map((existingEvent) => {
-      // console.log("existingEvent");
-      // console.log(existingEvent);
-      // console.log("event");
-      // console.log(event);
-      // console.log("existingEvent.id: "+existingEvent.id);
-      // console.log("event.id: "+event.id);
-      // console.log("start: "+start);
-      // console.log("end: "+end);
       if (existingEvent.id == event.id) {
         existingEvent.start = start;
         existingEvent.end = end;
         store.dispatch(addCustomEvent(existingEvent));
       }
       return existingEvent;
-      // return existingEvent.id == event.id
-      //   ? { ...existingEvent, start, end }
-      //   : existingEvent;
     });
-
     this.setState({
       events: nextEvents,
     });
-    // store.dispatch(addCustomEvent(nextEvents));
-    //console.log(nextEvents);
-
-    // alert(`${event.title} was resized to ${start}-${end}`);
   };
 
   newEvent(event) {
     const title = window.prompt("New Event Name");
-    console.log(title);
     if (title != null && title != "") {
-      let idList = store
-        .getState()
-        .calendar.calendarCourseBag.map((a) => a.id);
+      let idList = store.getState().calendar.calendarCourseBag.map((a) => a.id);
       var newId =
         store.getState().calendar.calendarCourseBag.length == 0
           ? 0
@@ -156,28 +128,26 @@ class Dnd extends React.Component {
   }
 
   eventStyleHandler = (event, start, end, isSelected) => {
-    // console.log(colors);
+    let currColor =
+      event.type == "preview" ? pcolors[0] : colors[(event.id % 10) + 1];
     let newStyle = {
-      backgroundColor: colors[(event.id % 10) + 1].weak,
-      color: colors[(event.id % 10) + 1].strong,
+      backgroundColor: currColor.weak,
+      color: currColor.strong,
       fontSize: "100%",
       borderRadius: "0px",
-      border: "none",
+      border:
+        event.type == "preview" ? "2px dashed " + currColor.strong : "none",
       boxShadow: "none",
       zIndex: "10",
     };
 
     if (isSelected) {
-      newStyle.backgroundColor = colors[(event.id % 10) + 1].strong;
+      newStyle.backgroundColor = currColor.strong;
       newStyle.color = "white";
-      newStyle.boxShadow = "6px 4px 30px " + colors[(event.id % 10) + 1].weak;
-      if (event.type != "custom")
-        store.dispatch(
-          setCourse({
-            selectedCRN: event.raw.crn,
-            selectedCourseArray: event.raw.selectedCourseArray,
-          })
-        );
+      newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
+      newStyle.border = event.type == "preview" ? "2px dashed " + currColor.weak : "none";
+      newStyle.border =
+        event.type == "preview" ? "2px dashed " + currColor.weak : "none";
     }
 
     return {
@@ -186,11 +156,18 @@ class Dnd extends React.Component {
     };
   };
 
+  onSelect = (event, e) => {
+    if (event.type != "custom") {
+      store.dispatch(
+        setCourse({
+          selectedCRN: event.raw.crn,
+          selectedCourseArray: event.raw.selectedCourseArray,
+        })
+      );
+    }
+  }
+
   render() {
-    // console.log("render start");
-    // console.log(this.props.courselist);
-    // console.log(store.getState().calendar.calendarCourseBag);
-    // console.log("render end");
     return (
       <div className="p-2">
         <DragAndDropCalendar
@@ -239,6 +216,7 @@ class Dnd extends React.Component {
             event: EventComponent,
           }}
           eventPropGetter={this.eventStyleHandler}
+          onSelectEvent={this.onSelect}
         />
       </div>
     );

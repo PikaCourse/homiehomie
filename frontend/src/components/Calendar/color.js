@@ -10,9 +10,8 @@ export const colors = [
     {strong:'rgba(188, 191, 4, 1)', weak:'rgba(188, 191, 4, 0.3)'},
     {strong:'rgba(21, 77, 222, 1)', weak:'rgba(21, 77, 222, 0.3)'},
     {strong:'rgba(68, 207, 207, 1)', weak:'rgba(68, 207, 207, 0.3)'},
-
 ];
 
 export const pcolors = [
-    {strong:'rgba(68, 207, 207, 0.1)', weak:'rgba(68, 207, 207, 0.1)'},
+    {strong:'#419ef4', weak:'#ffffff'},
 ];
