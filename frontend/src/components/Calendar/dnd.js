@@ -10,7 +10,7 @@ import "../../../static/scss/calendar.scss";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
-import { addCustomEvent, removeCustomEvent} from "../../actions/calendar";
+import { addCustomEvent, removeCustomEvent } from "../../actions/calendar";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
 import { colors, pcolors } from "./color.js";
@@ -25,7 +25,7 @@ class Dnd extends React.Component {
     this.state = {
       events: [],
       displayDragItemInCell: true,
-      selected: {}, 
+      selected: {},
     };
 
     this.moveEvent = this.moveEvent.bind(this);
@@ -39,13 +39,12 @@ class Dnd extends React.Component {
   };
 
   componentDidMount() {
-    document.addEventListener('keydown', this.deleteKeyDown, false);
+    document.addEventListener("keydown", this.deleteKeyDown, false);
   }
-  
+
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.deleteKeyDown, false);
+    document.removeEventListener("keydown", this.deleteKeyDown, false);
   }
-  
 
   handleDragStart = (event) => {
     this.setState({ draggedEvent: event });
@@ -155,7 +154,8 @@ class Dnd extends React.Component {
       newStyle.backgroundColor = currColor.strong;
       newStyle.color = "white";
       newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
-      newStyle.border = event.type == "preview" ? "2px dashed " + currColor.weak : "none";
+      newStyle.border =
+        event.type == "preview" ? "2px dashed " + currColor.weak : "none";
       newStyle.border =
         event.type == "preview" ? "2px dashed " + currColor.weak : "none";
     }
@@ -168,8 +168,8 @@ class Dnd extends React.Component {
 
   onSelect = (event, e) => {
     this.setState({
-      selected: event
-    }); 
+      selected: event,
+    });
     if (event.type != "custom") {
       store.dispatch(
         setCourse({
@@ -178,15 +178,15 @@ class Dnd extends React.Component {
         })
       );
     }
-  }
+  };
 
   deleteKeyDown = (e) => {
-    console.log('selected'); 
-    console.log(this.state.selected); 
-    if(e.keyCode === 8 && this.state.selected.type == 'custom') {
-      store.dispatch(removeCustomEvent(this.state.selected));     
+    console.log("selected");
+    console.log(this.state.selected);
+    if (e.keyCode === 8 && this.state.selected.type == "custom") {
+      store.dispatch(removeCustomEvent(this.state.selected));
     }
-  }
+  };
 
   render() {
     return (
