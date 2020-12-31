@@ -14,5 +14,5 @@ export const colors = [
 ];
 
 export const pcolors = [
-    {strong:'rgba(68, 207, 207, 0.1)', weak:'rgba(68, 207, 207, 0.1)'},
+    {strong:'#419ef4', weak:'#ffffff'},
 ];
