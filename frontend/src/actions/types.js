@@ -2,6 +2,8 @@ export const GET_LEADS = "GET_LEADS"
 export const GET_COURSE = "GET_COURSE"
 export const SET_COURSE = "SET_COURSE"
 export const GET_QUE = "GET_QUE"
+export const CLEAR_QUE = "CLEAR_QUE"
+
 export const GET_NOTES = "GET_NOTES"
 export const ADD_COURSE_TO_CAL = "ADD_COURSE_TO_CAL"
 export const REMOVE_COURSE_FROM_CAL = "REMOVE_COURSE_FROM_CAL"

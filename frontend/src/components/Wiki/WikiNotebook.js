@@ -12,9 +12,10 @@ import store from "../../store";
 import axios from "axios";
 import { getQuestion } from "../../actions/question.js";
 
-import { Button, Input, Card, Form, Checkbox } from "antd";
+import { Button, Input, Card, Form, Checkbox, message } from "antd";
 
 const { TextArea } = Input;
+const querystring = require("querystring");
 
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
@@ -32,7 +33,7 @@ export class WikiNotebook extends Component {
     super(props);
 
     this.state = {
-      value: [{ question: "" }, { note: "" }],
+      value: [],
       courseIndex: 0,
       addNewCard: false,
     };
@@ -45,7 +46,7 @@ export class WikiNotebook extends Component {
   handleSaveClicked(nbObj) {
     axios
       .post("api/notes", {
-        course: nbObj.question.course_meta,
+        course: this.props.selectedCourse.course_meta.id,
         question: nbObj.question.id,
         title: "whatever",
         content: this.state.value,
@@ -57,6 +58,49 @@ export class WikiNotebook extends Component {
 
   onChange = ({ target: { value } }) => {
     this.setState({ value });
+  };
+  handleSubmit = (values) => {
+    console.log(this.props.selectedCourse.course_meta.id);
+    axios
+      .post(
+        "api/questions",
+        querystring.stringify({
+          course_meta: this.props.selectedCourse.course_meta.id,
+          title: values.question,
+          tags: JSON.stringify(["hi", "h2"]),
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      )
+      .then((res) => {
+        axios
+          .post("api/notes", {
+            course: this.props.selectedCourse.course_meta.id,
+            question: res.data.question,
+            title: "whatever",
+            content: values.note,
+            tags: JSON.stringify(["hi"]),
+          })
+          .then((result) => {
+            result.data.code == "success"
+              ? message.success({
+                  content: "Note Added Successfully",
+                  style: {
+                    marginTop: "5vh",
+                  },
+                })
+              : message.error({
+                  content: "Fail to Add New Note  x_x",
+                  style: {
+                    marginTop: "5vh",
+                  },
+                });
+            this.forceUpdate();
+          });
+      });
   };
 
   addNewQueInput = () => {
@@ -131,6 +175,8 @@ export class WikiNotebook extends Component {
                   layout="vertical"
                   name="basic"
                   initialValues={{ remember: true }}
+                  onFinish={this.handleSubmit}
+                  onFinishFailed={() => console.log("test2")}
                 >
                   <Form.Item
                     name="question"
@@ -174,24 +220,6 @@ export class WikiNotebook extends Component {
                     </Button>
                   </Form.Item>
                 </Form>
-                {/* 
-                <form className="form-inline my-2 my-lg-0">
-                  <TextArea
-                    className="mb-2"
-                    allowClear
-                    onChange={this.onChange}
-                    placeholder="write a title"
-                    autoSize={{ minRows: 1, maxRows: 3 }}
-                    style={{ borderRadius: "5px", borderColor: "white" }}
-                  />
-                  <TextArea
-                    allowClear
-                    onChange={this.onChange}
-                    placeholder="write some notes"
-                    autoSize={{ minRows: 3, maxRows: 5 }}
-                    style={{ borderRadius: "5px", borderColor: "white" }}
-                  />
-              </form> */}
               </Card>
             ) : null
           }
@@ -222,7 +250,7 @@ export class WikiNotebook extends Component {
                   <form className="form-inline my-2 my-lg-0">
                     <TextArea
                       onChange={this.onChange}
-                      placeholder="Controlled autosize"
+                      placeholder="Write some amazing notes"
                       autoSize={{ minRows: 3, maxRows: 5 }}
                       style={{ borderRadius: "5px", borderColor: "white" }}
                     />
