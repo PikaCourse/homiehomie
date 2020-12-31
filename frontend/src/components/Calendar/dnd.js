@@ -95,36 +95,19 @@ class Dnd extends React.Component {
   };
 
   resizeEvent = ({ event, start, end }) => {
-    //console.log("resizeEvent");
     const { events } = this.state;
 
     const nextEvents = events.map((existingEvent) => {
-      // console.log("existingEvent");
-      // console.log(existingEvent);
-      // console.log("event");
-      // console.log(event);
-      // console.log("existingEvent.id: "+existingEvent.id);
-      // console.log("event.id: "+event.id);
-      // console.log("start: "+start);
-      // console.log("end: "+end);
       if (existingEvent.id == event.id) {
         existingEvent.start = start;
         existingEvent.end = end;
         store.dispatch(addCustomEvent(existingEvent));
       }
       return existingEvent;
-      // return existingEvent.id == event.id
-      //   ? { ...existingEvent, start, end }
-      //   : existingEvent;
     });
-
     this.setState({
       events: nextEvents,
     });
-    // store.dispatch(addCustomEvent(nextEvents));
-    //console.log(nextEvents);
-
-    // alert(`${event.title} was resized to ${start}-${end}`);
   };
 
   newEvent(event) {
