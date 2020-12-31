@@ -32,12 +32,10 @@ export class Header extends Component {
   }
 
   handleSearchClickedTwo() {
-    //getcourse: store course_info -> can find course_meta_id
-    //getQuestion: store question_array of question_objects -> can find question_id
-    //getNotes: store a notes_array depends on a question id array
+
     this.props.dispatch(getCourse(this.state.inputVal));
-    this.props.dispatch(getQuestion(store.getState().course.selectedCourse.course_meta.id)
-    );
+    // this.props.dispatch(getQuestion(store.getState().course.selectedCourse.course_meta.id)
+    // );
   }
   render() {
     return (

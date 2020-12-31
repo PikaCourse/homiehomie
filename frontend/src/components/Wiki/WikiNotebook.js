@@ -12,20 +12,28 @@ import store from "../../store";
 import axios from "axios";
 import { getQuestion } from "../../actions/question.js";
 
-import { Button, Input, Tooltip, Card } from "antd";
+import { Button, Input, Card, Form, Checkbox, message } from "antd";
 
 const { TextArea } = Input;
+const querystring = require("querystring");
 
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
+
+const formItemLayout = {
+  wrapperCol: {
+    span: 20,
+    offset: 2,
+  },
+};
 
 export class WikiNotebook extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      value: "",
+      value: [],
       courseIndex: 0,
       addNewCard: false,
     };
@@ -38,7 +46,7 @@ export class WikiNotebook extends Component {
   handleSaveClicked(nbObj) {
     axios
       .post("api/notes", {
-        course: nbObj.question.course_meta,
+        course: this.props.selectedCourse.course_meta.id,
         question: nbObj.question.id,
         title: "whatever",
         content: this.state.value,
@@ -50,7 +58,49 @@ export class WikiNotebook extends Component {
 
   onChange = ({ target: { value } }) => {
     this.setState({ value });
-    //console.log({ value });
+  };
+  handleSubmit = (values) => {
+    console.log(this.props.selectedCourse.course_meta.id);
+    axios
+      .post(
+        "api/questions",
+        querystring.stringify({
+          course_meta: this.props.selectedCourse.course_meta.id,
+          title: values.question,
+          tags: JSON.stringify(["hi", "h2"]),
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      )
+      .then((res) => {
+        axios
+          .post("api/notes", {
+            course: this.props.selectedCourse.course_meta.id,
+            question: res.data.question,
+            title: "whatever",
+            content: values.note,
+            tags: JSON.stringify(["hi"]),
+          })
+          .then((result) => {
+            result.data.code == "success"
+              ? message.success({
+                  content: "Note Added Successfully",
+                  style: {
+                    marginTop: "5vh",
+                  },
+                })
+              : message.error({
+                  content: "Fail to Add New Note  x_x",
+                  style: {
+                    marginTop: "5vh",
+                  },
+                });
+            this.forceUpdate();
+          });
+      });
   };
 
   addNewQueInput = () => {
@@ -108,27 +158,68 @@ export class WikiNotebook extends Component {
                 bordered={true}
                 className="my-2"
                 style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-                extra={
-                  <Button
-                    type="ghost"
-                    size="medium"
-                    onClick={() => {
-                      this.setState({ addNewCard: false });
-                    }}
-                  >
-                    <FontAwesomeIcon className="" icon={faTimes} />
-                  </Button>
-                }
               >
-                <form className="form-inline my-2 my-lg-0">
-                  <TextArea
-                    value={value}
-                    onChange={this.onChange}
-                    placeholder="Controlled autosize"
-                    autoSize={{ minRows: 3, maxRows: 5 }}
-                    style={{ borderRadius: "5px", borderColor: "white" }}
-                  />
-                </form>
+                <Button
+                  type="ghost"
+                  size="medium"
+                  onClick={() => {
+                    this.setState({ addNewCard: false });
+                  }}
+                  style={{ float: "right", display: "block" }}
+                >
+                  <FontAwesomeIcon className="" icon={faTimes} />
+                </Button>
+
+                <Form
+                  {...formItemLayout}
+                  layout="vertical"
+                  name="basic"
+                  initialValues={{ remember: true }}
+                  onFinish={this.handleSubmit}
+                  onFinishFailed={() => console.log("test2")}
+                >
+                  <Form.Item
+                    name="question"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your title!",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea
+                      placeholder="an amazing title"
+                      autoSize={{ minRows: 1, maxRows: 3 }}
+                      style={{ borderRadius: "5px", borderColor: "white" }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="note"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your title!",
+                      },
+                    ]}
+                  >
+                    <Input.TextArea
+                      placeholder="write a note"
+                      autoSize={{ minRows: 3, maxRows: 5 }}
+                      style={{ borderRadius: "5px", borderColor: "white" }}
+                    />
+                  </Form.Item>
+
+                  <Form.Item name="remember" valuePropName="checked">
+                    <Checkbox>Public</Checkbox>
+                  </Form.Item>
+
+                  <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                      Save
+                    </Button>
+                  </Form.Item>
+                </Form>
               </Card>
             ) : null
           }
@@ -141,14 +232,13 @@ export class WikiNotebook extends Component {
               bordered={true}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-              key = {nbObj.id}
-
+              key={nbObj.id}
             >
               {nbObj.notes.map((noteObj) => (
                 <p
                   className="pl-2"
                   style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-                  key = {noteObj.id}
+                  key={noteObj.id}
                 >
                   {noteObj.content}
                   <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> 15
@@ -159,9 +249,8 @@ export class WikiNotebook extends Component {
                 <div className="col-sm-11 pr-0">
                   <form className="form-inline my-2 my-lg-0">
                     <TextArea
-                      value={value}
                       onChange={this.onChange}
-                      placeholder="Controlled autosize"
+                      placeholder="Write some amazing notes"
                       autoSize={{ minRows: 3, maxRows: 5 }}
                       style={{ borderRadius: "5px", borderColor: "white" }}
                     />

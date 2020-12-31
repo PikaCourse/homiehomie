@@ -13,7 +13,7 @@ import store from "../../store";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinus, faPlus, faStar } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-import { Switch, Select, Input, Button, Tooltip } from "antd";
+import { Switch, Select, Input, Button, Tooltip, message } from "antd";
 
 import { getCourse } from "../../actions/course";
 import "antd/lib/style/themes/default.less";
@@ -104,6 +104,19 @@ export class WikiSummary extends Component {
               //this.animateButton(event);
               this.props.dispatch(addCurrCourse());
               this.forceUpdate();
+              addButtonText != "Change CRN"
+                ? message.success({
+                    content: "Course Added Successfully",
+                    style: {
+                      marginTop: "5vh",
+                    },
+                  })
+                : message.success({
+                    content: "CRN Changed Successfully",
+                    style: {
+                      marginTop: "5vh",
+                    },
+                  });
             }}
           >
             <FontAwesomeIcon className="" icon={faPlus} />
@@ -118,6 +131,12 @@ export class WikiSummary extends Component {
             onClick={(event) => {
               this.props.dispatch(removeCurrCourse());
               this.forceUpdate();
+              message.success({
+                content: "Course Removed Successfully",
+                style: {
+                  marginTop: "5vh",
+                },
+              });
             }}
           >
             <FontAwesomeIcon className="" icon={faMinus} />
@@ -131,6 +150,12 @@ export class WikiSummary extends Component {
             size="large"
             onClick={(event) => {
               store.dispatch(addCurrCourseToWish());
+              message.success({
+                content: "Course Added To Wishlist",
+                style: {
+                  marginTop: "5vh",
+                },
+              });
             }}
             disabled={this.state.starButton}
           >
