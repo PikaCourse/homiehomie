@@ -151,7 +151,7 @@ class Dnd extends React.Component {
       zIndex: "10",
     };
 
-    if (isSelected) {
+    if (isSelected || event.id == this.state.selected.id) {
       newStyle.backgroundColor = currColor.strong;
       newStyle.color = "white";
       newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
