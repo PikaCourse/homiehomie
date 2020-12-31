@@ -10,7 +10,7 @@ import "../../../static/scss/calendar.scss";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
-import { addCustomEvent } from "../../actions/calendar";
+import { addCustomEvent, removeCustomEvent} from "../../actions/calendar";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
 import { colors, pcolors } from "./color.js";
@@ -25,6 +25,7 @@ class Dnd extends React.Component {
     this.state = {
       events: [],
       displayDragItemInCell: true,
+      selected: {}, 
     };
 
     this.moveEvent = this.moveEvent.bind(this);
@@ -36,6 +37,15 @@ class Dnd extends React.Component {
     calendar: PropTypes.array.isRequired,
     calendarCourseBag: PropTypes.array.isRequired,
   };
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.deleteKeyDown, false);
+  }
+  
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.deleteKeyDown, false);
+  }
+  
 
   handleDragStart = (event) => {
     this.setState({ draggedEvent: event });
@@ -141,7 +151,7 @@ class Dnd extends React.Component {
       zIndex: "10",
     };
 
-    if (isSelected) {
+    if (isSelected || event.id == this.state.selected.id) {
       newStyle.backgroundColor = currColor.strong;
       newStyle.color = "white";
       newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
@@ -157,6 +167,9 @@ class Dnd extends React.Component {
   };
 
   onSelect = (event, e) => {
+    this.setState({
+      selected: event
+    }); 
     if (event.type != "custom") {
       store.dispatch(
         setCourse({
@@ -164,6 +177,14 @@ class Dnd extends React.Component {
           selectedCourseArray: event.raw.selectedCourseArray,
         })
       );
+    }
+  }
+
+  deleteKeyDown = (e) => {
+    console.log('selected'); 
+    console.log(this.state.selected); 
+    if(e.keyCode === 8 && this.state.selected.type == 'custom') {
+      store.dispatch(removeCustomEvent(this.state.selected));     
     }
   }
 
@@ -217,6 +238,7 @@ class Dnd extends React.Component {
           }}
           eventPropGetter={this.eventStyleHandler}
           onSelectEvent={this.onSelect}
+          //onKeyDown={this.deleteKeyDown}
         />
       </div>
     );

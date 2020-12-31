@@ -6,6 +6,7 @@ import {
   CLEAR_PREVIEW_COURSE_IN_CAL,
   ADD_CUS_EVENT_IN_CAL,
   DO_NOTHING, 
+  REMOVE_CUS_EVENT_IN_CAL, 
 } from "./types";
 import store from "../store";
 
@@ -130,3 +131,14 @@ export const addCustomEvent = (inputEvent) => {
     event: inputEvent,
   };
 };
+
+export const removeCustomEvent = (inputEvent) => {
+  return {
+    type: REMOVE_CUS_EVENT_IN_CAL,
+    event: inputEvent,
+  };
+};
+
+// export const changeSelected = () => {
+
+// }
