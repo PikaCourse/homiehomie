@@ -143,7 +143,7 @@ class Dnd extends React.Component {
     let newStyle = {
       backgroundColor: currColor.weak,
       color: currColor.strong,
-      fontSize: "100%",
+      fontSize: "80%",
       borderRadius: "0px",
       border:
         event.type == "preview" ? "2px dashed " + currColor.strong : "none",
