@@ -32,11 +32,11 @@ class Dnd extends React.Component {
     this.newEvent = this.newEvent.bind(this);
   }
 
-  static propTypes = {
-    course: PropTypes.array.isRequired,
-    calendar: PropTypes.array.isRequired,
-    calendarCourseBag: PropTypes.array.isRequired,
-  };
+  // static propTypes = {
+  //   course: PropTypes.array.isRequired,
+  //   calendar: PropTypes.array.isRequired,
+  //   calendarCourseBag: PropTypes.array.isRequired,
+  // };
 
   componentDidMount() {
     document.addEventListener("keydown", this.deleteKeyDown, false);
@@ -181,7 +181,6 @@ class Dnd extends React.Component {
 
   pageClick = (e) => {
     // https://stackoverflow.com/questions/23821768/how-to-listen-for-click-events-that-are-outside-of-a-component
-    console.log("pageClick");
     this.setState({
       selected: {},
     });

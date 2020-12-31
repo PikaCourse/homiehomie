@@ -12,7 +12,12 @@ import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faPlus, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMinus,
+  faPlus,
+  faStar,
+  faSave,
+} from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 import { Switch, Select, Input, Button, Tooltip, message } from "antd";
 
@@ -62,26 +67,22 @@ export class WikiSummary extends Component {
   // }
 
   buttonLoader() {
-    const courseArray = store
-      .getState()
-      .calendar.calendarCourseBag.filter(
-        (item) => (item.raw.selectedCourseArray == this.props.selectedCourseArray) //&& (item.type != 'preview'))
-      );
+    const courseArray = store.getState().calendar.calendarCourseBag.filter(
+      (item) => item.raw.selectedCourseArray == this.props.selectedCourseArray //&& (item.type != 'preview'))
+    );
 
     let enableAdd = true;
     let enableRemove = true;
     let addButtonText = "Add Course";
-    console.log("courseArray"); 
-    console.log(courseArray); 
+    console.log("courseArray");
+    console.log(courseArray);
     if (!Array.isArray(courseArray) || !courseArray.length) {
       // course not in calendarbag
       enableRemove = false;
     } else {
-      const course = store
-        .getState()
-        .calendar.calendarCourseBag.filter(
-          (item) => (item.raw.crn == this.props.selectedCRN) //&& (item.type != 'preview')
-        );
+      const course = store.getState().calendar.calendarCourseBag.filter(
+        (item) => item.raw.crn == this.props.selectedCRN //&& (item.type != 'preview')
+      );
       // course in calendarbag
       if (!Array.isArray(course) || !course.length) {
         // course different crn
@@ -120,7 +121,11 @@ export class WikiSummary extends Component {
                   });
             }}
           >
-            <FontAwesomeIcon className="" icon={faPlus} />
+            {addButtonText != "Change CRN" ? (
+              <FontAwesomeIcon className="" icon={faPlus} />
+            ) : (
+              <FontAwesomeIcon className="" icon={faSave} />
+            )}
           </Button>
         </Tooltip>
         <Tooltip title="Remove">
@@ -172,17 +177,12 @@ export class WikiSummary extends Component {
   static propTypes = {
     selectedCourseArray: PropTypes.array.isRequired,
   };
-  componentDidUpdate(prevProps) {
-    // if (prevProps.selectedCRN !== this.props.selectedCRN)
-    // {
-    //     store.dispatch(updatePreviewCourse(this.state.previewSwitch));
-    // }
 
+  componentDidUpdate(prevProps) {
     if (
       prevProps.wishlistCourseBag !== this.props.wishlistCourseBag ||
       prevProps.selectedCRN !== this.props.selectedCRN
     ) {
-
       const curr = this.props.wishlistCourseBag.find(
         ({ crn }) => crn === store.getState().course.selectedCRN
       );
@@ -265,19 +265,6 @@ export class WikiSummary extends Component {
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 Capacity: {this.props.selectedCourse.capacity}
               </p>
-
-              {/* <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                            Location: {this.props.selectedCourseArray.find(
-                ({ crn }) => crn === this.props.selectedCRN
-              ).location}
-                        </p> */}
-              {/* <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                            Instructor: {this.props.selectedCourseArray.find(
-                ({ crn }) => crn === this.props.selectedCRN
-              ).professor}
-                        </p> */}
-
-              {/* ToDO: GPA & Modality */}
             </div>
             {this.buttonLoader()}
           </div>

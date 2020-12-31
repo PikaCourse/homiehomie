@@ -23,9 +23,9 @@ export class Header extends Component {
     };
   }
 
-  static propTypes = {
-    course: PropTypes.array.isRequired,
-  };
+  // static propTypes = {
+  //   course: PropTypes.array.isRequired,
+  // };
 
   handleInputChangeTwo({ target }) {
     this.setState({ inputVal: target.value });
