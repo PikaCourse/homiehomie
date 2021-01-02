@@ -7,9 +7,11 @@ version:     v1.0.0
 desc:        Local setting file used for testing
 """
 
-from settings.default import *
+from homiehomie.settings_d.default import *
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 DATABASES = {
     'default': {
