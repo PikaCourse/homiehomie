@@ -72,7 +72,7 @@ jobs:
         pip install -r requirements/dev.txt
     - name: Run Coverage and Unit test
       run: |
-        coverage run manage.py test --noinput --settings=settings.local
+        coverage run manage.py test --noinput --settings=settings.prod
       env:
         # Fake SECRET KEY used for run test only 
         HOMIE_HOMIE_DJANGO_SECRET_KEY: wtelrbj_4zy@(16_f0vvvxa85i4otovka)a)651ccxm7ng9tuv
