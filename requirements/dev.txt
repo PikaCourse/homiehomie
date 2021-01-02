@@ -2,4 +2,3 @@
 -r comm.txt
 
 psycopg2-binary==2.8.6
-django-extensions==3.1.0
