@@ -38,33 +38,19 @@ function weekdayToClass(index, timeArray) {
 export class WikiSummary extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      // previewSwitch: true,
       starButton: false,
     };
-
-    // this.previewInputChange = this.previewInputChange.bind(this);
   }
 
   animateButton(e) {
     e.preventDefault;
-    //reset animation
     e.target.classList.remove("animate");
-
     e.target.classList.add("animate");
     setTimeout(function () {
       e.target.classList.remove("animate");
     }, 700);
   }
-
-  // previewInputChange(checked) {
-  //   // console.log("checked: " + checked);
-  //   store.dispatch(previewCurrCourse(checked));
-  //   this.setState({
-  //     previewSwitch: checked,
-  //   });
-  // }
 
   buttonLoader() {
     const courseArray = store.getState().calendar.calendarCourseBag.filter(
@@ -201,8 +187,18 @@ export class WikiSummary extends Component {
               <Search
                 placeholder="Search subject, CRN or course name"
                 allowClear
-                enterButton="Search"
+                enterButton={
+                  <Button
+                    className="mx-1"
+                    type="ghost"
+                    size="large"
+                    // style={{ color: "#419EF4", borderColor: "#419EF4" }}
+                  >
+                    Search
+                  </Button>
+                }
                 size="large"
+                type="ghost"
                 onSearch={(value) => this.props.dispatch(getCourse(value))}
               />
             </div>
