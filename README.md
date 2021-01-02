@@ -123,12 +123,17 @@
 
 ### Run
     source venv/bin/activate
-    python manage.py runserver
+    # Use local db
+    python manage.py runserver --settings=settings.local
+    
+    # Use dev db
+    python manage.py runserver --settings=settings.local
+
     npm run dev
     
 ### Migrate Database
-    python manage.py makemigrations
-    python manage.py migrate
+    python manage.py makemigrations --settings=settings.local
+    python manage.py migrate --settings=settings.local
 
 ## API
 
