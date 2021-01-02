@@ -10,7 +10,7 @@ import "../../../static/scss/calendar.scss";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
-import { addCustomEvent, removeCustomEvent} from "../../actions/calendar";
+import { addCustomEvent, removeCustomEvent } from "../../actions/calendar";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
 import { colors, pcolors } from "./color.js";
@@ -25,27 +25,28 @@ class Dnd extends React.Component {
     this.state = {
       events: [],
       displayDragItemInCell: true,
-      selected: {}, 
+      selected: {},
     };
 
     this.moveEvent = this.moveEvent.bind(this);
     this.newEvent = this.newEvent.bind(this);
   }
 
-  static propTypes = {
-    course: PropTypes.array.isRequired,
-    calendar: PropTypes.array.isRequired,
-    calendarCourseBag: PropTypes.array.isRequired,
-  };
+  // static propTypes = {
+  //   course: PropTypes.array.isRequired,
+  //   calendar: PropTypes.array.isRequired,
+  //   calendarCourseBag: PropTypes.array.isRequired,
+  // };
 
   componentDidMount() {
-    document.addEventListener('keydown', this.deleteKeyDown, false);
+    document.addEventListener("keydown", this.deleteKeyDown, false);
+    document.addEventListener("mousedown", this.pageClick, false);
   }
-  
+
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.deleteKeyDown, false);
+    document.removeEventListener("keydown", this.deleteKeyDown, false);
+    document.removeEventListener("mousedown", this.pageClick, false);
   }
-  
 
   handleDragStart = (event) => {
     this.setState({ draggedEvent: event });
@@ -73,15 +74,6 @@ class Dnd extends React.Component {
 
   moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
     const { events } = this.state;
-
-    let allDay = event.allDay;
-
-    if (!event.allDay && droppedOnAllDaySlot) {
-      allDay = true;
-    } else if (event.allDay && !droppedOnAllDaySlot) {
-      allDay = false;
-    }
-
     const nextEvents = events.map((existingEvent) => {
       if (existingEvent.id == event.id) {
         existingEvent.start = start;
@@ -151,11 +143,12 @@ class Dnd extends React.Component {
       zIndex: "10",
     };
 
-    if (isSelected || event.id == this.state.selected.id) {
+    if (event.id == this.state.selected.id) {
       newStyle.backgroundColor = currColor.strong;
       newStyle.color = "white";
       newStyle.boxShadow = "6px 4px 30px " + currColor.weak;
-      newStyle.border = event.type == "preview" ? "2px dashed " + currColor.weak : "none";
+      newStyle.border =
+        event.type == "preview" ? "2px dashed " + currColor.weak : "none";
       newStyle.border =
         event.type == "preview" ? "2px dashed " + currColor.weak : "none";
     }
@@ -168,8 +161,8 @@ class Dnd extends React.Component {
 
   onSelect = (event, e) => {
     this.setState({
-      selected: event
-    }); 
+      selected: event,
+    });
     if (event.type != "custom") {
       store.dispatch(
         setCourse({
@@ -178,15 +171,20 @@ class Dnd extends React.Component {
         })
       );
     }
-  }
+  };
 
   deleteKeyDown = (e) => {
-    console.log('selected'); 
-    console.log(this.state.selected); 
-    if(e.keyCode === 8 && this.state.selected.type == 'custom') {
-      store.dispatch(removeCustomEvent(this.state.selected));     
+    if (e.keyCode === 8 && this.state.selected.type == "custom") {
+      store.dispatch(removeCustomEvent(this.state.selected));
     }
-  }
+  };
+
+  pageClick = (e) => {
+    // https://stackoverflow.com/questions/23821768/how-to-listen-for-click-events-that-are-outside-of-a-component
+    this.setState({
+      selected: {},
+    });
+  };
 
   render() {
     return (

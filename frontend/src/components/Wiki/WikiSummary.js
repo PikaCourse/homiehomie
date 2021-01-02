@@ -4,14 +4,20 @@ import PropTypes from "prop-types";
 import {
   addCurrCourse,
   removeCurrCourse,
-  previewCurrCourse,
+  // previewCurrCourse,
+  // updatePreviewCourse
 } from "../../actions/calendar";
 import { addCurrCourseToWish } from "../../actions/wishlist";
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMinus, faPlus, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMinus,
+  faPlus,
+  faStar,
+  faSave,
+} from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 import { Switch, Select, Input, Button, Tooltip, message } from "antd";
 
@@ -32,55 +38,37 @@ function weekdayToClass(index, timeArray) {
 export class WikiSummary extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      previewSwitch: true,
       starButton: false,
     };
-
-    this.previewInputChange = this.previewInputChange.bind(this);
   }
 
   animateButton(e) {
     e.preventDefault;
-    //reset animation
     e.target.classList.remove("animate");
-
     e.target.classList.add("animate");
     setTimeout(function () {
       e.target.classList.remove("animate");
     }, 700);
   }
 
-  previewInputChange(checked) {
-    // console.log("checked: " + checked);
-    store.dispatch(previewCurrCourse(checked));
-    this.setState({
-      previewSwitch: checked,
-    });
-  }
-
   buttonLoader() {
-    const courseArray = store
-      .getState()
-      .calendar.calendarCourseBag.filter(
-        (item) => ((item.raw.selectedCourseArray == this.props.selectedCourseArray) && (item.type != 'preview'))
-      );
+    const courseArray = store.getState().calendar.calendarCourseBag.filter(
+      (item) => item.raw.selectedCourseArray == this.props.selectedCourseArray //&& (item.type != 'preview'))
+    );
 
     let enableAdd = true;
     let enableRemove = true;
     let addButtonText = "Add Course";
-    console.log("courseArray"); 
-    console.log(courseArray); 
+    console.log("courseArray");
+    console.log(courseArray);
     if (!Array.isArray(courseArray) || !courseArray.length) {
       // course not in calendarbag
       enableRemove = false;
     } else {
-      const course = store
-        .getState()
-        .calendar.calendarCourseBag.filter(
-          (item) => (item.raw.crn == this.props.selectedCRN) //&& (item.type != 'preview')
-        );
+      const course = store.getState().calendar.calendarCourseBag.filter(
+        (item) => item.raw.crn == this.props.selectedCRN //&& (item.type != 'preview')
+      );
       // course in calendarbag
       if (!Array.isArray(course) || !course.length) {
         // course different crn
@@ -119,7 +107,11 @@ export class WikiSummary extends Component {
                   });
             }}
           >
-            <FontAwesomeIcon className="" icon={faPlus} />
+            {addButtonText != "Change CRN" ? (
+              <FontAwesomeIcon className="" icon={faPlus} />
+            ) : (
+              <FontAwesomeIcon className="" icon={faSave} />
+            )}
           </Button>
         </Tooltip>
         <Tooltip title="Remove">
@@ -163,7 +155,7 @@ export class WikiSummary extends Component {
           </Button>
         </Tooltip>
 
-        <Switch defaultChecked onChange={this.previewInputChange} />
+        {/* <Switch defaultChecked onChange={this.previewInputChange} /> */}
       </div>
     );
   }
@@ -171,14 +163,8 @@ export class WikiSummary extends Component {
   static propTypes = {
     selectedCourseArray: PropTypes.array.isRequired,
   };
+
   componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    // console.log("componentDidUpdate");
-
-    store.dispatch(previewCurrCourse(this.state.previewSwitch));
-
-    //console.log("previewSwitch: "+this.state.previewSwitch);
-
     if (
       prevProps.wishlistCourseBag !== this.props.wishlistCourseBag ||
       prevProps.selectedCRN !== this.props.selectedCRN
@@ -201,8 +187,18 @@ export class WikiSummary extends Component {
               <Search
                 placeholder="Search subject, CRN or course name"
                 allowClear
-                enterButton="Search"
+                enterButton={
+                  <Button
+                    className="mx-1"
+                    type="ghost"
+                    size="large"
+                    // style={{ color: "#419EF4", borderColor: "#419EF4" }}
+                  >
+                    Search
+                  </Button>
+                }
                 size="large"
+                type="ghost"
                 onSearch={(value) => this.props.dispatch(getCourse(value))}
               />
             </div>
@@ -265,19 +261,6 @@ export class WikiSummary extends Component {
               <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
                 Capacity: {this.props.selectedCourse.capacity}
               </p>
-
-              {/* <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                            Location: {this.props.selectedCourseArray.find(
-                ({ crn }) => crn === this.props.selectedCRN
-              ).location}
-                        </p> */}
-              {/* <p className="mb-0" style={{fontFamily: 'Montserrat'}}>
-                            Instructor: {this.props.selectedCourseArray.find(
-                ({ crn }) => crn === this.props.selectedCRN
-              ).professor}
-                        </p> */}
-
-              {/* ToDO: GPA & Modality */}
             </div>
             {this.buttonLoader()}
           </div>

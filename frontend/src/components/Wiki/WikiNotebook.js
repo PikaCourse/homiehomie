@@ -39,23 +39,21 @@ export class WikiNotebook extends Component {
     };
   }
 
-  static propTypes = {
-    course: PropTypes.array.isRequired,
-  };
-
   handleSaveClicked(nbObj) {
-    let notebookObj = {
-        course: this.props.selectedCourse.course_meta.id,
-        question: nbObj.question.id,
-        title: "whatever",
-        content: this.state.value,
-        tags: ["hi"],
-    }
+    let notebookObj = querystring.stringify({
+      course: this.props.selectedCourse.id,
+      question: nbObj.question.id,
+      title: "whatever",
+      content: this.state.value,
+      tags: JSON.stringify(["hi"]),
+    });
     store.dispatch(addQuestion(nbObj, notebookObj));
-    console.log("now the notebad is:");
-    console.log(this.props.noteBag);
     axios
-      .post("api/notes", notebookObj)
+      .post("api/notes", notebookObj, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      })
       .then((result) => {});
   }
 
@@ -81,7 +79,7 @@ export class WikiNotebook extends Component {
       .then((res) => {
         axios
           .post("api/notes", {
-            course: this.props.selectedCourse.course_meta.id,
+            course: this.props.selectedCourse.id,
             question: res.data.question,
             title: "whatever",
             content: values.note,

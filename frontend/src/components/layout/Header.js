@@ -22,20 +22,12 @@ export class Header extends Component {
       courseIndex: 0,
     };
   }
-
-  static propTypes = {
-    course: PropTypes.array.isRequired,
-  };
-
   handleInputChangeTwo({ target }) {
     this.setState({ inputVal: target.value });
   }
 
   handleSearchClickedTwo() {
-
     this.props.dispatch(getCourse(this.state.inputVal));
-    // this.props.dispatch(getQuestion(store.getState().course.selectedCourse.course_meta.id)
-    // );
   }
   render() {
     return (
@@ -43,24 +35,6 @@ export class Header extends Component {
         <a className="navbar-brand mx-auto" href="#" style={selectedStyle}>
           Scheduler Beta
         </a>
-        {/*<form className="form-inline my-2 my-lg-0 w-75" />
-        <input
-          className="form-control mr-sm-2"
-          type="search"
-          placeholder="Search subject, CRN or course name"
-          aria-label="Search"
-          style={{ borderRadius: "30px" }}
-          onChange={(e) => this.handleInputChangeTwo(e)}
-        />
-        <button
-          className="btn btn-outline-primary my-2 my-sm-0"
-          style={{ borderRadius: "30px" }}
-          type="submit"
-          onClick={() => this.handleSearchClickedTwo()}
-        >
-          Search
-        </button>
-    */}
       </nav>
     );
   }
