@@ -34,7 +34,7 @@ class CourseMeta(models.Model):
     college = models.CharField(max_length=100, null=True, blank=True)
     title = models.CharField(max_length=300, default="")
     name = models.CharField(max_length=300, default="")
-    credit_hours = models.IntegerField(default=0)
+    credit_hours = models.IntegerField(default=0, null=True)
     school = models.CharField(max_length=100)
     description = models.CharField(max_length=2048, default="empty course description", blank=True, null=True)
     tags = models.JSONField(default=list, blank=True, null=True)
