@@ -103,11 +103,23 @@
     python -m pip install --user virtualenv
     python -m virtualenv --help
     virtualenv -p python3 venv
+    
+### Additional packages (for production only)
 
+#### Ubuntu
+
+    sudo apt install libpq-dev
+    
 ### Setup
     source venv/bin/activate
-    pip install -r requirements.txt
     npm install
+    
+    # If in test env
+    pip install -r requirements/dev.txt
+    
+    # If in prod env
+    pip install -r requirements.txt
+
 
 ### Run
     source venv/bin/activate

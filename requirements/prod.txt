@@ -1,0 +1,5 @@
+# Shared requirements
+-r comm.txt
+
+psycopg2==2.8.6
+gunicorn==20.0.4
