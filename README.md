@@ -124,16 +124,16 @@
 ### Run
     source venv/bin/activate
     # Use local db
-    python manage.py runserver --settings=settings.local
+    python manage.py runserver --settings=homiehomie.settings_d.local
     
     # Use dev db
-    python manage.py runserver --settings=settings.local
+    python manage.py runserver --settings=homiehomie.settings_d.dev
 
     npm run dev
     
 ### Migrate Database
-    python manage.py makemigrations --settings=settings.local
-    python manage.py migrate --settings=settings.local
+    python manage.py makemigrations --settings=homiehomie.settings_d.local
+    python manage.py migrate --settings=homiehomie.settings_d.local
 
 ## API
 
