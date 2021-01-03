@@ -78,12 +78,16 @@ export class WikiNotebook extends Component {
       )
       .then((res) => {
         axios
-          .post("api/notes", {
+          .post("api/notes", querystring.stringify({
             course: this.props.selectedCourse.id,
             question: res.data.question,
             title: "whatever",
             content: values.note,
             tags: JSON.stringify(["hi"]),
+          }), {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
           })
           .then((result) => {
             result.data.code == "success"
