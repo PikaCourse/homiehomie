@@ -92,14 +92,14 @@ class Course(models.Model):
     crn = models.CharField(max_length=50, default="", null=True)
     time = models.JSONField(default=list, blank=True, null=True)
     section = models.CharField(max_length=50, null=True)
-    type = models.CharField(max_length=10, default="lecture")
+    type = models.CharField(max_length=10, default="lecture", null=True)
     professor = models.CharField(max_length=100, default="", null=True, blank=True)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
     semester = models.CharField(max_length=20, null=True, blank=True)
     location = models.CharField(max_length=100, blank=True, null=True)
-    registered = models.IntegerField(default=-1)
+    registered = models.IntegerField(default=-1, null=True)
     capacity = models.IntegerField(default=-1, null=True, blank=True)
-    openseat = models.IntegerField(default=-1)
+    openseat = models.IntegerField(default=-1, null=True)
 
     def __str__(self):
         return "_".join([str(self.year), str(self.semester), str(self.course_meta)])
