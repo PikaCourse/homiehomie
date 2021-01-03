@@ -4,49 +4,44 @@ import { getCourse } from "../../actions/course";
 import { connect } from "react-redux";
 import store from "../../store";
 import { getQuestion } from "../../actions/question";
+import { Button } from "antd";
+import { useAuth0 } from "@auth0/auth0-react";
 
-import Navbar from "react-bootstrap/Navbar";
-import Nav from "react-bootstrap/Nav";
+function Header() {
+  const {
+    loginWithRedirect,
+    user,
+    isAuthenticated,
+    isLoading,
+    logout,
+  } = useAuth0();
+  const loginButton = isLoading ? (
+    <div>Loading ...</div>
+  ) : isAuthenticated ? (
+    <Button onClick={() => logout({ returnTo: window.location.origin })}>
+      Log Out
+    </Button>
+  ) : (
+    <Button onClick={() => loginWithRedirect()}>Log In</Button>
+  );
 
-import NavDropdown from "react-bootstrap/NavDropdown";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import FormControl from "react-bootstrap/FormControl";
-
-export class Header extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      inputVal: "",
-      courseIndex: 0,
-    };
-  }
-  handleInputChangeTwo({ target }) {
-    this.setState({ inputVal: target.value });
-  }
-
-  handleSearchClickedTwo() {
-    this.props.dispatch(getCourse(this.state.inputVal));
-  }
-  render() {
-    return (
-      <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
-        <a className="navbar-brand mx-auto" href="#" style={selectedStyle}>
+  return (
+    <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
+      <div className="container-fluid">
+        <a className="navbar-brand mx-4" href="#" style={selectedStyle}>
           Scheduler Beta
         </a>
-      </nav>
-    );
-  }
+        {isAuthenticated ? <span>Hi, {user.name}</span> : null}
+        {loginButton}
+      </div>
+    </nav>
+  );
 }
-const mapStateToProps = (state) => ({
-  course: state.course.course,
-});
 
 const selectedStyle = {
-  textShadow: "0px 4px 10px rgba(89, 108, 126, 0.35)",
+  // textShadow: "0px 4px 10px rgba(89, 108, 126, 0.35)",
   color: "#596C7E",
   fontWeight: "800",
   fontSize: "1.5rem",
 };
-export default connect(mapStateToProps)(Header);
+export default Header;
