@@ -2,13 +2,9 @@ import {
   ADD_COURSE_TO_CAL,
   REMOVE_COURSE_FROM_CAL,
   UPDATE_COURSE_IN_CAL,
-  //PREVIEW_COURSE_IN_CAL,
-  //CLEAR_PREVIEW_COURSE_IN_CAL,
   ADD_CUS_EVENT_IN_CAL,
   DO_NOTHING,
   REMOVE_CUS_EVENT_IN_CAL,
-  //UPDATE_PREVIEW,
-  //CLEAR_PREVIEW
 } from './types'
 import store from '../store'
 
@@ -40,19 +36,6 @@ export const addCurrCourse = () => {
   }
 }
 
-// export const updatePreviewCourse = (previewIsOn) => {
-//   if (previewIsOn)
-//     return {
-//       type: UPDATE_PREVIEW,
-//       selectedCRN: store.getState().course.selectedCRN,
-//       selectedCourse: store.getState().course.selectedCourse,
-//       selectedCourseArray: store.getState().course.selectedCourseArray,
-//     }
-//   else
-//     return {
-//       type: CLEAR_PREVIEW
-//     }
-// }
 
 export const addSelectCourse = (crnPara, selectedCourseArrayPara) => {
   const courseArray = store
@@ -60,7 +43,6 @@ export const addSelectCourse = (crnPara, selectedCourseArrayPara) => {
     .calendar.calendarCourseBag.filter(
       (item) =>
         item.raw.selectedCourseArray == selectedCourseArrayPara //||
-        //item.type == 'preview',
     )
 
   const selectedCoursePara = selectedCourseArrayPara.find(
