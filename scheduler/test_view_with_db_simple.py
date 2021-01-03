@@ -385,7 +385,7 @@ class CourseViewSetTests(APITestCase):
         :return:
         """
         url = reverse("api:courses-list")
-        fields = ["id", "crn", "time", "capacity", "registered",
+        fields = ["id", "crn", "time", "capacity", "registered", "openseat",
                   "type", "professor", "year", "semester",
                   "location", "course_meta"]
         response = self.client.get(url)
@@ -648,7 +648,7 @@ class CourseViewSetTests(APITestCase):
         """
         path_params = {"pk": 1}
         url = reverse("api:courses-detail", kwargs=path_params)
-        fields = ["id", "crn", "time", "capacity", "registered",
+        fields = ["id", "crn", "time", "capacity", "registered", "openseat",
                   "type", "professor", "year", "semester",
                   "location", "course_meta"]
 
