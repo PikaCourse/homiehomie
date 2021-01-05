@@ -13,8 +13,6 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 DEBUG = True
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
