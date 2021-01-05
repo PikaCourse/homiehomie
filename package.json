@@ -2,7 +2,8 @@
     "name": "homiehomie",
     "version": "1.0.0",
     "engines": {
-        "node": "14.x"
+        "node": "14.x",
+        "npm": "7.x"
     },
     "description": "source venv/bin/activate python manage.py runserver",
     "main": "index.js",
