@@ -162,7 +162,7 @@ class Note(models.Model):
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, null=True, default=None)
     content = models.TextField(blank=True)    # In markdown
     tags = models.JSONField(default=list)
 
