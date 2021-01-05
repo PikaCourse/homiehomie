@@ -35,7 +35,7 @@ class Dnd extends React.Component {
   static propTypes = {
     course: PropTypes.array.isRequired,
     calendar: PropTypes.array.isRequired,
-    calendarCourseBag: PropTypes.array.isRequired,
+    //calendarCourseBag: PropTypes.array.isRequired,
   };
 
   componentDidMount() {
@@ -217,7 +217,7 @@ class Dnd extends React.Component {
           style={{ height: "80vh" }}
           selectable
           localizer={mlocalizer}
-          events={this.props.calendarCourseBag} //data input
+          events={store.getState().calendar.calendarCourseBag} //data input
           onEventDrop={this.moveEvent}
           resizable={true}
           onEventResize={this.resizeEvent}

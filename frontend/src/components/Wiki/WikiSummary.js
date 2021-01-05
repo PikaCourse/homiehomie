@@ -4,10 +4,11 @@ import PropTypes from "prop-types";
 import {
   addCurrCourse,
   removeCurrCourse,
+  addCurrCourseToWish,
   // previewCurrCourse,
   // updatePreviewCourse
 } from "../../actions/calendar";
-import { addCurrCourseToWish } from "../../actions/wishlist";
+// import {  } from "../../actions/wishlist";
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
@@ -61,7 +62,7 @@ export class WikiSummary extends Component {
   //   });
   // }
 
-  buttonLoader() {
+  buttonLoader() { 
     const courseArray = store
       .getState()
       .calendar.calendarCourseBag.filter(
@@ -179,11 +180,11 @@ export class WikiSummary extends Component {
     // }
 
     if (
-      prevProps.wishlistCourseBag !== this.props.wishlistCourseBag ||
+      prevProps.pendingCourseBag !== this.props.pendingCourseBag ||
       prevProps.selectedCRN !== this.props.selectedCRN
     ) {
 
-      const curr = this.props.wishlistCourseBag.find(
+      const curr = this.props.pendingCourseBag.find(
         ({ crn }) => crn === store.getState().course.selectedCRN
       );
       this.setState({ starButton: curr != null });
@@ -293,7 +294,8 @@ const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCRN: state.course.selectedCRN,
   selectedCourse: state.course.selectedCourse,
-  wishlistCourseBag: state.wishlist.wishlistCourseBag,
+  calendarCourseBag: state.calendar.calendarCourseBag, 
+  pendingCourseBag: state.calendar.pendingCourseBag,
 });
 
 export default connect(mapStateToProps)(WikiSummary);

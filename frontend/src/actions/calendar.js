@@ -7,6 +7,8 @@ import {
   ADD_CUS_EVENT_IN_CAL,
   DO_NOTHING,
   REMOVE_CUS_EVENT_IN_CAL,
+  ADD_COURSE_TO_WISH,
+  REMOVE_COURSE_FROM_WISH,
   //UPDATE_PREVIEW,
   //CLEAR_PREVIEW
 } from './types'
@@ -18,8 +20,8 @@ export const addCurrCourse = () => {
     .getState()
     .calendar.calendarCourseBag.filter(
       (item) =>
-        item.raw.selectedCourseArray ==
-        store.getState().course.selectedCourseArray,
+      item.raw.selectedCourseArray ==
+      store.getState().course.selectedCourseArray,
     )
   if (!Array.isArray(courseArray) || !courseArray.length) {
     return {
@@ -59,12 +61,14 @@ export const addSelectCourse = (crnPara, selectedCourseArrayPara) => {
     .getState()
     .calendar.calendarCourseBag.filter(
       (item) =>
-        item.raw.selectedCourseArray == selectedCourseArrayPara //||
-        //item.type == 'preview',
+      item.raw.selectedCourseArray == selectedCourseArrayPara //||
+      //item.type == 'preview',
     )
 
   const selectedCoursePara = selectedCourseArrayPara.find(
-    ({ crn }) => crn === crnPara,
+    ({
+      crn
+    }) => crn === crnPara,
   )
 
   if (!Array.isArray(courseArray) || !courseArray.length) {
@@ -141,6 +145,26 @@ export const removeCustomEvent = (inputEvent) => {
     type: REMOVE_CUS_EVENT_IN_CAL,
     event: inputEvent,
   }
+}
+
+export const addCurrCourseToWish = () => {
+  return {
+    type: ADD_COURSE_TO_WISH,
+    selectedCRN: store.getState().course.selectedCRN,
+    selectedCourseArray: store.getState().course.selectedCourseArray,
+  };
+
+}
+
+export const removeCurrCourseFromWish = (idPara) => {
+
+  return {
+    type: REMOVE_COURSE_FROM_WISH,
+    selectedCRN: store.getState().course.selectedCRN,
+    selectedCourseArray: store.getState().course.selectedCourseArray,
+    id: idPara,
+  };
+
 }
 
 // export const changeSelected = () => {
