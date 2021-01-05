@@ -11,6 +11,8 @@ from homiehomie.settings_d.default import *
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
+DEBUG = True
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 DATABASES = {
