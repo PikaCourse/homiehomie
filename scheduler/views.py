@@ -169,9 +169,9 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if sortby is not None:
             if sortby not in self.supported_sortby_options:
                 raise InvalidQueryValue()
-            queryset = queryset.order_by(("-" if descending else "") + sortby, "last_answered")
+            queryset = queryset.order_by(("-" if descending else "") + sortby, "-last_answered")
         else:
-            queryset = queryset.order_by(("-" if descending else "") + "like_count", "last_answered")
+            queryset = queryset.order_by(("-" if descending else "") + "like_count", "-last_answered")
         # Also sub order by created time, the newest is at top
         if limit is not None:
             try:
@@ -273,9 +273,9 @@ class NoteViewSet(viewsets.ModelViewSet):
         if sortby is not None:
             if sortby not in self.supported_sortby_options:
                 raise InvalidQueryValue()
-            queryset = queryset.order_by(("-" if descending else "") + sortby, "last_edited")
+            queryset = queryset.order_by(("-" if descending else "") + sortby, "-last_edited")
         else:
-            queryset = queryset.order_by(("-" if descending else "") + "like_count", "last_edited")
+            queryset = queryset.order_by(("-" if descending else "") + "like_count", "-last_edited")
         if limit is not None:
             try:
                 limit = int(limit)
