@@ -123,13 +123,18 @@
 
 ### Run
     source venv/bin/activate
-    # Use local db
+    # Development Use local db
     python manage.py runserver --settings=homiehomie.settings_d.local
+    
+    # Use remote db
+    python manage.py runserver --settings=homiehomie.settings_d.remote
     
     # Use Production server and local setting
     DJANGO_SETTINGS_MODULE=homiehomie.settings_d.local gunicorn homiehomie.wsgi:application
     
     # Use dev db
+    # Run collectstatic since the dev setting use whitenoise to serve files
+    python manage.py collectstatic --noinput
     python manage.py runserver --settings=homiehomie.settings_d.dev
 
     npm run dev
