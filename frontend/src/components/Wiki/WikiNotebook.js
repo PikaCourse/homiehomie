@@ -12,7 +12,7 @@ import store from "../../store";
 import axios from "axios";
 import { getQuestion, addQuestion } from "../../actions/question.js";
 
-import { Button, Input, Card, Form, Checkbox, message } from "antd";
+import { Button, Input, Card, Form, Checkbox, message, resetFields } from "antd";
 
 const { TextArea } = Input;
 const querystring = require("querystring");
@@ -40,16 +40,22 @@ export class WikiNotebook extends Component {
   }
 
   handleSaveClicked(nbObj) {
-    let notebookObj = querystring.stringify({
+    let notebookObj = {
       course: this.props.selectedCourse.id,
       question: nbObj.question.id,
       title: "whatever",
       content: this.state.value,
       tags: JSON.stringify(["hi"]),
-    });
+    };
     store.dispatch(addQuestion(nbObj, notebookObj));
     axios
-      .post("api/notes", notebookObj, {
+      .post("api/notes", querystring.stringify({
+        course: this.props.selectedCourse.id,
+        question: nbObj.question.id,
+        title: "whatever",
+        content: this.state.value,
+        tags: JSON.stringify(["hi"]),
+      }), {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
@@ -131,6 +137,7 @@ export class WikiNotebook extends Component {
         >
           NoteBook
         </h1>
+        {/* first qu */}
 
         <div>
           <div onClick={() => this.setState({ addNewCard: true })}>
