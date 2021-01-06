@@ -126,6 +126,9 @@
     # Use local db
     python manage.py runserver --settings=homiehomie.settings_d.local
     
+    # Use Production server and local setting
+    DJANGO_SETTINGS_MODULE=homiehomie.settings_d.local gunicorn homiehomie.wsgi:application
+    
     # Use dev db
     python manage.py runserver --settings=homiehomie.settings_d.dev
 
