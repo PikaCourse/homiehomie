@@ -116,28 +116,14 @@ function Header() {
           I have read the <a href="">agreement</a>
         </Checkbox>
       </Form.Item></>; 
-  const loginFooter = [
-    // <Button key="back" onClick={handleCancel}>
-    //   Return
-    // </Button>,
-    // <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-    //   Submit
-    // </Button>,
-    <div> <Button type="primary" htmlType="submit" className="login-form-button" key="submit" loading={loading} onClick={handleOk}>
+  const loginFooter = 
+    <Form.Item> <Button type="primary" htmlType="submit" className="login-form-button" key="submit" loading={loading} >
     Log in
-    </Button> or <a href="#" onClick={(e) => {e.preventDefault();setLogin(false);}}>register now!</a></div>, 
-  ]; 
-  const signupFooter = [
-    // <Button key="back" onClick={handleCancel}>
-    //   Return
-    // </Button>,
-    // <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
-    //   Submit
-    // </Button>,
-    <div> <Button type="primary" htmlType="submit" className="login-form-button" key="submit" loading={loading} onClick={handleOk}>
+    </Button> or <a href="#" onClick={(e) => {e.preventDefault();setLogin(false);}}>register now!</a></Form.Item>; 
+  const signupFooter = 
+    <Form.Item> <Button type="primary" htmlType="submit" className="login-form-button" key="submit" loading={loading} >
     Sign Up
-    </Button> Already have an account? <a href="#" onClick={(e) => {e.preventDefault();setLogin(true);}}>login in</a> here</div>, 
-  ]; 
+    </Button> Already have an account? <a href="#" onClick={(e) => {e.preventDefault();setLogin(true);}}>login in</a> here</Form.Item>; 
   const tailFormItemLayout = {
     wrapperCol: {
       xs: {
@@ -155,7 +141,7 @@ function Header() {
     setVisible(true); 
   };
 
-  function handleOk() {
+  function handleOk(values) {
     setLoading(true); 
     setTimeout(() => {
       setVisible(false); 
@@ -189,16 +175,16 @@ function Header() {
         title="Title"
         onOk={handleOk}
         onCancel={handleCancel}
-        footer={login? loginFooter : signupFooter}
+        footer = {null}
       >
-        <p>Some contents...</p>
         <Form
           name="normal_login"
           className="login-form"
           initialValues={{
             remember: true,
           }}
-          onFinish={onFinish}
+          onFinish={handleOk}
+          // onFinishFailed={}
         >
         <Form.Item label="">
             <Radio.Group onChange={onFormTypeChange} value={login?"login":"signup"}>
@@ -207,13 +193,7 @@ function Header() {
             </Radio.Group>
           </Form.Item>
           {login?loginForm:signupForm}
-
-        {/* <Form.Item>
-          <Button type="primary" htmlType="submit" className="login-form-button" key="submit" loading={loading} onClick={handleOk}>
-            Log in
-          </Button>
-          Or <a href="">register now!</a>
-        </Form.Item> */}
+          {login?loginFooter:signupFooter}
       </Form>
       </Modal>
     </div>
