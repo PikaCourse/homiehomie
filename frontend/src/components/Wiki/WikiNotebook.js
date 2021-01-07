@@ -127,10 +127,11 @@ export class WikiNotebook extends Component {
                 });
             this.forceUpdate();
           });
-          console.log("res = ");
-          console.log(res.data.question);
+          //console.log("res = ");
+          //console.log(res.data.question);
+          //console.log(this.props.noteBag.length);
           let queObj = {
-            id: -1,
+            id: this.props.noteBag.length,
             question: {
               id: res.data.question,
               course_meta: this.props.selectedCourse.course_meta.id,
@@ -148,6 +149,7 @@ export class WikiNotebook extends Component {
           //console.log(queObj);
           store.dispatch(addOBJ(queObj));
       });
+      this.setState({ addNewCard: false });
   };
 
   addNewQueInput = () => {
@@ -277,7 +279,7 @@ export class WikiNotebook extends Component {
               </Card>
             ) : null
           }
-
+          
           {/* Question */}
           {this.props.noteBag.map((nbObj) => (
             <Card
