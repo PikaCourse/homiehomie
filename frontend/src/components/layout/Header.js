@@ -15,7 +15,8 @@ function Header() {
 
   const [loading, setLoading] = useState(false); 
   const [visible, setVisible] = useState(false); 
-  const [login, setLogin] = useState(true); 
+  const [login, setLogin] = useState(true);  //if user is in login tab 
+  const [error, setError] = useState(""); 
 
   const loginForm = <><Form.Item
       name="username"
@@ -142,6 +143,12 @@ function Header() {
       },
     },
   };
+  const errorMessage = <Form.Item
+        name="error message"
+        hidden={error==""?true:false}
+      >
+        {error}
+      </Form.Item>; 
 
   function getCookie(name) {
     var cookieValue = null;
@@ -163,10 +170,10 @@ function Header() {
     setVisible(true); 
   };
 
-  function handleOk() {
+  function handleOk(successful) {
     setLoading(true); 
     setTimeout(() => {
-      setVisible(false); 
+      if (successful) setVisible(false); 
       setLoading(false); 
      }, 1000);
   };
@@ -192,13 +199,18 @@ function Header() {
         switch(result.status) {
           case 200:
             console.log("Successfully login user"); 
-            handleOk(); 
+            setError(""); 
+            handleOk(true); 
             break;
           case 401:
             console.log("Error due to invalid password or username"); 
+            setError("Incorrect username or password."); 
+            handleOk(false); 
             break;
           default:
             console.log("login error due to others"); 
+            setError("Sorry, we cannot complete your request at this time due to unknown error, please try later."); 
+            handleOk(false); 
         }
 
       });
@@ -227,12 +239,18 @@ function Header() {
         switch(result.status) {
           case 200:
             console.log("Successfully register user"); 
+            setError(""); 
+            handleOk(true); 
             break;
           case 401:
             console.log("Error due to failed registration constraint"); 
+            setError("Sorry, we cannot complete your request at this time due to failed registration constraint, please try again."); 
+            handleOk(false); 
             break;
           default:
             console.log("register error due to others"); 
+            setError("Sorry, we cannot complete your request at this time due to unknown error, please try again."); 
+            handleOk(false); 
         }
 
       });
@@ -280,6 +298,12 @@ function Header() {
               <Radio.Button value="login">Login</Radio.Button>
               <Radio.Button value="signup">Sign Up</Radio.Button>
             </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            name="error message"
+            hidden={error==""?true:false}
+          >
+            {error}
           </Form.Item>
           {login?loginForm:signupForm}
           {login?loginFooter:signupFooter}
