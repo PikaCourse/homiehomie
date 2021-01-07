@@ -422,7 +422,8 @@ class PostViewSet(viewsets.ModelViewSet):
         f = PostModificationForm(post, instance=old_post)
         if f.is_valid():
             post = f.save()
-            error_pack = {"errcode": 0, "errmsg": "successfully updated post", "post": post.id}
+            error_pack = {"code": "success", "detail": "successfully updated post",
+                          "post": post.id, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
         raise InvalidForm()
 
@@ -488,7 +489,8 @@ class PostViewSet(viewsets.ModelViewSet):
             f = PostAnswerCreationForm(answer, request=request, post=post)
             if f.is_valid():
                 answer = f.save(debug=True)
-                error_pack = {"errcode": 0, "errmsg": "successfully created post answer", "answer": answer.id}
+                error_pack = {"code": "success", "detail": "successfully created post answer",
+                              "post": post.id, "answer": answer.id, "status": status.HTTP_201_CREATED}
                 return Response(error_pack, status=status.HTTP_201_CREATED)
         except Post.DoesNotExist:
             # Invalid post id path
@@ -522,7 +524,8 @@ class PostViewSet(viewsets.ModelViewSet):
                 post = Post.objects.get(id=pk)
                 post.last_answered = answer.last_edited
                 post.save()
-                error_pack = {"errcode": 0, "errmsg": "successfully modified post answer", "answer": answer.id}
+                error_pack = {"code": "success", "detail": "successfully modified post answer",
+                              "post": post.id, "answer": answer.id, "status": status.HTTP_200_OK}
                 return Response(error_pack, status=status.HTTP_200_OK)
 
         except Post.DoesNotExist:
