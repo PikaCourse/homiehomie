@@ -153,6 +153,7 @@ STATIC_URL = '/static/'
 
 # Default redirect to index page
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # Test fixtures
 FIXTURE_DIRS = ['test_fixtures']

@@ -9,8 +9,10 @@ desc:        User api for Course Wiki
 
 from user.models import Student
 from user.serializers import *
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, resolve_url
+from django.conf import settings
 from django.contrib.auth import login as auth_login
+from django.contrib.auth import logout as auth_logout
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.csrf import ensure_csrf_cookie, requires_csrf_token, csrf_protect
 from django.views.decorators.cache import never_cache
@@ -80,17 +82,20 @@ class UserViewSet(mixins.RetrieveModelMixin,
             raise ValidationError("invalid username or password combination",
                                   code="invalid_login")
 
-    @action(detail=False, methods=["get"])
+    @action(detail=False, methods=["get", "post"])
     @method_decorator(never_cache)
     def logout(self, request, *args, **kwargs):
         """
-        Log a user out regardless of login status
+        Log a user out regardless of login status and redirect
+        to LOGOUT_REDIRECT_URL specified in settings.py file
         :param request:
         :param args:
         :param kwargs:
         :return:
         """
-        pass
+        auth_logout(request)
+        next_page = resolve_url(settings.LOGOUT_REDIRECT_URL)
+        return redirect(next_page)
 
     @action(detail=False, methods=["post"])
     def register(self, request, *args, **kwargs):
