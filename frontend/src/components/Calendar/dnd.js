@@ -193,10 +193,10 @@ class Dnd extends React.Component {
     return (
       <div
         className="p-4 mt-4"
-        style={{ backgroundColor: "#ffffff", borderRadius: "1.5rem" }}
+        style={{ backgroundColor: "#ffffff", borderRadius: "1.5rem",overflowY: "auto", height: "80vh" }}
       >
         <DragAndDropCalendar
-          formats={{ timeGutterFormat: 'h tt' }}
+          formats={{ timeGutterFormat: 'hh:mm' }}
           min={
             new Date(
               today.getFullYear(),
@@ -219,7 +219,6 @@ class Dnd extends React.Component {
           }
           showMultiDayTimes={false}
           formats={formats}
-          style={{ height: "80vh" }}
           selectable
           localizer={mlocalizer}
           events={this.props.calendarCourseBag} //data input
