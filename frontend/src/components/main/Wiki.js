@@ -17,7 +17,7 @@ export class Wiki extends Component {
           className="px-1 mt-4"
           style={{
             overflowY: "auto",
-            height: "80vh",
+            height: "82vh",
             borderBottomRightRadius: "20px",
             borderBottomLeftRadius: "20px",
           }}
