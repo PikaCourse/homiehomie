@@ -12,7 +12,15 @@ import store from "../../store";
 import axios from "axios";
 import { getQuestion, addQuestion } from "../../actions/question.js";
 
-import { Button, Input, Card, Form, Checkbox, message, resetFields } from "antd";
+import {
+  Button,
+  Input,
+  Card,
+  Form,
+  Checkbox,
+  message,
+  resetFields,
+} from "antd";
 
 const { TextArea } = Input;
 const querystring = require("querystring");
@@ -49,17 +57,21 @@ export class WikiNotebook extends Component {
     };
     store.dispatch(addQuestion(nbObj, notebookObj));
     axios
-      .post("api/notes", querystring.stringify({
-        course: this.props.selectedCourse.id,
-        question: nbObj.question.id,
-        title: "whatever",
-        content: this.state.value,
-        tags: JSON.stringify(["hi"]),
-      }), {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      })
+      .post(
+        "api/notes",
+        querystring.stringify({
+          course: this.props.selectedCourse.id,
+          question: nbObj.question.id,
+          title: "whatever",
+          content: this.state.value,
+          tags: JSON.stringify(["hi"]),
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      )
       .then((result) => {});
   }
 
@@ -94,17 +106,21 @@ export class WikiNotebook extends Component {
       )
       .then((res) => {
         axios
-          .post("api/notes", querystring.stringify({
-            course: this.props.selectedCourse.id,
-            question: res.data.question,
-            title: "whatever",
-            content: values.note,
-            tags: JSON.stringify(["hi"]),
-          }), {
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-          })
+          .post(
+            "api/notes",
+            querystring.stringify({
+              course: this.props.selectedCourse.id,
+              question: res.data.question,
+              title: "whatever",
+              content: values.note,
+              tags: JSON.stringify(["hi"]),
+            }),
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            }
+          )
           .then((result) => {
             result.data.code == "success"
               ? message.success({
@@ -138,23 +154,25 @@ export class WikiNotebook extends Component {
   }
 
   render() {
-    const { value } = this.state;
     return (
-      <div className="p-3" style={noteBookStyle}>
-        <h1
-          className="mr-2 align-middle"
-          style={{ color: "#419EF4", display: "inline" }}
-        >
-          NoteBook
-        </h1>
+      <div className="" style={noteBookStyle}>
+        <div className="text-center">
+          <h1
+            className="divider my-3"
+            style={{ color: "#419EF4", fontSize: "1.5rem" }}
+          >
+            WikiNotes
+          </h1>
+        </div>
+
         {/* first qu */}
 
         <div>
           <div onClick={() => this.setState({ addNewCard: true })}>
             <Card
+              bordered={false}
               hoverable
               title=""
-              bordered={true}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
             >
@@ -176,10 +194,14 @@ export class WikiNotebook extends Component {
             this.state.addNewCard ? (
               <Card
                 hoverable
+                bordered={false}
                 title=""
-                bordered={true}
                 className="my-2"
-                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                style={{
+                  fontFamily: "Montserrat",
+                  color: "#596C7E",
+                  border: "none",
+                }}
               >
                 <Button
                   type="ghost"
@@ -251,7 +273,7 @@ export class WikiNotebook extends Component {
             <Card
               hoverable
               title={nbObj.question.title}
-              bordered={true}
+              bordered={false}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
               key={nbObj.id}
@@ -299,10 +321,10 @@ export class WikiNotebook extends Component {
 }
 
 const noteBookStyle = {
-  background: "#FFFFFF",
+  // background: "#FFFFFF",
   // border: "5px solid rgba(65, 158, 244, 0.27)",
   boxSizing: "border-box",
-  borderRadius: "2rem",
+  borderRadius: "1.5rem",
 };
 const mapStateToProps = (state) => ({
   selectedCourse: state.course.selectedCourse,
