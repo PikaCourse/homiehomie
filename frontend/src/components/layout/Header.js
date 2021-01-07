@@ -8,7 +8,6 @@ const querystring = require("querystring");
 // import ensure_csrf_cookie from django.views.decorators.csrf 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-import CSRFToken from '../user/csrftoken';
 
 
 function Header() {
