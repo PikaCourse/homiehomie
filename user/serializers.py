@@ -110,12 +110,36 @@ class UserLoginSerializer(serializers.Serializer):
                                    code="invalid_login")
 
 
-class UserRegisterSerializer(serializers.Serializer):
+class UserRegisterSerializer(serializers.ModelSerializer):
     """
     Serializer to validate register information
     """
 
-    # 150 max character length as by django auth user model
-    username = serializers.CharField(max_length=150)
-    email = serializers.EmailField()
     password = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ("username", "email")
+
+    def __init__(self, instance=None, data=empty, **kwargs):
+        super().__init__(instance, data, **kwargs)
+        self.user_cache = None
+
+    def validate_email(self):
+        email = self.validated_data["email"]
+        if not email:
+            raise ValidationError("missing email field", code="invalid_registration")
+        if User.objects.filter(email=email).count():
+            raise ValidationError("email taken", code="invalid_registration")
+        return email
+
+    def create(self, validated_data):
+        """
+        Create a new user by validating if the credentials are proper
+        :param validated_data:
+        :return:
+        """
+        # TODO Validate that email is not repeated
+        # TODO Run creation process via the validator like in UserCreationForm
+
+        pass

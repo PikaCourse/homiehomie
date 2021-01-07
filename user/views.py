@@ -106,6 +106,9 @@ class UserViewSet(mixins.RetrieveModelMixin,
         :param kwargs:
         :return:
         """
+
+        # TODO Validate incoming data,
+        #  create user, login user
         pass
 
     def default_get(self, request, *args, **kwargs):
