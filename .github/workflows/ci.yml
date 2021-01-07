@@ -2,7 +2,7 @@ name: Project CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dev ]
     paths-ignore: 
       - 'README.md'
       - '.gitignore'
@@ -12,7 +12,7 @@ on:
       - 'README.md'
       - '.gitignore'
       - '.github/**'
-    branches: [ main ]
+    branches: [ dev ]
     
   workflow_dispatch:
 
