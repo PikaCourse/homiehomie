@@ -8,6 +8,7 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Layout, Menu } from "antd";
 import Wishlist from "../wishlist/Wishlist";
 const { Header } = Layout;
+import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 
 const querystring = require("querystring");
 // import ensure_csrf_cookie from django.views.decorators.csrf
@@ -17,8 +18,12 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
 function Navbar() {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [login, setLogin] = useState(true);
   const [isWishlistVisible, setIsWishlistVisible] = useState(false);
+  const [login, setLogin] = useState(true); //if user is in login tab
+
+  const [error, setError] = useState("");
+  const [userProfile, setUserProfile] = useState({ username: "user" }); //loginStatus?getUserProfile:{}
+  const [loginStatus, setLoginStatus] = useState(false); //getSessionStatus()
 
   const loginForm = (
     <Form>
@@ -199,6 +204,79 @@ function Navbar() {
       },
     },
   };
+  const userProfileModal = (
+    <Modal
+      visible={visible}
+      title="Title"
+      onOk={handleOk}
+      onCancel={handleCancel}
+      footer={null}
+    >
+      user profile
+      <Button onClick={logOut}>Log Out</Button>
+    </Modal>
+  );
+  const loginSignupModal = (
+    <Modal
+      visible={visible}
+      title="Title"
+      onOk={handleOk}
+      onCancel={handleCancel}
+      footer={null}
+    >
+      <Form
+        name="normal_login"
+        className="login-form"
+        initialValues={{
+          remember: true,
+        }}
+        onFinish={login ? loginSubmit : signupSubmit}
+        // onFinishFailed={}
+      >
+        <Form.Item label="">
+          <Radio.Group
+            onChange={onFormTypeChange}
+            value={login ? "login" : "signup"}
+          >
+            <Radio.Button value="login">Login</Radio.Button>
+            <Radio.Button value="signup">Sign Up</Radio.Button>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item name="error message" hidden={error == "" ? true : false}>
+          {error}
+        </Form.Item>
+        {login ? loginForm : signupForm}
+        {login ? loginFooter : signupFooter}
+      </Form>
+    </Modal>
+  );
+
+  function getSessionStatus() {
+    console.log(sessionStorage);
+    console.log(localStorage);
+  }
+
+  function getUserProfile() {}
+
+  function logOut() {
+    console.log("user should be logged out");
+  } //send to backend log user out
+
+  function autoLogout() {
+    //auto log out user if website is inactive for 6 hours
+    let lastActiveTime = new Date(
+      JSON.parse(localStorage.getItem("last_active_time"))
+    );
+    let inactiveTimeDiffMs = Math.abs(lastActiveTime - new Date()); //in milliseconds
+    if (inactiveTimeDiffMs / 1000 == 21600) {
+      //if time difference is 6 hours (21600 seconds)
+      console.log("auto logout");
+      logOut();
+    }
+    setTimeout(() => {
+      // console.log(localStorage.getItem('last_active_time'));
+    }, 10000);
+  }
 
   function getCookie(name) {
     var cookieValue = null;
@@ -220,10 +298,10 @@ function Navbar() {
     setVisible(true);
   }
 
-  function handleOk() {
+  function handleOk(successful) {
     setLoading(true);
     setTimeout(() => {
-      setVisible(false);
+      if (successful) setVisible(false);
       setLoading(false);
     }, 1000);
   }
@@ -246,7 +324,30 @@ function Navbar() {
         },
       })
       .then((result) => {
-        console.log(result);
+        switch (result.status) {
+          case 200:
+            console.log("Successfully login user");
+            setError("");
+            setLoginStatus(true); //use getSessionStatus
+            getSessionStatus();
+            handleOk(true);
+            localStorage.setItem(
+              "last_active_time",
+              JSON.stringify(new Date())
+            );
+            break;
+          case 401:
+            console.log("Error due to invalid password or username");
+            setError("Incorrect username or password.");
+            handleOk(false);
+            break;
+          default:
+            console.log("login error due to others");
+            setError(
+              "Sorry, we cannot complete your request at this time due to unknown error, please try later."
+            );
+            handleOk(false);
+        }
       });
     handleOk();
   }
@@ -271,7 +372,31 @@ function Navbar() {
         },
       })
       .then((result) => {
-        console.log(result);
+        switch (result.status) {
+          case 200:
+            console.log("Successfully register user");
+            setError("");
+            setLoginStatus(true); //use getSessionStatus
+            handleOk(true);
+            localStorage.setItem(
+              "last_active_time",
+              JSON.stringify(new Date())
+            );
+            break;
+          case 401:
+            console.log("Error due to failed registration constraint");
+            setError(
+              "Sorry, we cannot complete your request at this time due to failed registration constraint, please try again."
+            );
+            handleOk(false);
+            break;
+          default:
+            console.log("register error due to others");
+            setError(
+              "Sorry, we cannot complete your request at this time due to unknown error, please try again."
+            );
+            handleOk(false);
+        }
       });
     handleOk();
   }
@@ -286,6 +411,7 @@ function Navbar() {
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
+      {autoLogout()}
       <div className="container-fluid">
         <a className="navbar-brand mx-4 pl-4" href="#" style={selectedStyle}>
           CourseWiki
@@ -310,37 +436,9 @@ function Navbar() {
             </li>
             <li class="nav-item">
               <Button type="primary" className="mx-2" onClick={showModal}>
-                Login
+                {loginStatus ? userProfile.username : "Login"}
               </Button>
-              <Modal
-                visible={visible}
-                title="Title"
-                onOk={handleOk}
-                onCancel={handleCancel}
-                footer={null}
-              >
-                <Form
-                  name="normal_login"
-                  className="login-form"
-                  initialValues={{
-                    remember: true,
-                  }}
-                  onFinish={login ? loginSubmit : signupSubmit}
-                  // onFinishFailed={}
-                >
-                  <Form.Item label="">
-                    <Radio.Group
-                      onChange={onFormTypeChange}
-                      value={login ? "login" : "signup"}
-                    >
-                      <Radio.Button value="login">Login</Radio.Button>
-                      <Radio.Button value="signup">Sign Up</Radio.Button>
-                    </Radio.Group>
-                  </Form.Item>
-                  {login ? loginForm : signupForm}
-                  {login ? loginFooter : signupFooter}
-                </Form>
-              </Modal>
+              {loginStatus ? userProfileModal : loginSignupModal}
             </li>
           </ul>
         </div>
