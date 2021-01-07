@@ -4,6 +4,7 @@ import { Modal, Button, Form, Input, Checkbox, Radio} from "antd";
 import { useAuth0 } from "@auth0/auth0-react";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import axios from "axios";
+import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 const querystring = require("querystring");
 // import ensure_csrf_cookie from django.views.decorators.csrf 
 axios.defaults.xsrfCookieName = 'csrftoken'
@@ -17,6 +18,8 @@ function Header() {
   const [visible, setVisible] = useState(false); 
   const [login, setLogin] = useState(true);  //if user is in login tab 
   const [error, setError] = useState(""); 
+  const [buttonText, setButtonText] = useState("Login"); 
+  const [userProfile, setUserProfile] = useState({username: ""}); 
 
   const loginForm = <><Form.Item
       name="username"
@@ -149,7 +152,47 @@ function Header() {
       >
         {error}
       </Form.Item>; 
-
+  const userProfileModal = <Modal
+    visible={visible}
+    title="Title"
+    onOk={handleOk}
+    onCancel={handleCancel}
+    footer = {null}
+  >
+    user profile
+  </Modal>; 
+  const loginSignupModal = <Modal
+    visible={visible}
+    title="Title"
+    onOk={handleOk}
+    onCancel={handleCancel}
+    footer = {null}
+  >
+    <Form
+      name="normal_login"
+      className="login-form"
+      initialValues={{
+        remember: true,
+      }}
+      onFinish={login?loginSubmit:signupSubmit}
+      // onFinishFailed={}
+    >
+    <Form.Item label="">
+        <Radio.Group onChange={onFormTypeChange} value={login?"login":"signup"}>
+          <Radio.Button value="login">Login</Radio.Button>
+          <Radio.Button value="signup">Sign Up</Radio.Button>
+        </Radio.Group>
+      </Form.Item>
+      <Form.Item
+        name="error message"
+        hidden={error==""?true:false}
+      >
+        {error}
+      </Form.Item>
+      {login?loginForm:signupForm}
+      {login?loginFooter:signupFooter}
+  </Form>
+  </Modal>; 
   function getCookie(name) {
     var cookieValue = null;
     console.log("document.cookie: "+document.cookie); 
@@ -200,6 +243,7 @@ function Header() {
           case 200:
             console.log("Successfully login user"); 
             setError(""); 
+            setButtonText(values.username); 
             handleOk(true); 
             break;
           case 401:
@@ -240,6 +284,7 @@ function Header() {
           case 200:
             console.log("Successfully register user"); 
             setError(""); 
+            setButtonText(values.email); 
             handleOk(true); 
             break;
           case 401:
@@ -275,40 +320,9 @@ function Header() {
         CourseWiki
       </a>
       <Button type="primary" onClick={showModal}>
-        Login
+        {buttonText}
       </Button>
-      <Modal
-        visible={visible}
-        title="Title"
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer = {null}
-      >
-        <Form
-          name="normal_login"
-          className="login-form"
-          initialValues={{
-            remember: true,
-          }}
-          onFinish={login?loginSubmit:signupSubmit}
-          // onFinishFailed={}
-        >
-        <Form.Item label="">
-            <Radio.Group onChange={onFormTypeChange} value={login?"login":"signup"}>
-              <Radio.Button value="login">Login</Radio.Button>
-              <Radio.Button value="signup">Sign Up</Radio.Button>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item
-            name="error message"
-            hidden={error==""?true:false}
-          >
-            {error}
-          </Form.Item>
-          {login?loginForm:signupForm}
-          {login?loginFooter:signupFooter}
-      </Form>
-      </Modal>
+      {buttonText=="Login"?loginSignupModal:userProfileModal}
     </div>
   </nav>
   );
