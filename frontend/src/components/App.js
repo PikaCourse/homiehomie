@@ -19,10 +19,10 @@ class App extends Component {
           <Header />
           <div className="container-fluid">
             <div className="row">
-              <div id="app" className="col-md-6">
+              <div className="col-md-6">
                 <DnDCalendar />
               </div>
-              <div id="app" className="col-md-6">
+              <div className="col-md-6">
                 <Wiki />
               </div>
             </div>
