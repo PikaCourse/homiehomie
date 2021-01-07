@@ -1,4 +1,4 @@
-import { GET_QUE, CLEAR_QUE, ADD_QUE, ADD_QUE } from "../actions/types.js";
+import { GET_QUE, CLEAR_QUE, ADD_QUE } from "../actions/types.js";
 
 const initialState = {
   noteBag: [],
