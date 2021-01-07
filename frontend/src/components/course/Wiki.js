@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
-import WikiNotebook from "../Wiki/WikiNotebook";
-import WikiSummary from "../Wiki/WikiSummary";
+import WikiNotebook from "./WikiNotebook";
+import WikiSummary from "./WikiSummary";
 import PropTypes from "prop-types";
 import { getCourse } from "../../actions/course";
 import { connect } from "react-redux";

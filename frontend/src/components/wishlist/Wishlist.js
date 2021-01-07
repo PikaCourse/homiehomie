@@ -8,13 +8,13 @@ import { CaretRightOutlined } from "@ant-design/icons";
 
 const { Panel } = Collapse;
 import { Table, Button, Switch, Space, Radio, Divider } from "antd";
-import {removeCurrCourseFromWish} from "../../actions/wishlist"
+// import {} from "../../actions/wishlist"
 import {setCourse, getCourse} from "../../actions/course"
-import {addSelectCourse} from "../../actions/calendar"
+import {addSelectCourse, removeCurrCourseFromWish} from "../../actions/calendar"
 
 const columns = [
   {
-    title: '',
+    title: 'Actions',
     key: 'operation',
     fixed: 'left',
     //width: 30,
@@ -40,6 +40,10 @@ const columns = [
             >View</Button>
             </div>,
                   
+  },
+  {
+    title: "In Course Bag?",
+    dataIndex: "",
   },
   {
     title: "id",
@@ -118,94 +122,84 @@ const columns = [
   // },
 ];
 
-
-
 export class Wishlist extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedRowKeys: [], // Check here to configure the default column
-      loading: false,
-    }; 
+    // this.state = {
+    //   selectedRowKeys: [], // Check here to configure the default column
+    //   loading: false,
+    // }; 
+    // this.state = {
+    //   uniqueCourseBag: Array.from(new Set(store.getState().calendar.calendarCourseBag.map(a => a.id)))
+    //   .map(id => {
+    //     return store.getState().calendar.calendarCourseBag.find(a => a.id === id)
+    //   }), 
+    // }
     
   }
   
-  start = () => {
-    this.setState({ loading: true });
-    // ajax request after empty completing
-    setTimeout(() => {
-      this.setState({
-        selectedRowKeys: [],
-        loading: false,
-      });
-    }, 1000);
-    console.log(columns[1].title); 
-  };
+  // start = () => {
+  //   this.setState({ loading: true });
+  //   // ajax request after empty completing
+  //   setTimeout(() => {
+  //     this.setState({
+  //       selectedRowKeys: [],
+  //       loading: false,
+  //     });
+  //   }, 1000);
+  //   console.log(columns[1].title); 
+  // };
 
-  onSelectChange = selectedRowKeys => {
-    console.log('selectedRowKeys changed: ', selectedRowKeys);
-    this.setState({ selectedRowKeys });
-  };
+  // onSelectChange = selectedRowKeys => {
+  //   console.log('selectedRowKeys changed: ', selectedRowKeys);
+  //   this.setState({ selectedRowKeys });
+  // };
 
   static propTypes = {
     selectedCourseArray: PropTypes.array.isRequired,
-    //wishlistCourseBag: PropTypes.array.isRequired,
+    pendingCourseBag: PropTypes.array.isRequired,
   };
 
   render() {
-    const { loading, selectedRowKeys } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange,
-    };
-    const hasSelected = selectedRowKeys.length > 0;
-    columns[0].title = <span><Button
-        type="primary"
-        onClick={this.start}
-        disabled={!hasSelected}
-        loading={loading}
-      >
-        Add All
-      </Button></span>;
+    // const { loading, selectedRowKeys } = this.state;
+    // const rowSelection = {
+    //   selectedRowKeys,
+    //   onChange: this.onSelectChange,
+    // };
+    // const hasSelected = selectedRowKeys.length > 0;
+    // columns[0].title = <span><Button
+    //     type="primary"
+    //     onClick={this.start}
+    //     disabled={!hasSelected}
+    //     loading={loading}
+    //   >
+    //     Add All
+    //   </Button></span>;
+
+    // const uniqueCourseBag = store.getState().calendar.calendarCourseBag.filter(
+    //   (item) => (item.raw.selectedCourseArray == this.props.selectedCourseArray) //&& (item.type != 'preview'))
+    // );
+    // const uniqueCourseBag = Array.from(new Set(store.getState().calendar.calendarCourseBag));
+    // const uniqueCourseBag = store.getState().calendar.calendarCourseBag.filter((val,preVal,array) => array.indexOf(val).id == preVal.id);
+    // const uniqueCourseBag = Array.from(new Set(store.getState().calendar.calendarCourseBag.map(a => a.id)))
+    //   .map(id => {
+    //     return store.getState().calendar.calendarCourseBag.find(a => a.id === id)
+    //   }); 
+    console.log("render in wishlist"); 
+    console.log(store.getState().calendar.uniqueCourseBag); 
+
     return (
 
       <div id="app" className="col-sm-12">
-        <Collapse
-          bordered={false}
-          expandIcon={({ isActive }) => (
-            <CaretRightOutlined rotate={isActive ? 90 : 0} />
-          )}
-          className="site-collapse-custom-collapse"
-        >
-          <Panel
-            header="Wishlist"
-            key="1"
-            className="site-collapse-custom-panel"
-          >
-            {/* <div style={{ marginBottom: 16 }}>
-              <Button
-                type="primary"
-                onClick={this.start}
-                disabled={!hasSelected}
-                loading={loading}
-              >
-                Add All
-              </Button>
-              <span style={{ marginLeft: 8 }}>
-                {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
-              </span>
-            </div> */}
-            <Table
-              rowSelection={rowSelection}
+      <Table
+              // rowSelection={rowSelection}
               columns={columns}
-              dataSource={store.getState().wishlist.wishlistCourseBag}
+              dataSource={[...store.getState().calendar.pendingCourseBag, ...store.getState().calendar.uniqueCourseBag]}
               // dataSource={[store.getState().course.selectedCourseArray.find(
               //   ({ crn }) => crn === store.getState().course.selectedCRN
               // )]}
               scroll={{ x:  'max-content' }} //api: https://ant.design/components/table/#scroll
             />
-          </Panel>
-        </Collapse>
       </div>
     );
   }
@@ -214,7 +208,7 @@ export class Wishlist extends Component {
 const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCRN: state.course.selectedCRN,
-  wishlistCourseBag: state.wishlist.wishlistCourseBag
+  pendingCourseBag: state.calendar.pendingCourseBag,
 });
 
 export default connect(mapStateToProps)(Wishlist);

@@ -13,13 +13,13 @@ import { setCourse } from "../../actions/course";
 import { addCustomEvent, removeCustomEvent } from "../../actions/calendar";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
-import { colors, pcolors } from "./color.js";
+import { colors, pcolors } from "./Color.js";
 
 let formats = {
   dayFormat: (date, culture, localizer) => moment.utc(date).format("ddd"), //https://devhints.io/moment
 };
 const today = new Date();
-class Dnd extends React.Component {
+class DnDCalendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,12 +31,6 @@ class Dnd extends React.Component {
     this.moveEvent = this.moveEvent.bind(this);
     this.newEvent = this.newEvent.bind(this);
   }
-
-  // static propTypes = {
-  //   course: PropTypes.array.isRequired,
-  //   calendar: PropTypes.array.isRequired,
-  //   calendarCourseBag: PropTypes.array.isRequired,
-  // };
 
   componentDidMount() {
     document.addEventListener("keydown", this.deleteKeyDown, false);
@@ -221,7 +215,7 @@ class Dnd extends React.Component {
           formats={formats}
           selectable
           localizer={mlocalizer}
-          events={this.props.calendarCourseBag} //data input
+          events={store.getState().calendar.calendarCourseBag} //data input
           onEventDrop={this.moveEvent}
           resizable={true}
           onEventResize={this.resizeEvent}
@@ -255,4 +249,4 @@ const mapStateToProps = (state) => ({
   calendarCourseBag: state.calendar.calendarCourseBag,
 });
 
-export default connect(mapStateToProps)(Dnd);
+export default connect(mapStateToProps)(DnDCalendar);

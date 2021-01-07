@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
-import { getQuestion, addQuestion } from "../../actions/question.js";
+import { getQuestion, addQuestion, addOBJ } from "../../actions/question.js";
 
 import {
   Button,
@@ -80,16 +80,6 @@ export class WikiNotebook extends Component {
   };
   handleSubmit = (values) => {
     console.log(this.props.selectedCourse.course_meta.id);
-    let queObj = {
-      id: 0,
-      question: {
-        course_meta: this.props.selectedCourse.course_meta.id,
-          title: values.question,
-          tags: JSON.stringify(["hi", "h2"]),
-      },
-      notes:[{}],
-
-    }
     axios
       .post(
         "api/questions",
@@ -137,7 +127,29 @@ export class WikiNotebook extends Component {
                 });
             this.forceUpdate();
           });
+          //console.log("res = ");
+          //console.log(res.data.question);
+          //console.log(this.props.noteBag.length);
+          let queObj = {
+            id: this.props.noteBag.length,
+            question: {
+              id: res.data.question,
+              course_meta: this.props.selectedCourse.course_meta.id,
+                title: values.question,
+                tags: JSON.stringify(["hi", "h2"]),
+            },
+            notes:[{course: this.props.selectedCourse.id,
+              question: values.question,
+              title: "whatever",
+              content: values.note,
+              tags: JSON.stringify(["hi"])}],
+      
+          };
+          //console.log("from handlesubmit");
+          //console.log(queObj);
+          store.dispatch(addOBJ(queObj));
       });
+      this.setState({ addNewCard: false });
   };
 
   addNewQueInput = () => {
@@ -267,7 +279,7 @@ export class WikiNotebook extends Component {
               </Card>
             ) : null
           }
-
+          
           {/* Question */}
           {this.props.noteBag.map((nbObj) => (
             <Card
