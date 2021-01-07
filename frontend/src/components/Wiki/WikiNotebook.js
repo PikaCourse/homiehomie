@@ -80,6 +80,16 @@ export class WikiNotebook extends Component {
   };
   handleSubmit = (values) => {
     console.log(this.props.selectedCourse.course_meta.id);
+    let queObj = {
+      id: 0,
+      question: {
+        course_meta: this.props.selectedCourse.course_meta.id,
+          title: values.question,
+          tags: JSON.stringify(["hi", "h2"]),
+      },
+      notes:[{}],
+
+    }
     axios
       .post(
         "api/questions",
@@ -233,7 +243,7 @@ export class WikiNotebook extends Component {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your title!",
+                        message: "Please input your note!",
                       },
                     ]}
                   >
