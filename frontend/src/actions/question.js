@@ -1,5 +1,5 @@
 import { GET_NOTES } from "./types";
-import { GET_QUE, CLEAR_QUE, ADD_QUE } from "./types";
+import { GET_QUE, CLEAR_QUE, ADD_QUE, ADD_OBJ } from "./types";
 import axios from "axios";
 
 export const getNotes = (noteBag) => (dispatch) => {
@@ -51,11 +51,21 @@ export const getQuestion = (metaid) => (dispatch) => {
     .catch((err) => console.log(err));
 };
 
+//this is actually add a note to a question
 export const addQuestion = (nbObj, notebookObj) => (dispatch) =>{
     console.log("get to addquestion")
     dispatch({
         type: ADD_QUE,
         notebagObj: nbObj,
         notebookObj: notebookObj
+    })
+}
+
+//this is for adding a new question object
+export const addOBJ = (queObj) => (dispatch) =>{
+    console.log("get to addobject")
+    dispatch({
+            type: ADD_OBJ,
+            queObj: queObj
     })
 }
