@@ -3,6 +3,12 @@ import PropTypes from "prop-types";
 import { Modal, Button, Form, Input, Checkbox, Radio} from "antd";
 import { useAuth0 } from "@auth0/auth0-react";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import axios from "axios";
+const querystring = require("querystring");
+// import ensure_csrf_cookie from django.views.decorators.csrf 
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+import CSRFToken from '../user/csrftoken';
 
 
 function Header() {
@@ -137,11 +143,27 @@ function Header() {
     },
   };
 
+  function getCookie(name) {
+    var cookieValue = null;
+    console.log("document.cookie: "+document.cookie); 
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
   function showModal() {
     setVisible(true); 
   };
 
-  function handleOk(values) {
+  function handleOk() {
     setLoading(true); 
     setTimeout(() => {
       setVisible(false); 
@@ -149,19 +171,62 @@ function Header() {
      }, 1000);
   };
 
+  function loginSubmit(values) {
+    console.log(values); 
+    console.log("login submit ran"); 
+    let userLoginObj = querystring.stringify({
+      username: values.username,
+      password: values.password,
+    });
+    var csrftoken = getCookie('csrftoken');
+    console.log(csrftoken); 
+    axios
+      .post("/user/login", userLoginObj, {
+        headers: {
+          'Accept': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": csrftoken, 
+        },
+      })
+      .then((result) => {console.log(result)});
+    handleOk(); 
+  }
+
+  function signupSubmit(values) {
+    console.log(values); 
+    console.log("signup submit ran"); 
+    console.log(values.email); 
+    let userRegObj = querystring.stringify({
+      username: values.email,
+      email: values.email, 
+      password: values.password,
+    });
+    var csrftoken = getCookie('csrftoken');
+    console.log(csrftoken); 
+    axios
+      .post("user/register", userRegObj, {
+        headers: {
+          'Accept': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
+          "X-CSRFToken": csrftoken, 
+        },
+      })
+      .then((result) => {console.log(result)});
+    handleOk(); 
+  }
+
   function handleCancel() {
     setVisible(false); 
   };
-
-  function onFinish(values) {
-    console.log('Received values of form: ', values);
-  }
 
   function onFormTypeChange(e) {
     setLogin(e.target.value == 'login'); 
   }
 
   return (
+      // <form action="/user/login" method="post">
+      //   <button type="submit">Send</button>
+      // </form>
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
     <div className="container-fluid">
       <a className="navbar-brand mx-4" href="#" style={selectedStyle}>
@@ -183,7 +248,7 @@ function Header() {
           initialValues={{
             remember: true,
           }}
-          onFinish={handleOk}
+          onFinish={login?loginSubmit:signupSubmit}
           // onFinishFailed={}
         >
         <Form.Item label="">
