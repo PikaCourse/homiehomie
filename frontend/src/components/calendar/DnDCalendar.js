@@ -32,13 +32,6 @@ class DnDCalendar extends React.Component {
     this.newEvent = this.newEvent.bind(this);
   }
 
-  // static propTypes = {
-  //   course: PropTypes.array.isRequired,
-  //   calendar: PropTypes.array.isRequired,
-  //   //calendarCourseBag: PropTypes.array.isRequired,
-  // };
-
-
   componentDidMount() {
     document.addEventListener("keydown", this.deleteKeyDown, false);
     document.addEventListener("mousedown", this.pageClick, false);

@@ -5,19 +5,21 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { Layout, Menu } from "antd";
+const { Header } = Layout;
 
 const querystring = require("querystring");
 // import ensure_csrf_cookie from django.views.decorators.csrf
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
-function Header() {
+function Navbar() {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [login, setLogin] = useState(true);
 
   const loginForm = (
-    <>
+    <Form>
       <Form.Item
         name="username"
         rules={[
@@ -56,10 +58,10 @@ function Header() {
           Forgot password
         </a>
       </Form.Item>
-    </>
+    </Form>
   );
   const signupForm = (
-    <>
+    <Form>
       <Form.Item
         name="email"
         label="E-mail"
@@ -134,11 +136,10 @@ function Header() {
           I have read the <a href="">agreement</a>
         </Checkbox>
       </Form.Item>
-    </>
+    </Form>
   );
   const loginFooter = (
     <Form.Item>
-      {" "}
       <Button
         type="primary"
         htmlType="submit"
@@ -162,7 +163,6 @@ function Header() {
   );
   const signupFooter = (
     <Form.Item>
-      {" "}
       <Button
         type="primary"
         htmlType="submit"
@@ -181,7 +181,7 @@ function Header() {
         }}
       >
         login in
-      </a>{" "}
+      </a>
       here
     </Form.Item>
   );
@@ -283,20 +283,23 @@ function Header() {
   }
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
+    <nav
+      className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2"
+      
+    >
       <div className="container-fluid">
-        <a className="navbar-brand mx-4" href="#" style={selectedStyle}>
+        <a className="navbar-brand mx-4 pl-4" href="#" style={selectedStyle}>
           CourseWiki
         </a>
         <div>
-          <ul class="navbar-nav ml-auto">
+          <ul class="navbar-nav ml-auto pr-4">
             <li class="nav-item">
-              <Button size="medium" style={{ color: "#419EF4"}}>
+              <Button size="medium" style={{ color: "#419EF4" }}>
                 <FontAwesomeIcon icon={faStar} />
               </Button>
             </li>
             <li class="nav-item">
-              <Button type="primary" onClick={showModal}>
+              <Button type="primary" className="mx-2" onClick={showModal}>
                 Login
               </Button>
               <Modal
@@ -341,4 +344,4 @@ const selectedStyle = {
   fontWeight: "800",
   fontSize: "1.5rem",
 };
-export default Header;
+export default Navbar;

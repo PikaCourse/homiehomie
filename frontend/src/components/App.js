@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from "react";
 import ReactDOM from "react-dom";
 
-import Header from "./nav/Header";
+import Navbar from "./nav/Navbar";
 import Footer from "./nav/Footer";
 import DnDCalendar from "./calendar/DnDCalendar";
 import Wiki from "./course/Wiki";
@@ -16,9 +16,9 @@ class App extends Component {
     return (
       <Provider store={store}>
         <Fragment>
-          <Header />
+          <Navbar style={{ height: "5vh" }} />
           <div className="container-fluid">
-            <div className="row">
+            <div className="row" style={{ height: "92vh" }}>
               <div className="col-md-6">
                 <DnDCalendar />
               </div>
@@ -27,7 +27,7 @@ class App extends Component {
               </div>
             </div>
           </div>
-          <Footer />
+          <Footer style={{ height: "3vh" }} />
         </Fragment>
       </Provider>
     );
