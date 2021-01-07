@@ -13,13 +13,13 @@ import { setCourse } from "../../actions/course";
 import { addCustomEvent, removeCustomEvent } from "../../actions/calendar";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
-import { colors, pcolors } from "./color.js";
+import { colors, pcolors } from "./Color.js";
 
 let formats = {
   dayFormat: (date, culture, localizer) => moment.utc(date).format("ddd"), //https://devhints.io/moment
 };
 const today = new Date();
-class Dnd extends React.Component {
+class DnDCalendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -32,11 +32,11 @@ class Dnd extends React.Component {
     this.newEvent = this.newEvent.bind(this);
   }
 
-  static propTypes = {
-    course: PropTypes.array.isRequired,
-    calendar: PropTypes.array.isRequired,
-    //calendarCourseBag: PropTypes.array.isRequired,
-  };
+  // static propTypes = {
+  //   course: PropTypes.array.isRequired,
+  //   calendar: PropTypes.array.isRequired,
+  //   //calendarCourseBag: PropTypes.array.isRequired,
+  // };
 
 
   componentDidMount() {
@@ -256,4 +256,4 @@ const mapStateToProps = (state) => ({
   calendarCourseBag: state.calendar.calendarCourseBag,
 });
 
-export default connect(mapStateToProps)(Dnd);
+export default connect(mapStateToProps)(DnDCalendar);

@@ -1,11 +1,10 @@
 import React, { Component, Fragment } from "react";
 import ReactDOM from "react-dom";
 
-import Header from "./layout/Header";
-import Footer from "./layout/Footer";
-import Dnd from "./Calendar/dnd";
-import Wiki from "./main/Wiki";
-import Wishlist from "./main/Wishlist";
+import Header from "./nav/Header";
+import Footer from "./nav/Footer";
+import DnDCalendar from "./calendar/DnDCalendar";
+import Wiki from "./course/Wiki";
 
 import { Provider } from "react-redux";
 import store from "../store";
@@ -19,12 +18,9 @@ class App extends Component {
         <Fragment>
           <Header />
           <div className="container-fluid">
-            {/* <div className="row">
-              <Wishlist />
-    </div> */}
             <div className="row">
               <div id="app" className="col-md-6">
-                <Dnd />
+                <DnDCalendar />
               </div>
               <div id="app" className="col-md-6">
                 <Wiki />
