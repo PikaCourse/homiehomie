@@ -193,7 +193,7 @@ class Dnd extends React.Component {
     return (
       <div
         className="p-4 mt-4"
-        style={{ backgroundColor: "#ffffff", borderRadius: "1.5rem",overflowY: "auto", height: "80vh" }}
+        style={{ backgroundColor: "#ffffff", borderRadius: "1.5rem",overflowY: "auto", height: "82vh" }}
       >
         <DragAndDropCalendar
           formats={{ timeGutterFormat: 'hh:mm' }}
