@@ -1,4 +1,4 @@
-import { GET_QUE, CLEAR_QUE, ADD_QUE, ADD_QUE } from "../actions/types.js";
+import { GET_QUE, CLEAR_QUE, ADD_QUE, ADD_OBJ } from "../actions/types.js";
 
 const initialState = {
   noteBag: [],
@@ -23,8 +23,12 @@ export default function (state = initialState, action) {
         noteBag: [],
       };
     case ADD_OBJ:
+        let newBag4 = [...state.noteBag];
+        newBag4.unshift(action.queObj);
+        //console.log("from addobj");
+        //console.log(newBag4);
         return{
-
+            noteBag: newBag4
         };
     case ADD_QUE:
         let newBag3 = [...state.noteBag];
