@@ -146,12 +146,6 @@ function Header() {
       },
     },
   };
-  const errorMessage = <Form.Item
-        name="error message"
-        hidden={error==""?true:false}
-      >
-        {error}
-      </Form.Item>; 
   const userProfileModal = <Modal
     visible={visible}
     title="Title"
@@ -160,7 +154,7 @@ function Header() {
     footer = {null}
   >
     user profile
-    <Button>Log Out</Button>
+    <Button onClick={logOut}>Log Out</Button>
   </Modal>; 
   const loginSignupModal = <Modal
     visible={visible}
@@ -201,12 +195,31 @@ function Header() {
   }; 
 
   function getUserProfile() {}; 
+
+  function logOut() {
+    console.log("user should be logged out"); 
+  }; //send to backend log user out 
+
+  function autoLogout() {
+    //auto log out user if website is inactive for 6 hours 
+    let lastActiveTime = new Date(JSON.parse(localStorage.getItem('last_active_time'))); 
+    let inactiveTimeDiffMs = Math.abs(lastActiveTime - new Date()); //in milliseconds
+    if (inactiveTimeDiffMs/1000 == 21600) {
+      //if time difference is 6 hours (21600 seconds)
+      console.log("auto logout")
+      logOut(); 
+    }
+    setTimeout(() => {
+      // console.log(localStorage.getItem('last_active_time')); 
+     }, 10000);
+  }
+
   function getCookie(name) {
     var cookieValue = null;
     console.log("document.cookie: "+document.cookie); 
     if (document.cookie && document.cookie !== '') {
         var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
+        for (var i = 0;  i < cookies.length; i++) {
             var cookie = jQuery.trim(cookies[i]);
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -254,6 +267,7 @@ function Header() {
             setLoginStatus(true); //use getSessionStatus
             getSessionStatus(); 
             handleOk(true); 
+            localStorage.setItem('last_active_time', JSON.stringify(new Date())); 
             break;
           case 401:
             console.log("Error due to invalid password or username"); 
@@ -295,6 +309,7 @@ function Header() {
             setError(""); 
             setLoginStatus(true); //use getSessionStatus
             handleOk(true); 
+            localStorage.setItem('last_active_time', JSON.stringify(new Date())); 
             break;
           case 401:
             console.log("Error due to failed registration constraint"); 
@@ -324,6 +339,7 @@ function Header() {
       //   <button type="submit">Send</button>
       // </form>
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
+    {autoLogout()}
     <div className="container-fluid">
       <a className="navbar-brand mx-4" href="#" style={selectedStyle}>
         CourseWiki
