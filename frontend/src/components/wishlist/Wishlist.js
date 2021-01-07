@@ -191,32 +191,7 @@ export class Wishlist extends Component {
     return (
 
       <div id="app" className="col-sm-12">
-        <Collapse
-          bordered={false}
-          expandIcon={({ isActive }) => (
-            <CaretRightOutlined rotate={isActive ? 90 : 0} />
-          )}
-          className="site-collapse-custom-collapse"
-        >
-          <Panel
-            header="List"
-            key="1"
-            className="site-collapse-custom-panel"
-          >
-            {/* <div style={{ marginBottom: 16 }}>
-              <Button
-                type="primary"
-                onClick={this.start}
-                disabled={!hasSelected}
-                loading={loading}
-              >
-                Add All
-              </Button>
-              <span style={{ marginLeft: 8 }}>
-                {hasSelected ? `Selected ${selectedRowKeys.length} items` : ""}
-              </span>
-            </div> */}
-            <Table
+      <Table
               // rowSelection={rowSelection}
               columns={columns}
               dataSource={[...store.getState().calendar.pendingCourseBag, ...store.getState().calendar.uniqueCourseBag]}
@@ -225,8 +200,6 @@ export class Wishlist extends Component {
               // )]}
               scroll={{ x:  'max-content' }} //api: https://ant.design/components/table/#scroll
             />
-          </Panel>
-        </Collapse>
       </div>
     );
   }
