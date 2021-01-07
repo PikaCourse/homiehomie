@@ -231,6 +231,7 @@ function Header() {
       <a className="navbar-brand mx-4" href="#" style={selectedStyle}>
         CourseWiki
       </a>
+      
       <Button type="primary" onClick={showModal}>
         Login
       </Button>
