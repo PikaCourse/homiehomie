@@ -8,7 +8,7 @@ const querystring = require("querystring");
 // import ensure_csrf_cookie from django.views.decorators.csrf 
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-import CSRFToken from '../user/csrftoken';
+// import CSRFToken from '../user/csrftoken';
 
 
 function Header() {
@@ -188,8 +188,20 @@ function Header() {
           "X-CSRFToken": csrftoken, 
         },
       })
-      .then((result) => {console.log(result)});
-    handleOk(); 
+      .then((result) => {
+        switch(result.status) {
+          case 200:
+            console.log("Successfully login user"); 
+            handleOk(); 
+            break;
+          case 401:
+            console.log("Error due to invalid password or username"); 
+            break;
+          default:
+            console.log("login error due to others"); 
+        }
+
+      });
   }
 
   function signupSubmit(values) {
@@ -211,7 +223,19 @@ function Header() {
           "X-CSRFToken": csrftoken, 
         },
       })
-      .then((result) => {console.log(result)});
+      .then((result) => {
+        switch(result.status) {
+          case 200:
+            console.log("Successfully register user"); 
+            break;
+          case 401:
+            console.log("Error due to failed registration constraint"); 
+            break;
+          default:
+            console.log("register error due to others"); 
+        }
+
+      });
     handleOk(); 
   }
 
