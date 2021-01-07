@@ -10,9 +10,17 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
-import { getQuestion, addQuestion } from "../../actions/question.js";
+import { getQuestion, addQuestion, addOBJ } from "../../actions/question.js";
 
-import { Button, Input, Card, Form, Checkbox, message } from "antd";
+import {
+  Button,
+  Input,
+  Card,
+  Form,
+  Checkbox,
+  message,
+  resetFields,
+} from "antd";
 
 const { TextArea } = Input;
 const querystring = require("querystring");
@@ -39,23 +47,31 @@ export class WikiNotebook extends Component {
     };
   }
 
-  static propTypes = {
-    course: PropTypes.array.isRequired,
-  };
-
   handleSaveClicked(nbObj) {
     let notebookObj = {
-        course: this.props.selectedCourse.course_meta.id,
-        question: nbObj.question.id,
-        title: "whatever",
-        content: this.state.value,
-        tags: ["hi"],
-    }
+      course: this.props.selectedCourse.id,
+      question: nbObj.question.id,
+      title: "whatever",
+      content: this.state.value,
+      tags: JSON.stringify(["hi"]),
+    };
     store.dispatch(addQuestion(nbObj, notebookObj));
-    console.log("now the notebad is:");
-    console.log(this.props.noteBag);
     axios
-      .post("api/notes", notebookObj)
+      .post(
+        "api/notes",
+        querystring.stringify({
+          course: this.props.selectedCourse.id,
+          question: nbObj.question.id,
+          title: "whatever",
+          content: this.state.value,
+          tags: JSON.stringify(["hi"]),
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      )
       .then((result) => {});
   }
 
@@ -80,13 +96,21 @@ export class WikiNotebook extends Component {
       )
       .then((res) => {
         axios
-          .post("api/notes", {
-            course: this.props.selectedCourse.course_meta.id,
-            question: res.data.question,
-            title: "whatever",
-            content: values.note,
-            tags: JSON.stringify(["hi"]),
-          })
+          .post(
+            "api/notes",
+            querystring.stringify({
+              course: this.props.selectedCourse.id,
+              question: res.data.question,
+              title: "whatever",
+              content: values.note,
+              tags: JSON.stringify(["hi"]),
+            }),
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            }
+          )
           .then((result) => {
             result.data.code == "success"
               ? message.success({
@@ -103,7 +127,29 @@ export class WikiNotebook extends Component {
                 });
             this.forceUpdate();
           });
+          //console.log("res = ");
+          //console.log(res.data.question);
+          //console.log(this.props.noteBag.length);
+          let queObj = {
+            id: this.props.noteBag.length,
+            question: {
+              id: res.data.question,
+              course_meta: this.props.selectedCourse.course_meta.id,
+                title: values.question,
+                tags: JSON.stringify(["hi", "h2"]),
+            },
+            notes:[{course: this.props.selectedCourse.id,
+              question: values.question,
+              title: "whatever",
+              content: values.note,
+              tags: JSON.stringify(["hi"])}],
+      
+          };
+          //console.log("from handlesubmit");
+          //console.log(queObj);
+          store.dispatch(addOBJ(queObj));
       });
+      this.setState({ addNewCard: false });
   };
 
   addNewQueInput = () => {
@@ -120,22 +166,25 @@ export class WikiNotebook extends Component {
   }
 
   render() {
-    const { value } = this.state;
     return (
-      <div className="p-3" style={noteBookStyle}>
-        <h1
-          className="mr-2 align-middle"
-          style={{ color: "#419EF4", display: "inline" }}
-        >
-          NoteBook
-        </h1>
+      <div className="" style={noteBookStyle}>
+        <div className="text-center">
+          <h1
+            className="divider my-3"
+            style={{ color: "#419EF4", fontSize: "1.5rem" }}
+          >
+            WikiNotes
+          </h1>
+        </div>
+
+        {/* first qu */}
 
         <div>
           <div onClick={() => this.setState({ addNewCard: true })}>
             <Card
+              bordered={false}
               hoverable
               title=""
-              bordered={true}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
             >
@@ -157,10 +206,14 @@ export class WikiNotebook extends Component {
             this.state.addNewCard ? (
               <Card
                 hoverable
+                bordered={false}
                 title=""
-                bordered={true}
                 className="my-2"
-                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                style={{
+                  fontFamily: "Montserrat",
+                  color: "#596C7E",
+                  border: "none",
+                }}
               >
                 <Button
                   type="ghost"
@@ -202,7 +255,7 @@ export class WikiNotebook extends Component {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your title!",
+                        message: "Please input your note!",
                       },
                     ]}
                   >
@@ -226,13 +279,13 @@ export class WikiNotebook extends Component {
               </Card>
             ) : null
           }
-
+          
           {/* Question */}
           {this.props.noteBag.map((nbObj) => (
             <Card
               hoverable
               title={nbObj.question.title}
-              bordered={true}
+              bordered={false}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
               key={nbObj.id}
@@ -280,10 +333,10 @@ export class WikiNotebook extends Component {
 }
 
 const noteBookStyle = {
-  background: "#FFFFFF",
+  // background: "#FFFFFF",
   // border: "5px solid rgba(65, 158, 244, 0.27)",
   boxSizing: "border-box",
-  borderRadius: "2rem",
+  borderRadius: "1.5rem",
 };
 const mapStateToProps = (state) => ({
   selectedCourse: state.course.selectedCourse,

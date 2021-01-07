@@ -52,7 +52,7 @@ class RegisterUserView(View):
         if f.is_valid():
             user = f.save(commit=False)
             user.save()
-            return redirect('login')
+            return redirect('user:login')
         return render(request, "user/register.html", {"form": f})
 
 

@@ -1,5 +1,5 @@
 import { GET_NOTES } from "./types";
-import { GET_QUE, CLEAR_QUE, ADD_QUE } from "./types";
+import { GET_QUE, CLEAR_QUE, ADD_QUE, ADD_OBJ, LOAD_QUE } from "./types";
 import axios from "axios";
 
 export const getNotes = (noteBag) => (dispatch) => {
@@ -32,17 +32,24 @@ export const getQuestion = (metaid) => (dispatch) => {
     //res = question array -> json
     .then((questions) => {
       //console.log(questions.data);
+      //console.log("check question list")
+      //console.log(questions.data)
       questions.data.map((item, index) => {
+        dispatch({
+            type: LOAD_QUE,
+            noteBagItem: {
+                id: index,
+                question: item,
+                notes: [],
+            }
+        });
         axios
           .get("api/notes?questionid=" + item.id)
           .then((notes) => {
             dispatch({
               type: GET_QUE,
-              noteBagItem: {
-                id: index,
-                question: item,
-                notes: notes.data,
-              },
+              index: index,
+              notes: notes.data,
             });
           })
           .catch((err) => console.log(err));
@@ -51,11 +58,21 @@ export const getQuestion = (metaid) => (dispatch) => {
     .catch((err) => console.log(err));
 };
 
+//this is actually add a note to a question
 export const addQuestion = (nbObj, notebookObj) => (dispatch) =>{
     console.log("get to addquestion")
     dispatch({
         type: ADD_QUE,
         notebagObj: nbObj,
         notebookObj: notebookObj
+    })
+}
+
+//this is for adding a new question object
+export const addOBJ = (queObj) => (dispatch) =>{
+    console.log("get to addobject")
+    dispatch({
+            type: ADD_OBJ,
+            queObj: queObj
     })
 }

@@ -22,6 +22,9 @@ storage/
 *.sqlite3
 media
 
+# Collected static file
+staticfiles/
+
 # Backup files # 
 *.bak 
 

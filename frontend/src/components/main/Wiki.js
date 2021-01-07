@@ -13,7 +13,15 @@ export class Wiki extends Component {
   render() {
     return (
       <Fragment>
-        <div style={{ overflowY: "auto", height: "80vh" }}>
+        <div
+          className="px-1 mt-4"
+          style={{
+            overflowY: "auto",
+            height: "82vh",
+            borderBottomRightRadius: "20px",
+            borderBottomLeftRadius: "20px",
+          }}
+        >
           <WikiSummary />
           <WikiNotebook />
         </div>

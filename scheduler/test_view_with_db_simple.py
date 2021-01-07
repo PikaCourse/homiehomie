@@ -132,7 +132,8 @@ class CourseMetaViewSetTests(APITestCase):
         # Query key-value pairs used for testing
         test_dict = {
             "college": "College of Engineering",
-            "name": "Introduction to Artificial Intelligence"
+            "name": "Introduction to Artificial Intelligence",
+            "title": "AAEC-4804"
         }
 
         # Test
@@ -149,7 +150,8 @@ class CourseMetaViewSetTests(APITestCase):
         # Query key-value pairs used for testing
         test_dict = {
             "college": "College of Engineering",
-            "name": "Introduction to Artificial Intelligence"
+            "name": "Introduction to Artificial Intelligence",
+            "title": "AAEC-4804"
         }
 
         # Test
@@ -158,14 +160,13 @@ class CourseMetaViewSetTests(APITestCase):
     def test_course_meta_list_single_filter_startswith(self):
         """
         Prepopulated database with data and test if it can be search by school name
-        Test if some query key support startswith search as specified in API doc
+        Test if some query key support co search as specified in API doc
         :return:
         """
         url = reverse("api:coursesmeta-list")
 
         # Query key-value pairs used for testing
         test_dict = {
-            "title": "AAEC-4804"
         }
 
         # Test Upper
@@ -181,7 +182,6 @@ class CourseMetaViewSetTests(APITestCase):
 
         # Query key-value pairs used for testing
         test_dict = {
-            "title": "AAEC-4804"
         }
 
         # Test Upper
@@ -368,15 +368,16 @@ class CourseViewSetTests(APITestCase):
     Begin valid view testing
     Support list and retrieve (GET)
     """
+    limit = 20
     def test_course_list_length(self):
         """
-        Since there are 23 entries in the fixtures, expected 23 entries
+        Check list length
         :return:
         """
         url = reverse("api:courses-list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), COURSE_NUM_ENTRIES)
+        self.assertEqual(len(response.data), min(COURSE_NUM_ENTRIES, self.limit))
 
     # ListView testing
     def test_course_list_format(self):
@@ -385,7 +386,7 @@ class CourseViewSetTests(APITestCase):
         :return:
         """
         url = reverse("api:courses-list")
-        fields = ["id", "crn", "time", "capacity", "registered",
+        fields = ["id", "crn", "time", "capacity", "registered", "openseat",
                   "type", "professor", "year", "semester",
                   "location", "course_meta"]
         response = self.client.get(url)
@@ -462,7 +463,6 @@ class CourseViewSetTests(APITestCase):
         test_dict = {
             "school": "Virgina Tech",
             "major": "ECE",
-            "title": "ECE 27000"
         }
 
         check_query_startswith(self, url, test_dict)
@@ -478,11 +478,44 @@ class CourseViewSetTests(APITestCase):
         # Query key-value pairs used for testing
         test_dict = {
             "school": "Virgina Tech",
-            "major": "ECE",
-            "title": "ECE 27000"
+            "major": "ECE"
         }
 
         check_query_istartswith(self, url, test_dict)
+
+    def test_course_list_single_filter_contain(self):
+        """
+        Prepopulated database with data and test if it can be search by school name
+        Test if some query key support contains search as specified in API doc
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        # Query key-value pairs used for testing
+        test_dict = {
+            "name": "Introduction to Artificial Intelligence",
+            "title": "ECE 27000"
+        }
+
+        # Test
+        check_query_contains(self, url, test_dict)
+
+    def test_course_list_single_filter_contain_ignore_case(self):
+        """
+        Prepopulated database with data and test if it can be search by school name
+        Test if some query key support contains search as specified in API doc
+        :return:
+        """
+        url = reverse("api:courses-list")
+
+        # Query key-value pairs used for testing
+        test_dict = {
+            "name": "Introduction to Artificial Intelligence",
+            "title": "ECE 27000"
+        }
+
+        # Test
+        check_query_icontains(self, url, test_dict)
 
     # Limit key constraint checker
     def test_course_list_single_filter_limit(self):
@@ -638,7 +671,7 @@ class CourseViewSetTests(APITestCase):
         url = reverse("api:courses-list")
         response = self.client.get(url, {"nonexisted": "Purdue"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), COURSE_NUM_ENTRIES)
+        self.assertEqual(len(response.data), min(COURSE_NUM_ENTRIES, self.limit))
 
     # DetailView/RetrieveView testing
     def test_course_retrieve(self):
@@ -648,7 +681,7 @@ class CourseViewSetTests(APITestCase):
         """
         path_params = {"pk": 1}
         url = reverse("api:courses-detail", kwargs=path_params)
-        fields = ["id", "crn", "time", "capacity", "registered",
+        fields = ["id", "crn", "time", "capacity", "registered", "openseat",
                   "type", "professor", "year", "semester",
                   "location", "course_meta"]
 

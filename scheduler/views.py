@@ -46,7 +46,10 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
         if college is not None:
             queryset = queryset.filter(college__icontains=college)
         if title is not None:
-            queryset = queryset.filter(title__istartswith=title)
+            queryset = queryset.filter(title__icontains=title)
+
+        # TODO Add support for other sorting?
+        queryset = queryset.order_by("title")
         if limit is not None:
             try:
                 limit = int(limit)
@@ -56,8 +59,7 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
             except ValueError as err:
                 raise InvalidQueryValue()
         else:
-            queryset = queryset[:200]
-
+            queryset = queryset[:20]
         serializer = CourseMetaSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -76,6 +78,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         # TODO Query parameter Validation with validator?
         school      = self.request.query_params.get("school", None)
         title       = self.request.query_params.get("title", None)
+        name        = self.request.query_params.get("name", None)
         crn         = self.request.query_params.get("crn", None)
         major       = self.request.query_params.get("major", None)
         year        = self.request.query_params.get("year", None)
@@ -87,7 +90,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         if school is not None:
             queryset = queryset.filter(course_meta__school__istartswith=school)
         if title is not None:
-            queryset = queryset.filter(course_meta__title__istartswith=title)
+            queryset = queryset.filter(course_meta__title__icontains=title)
+        if name is not None:
+            queryset = queryset.filter(course_meta__name__icontains=name)
         if crn is not None:
             queryset = queryset.filter(crn__istartswith=crn)
         if major is not None:
@@ -104,6 +109,9 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             queryset = queryset.filter(semester__iexact=semester)
         if professor is not None:
             queryset = queryset.filter(professor__istartswith=professor)
+
+        # TODO Support other sorting?
+        queryset = queryset.order_by("course_meta__title")
         if limit is not None:
             try:
                 limit = int(limit)
@@ -113,7 +121,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
             except ValueError as err:
                 raise InvalidQueryValue()
         else:
-            queryset = queryset[:200]
+            queryset = queryset[:20]
 
         serializer = CourseSerializer(queryset, many=True)
         return Response(serializer.data)
@@ -161,9 +169,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if sortby is not None:
             if sortby not in self.supported_sortby_options:
                 raise InvalidQueryValue()
-            queryset = queryset.order_by(("-" if descending else "") + sortby)
+            queryset = queryset.order_by(("-" if descending else "") + sortby, "-last_answered")
         else:
-            queryset = queryset.order_by(("-" if descending else "") + "like_count")
+            queryset = queryset.order_by(("-" if descending else "") + "like_count", "-last_answered")
+        # Also sub order by created time, the newest is at top
         if limit is not None:
             try:
                 limit = int(limit)
@@ -264,9 +273,9 @@ class NoteViewSet(viewsets.ModelViewSet):
         if sortby is not None:
             if sortby not in self.supported_sortby_options:
                 raise InvalidQueryValue()
-            queryset = queryset.order_by(("-" if descending else "") + sortby)
+            queryset = queryset.order_by(("-" if descending else "") + sortby, "-last_edited")
         else:
-            queryset = queryset.order_by(("-" if descending else "") + "like_count")
+            queryset = queryset.order_by(("-" if descending else "") + "like_count", "-last_edited")
         if limit is not None:
             try:
                 limit = int(limit)

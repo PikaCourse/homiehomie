@@ -34,7 +34,7 @@ class CourseMeta(models.Model):
     college = models.CharField(max_length=100, null=True, blank=True)
     title = models.CharField(max_length=300, default="")
     name = models.CharField(max_length=300, default="")
-    credit_hours = models.IntegerField(default=0)
+    credit_hours = models.IntegerField(default=0, null=True)
     school = models.CharField(max_length=100)
     description = models.CharField(max_length=2048, default="empty course description", blank=True, null=True)
     tags = models.JSONField(default=list, blank=True, null=True)
@@ -59,6 +59,8 @@ class Course(models.Model):
     location:       Course classroom location
     registered:     Course already registered
     capacity:       Course classroom capacity
+    openseat:       Course open seat, either this field is valid or capacity and registered fields are valid
+                    they are exclusive
 
 
     Example Data record:
@@ -83,19 +85,21 @@ class Course(models.Model):
     location:       ARMS-124
     registered:     30
     capacity:       100
+    openseat:       -1
     """
     course_meta = models.ForeignKey(CourseMeta, on_delete=models.CASCADE, default=-1)
     created_at = models.DateTimeField(auto_now_add=True)
     crn = models.CharField(max_length=50, default="", null=True)
     time = models.JSONField(default=list, blank=True, null=True)
     section = models.CharField(max_length=50, null=True)
-    type = models.CharField(max_length=10, default="lecture")
-    professor = models.CharField(max_length=100, default="", null=True, blank=True)
+    type = models.CharField(max_length=10, default="lecture", null=True)
+    professor = models.CharField(max_length=200, default="", null=True, blank=True)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
     semester = models.CharField(max_length=20, null=True, blank=True)
     location = models.CharField(max_length=100, blank=True, null=True)
-    registered = models.IntegerField(default=-1)
+    registered = models.IntegerField(default=-1, null=True)
     capacity = models.IntegerField(default=-1, null=True, blank=True)
+    openseat = models.IntegerField(default=-1, null=True)
 
     def __str__(self):
         return "_".join([str(self.year), str(self.semester), str(self.course_meta)])
@@ -158,7 +162,7 @@ class Note(models.Model):
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, null=True, default=None)
     content = models.TextField(blank=True)    # In markdown
     tags = models.JSONField(default=list)
 

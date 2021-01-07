@@ -1,0 +1,4 @@
+# Shared requirements
+-r comm.txt
+
+psycopg2==2.8.6

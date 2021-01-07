@@ -1,2 +1,1 @@
-release: python manage.py migrate --noinput
-web: python manage.py runserver 0.0.0.0:5000
+web: gunicorn -b 0.0.0.0:5000 homiehomie.wsgi:application

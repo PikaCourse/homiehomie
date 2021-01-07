@@ -2,7 +2,8 @@
     "name": "homiehomie",
     "version": "1.0.0",
     "engines": {
-        "node": "15.x"
+        "node": "14.x",
+        "npm": "7.x"
     },
     "description": "source venv/bin/activate python manage.py runserver",
     "main": "index.js",
@@ -39,6 +40,7 @@
         "webpack-cli": "^4.2.0"
     },
     "dependencies": {
+        "@auth0/auth0-react": "^1.2.0",
         "@fortawesome/fontawesome-svg-core": "^1.2.32",
         "@fortawesome/free-solid-svg-icons": "^5.15.1",
         "@fortawesome/react-fontawesome": "^0.1.14",
@@ -48,7 +50,7 @@
         "@types/react": "^17.0.0",
         "@types/react-dom": "^17.0.0",
         "antd": "^4.9.4",
-        "axios": "^0.21.0",
+        "axios": "^0.21.1",
         "bootstrap": "^4.5.3",
         "esm": "^3.2.25",
         "extract-text-webpack-plugin": "^3.0.2",
