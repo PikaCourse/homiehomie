@@ -5,6 +5,7 @@ export const GET_QUE = "GET_QUE"
 export const CLEAR_QUE = "CLEAR_QUE"
 export const ADD_QUE = "ADD_QUE"
 export const ADD_OBJ = "ADD_OBJ"
+export const LOAD_QUE = "LOAD_QUE"
 
 export const GET_NOTES = "GET_NOTES"
 export const ADD_COURSE_TO_CAL = "ADD_COURSE_TO_CAL"
