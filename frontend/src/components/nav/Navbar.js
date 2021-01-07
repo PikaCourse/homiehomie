@@ -6,6 +6,7 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Layout, Menu } from "antd";
+import Wishlist from "../wishlist/Wishlist";
 const { Header } = Layout;
 
 const querystring = require("querystring");
@@ -17,6 +18,7 @@ function Navbar() {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [login, setLogin] = useState(true);
+  const [isWishlistVisible, setIsWishlistVisible] = useState(false);
 
   const loginForm = (
     <Form>
@@ -283,10 +285,7 @@ function Navbar() {
   }
 
   return (
-    <nav
-      className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2"
-      
-    >
+    <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
       <div className="container-fluid">
         <a className="navbar-brand mx-4 pl-4" href="#" style={selectedStyle}>
           CourseWiki
@@ -294,9 +293,20 @@ function Navbar() {
         <div>
           <ul class="navbar-nav ml-auto pr-4">
             <li class="nav-item">
-              <Button size="medium" style={{ color: "#419EF4" }}>
+              <Button
+                size="medium"
+                style={{ color: "#419EF4" }}
+                onClick={() => setIsWishlistVisible(true)}
+              >
                 <FontAwesomeIcon icon={faStar} />
               </Button>
+              <Modal
+                visible={isWishlistVisible}
+                onCancel={() => setIsWishlistVisible(false)}
+                width={"85vw"}
+              >
+                <Wishlist />
+              </Modal>
             </li>
             <li class="nav-item">
               <Button type="primary" className="mx-2" onClick={showModal}>
