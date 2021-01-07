@@ -160,6 +160,7 @@ function Header() {
     footer = {null}
   >
     user profile
+    <Button>Log Out</Button>
   </Modal>; 
   const loginSignupModal = <Modal
     visible={visible}
@@ -194,7 +195,10 @@ function Header() {
   </Form>
   </Modal>; 
   
-  function getSessionStatus() {}; 
+  function getSessionStatus() {
+    console.log(sessionStorage); 
+    console.log(localStorage); 
+  }; 
 
   function getUserProfile() {}; 
   function getCookie(name) {
@@ -247,7 +251,8 @@ function Header() {
           case 200:
             console.log("Successfully login user"); 
             setError(""); 
-            setButtonText(values.username); 
+            setLoginStatus(true); //use getSessionStatus
+            getSessionStatus(); 
             handleOk(true); 
             break;
           case 401:
@@ -288,7 +293,7 @@ function Header() {
           case 200:
             console.log("Successfully register user"); 
             setError(""); 
-            setButtonText(values.email); 
+            setLoginStatus(true); //use getSessionStatus
             handleOk(true); 
             break;
           case 401:
@@ -326,7 +331,7 @@ function Header() {
       <Button type="primary" onClick={showModal}>
         {loginStatus?userProfile.username:"Login"}
       </Button>
-      {loginStatus?loginSignupModal:userProfileModal}
+      {loginStatus?userProfileModal:loginSignupModal}
     </div>
   </nav>
   );
