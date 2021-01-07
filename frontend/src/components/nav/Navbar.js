@@ -22,7 +22,7 @@ function Navbar() {
   const [login, setLogin] = useState(true); //if user is in login tab
 
   const [error, setError] = useState("");
-  const [userProfile, setUserProfile] = useState({ username: "" }); //loginStatus?getUserProfile:{}
+  const [userProfile, setUserProfile] = useState({ username: "user" }); //loginStatus?getUserProfile:{}
   const [loginStatus, setLoginStatus] = useState(false); //getSessionStatus()
 
   const loginForm = (
@@ -436,7 +436,6 @@ function Navbar() {
             </li>
             <li class="nav-item">
               <Button type="primary" className="mx-2" onClick={showModal}>
-                Login
                 {loginStatus ? userProfile.username : "Login"}
               </Button>
               {loginStatus ? userProfileModal : loginSignupModal}
