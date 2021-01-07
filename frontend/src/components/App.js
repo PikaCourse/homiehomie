@@ -1,11 +1,10 @@
 import React, { Component, Fragment } from "react";
 import ReactDOM from "react-dom";
 
-import Header from "./layout/Header";
-import Footer from "./layout/Footer";
-import Dnd from "./Calendar/dnd";
-import Wiki from "./main/Wiki";
-import Wishlist from "./main/Wishlist";
+import Navbar from "./nav/Navbar";
+import Footer from "./nav/Footer";
+import DnDCalendar from "./calendar/DnDCalendar";
+import Wiki from "./course/Wiki";
 
 import { Provider } from "react-redux";
 import store from "../store";
@@ -17,21 +16,18 @@ class App extends Component {
     return (
       <Provider store={store}>
         <Fragment>
-          <Header />
+          <Navbar style={{ height: "5vh" }} />
           <div className="container-fluid">
-            {/* <div className="row">
-              <Wishlist />
-    </div> */}
-            <div className="row">
-              <div id="app" className="col-md-6">
-                <Dnd />
+            <div className="row" style={{ height: "92vh" }}>
+              <div className="col-md-6">
+                <DnDCalendar />
               </div>
-              <div id="app" className="col-md-6">
+              <div className="col-md-6">
                 <Wiki />
               </div>
             </div>
           </div>
-          <Footer />
+          <Footer style={{ height: "3vh" }} />
         </Fragment>
       </Provider>
     );
