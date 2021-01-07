@@ -1,7 +1,9 @@
 from django.urls import path, include
 from user import views, routers
+from rest_framework.routers import SimpleRouter
 
-router = routers.UserRouter()
+# router = routers.UserRouter()
+router = SimpleRouter(trailing_slash=False)
 router.register(r'users', views.UserViewSet, basename='users')
 
 urlpatterns = [

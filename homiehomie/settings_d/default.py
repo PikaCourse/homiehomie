@@ -159,5 +159,8 @@ FIXTURE_DIRS = ['test_fixtures']
 
 # Django Reset Framework config
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'scheduler.exceptions.custom_exception_hdr'
+    'EXCEPTION_HANDLER': 'scheduler.exceptions.custom_exception_hdr',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ]
 }

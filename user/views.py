@@ -8,21 +8,20 @@ desc:        User api for Course Wiki
 """
 
 from user.models import Student
-from user.serializers import StudentSerializer
+from user.serializers import *
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth.views import LoginView
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
-from django.views import View
-from rest_framework import viewsets
-from rest_framework import mixins
-from rest_framework.decorators import action
+from django.contrib.auth import login as auth_login
+from django.views.decorators.debug import sensitive_post_parameters
+from django.views.decorators.csrf import ensure_csrf_cookie, requires_csrf_token, csrf_protect
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
+from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
+from rest_framework.decorators import action
+from rest_framework.parsers import JSONParser
 
 """
-URL Pattern
+URL Pattern need to implemented
 GET: user/, either redirect user to login or to their own page if already logged in
 GET: user/{pk}, user own detail page, need auth
 GET: user/login, return login page, if logged in, redirect to detail page
@@ -54,20 +53,35 @@ class UserViewSet(mixins.RetrieveModelMixin,
     """
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
+    parser_classes = [JSONParser]
 
     # TODO Need to specify permission individually?
     @action(detail=False, methods=["post"])
+    @method_decorator(never_cache)
+    @method_decorator(csrf_protect)
+    @method_decorator(sensitive_post_parameters())
     def login(self, request, *args, **kwargs):
         """
-        Login a user with given credientials
+        Login a user with given credentials
         :param request:
         :param args:
         :param kwargs:
         :return:
         """
-        pass
+        credentials = UserLoginSerializer(data=request.data)
+        if credentials.is_valid():
+            # Check if the credentials are correct and can be login
+            user = credentials.save()
+            auth_login(request, user)
+            error_pack = {"code": "success", "detail": "successfully login user",
+                          "user": user.id, "status": status.HTTP_200_OK}
+            return Response(error_pack, status=status.HTTP_200_OK)
+        else:
+            raise ValidationError("invalid username or password combination",
+                                  code="invalid_login")
 
     @action(detail=False, methods=["get"])
+    @method_decorator(never_cache)
     def logout(self, request, *args, **kwargs):
         """
         Log a user out regardless of login status
@@ -130,37 +144,6 @@ class UserViewSet(mixins.RetrieveModelMixin,
         :return:
         """
         pass
-
-
-class RegisterUserView(View):
-    """
-    Register user and redirect user to profile page
-    """
-
-    def get(self, request):
-        """
-        Render registration page
-        :param request:
-        :return:
-        """
-        if request.user.is_authenticated:
-            return redirect("/", username=request.user.username)
-        else:
-            f = UserCreationForm()
-            return render(request, "user/register.html", {"form": f})
-
-    def post(self, request):
-        """
-        Create user and authenticate
-        :param request:
-        :return:
-        """
-        f = UserCreationForm(request.POST)
-        if f.is_valid():
-            user = f.save(commit=False)
-            user.save()
-            return redirect('user:login')
-        return render(request, "user/register.html", {"form": f})
 
 
 # TODO Add support for password management
