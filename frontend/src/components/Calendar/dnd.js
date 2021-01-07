@@ -32,11 +32,12 @@ class Dnd extends React.Component {
     this.newEvent = this.newEvent.bind(this);
   }
 
-  // static propTypes = {
-  //   course: PropTypes.array.isRequired,
-  //   calendar: PropTypes.array.isRequired,
-  //   calendarCourseBag: PropTypes.array.isRequired,
-  // };
+  static propTypes = {
+    course: PropTypes.array.isRequired,
+    calendar: PropTypes.array.isRequired,
+    //calendarCourseBag: PropTypes.array.isRequired,
+  };
+
 
   componentDidMount() {
     document.addEventListener("keydown", this.deleteKeyDown, false);
@@ -221,7 +222,7 @@ class Dnd extends React.Component {
           formats={formats}
           selectable
           localizer={mlocalizer}
-          events={this.props.calendarCourseBag} //data input
+          events={store.getState().calendar.calendarCourseBag} //data input
           onEventDrop={this.moveEvent}
           resizable={true}
           onEventResize={this.resizeEvent}
