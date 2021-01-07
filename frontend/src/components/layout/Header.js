@@ -230,7 +230,7 @@ function Header() {
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
     <div className="container-fluid">
       <a className="navbar-brand mx-4" href="#" style={selectedStyle}>
-        Scheduler Beta
+        CourseWiki
       </a>
       <Button type="primary" onClick={showModal}>
         Login

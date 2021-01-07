@@ -2,6 +2,7 @@ body {
     font-family: 'Montserrat' !important;
     font-style: normal;
     font-weight: 400;
+    background-color: #f8f8f8;
 }
 
 h1 {
@@ -13,13 +14,33 @@ h2 {
     font-size: 1.5rem;
 }
 
-#dropdown-menu-align-right{
+.divider{
+    width:100%;
+    margin:20px auto;
+    overflow:hidden;
+    text-align:center;   
+    line-height:1.2em;
+}
+
+.divider:before, .divider:after{
+    content:"";
+    vertical-align:middle;
+    display:inline-block;
+    width:50%;
+    border-bottom:2px dotted #419EF4;
+    margin:0 2% 0 -55%;
+}
+.divider:after{
+    margin:0 -55% 0 2%;
+}
+
+/* #dropdown-menu-align-right{
     font-family: 'Montserrat';
     background-color: #ffffff;
     color: black;
     border-color: #419EF4;
     margin-bottom: 1rem;
-}
+} */
 
 @font-face {
     font-family: 'Montserrat';

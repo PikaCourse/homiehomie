@@ -26,13 +26,15 @@ export default function (state = initialState, action) {
         let newBag3 = [...state.noteBag];
         let newnbObj = action.notebagObj;
         let newnotebookObj = action.notebookObj;
-        newnbObj.notes.push(newnotebookObj);
-        let newBag4 = newBag3.filter(obj => obj.question.id != newnbObj.question.id);
-        console.log("from que");
-        console.log(newBag4);
-        newBag4.push(newnbObj);
+        console.log(newnotebookObj);
+        let indexOfObj = newBag3.findIndex(obj => obj.question.id == newnbObj.question.id);
+        newBag3[indexOfObj].notes.push(newnotebookObj);
+        console.log(indexOfObj);
+        console.log(" from add que");
+        //console.log("from que");
+        //console.log(newBag3);
         return{
-            noteBag: newBag4
+            noteBag: newBag3
         }
     default:
       return state;

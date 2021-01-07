@@ -19,9 +19,9 @@ class App extends Component {
         <Fragment>
           <Header />
           <div className="container-fluid">
-            <div className="row">
+            {/* <div className="row">
               <Wishlist />
-            </div>
+    </div> */}
             <div className="row">
               <div id="app" className="col-md-6">
                 <Dnd />
