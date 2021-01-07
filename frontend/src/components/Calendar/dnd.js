@@ -186,10 +186,17 @@ class Dnd extends React.Component {
     });
   };
 
+  timeRangeFormat = ({ start, end }, culture, local) =>
+    local.format(start, "hh:mm", culture);
+
   render() {
     return (
-      <div className="p-2">
+      <div
+        className="p-4 mt-4"
+        style={{ backgroundColor: "#ffffff", borderRadius: "1.5rem" }}
+      >
         <DragAndDropCalendar
+          formats={{ timeGutterFormat: 'h tt' }}
           min={
             new Date(
               today.getFullYear(),

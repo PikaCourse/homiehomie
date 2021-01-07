@@ -182,18 +182,14 @@ export class WikiSummary extends Component {
         {typeof this.props.selectedCourseArray.find(
           ({ crn }) => crn === this.props.selectedCRN
         ) != "undefined" ? (
-          <div className="p-3">
-            <div className="mb-4">
+          <div className="">
+            <div className="mb-2">
               <Search
+                style={{ border: "none" }}
                 placeholder="Search subject, CRN or course name"
                 allowClear
                 enterButton={
-                  <Button
-                    className="mx-1"
-                    type="ghost"
-                    size="large"
-                    // style={{ color: "#419EF4", borderColor: "#419EF4" }}
-                  >
+                  <Button className="mx-1" type="ghost" size="large">
                     Search
                   </Button>
                 }
@@ -202,67 +198,73 @@ export class WikiSummary extends Component {
                 onSearch={(value) => this.props.dispatch(getCourse(value))}
               />
             </div>
-            <div>
-              <h1
-                className="mr-2 align-middle"
-                style={{ color: "#419EF4", display: "inline" }}
-              >
-                {this.props.selectedCourse.course_meta.title}
-              </h1>
 
-              <Select
-                className="col-sm-3 mx-0 px-0 align-middle"
-                defaultValue={this.props.selectedCRN}
-                value={this.props.selectedCRN}
-                style={{ width: 120 }}
-                size="large"
-                onChange={(value) => {
-                  this.props.dispatch(
-                    setCourse({
-                      selectedCRN: value,
-                      selectedCourseArray: this.props.selectedCourseArray,
-                    })
-                  );
-                }}
-              >
-                {this.props.selectedCourseArray.map((course) => (
-                  <Option value={course.crn}>{course.crn}</Option>
-                ))}
-              </Select>
+            <div
+              className="p-4 my-2 mt-4"
+              style={{ backgroundColor: "#ffffff", borderRadius: "1.5rem" }}
+            >
+              <div>
+                <h1
+                  className="mr-2 align-middle"
+                  style={{ color: "#419EF4", display: "inline" }}
+                >
+                  {this.props.selectedCourse.course_meta.title}
+                </h1>
+
+                <Select
+                  className="col-sm-3 mx-0 px-0 align-middle"
+                  defaultValue={this.props.selectedCRN}
+                  value={this.props.selectedCRN}
+                  style={{ width: 120 }}
+                  size="large"
+                  onChange={(value) => {
+                    this.props.dispatch(
+                      setCourse({
+                        selectedCRN: value,
+                        selectedCourseArray: this.props.selectedCourseArray,
+                      })
+                    );
+                  }}
+                >
+                  {this.props.selectedCourseArray.map((course) => (
+                    <Option value={course.crn}>{course.crn}</Option>
+                  ))}
+                </Select>
+              </div>
+              <h1>{this.props.selectedCourse.course_meta.name}</h1>
+
+              <div className="">
+                <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
+                  {weekday.map((day, index) => (
+                    <span
+                      className={weekdayToClass(
+                        index,
+                        this.props.selectedCourse.time
+                      )}
+                    >
+                      {day}
+                    </span>
+                  ))}
+                </p>
+
+                <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
+                  {this.props.selectedCourse.professor} -{" "}
+                  {this.props.selectedCourse.time[0].start_at}-
+                  {this.props.selectedCourse.time[0].end_at} -{" "}
+                  {this.props.selectedCourse.location}
+                </p>
+
+                <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
+                  Credit Hour:{" "}
+                  {this.props.selectedCourse.course_meta.credit_hours}
+                </p>
+
+                <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
+                  Capacity: {this.props.selectedCourse.capacity}
+                </p>
+              </div>
+              {this.buttonLoader()}
             </div>
-            <h1>{this.props.selectedCourse.course_meta.name}</h1>
-
-            <div className="">
-              <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
-                {weekday.map((day, index) => (
-                  <span
-                    className={weekdayToClass(
-                      index,
-                      this.props.selectedCourse.time
-                    )}
-                  >
-                    {day}
-                  </span>
-                ))}
-              </p>
-
-              <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
-                {this.props.selectedCourse.professor} -{" "}
-                {this.props.selectedCourse.time[0].start_at}-
-                {this.props.selectedCourse.time[0].end_at} -{" "}
-                {this.props.selectedCourse.location}
-              </p>
-
-              <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
-                Credit Hour:{" "}
-                {this.props.selectedCourse.course_meta.credit_hours}
-              </p>
-
-              <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
-                Capacity: {this.props.selectedCourse.capacity}
-              </p>
-            </div>
-            {this.buttonLoader()}
           </div>
         ) : (
           "loading..."
