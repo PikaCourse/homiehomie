@@ -185,7 +185,8 @@ export class WikiSummary extends Component {
           <div className="">
             <div className="mb-2">
               <Search
-                style={{ border: "none" }}
+                bordered={false}
+                style={{ backgroundColor: "#ffffff", borderRadius: "0.5rem" }}
                 placeholder="Search subject, CRN or course name"
                 allowClear
                 enterButton={
