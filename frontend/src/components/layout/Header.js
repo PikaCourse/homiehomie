@@ -18,9 +18,9 @@ function Header() {
   const [visible, setVisible] = useState(false); 
   const [login, setLogin] = useState(true);  //if user is in login tab 
   const [error, setError] = useState(""); 
-  const [buttonText, setButtonText] = useState("Login"); 
-  const [userProfile, setUserProfile] = useState({username: ""}); 
-
+  const [userProfile, setUserProfile] = useState({username: ""}); //loginStatus?getUserProfile:{}
+  const [loginStatus, setLoginStatus] = useState(false); //getSessionStatus()
+  
   const loginForm = <><Form.Item
       name="username"
       rules={[
@@ -193,6 +193,10 @@ function Header() {
       {login?loginFooter:signupFooter}
   </Form>
   </Modal>; 
+  
+  function getSessionStatus() {}; 
+
+  function getUserProfile() {}; 
   function getCookie(name) {
     var cookieValue = null;
     console.log("document.cookie: "+document.cookie); 
@@ -320,9 +324,9 @@ function Header() {
         CourseWiki
       </a>
       <Button type="primary" onClick={showModal}>
-        {buttonText}
+        {loginStatus?userProfile.username:"Login"}
       </Button>
-      {buttonText=="Login"?loginSignupModal:userProfileModal}
+      {loginStatus?loginSignupModal:userProfileModal}
     </div>
   </nav>
   );
