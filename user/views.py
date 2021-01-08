@@ -60,8 +60,9 @@ class UserViewSet(mixins.RetrieveModelMixin,
     # TODO Need to specify permission individually?
     @action(detail=False, methods=["post"])
     @method_decorator(never_cache)
+    # CSRF is enforced on login and password related views,
+    # see https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication
     @method_decorator(csrf_protect)
-    @method_decorator(sensitive_post_parameters())
     def login(self, request, *args, **kwargs):
         """
         Login a user with given credentials
@@ -70,10 +71,18 @@ class UserViewSet(mixins.RetrieveModelMixin,
         :param kwargs:
         :return:
         """
+        # If already login, simply return the response
+        if not request.user.is_anonymous:
+            error_pack = {"code": "success", "detail": "already login",
+                          "user": request.user.id, "status": status.HTTP_200_OK}
+            return Response(error_pack, status=status.HTTP_200_OK)
         credentials = UserLoginSerializer(data=request.data)
-        if credentials.is_valid():
+
+        # Set true to raise the exception during validation process immediately
+        if credentials.is_valid(raise_exception=False):
             # Check if the credentials are correct and can be login
             user = credentials.save()
+            # Credential correct, login user
             auth_login(request, user)
             error_pack = {"code": "success", "detail": "successfully login user",
                           "user": user.id, "status": status.HTTP_200_OK}
@@ -107,9 +116,19 @@ class UserViewSet(mixins.RetrieveModelMixin,
         :return:
         """
 
-        # TODO Validate incoming data,
-        #  create user, login user
-        pass
+        credentials = UserRegisterSerializer(data=request.data)
+        if credentials.is_valid(raise_exception=True):
+            # Credentials valid, creating new user/student instance
+            user = credentials.save()
+            # TODO Add email registration step
+            error_pack = {"code": "success", "detail": "successfully register user",
+                          "user": user.id, "status": status.HTTP_200_OK}
+            # Login user, removed after adding email registration
+            auth_login(request, user)
+            return Response(error_pack, status=status.HTTP_200_OK)
+        else:
+            raise ValidationError("invalid registration info",
+                                  code="invalid_login")
 
     def default_get(self, request, *args, **kwargs):
         """

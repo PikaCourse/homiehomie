@@ -1,7 +1,7 @@
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
 from rest_framework.views import exception_handler
-from rest_framework.exceptions import APIException, ErrorDetail
+from rest_framework.exceptions import APIException, ErrorDetail, ValidationError
 from rest_framework import status
 
 
@@ -12,9 +12,16 @@ def custom_exception_hdr(exc, context):
 
     # Now add the HTTP status code to the response.
     if response is not None:
-        response.data['status'] = response.status_code
-        response.data['code'] = response.data['detail'].code
-        response.data['detail'] = str(response.data['detail'])
+        # Validation error handled differently
+        if isinstance(exc, ValidationError):
+            for field in response.data:
+                response.data[field] = map(str, response.data[field])
+            response.data['status'] = response.status_code
+            response.data['code'] = "valid_error"
+        else:
+            response.data['status'] = response.status_code
+            response.data['code'] = response.data['detail'].code
+            response.data['detail'] = str(response.data['detail'])
     return response
 
 

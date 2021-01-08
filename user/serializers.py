@@ -3,8 +3,9 @@ from django.contrib.auth import (
     authenticate, get_user_model, password_validation,
 )
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound, ValidationError, AuthenticationFailed
+from rest_framework.exceptions import NotFound, AuthenticationFailed
 from rest_framework.fields import (empty)
 
 
@@ -33,9 +34,9 @@ class UserLoginSerializer(serializers.Serializer):
     Serializer to validate user login information
     Should allow either username or email login
 
-    TODO In `save`, authentic user but not log he in, log user in in
-    TODO viewset; since the save method aim at checking the
-    TODO if the credentials are valid. Also should raise login error here as well
+    In `save`, authentic user but not log he in, log user in in
+    viewset; since the save method aim at checking the
+    if the credentials are valid. Also should raise login error here as well
     TODO After checking the credentials are valid, can also check if the user is allow to login
     TODO which is useful in cases like required email verification
     """
@@ -119,27 +120,56 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("username", "email")
+        fields = ("username", "email", "password")
 
     def __init__(self, instance=None, data=empty, **kwargs):
         super().__init__(instance, data, **kwargs)
         self.user_cache = None
 
-    def validate_email(self):
-        email = self.validated_data["email"]
+    def validate_email(self, value):
+        # Value already check against model field Email constraint
+        email = value
         if not email:
-            raise ValidationError("missing email field", code="invalid_registration")
+            raise serializers.ValidationError("missing email field")
         if User.objects.filter(email=email).count():
-            raise ValidationError("email taken", code="invalid_registration")
+            raise serializers.ValidationError("email taken")
         return email
+
+    def validate_username(self, value):
+        # Not necessary since the username is unique in the
+        # django.contrib.auth models
+        return value
+
+    def validate_password(self, value):
+        # Handled in object-level validation
+        return value
+
+    def validate(self, data):
+        """
+        Object-level validation on object data
+        :param data:
+        :return:
+        """
+
+        # Validate the user password
+        # TODO Add additional validator for password strength?
+        user = User(**data)
+        password = data.get('password')
+        errors = dict()
+        try:
+            # Validate the password and catch the exception
+            password_validation.validate_password(password=password, user=user)
+        # The exception raised here is different than serializers.ValidationError
+        except ValidationError as e:
+            errors['password'] = list(e)
+        if errors:
+            raise serializers.ValidationError(errors)
+        return super(UserRegisterSerializer, self).validate(data)
 
     def create(self, validated_data):
         """
-        Create a new user by validating if the credentials are proper
+        Create a new user after validating if the credentials are proper
         :param validated_data:
         :return:
         """
-        # TODO Validate that email is not repeated
-        # TODO Run creation process via the validator like in UserCreationForm
-
-        pass
+        return User.objects.create_user(**validated_data)
