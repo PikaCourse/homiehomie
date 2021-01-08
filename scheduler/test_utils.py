@@ -265,7 +265,7 @@ def check_order(test_case, arr, key, descending=True):
     prev_count = None
     pinned_list = []
     for obj in arr:
-        if obj["is_pin"]:
+        if "is_pin" in obj and obj["is_pin"]:
             test_case.assertIsNone(prev_count, msg="Pinned question should come first in sequence")
             pinned_list.append(obj)
             continue
