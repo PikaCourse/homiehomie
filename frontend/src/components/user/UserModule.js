@@ -335,10 +335,10 @@ function UserModule() {
       }
       )
       .then((result) => {
+        handleOk(true);
         console.log(result); 
         console.log("Successfully logout user");
         setLoginStatus(false); //use getSessionStatus
-        handleOk(true);
         localStorage.removeItem("last_active_time");
       })
       .catch(err => {
@@ -407,11 +407,11 @@ function UserModule() {
         console.log("result"); 
         console.log(result); 
         if (result.status == 200) {
+          handleOk(true);
           console.log("Successfully login user");
           setError("");
           setLoginStatus(true); //use getSessionStatus
           getSessionStatus();
-          handleOk(true);
           localStorage.setItem(
             "last_active_time",
             JSON.stringify(new Date())
@@ -419,17 +419,16 @@ function UserModule() {
         }
       })
       .catch(err => {
+        handleOk(false);
         console.log(err.response.status);
         if (err.response.status >= 400 && err.response.status < 500) {
           console.log("Error due to invalid password or username");
           setError("Incorrect username or password.");
-          handleOk(false);
         } else {
           console.log("login error due to others");
           setError(
             "Sorry, we cannot complete your request at this time due to unknown error, please try later."
           );
-          handleOk(false);
         }
      });
   }
@@ -455,10 +454,10 @@ function UserModule() {
       })
       .then((result) => {
         if (result.status == 200) {
+          handleOk(true);
           console.log("Successfully register user");
           setError("");
           setLoginStatus(true); //use getSessionStatus
-          handleOk(true);
           localStorage.setItem(
             "last_active_time",
             JSON.stringify(new Date())
@@ -466,6 +465,7 @@ function UserModule() {
         }
       })
       .catch(err => {
+        handleOk(false);
         console.log(err.response); 
         if (err.response.status >= 400 && err.response.status < 500) {
           console.log("Error due to failed registration constraint");
@@ -476,13 +476,11 @@ function UserModule() {
             "Sorry, we cannot complete your request at this time due to failed registration constraint, please try again.\n"
             + passwordErrMes + emailErrMes + usernameErrMes
           );
-          handleOk(false);
         } else {
           console.log("register error due to others");
           setError(
             "Sorry, we cannot complete your request at this time due to unknown error, please try again."
           );
-          handleOk(false);
         }
       });
   }
@@ -493,11 +491,12 @@ function UserModule() {
   }
 
   function handleOk(successful) {
-    setLoading(true);
-    setTimeout(() => {
-      if (successful) setVisible(false);
-      setLoading(false);
-    }, 1000);
+    if (successful) setVisible(false);
+    // setLoading(true);
+    // setTimeout(() => {
+    //   if (successful) setVisible(false);
+    //   setLoading(false);
+    // }, 1000);
   }
 
   function handleCancel() {
