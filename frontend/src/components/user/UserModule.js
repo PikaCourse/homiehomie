@@ -16,16 +16,18 @@ axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
 function UserModule() {
+  //local usage 
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [login, setLogin] = useState(true); //if user is in login tab
-
   const [error, setError] = useState("");
+  //global usage 
   const [userProfile, setUserProfile] = useState({ username: "user" }); //loginStatus?getUserProfile:{}
   const [loginStatus, setLoginStatus] = useState(false); //getSessionStatus()
-
-  const loginForm = (
-    <Form>
+ 
+  //login signup 
+  const loginForm = ( //login main form
+    <>
       <Form.Item
         name="username"
         rules={[
@@ -64,10 +66,10 @@ function UserModule() {
           Forgot password
         </a>
       </Form.Item>
-    </Form>
+    </>
   );
-  const signupForm = (
-    <Form>
+  const signupForm = ( //signup main form 
+    <>
       <Form.Item
         name="email"
         label="E-mail"
@@ -131,9 +133,7 @@ function UserModule() {
         rules={[
           {
             validator: (_, value) =>
-              value
-                ? Promise.resolve()
-                : Promise.reject("Please read and accept agreement"),
+              value ? Promise.resolve() : Promise.reject('Please read and accept agreement'),
           },
         ]}
         {...tailFormItemLayout}
@@ -142,9 +142,9 @@ function UserModule() {
           I have read the <a href="">agreement</a>
         </Checkbox>
       </Form.Item>
-    </Form>
+    </>
   );
-  const loginFooter = (
+  const loginFooter = ( //the footer of login form, including buttons 
     <Form.Item>
       <Button
         type="primary"
@@ -167,7 +167,7 @@ function UserModule() {
       </a>
     </Form.Item>
   );
-  const signupFooter = (
+  const signupFooter = ( //the footer of signup form, including buttons 
     <Form.Item>
       <Button
         type="primary"
@@ -203,6 +203,7 @@ function UserModule() {
       },
     },
   };
+
   const userProfileModal = (
     <Modal
       visible={visible}
@@ -230,7 +231,7 @@ function UserModule() {
           remember: true,
         }}
         onFinish={login ? loginSubmit : signupSubmit}
-        // onFinishFailed={}
+        onFinishFailed
       >
         <Form.Item label="">
           <Radio.Group
@@ -241,7 +242,7 @@ function UserModule() {
             <Radio.Button value="signup">Sign Up</Radio.Button>
           </Radio.Group>
         </Form.Item>
-        <Form.Item name="error message" hidden={error == "" ? true : false}>
+        <Form.Item name="error message" hidden={error == "" ? true : false} style={{ color: "red" }}>
           {error}
         </Form.Item>
         {login ? loginForm : signupForm}
@@ -250,6 +251,7 @@ function UserModule() {
     </Modal>
   );
 
+  // backend, storage related functions  
   function getSessionStatus() {
     console.log(sessionStorage);
     console.log(localStorage);
@@ -292,18 +294,6 @@ function UserModule() {
       }
     }
     return cookieValue;
-  }
-
-  function showModal() {
-    setVisible(true);
-  }
-
-  function handleOk(successful) {
-    setLoading(true);
-    setTimeout(() => {
-      if (successful) setVisible(false);
-      setLoading(false);
-    }, 1000);
   }
 
   function loginSubmit(values) {
@@ -349,7 +339,6 @@ function UserModule() {
             handleOk(false);
         }
       });
-    handleOk();
   }
 
   function signupSubmit(values) {
@@ -398,11 +387,24 @@ function UserModule() {
             handleOk(false);
         }
       });
-    handleOk();
+  }
+
+  // local 
+  function showModal() {
+    setVisible(true);
+  }
+
+  function handleOk(successful) {
+    setLoading(true);
+    setTimeout(() => {
+      if (successful) setVisible(false);
+      setLoading(false);
+    }, 1000);
   }
 
   function handleCancel() {
     setVisible(false);
+    setError(""); 
   }
 
   function onFormTypeChange(e) {
@@ -412,6 +414,7 @@ function UserModule() {
   return (
 
             <>
+            {() => {if (loginStatus) setTimeout(function(){ autoLogout(); }, 300000); }}
               <Button type="primary" className="mx-2" onClick={showModal}>
                 {loginStatus ? userProfile.username : "Login"}
               </Button>
