@@ -1,4 +1,5 @@
 from user.models import *
+from user.validators import *
 from django.contrib.auth import (
     authenticate, get_user_model, password_validation,
 )
@@ -19,52 +20,29 @@ class UserSerializer(serializers.ModelSerializer):
                   "email", "date_joined",)
         read_only_fields = ("date_joined", "last_login")
 
-# TODO Use source option in field? and manually validate the email and username
+
 class StudentSerializer(serializers.ModelSerializer):
     """
     Serializer to return student profile
     """
     # Required is set to false since we want the input
     # data to be flatten as well, thus won't contains key `user`
-    user = UserSerializer(read_only=False)
+    user = User
+    username = serializers.CharField(source="user.username",
+                                     validators=[UniqueOrOwnerValidator(queryset=User.objects.all())])
+    email = serializers.EmailField(source="user.email",
+                                   validators=[UniqueOrOwnerValidator(queryset=User.objects.all())])
+    first_name = serializers.CharField(source="user.first_name", allow_blank=True)
+    last_name = serializers.CharField(source="user.last_name", allow_blank=True)
+    # If read only is true, will not be included in validated data
+    last_login = serializers.DateTimeField(source="user.last_login", read_only=True)
+    date_joined = serializers.DateTimeField(source="user.date_joined", read_only=True)
 
     class Meta:
         model = Student
-        fields = "__all__"
+        exclude = ("user", )
+        read_only_fields = ("id", )
 
-    # Flatten the data
-    def to_representation(self, obj):
-        """
-        Flatten the data
-        :param obj:
-        :return:
-        """
-        representation = super().to_representation(obj)
-        user_representation = representation.pop("user")
-        for field in user_representation:
-            representation[field] = user_representation[field]
-        return representation
-
-    def to_internal_value(self, data):
-        """
-        Move data from raw form to internal structure
-        :param data:
-        :return:
-        """
-        user_internal = {}
-        for key in UserSerializer.Meta.fields:
-            # If the key is not read only fields and presented in the data
-            if key not in UserSerializer.Meta.read_only_fields and key in data:
-                user_internal[key] = data.pop(key)
-
-        data["user"] = user_internal
-        internal = super().to_internal_value(data)
-        # internal['user'] = user_internal
-        return internal
-
-
-    # TODO Should not modify read only fields
-    # TODO Username check the one exist is not himself
     def update(self, instance, validated_data):
         """
         Update the user student profile
@@ -72,14 +50,15 @@ class StudentSerializer(serializers.ModelSerializer):
         :param validated_data:
         :return:
         """
-        user_data = validated_data.pop('user')
-        super().update(instance, validated_data)
-
-        # Update user fields
+        # Update Student instance
+        # TODO Update user instance
         user = instance.user
-        for attr, value in user_data.items():
-            setattr(user, attr, value)
+        user_data = validated_data.pop("user")
+        for field in user_data:
+            if hasattr(user, field):
+                setattr(user, field, user_data[field])
         user.save()
+        super().update(instance, validated_data)
 
         return instance
 
