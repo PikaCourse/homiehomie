@@ -9,6 +9,7 @@ import { Layout, Menu } from "antd";
 import Wishlist from "../wishlist/Wishlist";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
+import prompt from "../../../static/json/prompt.json"
 
 const querystring = require("querystring");
 // import ensure_csrf_cookie from django.views.decorators.csrf
@@ -71,6 +72,18 @@ function UserModule() {
   const signupForm = ( //signup main form 
     <>
       <Form.Item
+        name="username"
+        label="Username"
+        rules={[
+          {
+            required: true,
+            message: "Please input your username!",
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
         name="email"
         label="E-mail"
         rules={[
@@ -83,7 +96,6 @@ function UserModule() {
             message: "Please input your E-mail!",
           },
         ]}
-        extra="Email will automatically be your username for your convenience."
       >
         <Input />
       </Form.Item>
@@ -96,8 +108,20 @@ function UserModule() {
             required: true,
             message: "Please input your password!",
           },
+          () => ({
+            validator(_, value) {
+              if (value.length >= 8) {
+                return Promise.resolve();
+              }
+              else {return Promise.reject(
+                prompt.registerRules.passwordRules.nonlength
+              );
+              }
+            },
+          }),
         ]}
         hasFeedback
+        extra={prompt.registerRules.passwordRules.rules}
       >
         <Input.Password />
       </Form.Item>
@@ -203,7 +227,6 @@ function UserModule() {
       },
     },
   };
-
   const userProfileModal = (
     <Modal
       visible={visible}
@@ -257,11 +280,77 @@ function UserModule() {
     console.log(localStorage);
   }
 
-  function getUserProfile() {}
+  useEffect(() => {
+    // Update the document title using the browser API
+    getUserProfile();
+  }, []);
+
+  function getUserProfile() {
+    var csrftoken = getCookie("csrftoken");
+    console.log(csrftoken);
+    axios
+      .get("/api/users",  {
+        headers: {
+          // Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrftoken,
+        },
+      })
+      .then((result) => {
+        console.log("result"); 
+        console.log(result); 
+        if (result.status == 302) {
+          console.log("Successfully get user profile info");
+          setError("");
+          localStorage.setItem(
+            "last_active_time",
+            JSON.stringify(new Date())
+          );
+          setLoginStatus(true); 
+          // setUserProfile({result}); 
+        } else if (result.status == 401)
+        {
+          setLoginStatus(false); 
+        }
+      })
+      .catch(err => {
+          setError(
+            "Sorry, we cannot keep you login at this time due to unknown error, please try later."
+          );
+     });
+  }
 
   function logOut() {
     console.log("user should be logged out");
-    setLoginStatus(false); 
+    var csrftoken = getCookie("csrftoken");
+    console.log(csrftoken);
+    axios
+      .get("/api/users/logout", 
+      {
+        headers: {
+          // Accept: "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrftoken,
+        },
+      }
+      )
+      .then((result) => {
+        console.log(result); 
+        console.log("Successfully logout user");
+        setLoginStatus(false); //use getSessionStatus
+        handleOk(true);
+        localStorage.removeItem("last_active_time");
+      })
+      .catch(err => {
+        setError(
+          "Sorry, we cannot complete your request at this time, please try again."
+        );
+        localStorage.setItem(
+          "last_active_time",
+          JSON.stringify(new Date())
+        );
+        console.log(err.response); 
+      });
   } //send to backend log user out
 
   function autoLogout() {
@@ -286,7 +375,8 @@ function UserModule() {
     if (document.cookie && document.cookie !== "") {
       var cookies = document.cookie.split(";");
       for (var i = 0; i < cookies.length; i++) {
-        var cookie = jQuery.trim(cookies[i]);
+        // var cookie = jQuery.trim(cookies[i]);
+        var cookie = cookies[i].trim();
         if (cookie.substring(0, name.length + 1) === name + "=") {
           cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
           break;
@@ -299,92 +389,100 @@ function UserModule() {
   function loginSubmit(values) {
     console.log(values);
     console.log("login submit ran");
-    let userLoginObj = querystring.stringify({
+    let userLoginObj = {
       username: values.username,
       password: values.password,
-    });
+    };
     var csrftoken = getCookie("csrftoken");
     console.log(csrftoken);
     axios
-      .post("/user/login", userLoginObj, {
+      .post("/api/users/login", userLoginObj, {
         headers: {
-          Accept: "application/x-www-form-urlencoded",
-          "Content-Type": "application/x-www-form-urlencoded",
+          // Accept: "application/json",
+          "Content-Type": "application/json",
           "X-CSRFToken": csrftoken,
         },
       })
       .then((result) => {
-        switch (result.status) {
-          case 200:
-            console.log("Successfully login user");
-            setError("");
-            setLoginStatus(true); //use getSessionStatus
-            getSessionStatus();
-            handleOk(true);
-            localStorage.setItem(
-              "last_active_time",
-              JSON.stringify(new Date())
-            );
-            break;
-          case 401:
-            console.log("Error due to invalid password or username");
-            setError("Incorrect username or password.");
-            handleOk(false);
-            break;
-          default:
-            console.log("login error due to others");
-            setError(
-              "Sorry, we cannot complete your request at this time due to unknown error, please try later."
-            );
-            handleOk(false);
+        console.log("result"); 
+        console.log(result); 
+        if (result.status == 200) {
+          console.log("Successfully login user");
+          setError("");
+          setLoginStatus(true); //use getSessionStatus
+          getSessionStatus();
+          handleOk(true);
+          localStorage.setItem(
+            "last_active_time",
+            JSON.stringify(new Date())
+          );
         }
-      });
+      })
+      .catch(err => {
+        console.log(err.response.status);
+        if (err.response.status >= 400 && err.response.status < 500) {
+          console.log("Error due to invalid password or username");
+          setError("Incorrect username or password.");
+          handleOk(false);
+        } else {
+          console.log("login error due to others");
+          setError(
+            "Sorry, we cannot complete your request at this time due to unknown error, please try later."
+          );
+          handleOk(false);
+        }
+     });
   }
 
   function signupSubmit(values) {
     console.log(values);
     console.log("signup submit ran");
     console.log(values.email);
-    let userRegObj = querystring.stringify({
-      username: values.email,
+    let userRegObj = {
+      username: values.username,
       email: values.email,
       password: values.password,
-    });
+    };
     var csrftoken = getCookie("csrftoken");
     console.log(csrftoken);
     axios
-      .post("user/register", userRegObj, {
+      .post("/api/users/register", userRegObj, {
         headers: {
-          Accept: "application/x-www-form-urlencoded",
-          "Content-Type": "application/x-www-form-urlencoded",
+          // Accept: "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
           "X-CSRFToken": csrftoken,
         },
       })
       .then((result) => {
-        switch (result.status) {
-          case 200:
-            console.log("Successfully register user");
-            setError("");
-            setLoginStatus(true); //use getSessionStatus
-            handleOk(true);
-            localStorage.setItem(
-              "last_active_time",
-              JSON.stringify(new Date())
-            );
-            break;
-          case 401:
-            console.log("Error due to failed registration constraint");
-            setError(
-              "Sorry, we cannot complete your request at this time due to failed registration constraint, please try again."
-            );
-            handleOk(false);
-            break;
-          default:
-            console.log("register error due to others");
-            setError(
-              "Sorry, we cannot complete your request at this time due to unknown error, please try again."
-            );
-            handleOk(false);
+        if (result.status == 200) {
+          console.log("Successfully register user");
+          setError("");
+          setLoginStatus(true); //use getSessionStatus
+          handleOk(true);
+          localStorage.setItem(
+            "last_active_time",
+            JSON.stringify(new Date())
+          );
+        }
+      })
+      .catch(err => {
+        console.log(err.response); 
+        if (err.response.status >= 400 && err.response.status < 500) {
+          console.log("Error due to failed registration constraint");
+          let passwordErrMes = typeof err.response.data.password !== 'undefined'?("\n"+err.response.data.password):""; 
+          let emailErrMes = typeof err.response.data.email !== 'undefined'?("\n"+err.response.data.email):""; 
+          let usernameErrMes = typeof err.response.data.username !== 'undefined'?("\n"+err.response.data.username):""; 
+          setError(
+            "Sorry, we cannot complete your request at this time due to failed registration constraint, please try again.\n"
+            + passwordErrMes + emailErrMes + usernameErrMes
+          );
+          handleOk(false);
+        } else {
+          console.log("register error due to others");
+          setError(
+            "Sorry, we cannot complete your request at this time due to unknown error, please try again."
+          );
+          handleOk(false);
         }
       });
   }
