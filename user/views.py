@@ -8,6 +8,7 @@ desc:        User api for Course Wiki
 """
 
 from user.serializers import *
+from user.permissions import *
 from django.shortcuts import redirect, resolve_url, reverse
 from django.conf import settings
 from django.contrib.auth import login as auth_login
@@ -138,7 +139,8 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
     """
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsProfileOwnerUser]
+    parser_classes = [JSONParser]
 
     # TODO Permission checking
     def default_get(self, request, *args, **kwargs):
@@ -177,27 +179,27 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
         url = self.reverse_action("user:users-detail", kwargs={"pk": user_id})
         return redirect(url)
 
-    def retrieve(self, request, *args, **kwargs):
-        """
-        Retrieve a user's profile, need either admin privilege or the logined user be himself
+    # def retrieve(self, request, *args, **kwargs):
+    #     """
+    #     Retrieve a user's profile, need either admin privilege or the logined user be himself
+    #
+    #     Permission is IsAuthenticated and Owner
+    #     :param request:
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     pass
 
-        Permission is IsAuthenticated and Owner
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        return Response({"test": "TEST"})
-
-    def update(self, request, *args, **kwargs):
-        """
-        Update a user's profile, need either admin or the logined user be hiimself
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        return Response({})
+    # def update(self, request, *args, **kwargs):
+    #     """
+    #     Update a user's profile, need either admin or the logined user be hiimself
+    #     :param request:
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     return Response({})
 
 
 # TODO Add support for password management

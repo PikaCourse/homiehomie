@@ -15,18 +15,73 @@ class UserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = User
-        exclude = ["password"]
+        fields = ("username", "last_login", "first_name", "last_name",
+                  "email", "date_joined",)
+        read_only_fields = ("date_joined", "last_login")
 
-
+# TODO Use source option in field? and manually validate the email and username
 class StudentSerializer(serializers.ModelSerializer):
     """
     Serializer to return student profile
     """
-    user = UserSerializer(read_only=True)
+    # Required is set to false since we want the input
+    # data to be flatten as well, thus won't contains key `user`
+    user = UserSerializer(read_only=False)
 
     class Meta:
         model = Student
         fields = "__all__"
+
+    # Flatten the data
+    def to_representation(self, obj):
+        """
+        Flatten the data
+        :param obj:
+        :return:
+        """
+        representation = super().to_representation(obj)
+        user_representation = representation.pop("user")
+        for field in user_representation:
+            representation[field] = user_representation[field]
+        return representation
+
+    def to_internal_value(self, data):
+        """
+        Move data from raw form to internal structure
+        :param data:
+        :return:
+        """
+        user_internal = {}
+        for key in UserSerializer.Meta.fields:
+            # If the key is not read only fields and presented in the data
+            if key not in UserSerializer.Meta.read_only_fields and key in data:
+                user_internal[key] = data.pop(key)
+
+        data["user"] = user_internal
+        internal = super().to_internal_value(data)
+        # internal['user'] = user_internal
+        return internal
+
+
+    # TODO Should not modify read only fields
+    # TODO Username check the one exist is not himself
+    def update(self, instance, validated_data):
+        """
+        Update the user student profile
+        :param instance:
+        :param validated_data:
+        :return:
+        """
+        user_data = validated_data.pop('user')
+        super().update(instance, validated_data)
+
+        # Update user fields
+        user = instance.user
+        for attr, value in user_data.items():
+            setattr(user, attr, value)
+        user.save()
+
+        return instance
 
 
 class UserLoginSerializer(serializers.Serializer):

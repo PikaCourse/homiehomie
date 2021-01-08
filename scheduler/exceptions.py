@@ -15,7 +15,7 @@ def custom_exception_hdr(exc, context):
         # Validation error handled differently
         if isinstance(exc, ValidationError):
             for field in response.data:
-                response.data[field] = map(str, response.data[field])
+                response.data[field] = get_errmsg_recursively(response.data[field])
             response.data['status'] = response.status_code
             response.data['code'] = "valid_error"
         else:
@@ -23,6 +23,29 @@ def custom_exception_hdr(exc, context):
             response.data['code'] = response.data['detail'].code
             response.data['detail'] = str(response.data['detail'])
     return response
+
+
+def get_errmsg_recursively(err):
+    # if err is still dict, dig deeper
+    if isinstance(err, dict):
+        result = dict()
+        for field in err:
+            result[field] = get_errmsg_recursively(err[field])
+    # if err is list, they will be error dict object, just apply str func to them
+    elif isinstance(err, list):
+        result = map(str, err)
+    # else just return string
+    else:
+        result = str(err)
+    return result
+
+
+# TODO Flatten the error message as well?
+def flatten_errmsg(data, field):
+    if not isinstance(data[field], list):
+        # Not field: [error list] structure, flatten it
+        pass
+    return
 
 
 class InvalidForm(APIException):
