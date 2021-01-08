@@ -1,7 +1,16 @@
 import React, { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import store from "../../store";
-import { Card, Switch, Select, Input, Button, Tooltip, message } from "antd";
+import {
+  Card,
+  Radio,
+  Switch,
+  Select,
+  Input,
+  Button,
+  Tooltip,
+  message,
+} from "antd";
 import { isEmpty } from "../../helper/dataCheck";
 
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
@@ -13,7 +22,15 @@ function WikiSummary() {
   const [rmBtn, setRmBtn] = useState(true);
   const [starBtn, setStarBtn] = useState(true);
   const selectedCourse = useSelector((state) => state.course.selectedCourse);
+  const selectedCourseArray = useSelector(
+    (state) => state.course.selectedCourseArray
+  );
+
   const dispatch = useDispatch();
+  const professors = [
+    ...new Set(selectedCourseArray.map((course) => course.professor)),
+  ]; // [ 'A', 'B']
+
   return (
     <Fragment>
       <div className="p-4 my-2 mt-4" style={CardStyle}>
@@ -46,7 +63,28 @@ function WikiSummary() {
                     {" credits"}
                   </span>
                 )}
+
+                {selectedCourse.type == null ? null : (
+                  <span className="ml-2 mb-1 badge bg-secondary">
+                    {selectedCourse.type}
+                  </span>
+                )}
               </p>
+            </div>
+            <div>
+              <Radio.Group
+                defaultValue={selectedCourse.professor}
+                size="small"
+                buttonStyle="solid"
+              >
+                {professors.map((prof, index) => {
+                  index % 4 == 0 ? (
+                    <Radio.Button value={prof}>{prof}</Radio.Button>
+                  ){"\n"}: (
+                    <Radio.Button value={prof}>{prof}</Radio.Button>
+                  );
+                })}
+              </Radio.Group>
             </div>
           </div>
         ) : (
@@ -59,27 +97,12 @@ function WikiSummary() {
 
 function weekdayToClass(index, timeArray) {
   let timecp = timeArray;
-//   if (typeof timeArray == "string") timecp = JSON.parse(timecp);
   let result = "badge bg-light mb-1";
   timecp.map((timeObj) => {
-    console.log(timeObj.weekday == index);
-
-    console.log(index);
-    console.log(timeObj);
-    console.log(timeObj.weekday);
-    console.log("-------------------");
     if (timeObj.weekday == index) {
       result = "mb-1 badge bg-secondary";
     }
   });
-  //   for (let i = 0; i < timeArray.length; i++) {
-  //     console.log(i);
-  //     console.log(timeArray);
-  //     console.log(timeArray[i].weekday);
-  //     console.log("-------------------");
-
-  //     if (timeArray[i].weekday == index) return "mb-1 badge bg-secondary";
-  //   }
   return result;
 }
 
