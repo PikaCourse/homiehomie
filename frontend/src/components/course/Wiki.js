@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { getCourse } from "../../actions/course";
 import { connect } from "react-redux";
 import WikiSearch from "./Search";
+import WikiSummary from "./Summary"
 export class Wiki extends Component {
   componentDidMount() {
     this.props.dispatch(getCourse("CS-3114"));
@@ -14,6 +15,8 @@ export class Wiki extends Component {
       <Fragment>
         <div className="px-1 mt-4" style={WikiStyle}>
           <WikiSearch />
+          <WikiSummary />
+
           <WikiNotebook />
         </div>
       </Fragment>

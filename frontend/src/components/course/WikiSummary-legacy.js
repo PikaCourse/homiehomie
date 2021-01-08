@@ -173,7 +173,7 @@ export class WikiSummary extends Component {
             <div className="mb-2">
               <Search />
             </div>
-
+            
             <div
               className="p-4 my-2 mt-4"
               style={{ backgroundColor: "#ffffff", borderRadius: "1.5rem" }}
