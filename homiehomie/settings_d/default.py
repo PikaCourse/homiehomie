@@ -153,11 +153,15 @@ STATIC_URL = '/static/'
 
 # Default redirect to index page
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 # Test fixtures
 FIXTURE_DIRS = ['test_fixtures']
 
 # Django Reset Framework config
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'scheduler.exceptions.custom_exception_hdr'
+    'EXCEPTION_HANDLER': 'scheduler.exceptions.custom_exception_hdr',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ]
 }

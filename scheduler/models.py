@@ -3,6 +3,8 @@ from django.db import models
 # from django.contrib.auth.models import User
 from user.models import Student
 
+# TODO Use choices options of fields to limit user input and as
+# TODO validation
 
 # Create your models here.
 class CourseMeta(models.Model):
