@@ -7,6 +7,7 @@ import {
   faThumbsDown,
   faPen,
   faTimes,
+  faThumbtack
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
@@ -288,6 +289,7 @@ export class WikiNotebook extends Component {
               bordered={false}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+              extra={(nbObj.question.is_pin)?<FontAwesomeIcon icon={faThumbtack}/> : null}
               key={nbObj.id}
             >
               {nbObj.notes.map((noteObj) => (
