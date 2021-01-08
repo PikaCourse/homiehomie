@@ -7,20 +7,19 @@ version:     v1.0.0b
 desc:        User api for Course Wiki
 """
 
-from user.models import Student
 from user.serializers import *
-from django.shortcuts import render, redirect, resolve_url
+from django.shortcuts import redirect, resolve_url, reverse
 from django.conf import settings
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from django.views.decorators.debug import sensitive_post_parameters
-from django.views.decorators.csrf import ensure_csrf_cookie, requires_csrf_token, csrf_protect
+from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 """
 URL Pattern need to implemented
@@ -38,24 +37,18 @@ DELETE:  user/{pk}, delete user
 """
 
 
-class UserViewSet(mixins.RetrieveModelMixin,
-                  mixins.UpdateModelMixin,
-                  viewsets.GenericViewSet):
+class UserLoginViewSet(viewsets.GenericViewSet):
     """
-    User viewset api, handle any operations related to users, including:
+    User login viewset api, handle any operations related to users login, including:
     As of version 1.0.0b
     - Login
     - Register
-    - Retrieve and modify user profile
-
-    Might also support the following in future version:
-    - Password reset
-    - Change password
-    - Delete user
+    - Logout
     """
-    queryset = Student.objects.all()
+
     serializer_class = StudentSerializer
     parser_classes = [JSONParser]
+    permission_classes = [AllowAny]     # Should any no authenticated users to login/register
 
     # TODO Need to specify permission individually?
     @action(detail=False, methods=["post"])
@@ -103,8 +96,7 @@ class UserViewSet(mixins.RetrieveModelMixin,
         :return:
         """
         auth_logout(request)
-        next_page = resolve_url(settings.LOGOUT_REDIRECT_URL)
-        return redirect(next_page)
+        return redirect(settings.LOGOUT_REDIRECT_URL)
 
     @action(detail=False, methods=["post"])
     def register(self, request, *args, **kwargs):
@@ -130,37 +122,72 @@ class UserViewSet(mixins.RetrieveModelMixin,
             raise ValidationError("invalid registration info",
                                   code="invalid_login")
 
+
+class UserManagementViewSet(mixins.RetrieveModelMixin,
+                            mixins.UpdateModelMixin,
+                            viewsets.GenericViewSet):
+    """
+    User profile management viewset, include the following:
+
+    - Retrieve and modify user profile
+
+    Might also support the following in future version:
+    - Password reset
+    - Change password
+    - Delete user
+    """
+    queryset = Student.objects.all()
+    serializer_class = StudentSerializer
+    permission_classes = [IsAuthenticated]
+
+    # TODO Permission checking
     def default_get(self, request, *args, **kwargs):
         """
         Retrieve current session user profile via getting the user id from
-        session and perform redirectioon
+        session and perform redirection
+
+        Need authenticated user, therefore set permission class to IsAuthenticated
         :param request:
         :param args:
         :param kwargs:
         :return:
         """
-        pass
+        # TODO Redirect to login if fail to authenticated
+
+        # Access user id and redirect to specific url
+        user_id = request.user.id
+        # TODO Is there a way to not hardcode this?
+        url = reverse("user:users-detail", kwargs={"pk": user_id})
+        return redirect(url)
 
     def default_put(self, request, *args, **kwargs):
         """
         Update current user's profile, via getting the user id from
         session and perform redirection
+
+        Need authenticated user, therefore set permission class to IsAuthenticated
         :param request:
         :param args:
         :param kwargs:
         :return:
         """
-        pass
+        # TODO Redirect to login if fail to authenticated
+        # Access user id and redirect to specific url
+        user_id = request.user.id
+        url = self.reverse_action("user:users-detail", kwargs={"pk": user_id})
+        return redirect(url)
 
     def retrieve(self, request, *args, **kwargs):
         """
         Retrieve a user's profile, need either admin privilege or the logined user be himself
+
+        Permission is IsAuthenticated and Owner
         :param request:
         :param args:
         :param kwargs:
         :return:
         """
-        pass
+        return Response({"test": "TEST"})
 
     def update(self, request, *args, **kwargs):
         """
@@ -170,7 +197,7 @@ class UserViewSet(mixins.RetrieveModelMixin,
         :param kwargs:
         :return:
         """
-        pass
+        return Response({})
 
 
 # TODO Add support for password management
