@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
-import WikiNotebook from "../Wiki/WikiNotebook";
-import WikiSummary from "../Wiki/WikiSummary";
+import WikiNotebook from "./WikiNotebook";
+import WikiSummary from "./WikiSummary";
 import PropTypes from "prop-types";
 import { getCourse } from "../../actions/course";
 import { connect } from "react-redux";
@@ -15,7 +15,12 @@ export class Wiki extends Component {
       <Fragment>
         <div
           className="px-1 mt-4"
-          style={{ overflowY: "auto", height: "80vh", borderRadius: "20px" }}
+          style={{
+            overflowY: "auto",
+            height: "82vh",
+            borderBottomRightRadius: "20px",
+            borderBottomLeftRadius: "20px",
+          }}
         >
           <WikiSummary />
           <WikiNotebook />
