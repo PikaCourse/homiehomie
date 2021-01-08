@@ -27,12 +27,25 @@ function WikiSummary() {
             </h1>
 
             <div>
-              <p className="mb-1" style={{ fontFamily: "Montserrat" }}>
-                {weekday.map((day, index) => (
-                  <span className={weekdayToClass(index, selectedCourse.time)}>
-                    {day}
+              <p className="my-2" style={{ fontFamily: "Montserrat" }}>
+                {weekday.map((day, i) => (
+                  <span className={weekdayToClass(i, selectedCourse.time)}>
+                    {day} {console.log(selectedCourse)}
                   </span>
                 ))}
+
+                <span className="ml-2 mb-1 badge bg-secondary">
+                  {selectedCourse.crn == null
+                    ? selectedCourse.section
+                    : selectedCourse.crn}
+                </span>
+
+                {selectedCourse.course_meta.credit_hours == null ? null : (
+                  <span className="ml-2 mb-1 badge bg-secondary">
+                    {selectedCourse.course_meta.credit_hours}
+                    {" credits"}
+                  </span>
+                )}
               </p>
             </div>
           </div>
@@ -45,10 +58,29 @@ function WikiSummary() {
 }
 
 function weekdayToClass(index, timeArray) {
-  for (let i = 0; i < timeArray.length; i++) {
-    if (timeArray[i].weekday == index) return "mb-1 badge bg-secondary";
-  }
-  return "badge bg-light mb-1";
+  let timecp = timeArray;
+//   if (typeof timeArray == "string") timecp = JSON.parse(timecp);
+  let result = "badge bg-light mb-1";
+  timecp.map((timeObj) => {
+    console.log(timeObj.weekday == index);
+
+    console.log(index);
+    console.log(timeObj);
+    console.log(timeObj.weekday);
+    console.log("-------------------");
+    if (timeObj.weekday == index) {
+      result = "mb-1 badge bg-secondary";
+    }
+  });
+  //   for (let i = 0; i < timeArray.length; i++) {
+  //     console.log(i);
+  //     console.log(timeArray);
+  //     console.log(timeArray[i].weekday);
+  //     console.log("-------------------");
+
+  //     if (timeArray[i].weekday == index) return "mb-1 badge bg-secondary";
+  //   }
+  return result;
 }
 
 export default WikiSummary;
