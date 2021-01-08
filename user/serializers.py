@@ -1,12 +1,23 @@
+"""
+filename:    serializers.py
+created at:  01/8/2021
+author:      Weili An
+email:       china_aisa@live.com
+version:     v1.0.0
+desc:        User system serializer, handle retrieving and updating data format and
+             incoming form processing
+"""
+
+
 from user.models import *
 from user.validators import *
 from django.contrib.auth import (
-    authenticate, get_user_model, password_validation,
+    authenticate, password_validation,
 )
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound, AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.fields import (empty)
 
 
@@ -50,14 +61,15 @@ class StudentSerializer(serializers.ModelSerializer):
         :param validated_data:
         :return:
         """
-        # Update Student instance
-        # TODO Update user instance
+        # Update user instance
         user = instance.user
         user_data = validated_data.pop("user")
         for field in user_data:
             if hasattr(user, field):
                 setattr(user, field, user_data[field])
         user.save()
+
+        # Update Student instance
         super().update(instance, validated_data)
 
         return instance
@@ -165,6 +177,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         email = value
         if not email:
             raise serializers.ValidationError("missing email field")
+        if not email.endswith(".edu"):
+            raise serializers.ValidationError("requires .edu email for registration")
         if User.objects.filter(email=email).count():
             raise serializers.ValidationError("email taken")
         return email

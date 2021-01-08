@@ -142,7 +142,6 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
     permission_classes = [IsAuthenticated, IsProfileOwnerUser]
     parser_classes = [JSONParser]
 
-    # TODO Permission checking
     def default_get(self, request, *args, **kwargs):
         """
         Retrieve current session user profile via getting the user id from
@@ -178,28 +177,6 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
         user_id = request.user.id
         url = self.reverse_action("user:users-detail", kwargs={"pk": user_id})
         return redirect(url)
-
-    # def retrieve(self, request, *args, **kwargs):
-    #     """
-    #     Retrieve a user's profile, need either admin privilege or the logined user be himself
-    #
-    #     Permission is IsAuthenticated and Owner
-    #     :param request:
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     pass
-
-    # def update(self, request, *args, **kwargs):
-    #     """
-    #     Update a user's profile, need either admin or the logined user be hiimself
-    #     :param request:
-    #     :param args:
-    #     :param kwargs:
-    #     :return:
-    #     """
-    #     return Response({})
 
 
 # TODO Add support for password management
