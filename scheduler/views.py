@@ -33,6 +33,7 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
 
         # TODO Better way?
         # TODO Query parameter Vaildation
+        # TODO Consider using: https://www.django-rest-framework.org/api-guide/filtering/
         school      = self.request.query_params.get("school", None)
         college     = self.request.query_params.get("college", None)
         title       = self.request.query_params.get("title", None)
