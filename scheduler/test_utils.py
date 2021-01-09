@@ -263,7 +263,12 @@ def check_query_filter_error(test_case, url, query_params=None, error_class=Inva
 
 def check_order(test_case, arr, key, descending=True):
     prev_count = None
+    pinned_list = []
     for obj in arr:
+        if "is_pin" in obj and obj["is_pin"]:
+            test_case.assertIsNone(prev_count, msg="Pinned question should come first in sequence")
+            pinned_list.append(obj)
+            continue
         if prev_count is None:
             prev_count = obj[key]
             continue
@@ -276,6 +281,18 @@ def check_order(test_case, arr, key, descending=True):
                 test_case.assertGreaterEqual(cur_count, prev_count, msg=f"Key: {key}\tdescending: {descending}\t"
                                                                      f"Prev: {prev_count}\tCur: {cur_count}")
             prev_count = cur_count
+
+    # Pin order with less value should be in front place
+    # meaning that the pinned list should be in ascending order
+    prev_order = None
+    for pinned_obj in pinned_list:
+        if prev_order is None:
+            prev_order = pinned_obj["pin_order"]
+            continue
+        else:
+            cur_order = pinned_obj["pin_order"]
+            test_case.assertLessEqual(cur_order, prev_order, msg=f"Key: pin_order\t"
+                                                                 f"Prev: {prev_order}\tCur: {cur_order}")
 
 
 def check_post_success(test_case, url, detail_url_name, test_data,

@@ -7,18 +7,20 @@ assignees: ''
 
 ---
 
-**Who should attend the meeting?**
+# Meeting Agenda: [DATE]
 
-**How urgent is the meeting?**
+## Who should attend the meeting?
+
+## How urgent is the meeting?
 Should this be done by...
 i.e. (as soon as possible, anytime within the current development cycle, anytime within the next development cycle, sometime)
 note: if it is critically urgent, please add "!important" label
 
-**When is the meeting?**
+## When is the meeting?
 
-**What is the meeting agenda?**
+## What is the meeting agenda?
 
-**Additional Meeting Materials**
+## Additional Meeting Materials
 
-**Additional context**
+## Additional context
 Add any other context about the problem here.
