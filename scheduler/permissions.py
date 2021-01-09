@@ -28,7 +28,17 @@ class IsAuthenticatedAndOwnerOrReadOnly(permissions.BasePermission):
             return not request.user.is_anonymous
 
     def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user
+        """
+        Allow GET the detail object
+        :param request:
+        :param view:
+        :param obj:
+        :return:
+        """
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return obj.owner == request.user
 
 
 class QuestionViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -37,7 +47,10 @@ class QuestionViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
     """
 
     def has_object_permission(self, request, view, obj):
-        return obj.created_by == request.user
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return obj.created_by == request.user
 
 
 class NoteViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -46,7 +59,10 @@ class NoteViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
     """
 
     def has_object_permission(self, request, view, obj):
-        return obj.created_by == request.user
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return obj.created_by == request.user
 
 
 class PostViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -55,7 +71,10 @@ class PostViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
     """
 
     def has_object_permission(self, request, view, obj):
-        return obj.poster == request.user
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return obj.poster == request.user
 
 
 class PostAnswerViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -64,7 +83,10 @@ class PostAnswerViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
     """
 
     def has_object_permission(self, request, view, obj):
-        return obj.postee == request.user
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return obj.postee == request.user
 
 
 class ScheduleViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -72,4 +94,7 @@ class ScheduleViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
     Check if the request to schedule viewset is appropriate
     """
     def has_object_permission(self, request, view, obj):
-        return obj.user == request.user
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return obj.user == request.user

@@ -53,6 +53,7 @@ logs
 node_modules
 bower_components
 main.js
+main.js.LICENSE.txt
 
 # Testing related
 coverage.xml

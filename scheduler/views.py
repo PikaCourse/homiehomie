@@ -17,8 +17,6 @@ from rest_framework.parsers import JSONParser, FormParser
 from datetime import datetime
 
 
-# TODO Add isOwnerOrReadOnly Permission
-
 """
 API Definition below
 """
@@ -132,7 +130,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = CourseSerializer(queryset, many=True)
         return Response(serializer.data)
 
-# TODO Permission check
+
 class QuestionViewSet(viewsets.ModelViewSet):
     query_parameters = ["courseid", "sortby", "descending", "limit"]
     queryset = Question.objects.all()
@@ -144,9 +142,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
     # TODO Better way to valdiate query param
     # Supported fields for sortby option
     supported_sortby_options = ["like_count", "star_count", "dislike_count"]
-
-    # TODO Tmp disable to ease debugging
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
     # GET method to get list of question related to the query
     def list(self, request, *args, **kwargs):
@@ -207,9 +202,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         raise InvalidForm()
 
     # PUT method used to update existing question
-    # TODO Add permission control to allow only owner or admin to modify
     def update(self, request, pk=None, *args, **kwargs):
-        # TODO Verify the user is the owner
         question = request.data
 
         # Get the object via DRF
@@ -444,7 +437,8 @@ class PostViewSet(viewsets.ModelViewSet):
                       "post": post.id, "status": status.HTTP_200_OK}
         return Response(error_pack)
 
-    # TODO Check object permission manually
+    # TODO Check object permission manually?
+    # TODO Make post answer a separate viewset
     @action(detail=True, methods=['get'])
     @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
     def answers(self, request, pk=None):
