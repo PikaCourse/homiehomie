@@ -519,10 +519,8 @@ function UserModule() {
   }
 
   return (
-
             <>
-            {/* {() => {if (loginStatus) setTimeout(function(){ autoLogout(); }, 100); }} */}
-            {/* {autoLogout()} */}
+            {loginStatus?null:logOut()}
               <Button type="primary" className="mx-2" onClick={showModal}>
                 {loginStatus ? userProfile.username : "Login"}
               </Button>
