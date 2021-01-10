@@ -5,23 +5,50 @@ const initialState = {
     wishlistCourseBag: [],
 };
 
+function formatTimeDisplay(unformatted) {
+    let formatted = ""; 
+    unformatted.forEach(element => {
+        formatted = formatted+numToWeekDay(element.weekday)+" "+element.start_at+"-"+element.end_at+"\n"; 
+    });
+    return formatted; 
+}
+
+function numToWeekDay(numWeekday) {
+    switch(numWeekday) {
+        case 0:
+          return "Mon"; 
+        break;
+        case 1:
+          return "Tue"; 
+        break;
+        case 2:
+            return "Wed"; 
+        break;
+        case 3:
+            return "Thur"; 
+        break;
+        case 4:
+            return "Fri"; 
+        break;
+        default:
+            return "Online"; 
+      }
+}
+
 function addNewCourseToWish(state, action)
-{
-    console.log("store.initialState"); 
-    console.log(store); 
+{ 
     var tempArray = [...state.wishlistCourseBag];
 
     const selectedCourse = action.selectedCourseArray.find(
         ({ crn }) => crn === action.selectedCRN
     );
-
-    let timeStr = 'yet to implement'; //need to be edited 
+    console.log(selectedCourse.time); 
     let semesterStr = selectedCourse.year + selectedCourse.semester; 
     tempArray.push({
         key: state.wishlistCourseBag.length + 1,
         id: state.wishlistCourseBag.length + 1,
         crn: selectedCourse.crn, 
-        time: timeStr, 
+        time: formatTimeDisplay(selectedCourse.time), 
         capacity: selectedCourse.capacity, 
         registered: selectedCourse.registered, 
         type: selectedCourse.type, 
