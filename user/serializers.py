@@ -21,17 +21,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.fields import (empty)
 
 
-class UserSerializer(serializers.ModelSerializer):
-    """
-    Serializer return django auth user model
-    """
-    class Meta:
-        model = User
-        fields = ("username", "last_login", "first_name", "last_name",
-                  "email", "date_joined",)
-        read_only_fields = ("date_joined", "last_login")
-
-
+# TODO Add validation for birthday and gradation
 class StudentSerializer(serializers.ModelSerializer):
     """
     Serializer to return student profile
@@ -53,6 +43,15 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         exclude = ("user", )
         read_only_fields = ("id", )
+
+    def validate_email(self, value):
+        # Value already check against model field Email constraint
+        email = value
+        if not email:
+            raise serializers.ValidationError("missing email field")
+        if not email.endswith(".edu"):
+            raise serializers.ValidationError("requires .edu email for registration")
+        return email
 
     def update(self, instance, validated_data):
         """

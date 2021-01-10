@@ -24,6 +24,7 @@ def get_packet_details(exc):
     packet['status'] = exc.status_code
     return packet
 
+
 def check_fields(test_case, obj, fields):
     for field in fields:
         test_case.assertTrue(field in obj, msg=f"field name: {field}")
