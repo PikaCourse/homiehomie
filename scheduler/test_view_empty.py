@@ -536,13 +536,15 @@ class EmptyPostViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["code"], "not_authenticated")
 
+
+class EmptyPostAnswerViewSetTests(APITestCase):
     def test_post_answer_list(self):
         """
         404 due to empty db
         :return:
         """
-        params = {'pk': 1}
-        url = reverse("api:posts-answers", kwargs=params)
+        params = {'post_id': 1}
+        url = reverse("api:postanswers-list", kwargs=params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["code"], NotFound.default_code)
@@ -552,8 +554,8 @@ class EmptyPostViewSetTests(APITestCase):
         404 due to empty db
         :return:
         """
-        params = {'pk': 1, 'answerid': 1}
-        url = reverse("api:posts-detail-answer", kwargs=params)
+        params = {'post_id': 1, 'pk': 1}
+        url = reverse("api:postanswers-detail", kwargs=params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["code"], NotFound.default_code)
@@ -563,8 +565,8 @@ class EmptyPostViewSetTests(APITestCase):
         Expect a 403 response due to not authenticated
         :return:
         """
-        params = {'pk': 1}
-        url = reverse("api:posts-answers", kwargs=params)
+        params = {'post_id': 1}
+        url = reverse("api:postanswers-list", kwargs=params)
         response = self.client.post(url,
                                     data=urlencode({'content': 'Test content'}),
                                     content_type='application/x-www-form-urlencoded')
@@ -577,8 +579,8 @@ class EmptyPostViewSetTests(APITestCase):
         Expect a 403 due to not authenticated
         :return:
         """
-        params = {'pk': 1}
-        url = reverse("api:posts-answers", kwargs=params)
+        params = {'post_id': 1}
+        url = reverse("api:postanswers-list", kwargs=params)
         response = self.client.post(url,
                                     data=urlencode({}),
                                     content_type='application/x-www-form-urlencoded')
@@ -591,8 +593,8 @@ class EmptyPostViewSetTests(APITestCase):
         403 due to not authenticated
         :return:
         """
-        params = {'pk': 1, 'answerid': 1}
-        url = reverse("api:posts-detail-answer", kwargs=params)
+        params = {'post_id': 1, 'pk': 1}
+        url = reverse("api:postanswers-detail", kwargs=params)
         response = self.client.put(url,
                                     data=urlencode({'content': 'Test content'}),
                                     content_type='application/x-www-form-urlencoded')
@@ -605,8 +607,8 @@ class EmptyPostViewSetTests(APITestCase):
         403 due to not authenticated
         :return:
         """
-        params = {'pk': 1, 'answerid': 1}
-        url = reverse("api:posts-detail-answer", kwargs=params)
+        params = {'post_id': 1, 'pk': 1}
+        url = reverse("api:postanswers-detail", kwargs=params)
         response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["code"], "not_authenticated")
@@ -616,8 +618,8 @@ class EmptyPostViewSetTests(APITestCase):
         403 due to not authenticated
         :return:
         """
-        params = {'pk': 1, 'answerid': 1}
-        url = reverse("api:posts-detail-answer", kwargs=params)
+        params = {'post_id': 1, 'pk': 1}
+        url = reverse("api:postanswers-detail", kwargs=params)
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(response.data["code"], "not_authenticated")

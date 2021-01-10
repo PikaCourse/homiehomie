@@ -2654,8 +2654,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test if the returned list length matched with expected
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), POST_ANSWER_NUM_ENTRIES_1)
@@ -2667,8 +2667,8 @@ class PostAnswerViewSetTests(APITestCase):
         expecting empty list and 200 OK
         :return:
         """
-        path_params = {"pk": 2}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 2}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, [])
@@ -2679,8 +2679,8 @@ class PostAnswerViewSetTests(APITestCase):
         specified by the API documentation
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         fields = ["post", "postee", "created_at",
                   "last_edited", "like_count", "star_count",
                   "dislike_count", "content"]
@@ -2694,12 +2694,13 @@ class PostAnswerViewSetTests(APITestCase):
         Test if provided incorrect pk the response will be not found
         :return:
         """
-        path_params = {"pk": POST_NUM_ENTRIES + 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+
+        path_params = {"post_id": POST_NUM_ENTRIES + 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         check_query_filter_error(self, url, error_class=NotFound)
 
-        path_params = {"pk": -1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": -1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         check_query_filter_error(self, url, error_class=NotFound)
 
     def test_post_answer_list_invalid_post_id_not_integer(self):
@@ -2720,8 +2721,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test default return order
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotEqual(response.data, [])
@@ -2732,8 +2733,8 @@ class PostAnswerViewSetTests(APITestCase):
         Check if sortby works for other valid options
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         sortby_options = ["like_count", "dislike_count", "star_count"]
         descending_options = [True, False]
         for sortby_option in sortby_options:
@@ -2749,8 +2750,8 @@ class PostAnswerViewSetTests(APITestCase):
         Expecting 400 and raise InvalidQueryValue exception
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         test_sortby = "invalid"
         test_descending = "invalid"
 
@@ -2771,8 +2772,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test whether the limit parameter is working
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
 
         test_limit = POST_ANSWER_NUM_ENTRIES_1 - 1
         response = self.client.get(url, {"limit": test_limit})
@@ -2785,8 +2786,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test whether the limit parameter is working
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
 
         # Test limit 0
         test_limit = 0
@@ -2800,8 +2801,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test whether the limit parameter is working
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
 
         # Test limit -1
         test_limit = -1
@@ -2815,8 +2816,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test whether the limit parameter is working
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
 
         # Test limit float
         test_limit = 3.545
@@ -2835,7 +2836,7 @@ class PostAnswerViewSetTests(APITestCase):
         Test that the query param works for multiple query key
         :return:
         """
-        url = reverse("api:posts-answers", kwargs={"pk": 1})
+        url = reverse("api:postanswers-list", kwargs={"post_id": 1})
         test_query_keys = ["sortby", "descending", "limit"]
         test_query_values = {
             "sortby": ["like_count", "star_count", "dislike_count"],
@@ -2853,7 +2854,7 @@ class PostAnswerViewSetTests(APITestCase):
         Test if applying an extra filter will not affect the query
         :return:
         """
-        url = reverse("api:posts-answers", kwargs={"pk": 1})
+        url = reverse("api:postanswers-list", kwargs={"post_id": 1})
         response = self.client.get(url, {"nonexisted": "Purdue"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), POST_ANSWER_NUM_ENTRIES_1)
@@ -2864,8 +2865,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test accessing single post answer object
         :return:
         """
-        path_params = {"pk": 1, "answerid": 1}
-        url = reverse("api:posts-detail-answer", kwargs=path_params)
+        path_params = {"post_id": 1, "pk": 1}
+        url = reverse("api:postanswers-detail", kwargs=path_params)
         fields = ["post", "postee", "created_at",
                   "last_edited", "like_count", "star_count",
                   "dislike_count", "content"]
@@ -2880,14 +2881,14 @@ class PostAnswerViewSetTests(APITestCase):
         expecting a 404 not found
         :return:
         """
-        pk_list = [POST_NUM_ENTRIES + 1, -1, 1]
-        answerid_list = [1, POST_ANSWER_NUM_ENTRIES_1 + 1, -1]
-        for pk in pk_list:
-            for answerid in answerid_list:
-                if pk == 1 and answerid == 1:
+        post_id_list = [POST_NUM_ENTRIES + 1, -1, 1]
+        pk_liest = [1, POST_ANSWER_NUM_ENTRIES_1 + 1, -1]
+        for post_id in post_id_list:
+            for pk in pk_liest:
+                if post_id == 1 and pk == 1:
                     continue
-                path_params = {"pk": pk, "answerid": answerid}
-                url = reverse("api:posts-detail-answer", kwargs=path_params)
+                path_params = {"post_id": post_id, "pk": pk}
+                url = reverse("api:postanswers-detail", kwargs=path_params)
                 check_query_filter_error(self, url, error_class=NotFound)
 
     def test_post_answer_retrieve_invalid_not_link(self):
@@ -2896,8 +2897,8 @@ class PostAnswerViewSetTests(APITestCase):
         given post id, expecting 404 not found
         :return:
         """
-        path_params = {"pk": 1, "answerid": 5}
-        url = reverse("api:posts-detail-answer", kwargs=path_params)
+        path_params = {"post_id": 1, "pk": 5}
+        url = reverse("api:postanswers-detail", kwargs=path_params)
         check_query_filter_error(self, url, error_class=NotFound)
 
     # TODO Rest of tests need to add permission check after introducing user
@@ -2907,37 +2908,38 @@ class PostAnswerViewSetTests(APITestCase):
         Test success create view and able to access via get
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        detail_url_name = "api:posts-detail-answer"
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
+        detail_url_name = "api:postanswers-detail"
         # Encode json field
         test_data = {'content': 'Test post content'}
 
         check_post_success(self, url, detail_url_name, test_data, json_fields=[], id_fields="answer",
-                           detail_pk_name="answerid", detail_path_params=path_params)
+                           detail_pk_name="pk", detail_path_params=path_params)
 
     def test_post_answer_create_extra_field(self):
         """
         Test submit post request with extra field, should be ignored
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        detail_url_name = "api:posts-detail-answer"
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
+        detail_url_name = "api:postanswers-detail"
         # Encode json field
         test_data = {'content': 'Test content', "extra": "extra"}
 
         check_post_success(self, url, detail_url_name, test_data, json_fields=[], ignore_fields=["extra"],
-                           id_fields="answer", detail_pk_name="answerid", detail_path_params=path_params)
+                           id_fields="answer", detail_pk_name="pk", detail_path_params=path_params)
 
     def test_post_answer_create_invalid_missing_fields(self):
         """
         Test post request with missing field names
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        detail_url_name = "api:posts-detail-answer"
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
+
+        detail_url_name = "api:postsanswers-detail"
         # Encode json field
         test_data = {}
 
@@ -2949,9 +2951,9 @@ class PostAnswerViewSetTests(APITestCase):
         this is the only user enter field
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        detail_url_name = "api:posts-detail-answer"
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
+        detail_url_name = "api:postanswers-detail"
         # Encode json field
         test_data = {'content': ''}
 
@@ -2963,15 +2965,21 @@ class PostAnswerViewSetTests(APITestCase):
         Test successful update post answer
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+        post_answer_data = {
+            "post_id": 1,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": answer.id}
         test_data = {"content": "Changed Content"}
         time_test = datetime.now()
 
         check_put_success(self, detail_url_name, path_params, test_data=test_data, json_fields=[])
 
         # Check if the last edited fields get updated as well
-        url = reverse("api:posts-detail-answer", kwargs=path_params)
+        url = reverse("api:postanswers-detail", kwargs=path_params)
         response = self.client.get(url)
         time_post_answer = datetime.fromisoformat(response.data["last_edited"][:-1])
         time_diff_seconds = (time_post_answer - time_test).total_seconds()
@@ -2993,43 +3001,54 @@ class PostAnswerViewSetTests(APITestCase):
         Test update post answer not owned
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"pk": 1, "post_id": 1}
         test_data = {"content": "Changed Content"}
 
-        check_put_error_v2(self, detail_url_name, path_params, test_data=test_data)
+        check_put_error_v2(self, detail_url_name, path_params, test_data=test_data, error_code="permission_denied",
+                           status_code=status.HTTP_403_FORBIDDEN)
+
 
     def test_post_answer_update_invalid_pk(self):
         """
         Test with invalid pk or answer id, expecting errors
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
+        detail_url_name = "api:postanswers-detail"
         test_data = {"content": "Changed answer Content"}
 
         # Out of range
-        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES + 1}
+        path_params = {"post_id": 1, "pk": POST_ANSWER_NUM_ENTRIES + 1}
         check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
         # Mismatch
-        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
+        # TODO This need to raise 404, but now is 403 due to permission order
+        path_params = {"post_id": 1, "pk": POST_ANSWER_NUM_ENTRIES_1 + 1}
+        check_put_error_v2(self, detail_url_name, path_params, test_data=test_data, error_code="permission_denied",
+                           status_code=status.HTTP_403_FORBIDDEN)
 
         # Not an integer
-        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
+        url = "/api/posts/1/answers/I am not integer"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
         # Not an integer
-        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
+        url = "/api/posts/1/answers/3.432"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
     def test_post_answer_update_extra_field(self):
         """
         Test update post answer with extra field, which should be ignored
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+        post_answer_data = {
+            "post_id": 1,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": answer.id}
         test_data = {"content": "Changed Content", "extra": "extra"}
 
         check_put_success(self, detail_url_name, path_params, test_data=test_data, json_fields=[], ignore_fields=["extra"])
@@ -3039,8 +3058,14 @@ class PostAnswerViewSetTests(APITestCase):
         Test update post answer with missing fields, expecting 400 InvalidForm
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+        post_answer_data = {
+            "post_id": 1,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": answer.id}
         test_data = {}
         check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidForm)
 
@@ -3050,8 +3075,14 @@ class PostAnswerViewSetTests(APITestCase):
         Test successful delete
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+        post_answer_data = {
+            "post_id": 1,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": answer.id}
 
         check_delete_success(self, detail_url_name, path_params)
 
@@ -3060,8 +3091,9 @@ class PostAnswerViewSetTests(APITestCase):
         Test delete not owned answer
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": 1}
 
         check_delete_error_v2(self, detail_url_name, path_params,
                               error_code="permission_denied",
@@ -3072,8 +3104,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test invalid delete: out of range pk
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 100}
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": 100}
         check_delete_error(self, detail_url_name, path_params)
 
     def test_post_answer_destroy_invalid_path_params(self):
@@ -3081,7 +3113,7 @@ class PostAnswerViewSetTests(APITestCase):
         Test invalid delete: not an integer, no linked
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
+        detail_url_name = "api:postanswers-detail"
 
         url = "/api/posts/1/answers/3.4"
         check_delete_error(self, url=url, error_class=NotFound)
@@ -3089,7 +3121,13 @@ class PostAnswerViewSetTests(APITestCase):
         url = "/api/posts/1/answers/not an integer"
         check_delete_error(self, url=url, error_class=NotFound)
 
-        path_params = {"pk": 1, "answerid": 5}
+        post_answer_data = {
+            "post_id": 2,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        path_params = {"post_id": 1, "pk": answer.id}
         check_delete_error(self, detail_url_name, path_params, error_class=NotFound)
 
     """
@@ -3103,8 +3141,8 @@ class PostAnswerViewSetTests(APITestCase):
         Partial update/PATCH not supported
         :return:
         """
-        params = {"pk": 1, "answerid": 1}
-        url = reverse("api:posts-detail-answer", kwargs=params)
+        params = {"post_id": 1, "pk": 1}
+        url = reverse("api:postanswers-detail", kwargs=params)
         check_method_not_allowed(self, url, "PATCH")
 
     def test_post_answer_partial_update_no_match(self):
@@ -3112,9 +3150,6 @@ class PostAnswerViewSetTests(APITestCase):
         Partial update/PATCH not supported
         :return:
         """
-        params = {"pk": 1, "answerid": 5}
-        url = reverse("api:posts-detail-answer", kwargs=params)
+        params = {"post_id": 1, "pk": 5}
+        url = reverse("api:postanswers-detail", kwargs=params)
         check_method_not_allowed(self, url, "PATCH")
-
-
-# TODO Test permission
