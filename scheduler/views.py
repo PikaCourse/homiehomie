@@ -6,6 +6,7 @@ from scheduler.forms import *
 from scheduler.serializers import *
 from scheduler.exceptions import *
 from scheduler.permissions import *
+from scheduler.permissions import ReadOnly
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -26,7 +27,7 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
     query_parameters = ["school", "major", "limit"]
     queryset = CourseMeta.objects.all()
     serializer_class = CourseMetaSerializer
-    # Permission control not needed since the viewset is ReadOnly
+    permission_classes = [ReadOnly]
 
     def list(self, request, *args, **kwargs):
         queryset = CourseMeta.objects.all()
@@ -74,7 +75,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                         "semester", "professor", "limit"]
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    # Permission control not needed since the viewset is ReadOnly
+    permission_classes = [ReadOnly]
 
     def list(self, request, *args, **kwargs):
         queryset = Course.objects.all()
