@@ -230,12 +230,15 @@ function UserModule() {
   const userProfileModal = (
     <Modal
       visible={visible}
-      title="Title"
+      title="User Profile"
       onOk={handleOk}
       onCancel={handleCancel}
       footer={null}
     >
-      user profile
+      {Object.keys(userProfile).map(key => 
+        <h5>{key+ " : "+userProfile[key]}</h5>
+      )}
+     
       <Button onClick={logOut}>Log Out</Button>
     </Modal>
   );
@@ -300,7 +303,7 @@ function UserModule() {
       .then((result) => {
         console.log("result"); 
         console.log(result); 
-        if (result.status == 302) {
+        if (result.status == 302 || result.status == 200) {
           console.log("Successfully get user profile info");
           setError("");
           localStorage.setItem(
@@ -309,6 +312,7 @@ function UserModule() {
           );
           setLoginStatus(true); 
           // setUserProfile({result}); 
+          setUserProfile({username: result.data.username, email: result.data.email}); 
         } 
       })
       .catch(err => {
@@ -365,14 +369,16 @@ function UserModule() {
       JSON.parse(localStorage.getItem("last_active_time"))
     );
     let inactiveTimeDiffMs = Math.abs(lastActiveTime - new Date()); //in milliseconds
-    if (inactiveTimeDiffMs / 1000 == 21600) {
+    if (inactiveTimeDiffMs == 60000) {
+      //inactiveTimeDiffMs / 1000 == 21600
       //if time difference is 6 hours (21600 seconds)
       console.log("auto logout");
       logOut();
     }
     setTimeout(() => {
-      // console.log(localStorage.getItem('last_active_time'));
-    }, 10000);
+      console.log("last_active_time"); 
+      console.log(localStorage.getItem('last_active_time'));
+    }, 1000);
   }
 
   function getCookie(name) {
@@ -395,7 +401,7 @@ function UserModule() {
   function loginSubmit(values) {
     console.log(values);
     console.log("login submit ran");
-    let userLoginObj = {
+    var userLoginObj = {
       username: values.username,
       password: values.password,
     };
@@ -422,6 +428,7 @@ function UserModule() {
             "last_active_time",
             JSON.stringify(new Date())
           );
+          getUserProfile();  
         }
       })
       .catch(err => {
@@ -468,6 +475,7 @@ function UserModule() {
             "last_active_time",
             JSON.stringify(new Date())
           );
+          getUserProfile();   
         }
       })
       .catch(err => {
@@ -517,7 +525,8 @@ function UserModule() {
   return (
 
             <>
-            {() => {if (loginStatus) setTimeout(function(){ autoLogout(); }, 300000); }}
+            {/* {() => {if (loginStatus) setTimeout(function(){ autoLogout(); }, 100); }} */}
+            {/* {autoLogout()} */}
               <Button type="primary" className="mx-2" onClick={showModal}>
                 {loginStatus ? userProfile.username : "Login"}
               </Button>
