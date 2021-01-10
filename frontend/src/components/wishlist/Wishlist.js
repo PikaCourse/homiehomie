@@ -17,7 +17,8 @@ import {useDispatch, useSelector} from "react-redux"
 
 
 function Wishlist() {
-
+  const wishlistCourseBag = useSelector(state => state.wishlist.wishlistCourseBag); 
+  const calendarCourseBag = useSelector(state => state.calendar.calendarCourseBag); 
   const [isWishlistVisible, setIsWishlistVisible] = useState(false);
 
   const columns = [
@@ -47,7 +48,13 @@ function Wishlist() {
     },
     {
       title: "In Course Bag?",
-      dataIndex: "",
+      shouldCellUpdate: (record, prevRecord) => {}, 
+      render: () => (text, record) => {
+        let inCourseBag = JSON.stringify(typeof calendarCourseBag.find(element => element.raw.crn == record.crn) == "undefined"); 
+        console.log("inCourseBag"); 
+        console.log(inCourseBag); 
+        return <h5>{inCourseBag}</h5>; 
+      }, 
     },
     {
       title: "id",
@@ -126,7 +133,7 @@ function Wishlist() {
     // },
   ];
 
-  const wishlistCourseBag = useSelector(state => state.wishlist.wishlistCourseBag); 
+  
   
   // start = () => {
   //   this.setState({ loading: true });
