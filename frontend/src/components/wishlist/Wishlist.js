@@ -12,8 +12,8 @@ import { Table, Button, Switch, Space, Radio, Divider, Collapse, Tag, Modal } fr
 const { Panel } = Collapse;
 // import {} from "../../actions/wishlist"
 import {setCourse, getCourse} from "../../actions/course"
-import {addSelectCourse, removeCurrCourseFromWish} from "../../actions/calendar"
-
+import {removeCurrCourseFromWish} from "../../actions/wishlist"
+import {useDispatch, useSelector} from "react-redux"
 
 
 function Wishlist() {
@@ -125,6 +125,8 @@ function Wishlist() {
     //   dataIndex: ["course_meta","tags"],
     // },
   ];
+
+  const wishlistCourseBag = useSelector(state => state.wishlist.wishlistCourseBag); 
   
   // start = () => {
   //   this.setState({ loading: true });
@@ -167,7 +169,7 @@ function Wishlist() {
       <Table
               // rowSelection={rowSelection}
               columns={columns}
-              dataSource={store.getState().wishlist.wishlistCourseBag}
+              dataSource={wishlistCourseBag}
               // dataSource={[store.getState().course.selectedCourseArray.find(
               //   ({ crn }) => crn === store.getState().course.selectedCRN
               // )]}
@@ -183,7 +185,6 @@ function Wishlist() {
 const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCRN: state.course.selectedCRN,
-  pendingCourseBag: state.calendar.pendingCourseBag,
 });
 
 export default connect(mapStateToProps)(Wishlist);
