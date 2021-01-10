@@ -12,8 +12,10 @@ import {
   // UPDATE_PREVIEW,
   // CLEAR_PREVIEW
 } from "../actions/types.js";
+import {loadState, saveState} from '../../src/helper/localStorage'
+
 const initialState = {
-  calendarCourseBag: [],
+  calendarCourseBag: loadState().calendarCourseBag,
   pendingCourseBag: [],
   uniqueCourseBag: [],  
   listFormattedBag: [], 

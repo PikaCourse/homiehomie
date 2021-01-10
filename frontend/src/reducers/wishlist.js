@@ -1,10 +1,14 @@
 import { ADD_COURSE_TO_WISH, REMOVE_COURSE_FROM_WISH} from "../actions/types.js";
+import store from '../store'
+
 const initialState = {
     wishlistCourseBag: [],
 };
 
 function addNewCourseToWish(state, action)
 {
+    console.log("store.initialState"); 
+    console.log(store); 
     var tempArray = [...state.wishlistCourseBag];
 
     const selectedCourse = action.selectedCourseArray.find(
