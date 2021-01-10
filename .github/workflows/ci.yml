@@ -72,6 +72,7 @@ jobs:
         pip install -r requirements/dev.txt
     - name: Run Coverage and Unit test
       run: |
+        python manage.py collectstatic --noinput
         make coverage_dev
       env:
         # Fake SECRET KEY used for run test only 
