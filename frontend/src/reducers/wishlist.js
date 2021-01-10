@@ -1,8 +1,9 @@
 import { ADD_COURSE_TO_WISH, REMOVE_COURSE_FROM_WISH} from "../actions/types.js";
 import store from '../store'
+import {loadWishlistCourseBag} from '../../src/helper/localStorage'
 
 const initialState = {
-    wishlistCourseBag: [],
+    wishlistCourseBag: loadWishlistCourseBag(),
 };
 
 function formatTimeDisplay(unformatted) {

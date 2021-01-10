@@ -10,6 +10,18 @@ export const loadState = () => {
     }
 };
 
+export const loadWishlistCourseBag = () => {
+  try {
+    const serializedState = localStorage.getItem('wishlistCourseBag');
+    if (serializedState === null) {
+      return [];
+    }
+    return JSON.parse(serializedState);
+  } catch (err) {
+    return [];
+  }
+};
+
 export const loadCalendarCourseBag = () => {
     console.log("loadCalendarCourseBag");
     try {
