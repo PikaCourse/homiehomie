@@ -1,11 +1,23 @@
+"""
+filename:    serializers.py
+created at:  01/8/2021
+author:      Weili An
+email:       china_aisa@live.com
+version:     v1.0.0
+desc:        User system serializer, handle retrieving and updating data format and
+             incoming form processing
+"""
+
+
 from user.models import *
+from user.validators import *
 from django.contrib.auth import (
-    authenticate, get_user_model, password_validation,
+    authenticate, password_validation,
 )
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
-from rest_framework.exceptions import NotFound, AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.fields import (empty)
 
 
@@ -15,18 +27,52 @@ class UserSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = User
-        exclude = ["password"]
+        fields = ("username", "last_login", "first_name", "last_name",
+                  "email", "date_joined",)
+        read_only_fields = ("date_joined", "last_login")
 
 
 class StudentSerializer(serializers.ModelSerializer):
     """
     Serializer to return student profile
     """
-    user = UserSerializer(read_only=True)
+    # Required is set to false since we want the input
+    # data to be flatten as well, thus won't contains key `user`
+    user = User
+    username = serializers.CharField(source="user.username",
+                                     validators=[UniqueOrOwnerValidator(queryset=User.objects.all())])
+    email = serializers.EmailField(source="user.email",
+                                   validators=[UniqueOrOwnerValidator(queryset=User.objects.all())])
+    first_name = serializers.CharField(source="user.first_name", allow_blank=True)
+    last_name = serializers.CharField(source="user.last_name", allow_blank=True)
+    # If read only is true, will not be included in validated data
+    last_login = serializers.DateTimeField(source="user.last_login", read_only=True)
+    date_joined = serializers.DateTimeField(source="user.date_joined", read_only=True)
 
     class Meta:
         model = Student
-        fields = "__all__"
+        exclude = ("user", )
+        read_only_fields = ("id", )
+
+    def update(self, instance, validated_data):
+        """
+        Update the user student profile
+        :param instance:
+        :param validated_data:
+        :return:
+        """
+        # Update user instance
+        user = instance.user
+        user_data = validated_data.pop("user")
+        for field in user_data:
+            if hasattr(user, field):
+                setattr(user, field, user_data[field])
+        user.save()
+
+        # Update Student instance
+        super().update(instance, validated_data)
+
+        return instance
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -131,6 +177,8 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         email = value
         if not email:
             raise serializers.ValidationError("missing email field")
+        if not email.endswith(".edu"):
+            raise serializers.ValidationError("requires .edu email for registration")
         if User.objects.filter(email=email).count():
             raise serializers.ValidationError("email taken")
         return email

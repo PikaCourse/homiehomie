@@ -504,7 +504,6 @@ def check_delete_error(test_case, detail_url_name=None, path_params={}, url=None
     test_case.assertEqual(response.data, get_packet_details(error_class()), msg=f"URL: {url}")
 
 
-
 def check_method_not_allowed(test_case, url, method):
     """
     Check if proper exception is raised for not allowed HTTP methods
@@ -513,7 +512,9 @@ def check_method_not_allowed(test_case, url, method):
     :param method:
     :return:
     """
-    if method == "POST":
+    if method == "GET":
+        response = test_case.client.get(url)
+    elif method == "POST":
         response = test_case.client.post(url)
     elif method == "PUT":
         response = test_case.client.put(url)

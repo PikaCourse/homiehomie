@@ -1,19 +1,21 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.db.models import Model
+from django.utils.decorators import method_decorator
 from scheduler.models import *
 from scheduler.forms import *
 from scheduler.serializers import *
 from scheduler.exceptions import *
-from rest_framework import viewsets, status, permissions
+from scheduler.permissions import *
+from rest_framework import viewsets, status
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.decorators import action
+from rest_framework.decorators import permission_classes as rest_permission_classes
 from rest_framework.parsers import JSONParser, FormParser
 from datetime import datetime
 
-
-# TODO Add isOwnerOrReadOnly Permission
 
 """
 API Definition below
@@ -24,12 +26,14 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
     query_parameters = ["school", "major", "limit"]
     queryset = CourseMeta.objects.all()
     serializer_class = CourseMetaSerializer
+    # Permission control not needed since the viewset is ReadOnly
 
     def list(self, request, *args, **kwargs):
         queryset = CourseMeta.objects.all()
 
         # TODO Better way?
         # TODO Query parameter Vaildation
+        # TODO Consider using: https://www.django-rest-framework.org/api-guide/filtering/
         school      = self.request.query_params.get("school", None)
         college     = self.request.query_params.get("college", None)
         title       = self.request.query_params.get("title", None)
@@ -70,6 +74,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                         "semester", "professor", "limit"]
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    # Permission control not needed since the viewset is ReadOnly
 
     def list(self, request, *args, **kwargs):
         queryset = Course.objects.all()
@@ -133,13 +138,11 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    permission_classes = [QuestionViewSetPermission]
 
     # TODO Better way to valdiate query param
     # Supported fields for sortby option
     supported_sortby_options = ["like_count", "star_count", "dislike_count"]
-
-    # TODO Tmp disable to ease debugging
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
 
     # GET method to get list of question related to the query
     def list(self, request, *args, **kwargs):
@@ -200,9 +203,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         raise InvalidForm()
 
     # PUT method used to update existing question
-    # TODO Add permission control to allow only owner or admin to modify
     def update(self, request, pk=None, *args, **kwargs):
-        # TODO Verify the user is the owner
         question = request.data
 
         # Get the object via DRF
@@ -233,8 +234,9 @@ class NoteViewSet(viewsets.ModelViewSet):
     serializer_class = NoteSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    permission_classes = [NoteViewSetPermission]
 
-    # TODO Better way to valdiate query param
+    # TODO Better way to valdiate query param, use serializer
     # Supported fields for sortby option
     supported_sortby_options = ["like_count", "star_count", "dislike_count"]
 
@@ -342,6 +344,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    permission_classes = [PostViewSetPermission]
 
     # TODO Better way to valdiate query param
     # Supported fields for sortby option
@@ -435,7 +438,10 @@ class PostViewSet(viewsets.ModelViewSet):
                       "post": post.id, "status": status.HTTP_200_OK}
         return Response(error_pack)
 
+    # TODO Check object permission manually?
+    # TODO Make post answer a separate viewset
     @action(detail=True, methods=['get'])
+    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
     def answers(self, request, pk=None):
         queryset = PostAnswer.objects.all()
 
@@ -480,6 +486,7 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @answers.mapping.post
+    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
     def create_answer(self, request, pk=None):
         answer = request.data
 
@@ -498,6 +505,7 @@ class PostViewSet(viewsets.ModelViewSet):
         raise InvalidForm()
 
     @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>[^/.]+)")
+    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
     def detail_answer(self, request, pk=None, answerid=None):
         # TODO Check for post id as well
         # TODO Verify that the post answer and post is related
@@ -507,6 +515,7 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @detail_answer.mapping.put
+    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
     def modify_answer(self, request, pk=None, answerid=None):
         answer = request.data
         try:
@@ -540,6 +549,7 @@ class PostViewSet(viewsets.ModelViewSet):
         raise InvalidForm()
 
     @detail_answer.mapping.delete
+    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
     def destroy_answer(self, request, pk=None, answerid=None):
         # No request body
         try:
