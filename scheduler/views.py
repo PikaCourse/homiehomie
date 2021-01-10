@@ -6,6 +6,7 @@ from scheduler.forms import *
 from scheduler.serializers import *
 from scheduler.exceptions import *
 from scheduler.permissions import *
+from scheduler.permissions import ReadOnly
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -26,7 +27,7 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
     query_parameters = ["school", "major", "limit"]
     queryset = CourseMeta.objects.all()
     serializer_class = CourseMetaSerializer
-    # Permission control not needed since the viewset is ReadOnly
+    permission_classes = [ReadOnly]
 
     def list(self, request, *args, **kwargs):
         queryset = CourseMeta.objects.all()
@@ -74,7 +75,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                         "semester", "professor", "limit"]
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    # Permission control not needed since the viewset is ReadOnly
+    permission_classes = [ReadOnly]
 
     def list(self, request, *args, **kwargs):
         queryset = Course.objects.all()
@@ -438,18 +439,34 @@ class PostViewSet(viewsets.ModelViewSet):
                       "post": post.id, "status": status.HTTP_200_OK}
         return Response(error_pack)
 
-    # TODO Check object permission manually?
-    # TODO Make post answer a separate viewset
-    @action(detail=True, methods=['get'])
-    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
-    def answers(self, request, pk=None):
+
+class PostAnswerViewSet(viewsets.ModelViewSet):
+    """
+    Viewset for post answer
+    assume that the url prefix has a post_id field
+    """
+    queryset = PostAnswer.objects.all()
+    serializer_class = PostAnswerSerializer
+    parser_classes = [FormParser]
+    permission_classes = [PostAnswerViewSetPermission]
+    http_method_names = ['get', 'post', 'head', 'put', 'delete']
+
+
+    # TODO Better way to valdiate query param
+    # Supported fields for sortby option
+    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
+
+    def list(self, request, post_id=None, *args, **kwargs):
         queryset = PostAnswer.objects.all()
 
         # Verify that post with id pk exist in db
-        post = self.get_object()
-
+        try:
+            get_object_or_404(Post, id=post_id)
+        except ValueError:
+            # Not valid post_id
+            raise NotFound()
         # Parse Params
-        queryset = queryset.filter(post_id=pk)
+        queryset = queryset.filter(post_id=post_id)
         sortby = self.request.query_params.get("sortby", None)
         descending = self.request.query_params.get("descending", None)
         limit = self.request.query_params.get("limit", None)
@@ -479,20 +496,17 @@ class PostViewSet(viewsets.ModelViewSet):
             except ValueError as err:
                 raise InvalidQueryValue()
         else:
-            queryset = queryset[:50]
-
+            queryset = queryset[:10]
 
         serializer = PostAnswerSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @answers.mapping.post
-    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
-    def create_answer(self, request, pk=None):
+    def create(self, request, post_id=None, *args, **kwargs):
         answer = request.data
 
         try:
             # Set post id from path param
-            post = Post.objects.get(id=pk)
+            post = Post.objects.get(id=post_id)
             f = PostAnswerCreationForm(answer, request=request, post=post)
             if f.is_valid():
                 answer = f.save(debug=True)
@@ -504,33 +518,34 @@ class PostViewSet(viewsets.ModelViewSet):
             raise NotFound()
         raise InvalidForm()
 
-    @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>[^/.]+)")
-    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
-    def detail_answer(self, request, pk=None, answerid=None):
-        # TODO Check for post id as well
-        # TODO Verify that the post answer and post is related
-        queryset = PostAnswer.objects.all()
-        post_answer = get_object_or_404(queryset, id=answerid, post_id=pk)
-        serializer = PostAnswerSerializer(post_answer, many=False)
+    def retrieve(self, request, post_id=None, *args, **kwargs):
+        # TODO Verify that the post_id matched with the object post_id
+        # TODO Validate post_id match internally to raise NotFound
+        try:
+            post = get_object_or_404(Post, id=post_id)
+        except ValueError:
+            raise NotFound()
+        answer = self.get_object()
+        if post.id != answer.post_id:
+            raise NotFound()
+        serializer = self.get_serializer(answer)
         return Response(serializer.data)
 
-    @detail_answer.mapping.put
-    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
-    def modify_answer(self, request, pk=None, answerid=None):
+    def update(self, request, post_id=None, *args, **kwargs):
         answer = request.data
         try:
             # Cannot use self.get_object since it is not in PostAnswer viewset
-            old_answer = PostAnswer.objects.get(id=answerid)
+            old_answer = self.get_object()
 
             # Check post answer and the post is linked
-            if eval(pk) != old_answer.post_id:
+            if eval(post_id) != old_answer.post_id:
                 raise ValidationError("mismatch between given post id and answer post id",
                                       code="mismatch")
             # Update post answer
             f = PostAnswerModificationForm(answer, instance=old_answer)
             if f.is_valid():
                 answer = f.save()
-                post = Post.objects.get(id=pk)
+                post = Post.objects.get(id=post_id)
                 post.last_answered = answer.last_edited
                 post.save()
                 error_pack = {"code": "success", "detail": "successfully modified post answer",
@@ -548,14 +563,10 @@ class PostViewSet(viewsets.ModelViewSet):
         # Invalid form key
         raise InvalidForm()
 
-    @detail_answer.mapping.delete
-    @method_decorator(rest_permission_classes([PostAnswerViewSetPermission]))
-    def destroy_answer(self, request, pk=None, answerid=None):
-        # No request body
+    def destroy(self, request, pk=None, post_id=None, *args, **kwargs):
         try:
-            answerid = int(answerid)
-            old_answer = PostAnswer.objects.get(id=answerid)
-            post = self.get_object()
+            old_answer = self.get_object()
+            post = get_object_or_404(Post, id=post_id)
 
             # Check post answer and the post is linked
             if post.id != old_answer.post_id:
@@ -564,7 +575,7 @@ class PostViewSet(viewsets.ModelViewSet):
             # Delete post answer
             old_answer.delete()
             error_pack = {"code": "success", "detail": "successfully deleted post answer",
-                          "answer": answerid, "status": status.HTTP_200_OK}
+                          "answer": pk, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
         except PostAnswer.DoesNotExist:
             # Invalid question answer id

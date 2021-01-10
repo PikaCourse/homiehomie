@@ -10,6 +10,20 @@ desc:        Permission for scheduler api
 from rest_framework import permissions
 
 
+class ReadOnly(permissions.BasePermission):
+    """
+    Read only permission for course and course meta
+    """
+    message = "This is read only"
+    code = "read_only"
+
+    def has_permission(self, request, view):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        else:
+            return False
+
+
 class IsAuthenticatedAndOwnerOrReadOnly(permissions.BasePermission):
     """
     Check if the user is authenticated for
@@ -18,6 +32,10 @@ class IsAuthenticatedAndOwnerOrReadOnly(permissions.BasePermission):
     If the user is not authenticated, only grant Read access
     """
 
+    # TODO Separate this using python functools.partial to apply to different view method
+    #  https://stackoverflow.com/questions/23716855/django-rest-framework-custom-permissions-per-view
+    #  or
+    #  https://www.django-rest-framework.org/api-guide/viewsets/#introspecting-viewset-actions
     message = "Need to be authenticated to create and be the owner to change content"
 
     def has_permission(self, request, view):
@@ -50,7 +68,7 @@ class QuestionViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
         if request.method in permissions.SAFE_METHODS:
             return True
         else:
-            return obj.created_by == request.user
+            return obj.created_by.user == request.user
 
 
 class NoteViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -62,7 +80,7 @@ class NoteViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
         if request.method in permissions.SAFE_METHODS:
             return True
         else:
-            return obj.created_by == request.user
+            return obj.created_by.user == request.user
 
 
 class PostViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -74,7 +92,7 @@ class PostViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
         if request.method in permissions.SAFE_METHODS:
             return True
         else:
-            return obj.poster == request.user
+            return obj.poster.user == request.user
 
 
 class PostAnswerViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -86,7 +104,7 @@ class PostAnswerViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
         if request.method in permissions.SAFE_METHODS:
             return True
         else:
-            return obj.postee == request.user
+            return obj.postee.user == request.user
 
 
 class ScheduleViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -97,4 +115,4 @@ class ScheduleViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
         if request.method in permissions.SAFE_METHODS:
             return True
         else:
-            return obj.user == request.user
+            return obj.user.user == request.user
