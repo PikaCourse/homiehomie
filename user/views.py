@@ -162,22 +162,24 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
         url = reverse("user:users-detail", kwargs={"pk": user_id})
         return redirect(url)
 
-    def default_put(self, request, *args, **kwargs):
-        """
-        Update current user's profile, via getting the user id from
-        session and perform redirection
-
-        Need authenticated user, therefore set permission class to IsAuthenticated
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        # TODO Redirect to login if fail to authenticated
-        # Access user id and redirect to specific url
-        user_id = request.user.id
-        url = self.reverse_action("user:users-detail", kwargs={"pk": user_id})
-        return redirect(url)
+    # Comment out since Django redirect does not support 307, which will not
+    # drop the POST data
+    # def default_put(self, request, *args, **kwargs):
+    #     """
+    #     Update current user's profile, via getting the user id from
+    #     session and perform redirection
+    #
+    #     Need authenticated user, therefore set permission class to IsAuthenticated
+    #     :param request:
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     # TODO Redirect to login if fail to authenticated
+    #     # Access user id and redirect to specific url
+    #     user_id = request.user.id
+    #     url = reverse("user:users-detail", kwargs={"pk": user_id})
+    #     return redirect(url)
 
 
 # TODO Add support for password management
