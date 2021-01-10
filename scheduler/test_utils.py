@@ -431,6 +431,30 @@ def check_put_error(test_case, detail_url_name=None, path_params={}, url=None, t
     test_case.assertEqual(response.data, get_packet_details(error_class()), msg=f"Response: {response}\tURL: {url}")
 
 
+def check_put_error_v2(test_case, detail_url_name=None, path_params={}, url=None, test_data={},
+                       error_code="not_found", status_code=status.HTTP_404_NOT_FOUND):
+    """
+    Expecting error on put submission
+    :param test_case:
+    :param detail_url_name:
+    :param path_params:
+    :param url:
+    :param test_data:
+    :param error_code:
+    :param status_code:
+    :return:
+    """
+    if url is None:
+        url = reverse(detail_url_name, kwargs=path_params)
+
+    test_form_encoded = urlencode(test_data)
+    response = test_case.client.put(url,
+                                    data=test_form_encoded,
+                                    content_type='application/x-www-form-urlencoded')
+    test_case.assertEqual(response.status_code, status_code, msg=f"Test Data: {test_data}\tURL: {url}")
+    test_case.assertEqual(response.data["code"], error_code, msg=f"Response: {response}\tURL: {url}")
+
+
 def check_put_missing_fields(test_case, detail_url_name, path_params, test_data, blank_fields=("content",), num_put=20):
     """
     Perform `num_put` times put request with missing at least one of the field
@@ -503,6 +527,27 @@ def check_delete_error(test_case, detail_url_name=None, path_params={}, url=None
     response = test_case.client.delete(url)
     test_case.assertEqual(response.status_code, error_class.status_code)
     test_case.assertEqual(response.data, get_packet_details(error_class()), msg=f"URL: {url}")
+
+
+def check_delete_error_v2(test_case, detail_url_name=None, path_params={}, url=None,
+                          error_code="not_found", status_code=status.HTTP_404_NOT_FOUND):
+    """
+    Test unsuccessful delete with error specified as error code and status code
+    :param test_case:
+    :param detail_url_name:
+    :param path_params:
+    :param url:
+    :param error_code:
+    :param status_code:
+    :return:
+    """
+
+    if url is None:
+        url = reverse(detail_url_name, kwargs=path_params)
+    # Perform delete operation
+    response = test_case.client.delete(url)
+    test_case.assertEqual(response.status_code, status_code)
+    test_case.assertEqual(response.data["code"], error_code)
 
 
 def check_method_not_allowed(test_case, url, method):
