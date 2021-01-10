@@ -288,6 +288,7 @@ function UserModule() {
   function getUserProfile() {
     var csrftoken = getCookie("csrftoken");
     console.log(csrftoken);
+    console.log("getUserProfile ran"); 
     axios
       .get("/api/users",  {
         headers: {
@@ -308,15 +309,20 @@ function UserModule() {
           );
           setLoginStatus(true); 
           // setUserProfile({result}); 
-        } else if (result.status == 401)
-        {
-          setLoginStatus(false); 
-        }
+        } 
       })
       .catch(err => {
+        console.log("get user err.response"); 
+        console.log(err.response); 
+        if (err.response.status == 403 || err.response.status == 401) {
+          console.log("user is not logged in"); 
+          setLoginStatus(false); 
+        }
+        else {
           setError(
             "Sorry, we cannot keep you login at this time due to unknown error, please try later."
           );
+        }
      });
   }
 
