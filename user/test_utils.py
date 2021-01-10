@@ -209,7 +209,7 @@ def check_register_error(test_case, register_data, error_code="valid_error", sta
     if csrf_checks:
         error_code = "invalid_csrf"
     response = register_with_api(test_case, register_data, csrf_checks=csrf_checks)
-    test_case.assertEqual(response.status_code, status_code, msg=response.data)
+    test_case.assertEqual(response.status_code, status_code)
     if not csrf_checks:
         test_case.assertEqual(response.data["code"], error_code, msg=f"Mismatch error code: Expected: {error_code}\t"
                                                                      f"Actual: {response.data['code']}")

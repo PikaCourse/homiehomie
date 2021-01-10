@@ -91,7 +91,7 @@ class UserLoginViewSetTests(APITestCase):
             "email": "test@test.edu"
         }
 
-        check_register_error(self, register_data, csrf_checks=True)
+        check_register_error(self, register_data, csrf_checks=True, status_code=status.HTTP_403_FORBIDDEN)
 
     def test_user_register_email_without_edu(self):
         """
@@ -233,6 +233,8 @@ class UserLoginViewSetTests(APITestCase):
             "username": "tester",
             "password": "testcoursewiki"
         }
+
+        User.objects.create_user(**login_data)
 
         check_login_success(self, login_data)
         check_logout(self)
