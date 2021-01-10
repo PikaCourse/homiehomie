@@ -21,6 +21,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action, permission_classes
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import ValidationError
 
 """
 URL Pattern need to implemented
@@ -73,7 +74,7 @@ class UserLoginViewSet(viewsets.GenericViewSet):
         credentials = UserLoginSerializer(data=request.data)
 
         # Set true to raise the exception during validation process immediately
-        if credentials.is_valid(raise_exception=False):
+        if credentials.is_valid(raise_exception=True):
             # Check if the credentials are correct and can be login
             user = credentials.save()
             # Credential correct, login user
@@ -82,10 +83,9 @@ class UserLoginViewSet(viewsets.GenericViewSet):
                           "user": user.id, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
         else:
-            raise ValidationError("invalid username or password combination",
-                                  code="invalid_login")
+            raise ValidationError("invalid username or password combination", code="invalid_login")
 
-    @action(detail=False, methods=["get", "post"])
+    @action(detail=False, methods=["get"])
     @method_decorator(never_cache)
     def logout(self, request, *args, **kwargs):
         """
@@ -100,6 +100,7 @@ class UserLoginViewSet(viewsets.GenericViewSet):
         return redirect(settings.LOGOUT_REDIRECT_URL)
 
     @action(detail=False, methods=["post"])
+    @method_decorator(csrf_protect)
     def register(self, request, *args, **kwargs):
         """
         Register a user with email, username, and a password
@@ -121,7 +122,7 @@ class UserLoginViewSet(viewsets.GenericViewSet):
             return Response(error_pack, status=status.HTTP_200_OK)
         else:
             raise ValidationError("invalid registration info",
-                                  code="invalid_login")
+                                  code="invalid_register")
 
 
 class UserManagementViewSet(mixins.RetrieveModelMixin,
