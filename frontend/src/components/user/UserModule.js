@@ -12,7 +12,7 @@ import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import prompt from "../../../static/json/prompt.json"
 import store from '../../store'
 import {updateLoginStatus} from '../../actions/user'
-import {userDispatch, useSelector} from "react-redux"
+import {useDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
@@ -24,10 +24,10 @@ function UserModule() {
   const [error, setError] = useState("");
   //global usage 
   const [userProfile, setUserProfile] = useState({ username: "user" }); //loginStatus?getUserProfile:{}
-  const [loginStatus, setLoginStatus] = useState(false); //getSessionStatus()
-  const testingLoginSta = store.getState().user.loginStatus; 
+  // const [loginStatus, dispatch(updateLoginStatus] = useState(false); //getSessionStatus()
   //store 
-  const loginStatusTest = useSelector(state => state.user.loginStatus); 
+  const loginStatus = useSelector(state => state.user.loginStatus); 
+  const dispatch = useDispatch(); 
   //login signup 
   const loginForm = ( //login main form
     <>
@@ -306,7 +306,7 @@ function UserModule() {
             "last_active_time",
             JSON.stringify(new Date())
           );
-          setLoginStatus(true); 
+          dispatch(updateLoginStatus(true)); 
           // setUserProfile({result}); 
           setUserProfile({username: result.data.username, email: result.data.email}); 
         } 
@@ -316,7 +316,7 @@ function UserModule() {
         console.log(err.response); 
         if (err.response.status == 403 || err.response.status == 401) {
           console.log("user is not logged in"); 
-          setLoginStatus(false); 
+          dispatch(updateLoginStatus(false)); 
         }
         else {
           setError(
@@ -344,7 +344,7 @@ function UserModule() {
         handleOk(true);
         console.log(result); 
         console.log("Successfully logout user");
-        setLoginStatus(false); //use getSessionStatus
+        dispatch(updateLoginStatus(false)); //use getSessionStatus
         localStorage.removeItem("last_active_time");
       })
       .catch(err => {
@@ -415,21 +415,21 @@ function UserModule() {
         console.log("result"); 
         console.log(result); 
         if (result.status == 200) {
+          getUserProfile(); 
           handleOk(true);
           console.log("Successfully login user");
           setError("");
-          setLoginStatus(true); //use getSessionStatus
+          dispatch(updateLoginStatus(true)); //use getSessionStatus
           getSessionStatus();
           localStorage.setItem(
             "last_active_time",
             JSON.stringify(new Date())
           );
-          getUserProfile();  
         }
       })
       .catch(err => {
         handleOk(false);
-        console.log(err.response.status);
+        // console.log(err.response.status);
         if (err.response.status >= 400 && err.response.status < 500) {
           console.log("Error due to invalid password or username");
           setError("Incorrect username or password.");
@@ -466,7 +466,7 @@ function UserModule() {
           handleOk(true);
           console.log("Successfully register user");
           setError("");
-          setLoginStatus(true); //use getSessionStatus
+          dispatch(updateLoginStatus(true)); //use getSessionStatus
           localStorage.setItem(
             "last_active_time",
             JSON.stringify(new Date())
