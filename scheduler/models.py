@@ -41,6 +41,9 @@ class CourseMeta(models.Model):
     description = models.CharField(max_length=2048, default="empty course description", blank=True, null=True)
     tags = models.JSONField(default=list, blank=True, null=True)
 
+    class Meta:
+        ordering = ["title"]
+
     def __str__(self):
         return "_".join([self.school, self.title, self.name])
 
@@ -102,6 +105,9 @@ class Course(models.Model):
     registered = models.IntegerField(default=-1, null=True)
     capacity = models.IntegerField(default=-1, null=True, blank=True)
     openseat = models.IntegerField(default=-1, null=True)
+
+    class Meta:
+        ordering = ["course_meta__title"]
 
     def __str__(self):
         return "_".join([str(self.year), str(self.semester), str(self.course_meta)])
@@ -251,11 +257,30 @@ class Schedule(models.Model):
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
     semester = models.CharField(max_length=20)
     name = models.CharField(max_length=200)
-    note = models.TextField()
-    coursesid = models.JSONField(default=list)
+    note = models.TextField(blank=True, null=True)
+    coursesid = models.ManyToManyField(Course)
     tags = models.JSONField(default=list)
 
     def __str__(self):
         return str(self.user) + "_" + str(self.year) + "_" + self.semester + "_" + self.name
 
 
+class WishList(models.Model):
+    """
+    Course wishlist by user, each user only has one wishlist as it is
+    only meant for temporarily saving user courses
+    user:           User creating this wishlist
+    created_at:     The time this wishlist is created
+    last_edited:    The most recent time this schedule is edited
+    note:           Note of the wishlist
+
+    coursesid:      Access all the courses in this wishlist via id array
+    """
+    user = models.OneToOneField(Student, on_delete=models.SET(Student.get_sentinel_user))
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now_add=True)
+    note = models.TextField(blank=True, null=True)
+    coursesid = models.ManyToManyField(Course)
+
+    def __str__(self):
+        return f"Wishlist_{self.user}"
