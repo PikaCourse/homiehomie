@@ -10,9 +10,9 @@ import Wishlist from "../wishlist/Wishlist";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import prompt from "../../../static/json/prompt.json"
-
-const querystring = require("querystring");
-// import ensure_csrf_cookie from django.views.decorators.csrf
+import store from '../../store'
+import {updateLoginStatus} from '../../actions/user'
+import {userDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 
@@ -25,7 +25,9 @@ function UserModule() {
   //global usage 
   const [userProfile, setUserProfile] = useState({ username: "user" }); //loginStatus?getUserProfile:{}
   const [loginStatus, setLoginStatus] = useState(false); //getSessionStatus()
- 
+  const testingLoginSta = store.getState().user.loginStatus; 
+  //store 
+  const loginStatusTest = useSelector(state => state.user.loginStatus); 
   //login signup 
   const loginForm = ( //login main form
     <>
@@ -276,12 +278,6 @@ function UserModule() {
       </Form>
     </Modal>
   );
-
-  // backend, storage related functions  
-  function getSessionStatus() {
-    console.log(sessionStorage);
-    console.log(localStorage);
-  }
 
   useEffect(() => {
     // Update the document title using the browser API
