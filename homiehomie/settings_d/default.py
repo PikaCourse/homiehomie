@@ -162,7 +162,7 @@ FIXTURE_DIRS = ['test_fixtures']
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'scheduler.exceptions.custom_exception_hdr',
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',

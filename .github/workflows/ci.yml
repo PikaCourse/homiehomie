@@ -72,14 +72,15 @@ jobs:
         pip install -r requirements/dev.txt
     - name: Run Coverage and Unit test
       run: |
-        coverage run manage.py test --noinput --settings=homiehomie.settings_d.dev --parallel
+        make coverage_dev
       env:
         # Fake SECRET KEY used for run test only 
         HOMIE_HOMIE_DJANGO_SECRET_KEY: wtelrbj_4zy@(16_f0vvvxa85i4otovka)a)651ccxm7ng9tuv
         DATABASE_URL: postgres://postgres:postgres@localhost:5432/action
+        COVERAGE_PROCESS_START: .coveragerc
     - name: Generate coverage report 
       run: |
-        coverage xml -o coverage.xml
+        make coverage-report_xml
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
       with:

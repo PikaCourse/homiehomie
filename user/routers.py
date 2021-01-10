@@ -18,8 +18,7 @@ class UserRouter(SimpleRouter):
         # Default user get and update profile
         Route(
             url=r'^{prefix}{trailing_slash}$',
-            mapping={'get': 'default_get',
-                     'put': 'default_put'},
+            mapping={'get': 'default_get'},
             name='{basename}-default',
             detail=False,
             initkwargs={'suffix': 'Default'}

@@ -162,23 +162,41 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
         url = reverse("user:users-detail", kwargs={"pk": user_id})
         return redirect(url)
 
-    def default_put(self, request, *args, **kwargs):
-        """
-        Update current user's profile, via getting the user id from
-        session and perform redirection
+    # Comment out since Django redirect does not support 307, which will not
+    # drop the POST data
+    # def default_put(self, request, *args, **kwargs):
+    #     """
+    #     Update current user's profile, via getting the user id from
+    #     session and perform redirection
+    #
+    #     Need authenticated user, therefore set permission class to IsAuthenticated
+    #     :param request:
+    #     :param args:
+    #     :param kwargs:
+    #     :return:
+    #     """
+    #     # TODO Redirect to login if fail to authenticated
+    #     # Access user id and redirect to specific url
+    #     user_id = request.user.id
+    #     url = reverse("user:users-detail", kwargs={"pk": user_id})
+    #     return redirect(url)
 
-        Need authenticated user, therefore set permission class to IsAuthenticated
-        :param request:
-        :param args:
-        :param kwargs:
-        :return:
-        """
-        # TODO Redirect to login if fail to authenticated
-        # Access user id and redirect to specific url
-        user_id = request.user.id
-        url = self.reverse_action("user:users-detail", kwargs={"pk": user_id})
-        return redirect(url)
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
 
+        if getattr(instance, '_prefetched_objects_cache', None):
+            # If 'prefetch_related' has been applied to a queryset, we need to
+            # forcibly invalidate the prefetch cache on the instance.
+            instance._prefetched_objects_cache = {}
+
+        data = serializer.data
+        error_pack = {"code": "success", "detail": "successfully update user profile",
+                      "user": data["id"], "status": status.HTTP_200_OK}
+        return Response(error_pack, status=status.HTTP_200_OK)
 
 # TODO Add support for password management
 # TODO Add support for user profile
