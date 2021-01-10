@@ -13,7 +13,7 @@ export const loadState = () => {
 export const loadCalendarCourseBag = () => {
     console.log("loadCalendarCourseBag");
     try {
-      const serializedState = localStorage.getItem('state');
+      const serializedState = localStorage.getItem("calendarCourseBag");
       if (serializedState === null) {
         return [];
       }
@@ -35,10 +35,10 @@ export const loadCalendarCourseBag = () => {
     }
 };
 
-export const saveState = (state) => {
+export const saveState = (name, state) => {
     try {
       const serializedState = JSON.stringify(state);
-      localStorage.setItem('state', serializedState);
+      localStorage.setItem(name, serializedState);
     } catch {
       // ignore write errors
     }

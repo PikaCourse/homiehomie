@@ -15,7 +15,7 @@ const store = createStore(
 );
 
 store.subscribe(() => {
-  saveState(store.getState().calendar.calendarCourseBag);
+  saveState("calendarCourseBag", store.getState().calendar.calendarCourseBag);
 });
 
 export default store;
