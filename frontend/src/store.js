@@ -10,7 +10,6 @@ const middleware = [thunk];
 
 console.log("loadState()");
 console.log(loadState());
-console.log(loadState().calendarCourseBag);
 
 const store = createStore(
   rootReducer,
@@ -19,9 +18,7 @@ const store = createStore(
 );
 
 store.subscribe(() => {
-  saveState({
-    randomName: store.getState().calendar.calendarCourseBag
-  });
+  saveState(store.getState().calendar.calendarCourseBag);
 });
 console.log("rootReducer.wishlist"); 
 console.log(store.getState().calendar.calendarCourseBag); 

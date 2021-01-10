@@ -15,7 +15,7 @@ import {
 import {loadState, saveState} from '../../src/helper/localStorage'
 
 const initialState = {
-  calendarCourseBag: loadState().calendarCourseBag,
+  calendarCourseBag: loadState(),
   pendingCourseBag: [],
   uniqueCourseBag: [],  
   listFormattedBag: [], 
