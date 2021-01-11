@@ -57,3 +57,4 @@ main.js.LICENSE.txt
 
 # Testing related
 coverage.xml
+.coverage.*

@@ -33,7 +33,7 @@ class Student(models.Model):
         (UNKNOWN, 'Unknown')
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student")
     school = models.CharField(max_length=100, null=True)
     major = models.CharField(max_length=100, null=True)
     majors = models.JSONField(default=list, blank=True, null=True)
