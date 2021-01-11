@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 import {
   addCurrCourse,
   removeCurrCourse,
-  addCurrCourseToWish,
   // previewCurrCourse,
   // updatePreviewCourse
 } from "../../actions/calendar";
+import {addCurrCourseToWish} from "../../actions/wishlist"
 // import {  } from "../../actions/wishlist";
 import { setCourse } from "../../actions/course";
 import store from "../../store";
@@ -170,11 +170,11 @@ export class WikiSummary extends Component {
 
   componentDidUpdate(prevProps) {
     if (
-      prevProps.pendingCourseBag !== this.props.pendingCourseBag ||
+      prevProps.wishlistCourseBag !== this.props.wishlistCourseBag ||
       prevProps.selectedCRN !== this.props.selectedCRN
     ) {
 
-      const curr = this.props.pendingCourseBag.find(
+      const curr = this.props.wishlistCourseBag.find(
         ({ crn }) => crn === store.getState().course.selectedCRN
       );
       this.setState({ starButton: curr != null });
@@ -285,7 +285,7 @@ const mapStateToProps = (state) => ({
   selectedCRN: state.course.selectedCRN,
   selectedCourse: state.course.selectedCourse,
   calendarCourseBag: state.calendar.calendarCourseBag, 
-  pendingCourseBag: state.calendar.pendingCourseBag,
+  wishlistCourseBag: state.wishlist.wishlistCourseBag, 
 });
 
 export default connect(mapStateToProps)(WikiSummary);

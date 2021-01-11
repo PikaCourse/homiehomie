@@ -13,7 +13,6 @@ import UserModule from "../user/UserModule"
 
 
 function Navbar() {
-  const [isWishlistVisible, setIsWishlistVisible] = useState(false);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
@@ -24,20 +23,7 @@ function Navbar() {
         <div>
           <ul class="navbar-nav ml-auto pr-4">
             <li class="nav-item">
-              <Button
-                size="medium"
-                style={{ color: "#419EF4" }}
-                onClick={() => setIsWishlistVisible(true)}
-              >
-                <FontAwesomeIcon icon={faStar} />
-              </Button>
-              <Modal
-                visible={isWishlistVisible}
-                onCancel={() => setIsWishlistVisible(false)}
-                width={"85vw"}
-              >
-                <Wishlist />
-              </Modal>
+              <Wishlist />
             </li>
             <li class="nav-item">
               <UserModule />

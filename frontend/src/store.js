@@ -2,6 +2,7 @@ import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import thunk from 'redux-thunk';
 import rootReducer from './reducers';
+import {loadState, saveState, loadCalendarCourseBag} from '../src/helper/localStorage'
 
 const initialState = {};
 
@@ -12,5 +13,10 @@ const store = createStore(
   initialState,
   composeWithDevTools(applyMiddleware(...middleware)),
 );
+
+store.subscribe(() => {
+  saveState("calendarCourseBag", store.getState().calendar.calendarCourseBag);
+  saveState("wishlistCourseBag", store.getState().wishlist.wishlistCourseBag);
+});
 
 export default store;
