@@ -43,8 +43,8 @@ class PostAnswerSerializer(serializers.ModelSerializer):
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule
-        fields = '__all__'
-        read_only_fields = ("id", "last_edited", "created_at", "student")
+        exclude = ("student", )
+        read_only_fields = ("id", "last_edited", "created_at")
 
     def validate_year(self, year):
         """
@@ -86,8 +86,8 @@ class ScheduleSerializer(serializers.ModelSerializer):
 class WishListSerializer(serializers.ModelSerializer):
     class Meta:
         model = WishList
-        fields = '__all__'
-        read_only_fields = ("id", "last_edited", "created_at", "student")
+        exclude = ("student", )
+        read_only_fields = ("id", "last_edited", "created_at")
 
     def validate(self, data):
         """
@@ -95,10 +95,12 @@ class WishListSerializer(serializers.ModelSerializer):
         :param data:
         :return:
         """
-        # Check if there already exists a wishlist from the user
-        user = self.context["request"].user
-        if WishList.objects.filter(student__user=user).exists():
-            raise serializers.ValidationError("wishlist already exists")
+        # Check if there already exists a wishlist from the user upon creation
+        if self.context["request"]._request.method == "POST":
+            user = self.context["request"].user
+            if WishList.objects.filter(student__user=user).exists():
+                raise serializers.ValidationError("wishlist already exists")
+        return data
 
     def create(self, validated_data):
         """
