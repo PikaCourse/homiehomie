@@ -238,9 +238,10 @@ class PostAnswer(models.Model):
 class Schedule(models.Model):
     """
     Course scheduled created by USER
-    user:           User creating this schedule
+    student:        User creating this schedule
     created_at:     The time this schedule is created
-    last_edited:    The most recent time this schedule is edited
+    last_edited:    The most recent time this schedule is edited, default order
+                    list according to this in descending direction
     is_star:        Is this schedule starred by user?
     year:           Year of the schedule for
     semester:       Semester of the schedule
@@ -250,37 +251,47 @@ class Schedule(models.Model):
 
     coursesid:      Access all the courses in this schedule via id array
     """
-    user = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
+    SEMESTER_CHOICES = [
+        ("fall", "fall"),
+        ("spring", "spring"),
+        ("summer", "summer"),
+        ("winter", "winter")
+    ]
+    student = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     is_star = models.BooleanField(default=False)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
-    semester = models.CharField(max_length=20)
-    name = models.CharField(max_length=200)
+    semester = models.CharField(max_length=8, choices=SEMESTER_CHOICES)
+    name = models.CharField(max_length=200, blank=True)
     note = models.TextField(blank=True, null=True)
-    coursesid = models.ManyToManyField(Course)
-    tags = models.JSONField(default=list)
+    courses = models.ManyToManyField(Course)
+    tags = models.JSONField(default=list, null=True)
+
+    class Meta:
+        # Default to put last edited schedule to first
+        ordering = ["-last_edited"]
 
     def __str__(self):
-        return str(self.user) + "_" + str(self.year) + "_" + self.semester + "_" + self.name
+        return str(self.student) + "_" + str(self.year) + "_" + self.semester + "_" + self.name
 
 
 class WishList(models.Model):
     """
     Course wishlist by user, each user only has one wishlist as it is
     only meant for temporarily saving user courses
-    user:           User creating this wishlist
+    student:        User creating this wishlist
     created_at:     The time this wishlist is created
     last_edited:    The most recent time this schedule is edited
     note:           Note of the wishlist
 
     coursesid:      Access all the courses in this wishlist via id array
     """
-    user = models.OneToOneField(Student, on_delete=models.SET(Student.get_sentinel_user))
+    student = models.OneToOneField(Student, on_delete=models.SET(Student.get_sentinel_user))
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     note = models.TextField(blank=True, null=True)
-    coursesid = models.ManyToManyField(Course)
+    courses = models.ManyToManyField(Course)
 
     def __str__(self):
-        return f"Wishlist_{self.user}"
+        return f"Wishlist_{self.student}"

@@ -590,6 +590,31 @@ class PostAnswerViewSet(viewsets.ModelViewSet):
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
-    queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
-    http_method_names = ['get', 'post', 'head', 'put']
+    http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    parser_classes = [JSONParser]
+    permission_classes = [IsAuthenticated, ScheduleViewSetPermission]
+
+    def get_queryset(self):
+        # Make sure user only see his own schedule
+        # Prevent List method to show user others schedule
+        user = self.request.user
+        return Schedule.objects.filter(student__user=user)
+
+
+class WishListViewSet(viewsets.ModelViewSet):
+    serializer_class = WishListSerializer
+    http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    parser_classes = [JSONParser]
+    permission_classes = [IsAuthenticated, WishListViewSetPermission]
+
+    def get_queryset(self):
+        # Make sure user only see his own wishlist
+        user = self.request.user
+        return WishList.objects.filter(student__user=user)
+
+    # TODO Simply redirect this? since only one wishlist for a user
+    # def list(self, request, *args, **kwargs):
+    #     # Since only one wishlist for one user, just redirect it
+    #     return super().retrieve(request, *args, **kwargs)
+

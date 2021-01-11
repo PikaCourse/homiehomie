@@ -24,6 +24,7 @@ class ReadOnly(permissions.BasePermission):
             return False
 
 
+# TODO Break into IsAuthenticatedOrReadOnly and IsOwnerOrReadOnly
 class IsAuthenticatedAndOwnerOrReadOnly(permissions.BasePermission):
     """
     Check if the user is authenticated for
@@ -56,7 +57,24 @@ class IsAuthenticatedAndOwnerOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
         else:
-            return obj.owner == request.user
+            return obj.user == request.user
+
+
+class IsOwnerOrWriteOnly(permissions.BasePermission):
+    """
+    Check if the user is the owner of the instance for listing, retrieving, updating and deleting it
+    Else user can only post
+    """
+    message = "Need to be the owner to perform the operation"
+
+    def has_object_permission(self, request, view, obj):
+        """
+        :param request:
+        :param view:
+        :param obj:
+        :return:
+        """
+        return obj.user == request.user
 
 
 class QuestionViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
@@ -107,12 +125,35 @@ class PostAnswerViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
             return obj.postee.user == request.user
 
 
-class ScheduleViewSetPermission(IsAuthenticatedAndOwnerOrReadOnly):
+class ScheduleViewSetPermission(IsOwnerOrWriteOnly):
     """
-    Check if the request to schedule viewset is appropriate
+    Check if the user is the owner of the instance for listing, retrieving, updating and deleting it
+    Else user can only post
     """
+    message = "Need to be the owner to perform the operation"
+
     def has_object_permission(self, request, view, obj):
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        else:
-            return obj.user.user == request.user
+        """
+        :param request:
+        :param view:
+        :param obj:
+        :return:
+        """
+        return obj.student.user == request.user
+
+
+class WishListViewSetPermission(IsOwnerOrWriteOnly):
+    """
+    Check if the user is the owner of the instance for listing, retrieving, updating and deleting it
+    Else user can only post
+    """
+    message = "Need to be the owner to perform the operation"
+
+    def has_object_permission(self, request, view, obj):
+        """
+        :param request:
+        :param view:
+        :param obj:
+        :return:
+        """
+        return obj.student.user == request.user
