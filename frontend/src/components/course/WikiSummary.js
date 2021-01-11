@@ -313,7 +313,7 @@ const mapStateToProps = (state) => ({
   selectedCRN: state.course.selectedCRN,
   selectedCourse: state.course.selectedCourse,
   calendarCourseBag: state.calendar.calendarCourseBag, 
-  option: state.course.option
+  option: state.course.option,
   wishlistCourseBag: state.wishlist.wishlistCourseBag, 
 });
 
