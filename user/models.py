@@ -47,13 +47,18 @@ class Student(models.Model):
 
     @classmethod
     def get_sentinel_user(cls):
-        user = User.objects.get_or_create(username='deleted')[0]
+        user, _ = User.objects.get_or_create(username='deleted')
         return Student.objects.get(user=user)
 
     @classmethod
     def get_tester_user(cls):
-        tester = User.objects.get_or_create(username='tester')[0]
+        tester, _ = User.objects.get_or_create(username='tester')
         return Student.objects.get(user=tester)
+
+    @classmethod
+    def get_site_bot(cls):
+        site, _ = User.objects.get_or_create(username='site')
+        return Student.objects.get(user=site)
 
     def __str__(self):
         return self.user.username

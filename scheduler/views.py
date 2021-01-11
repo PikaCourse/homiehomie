@@ -23,6 +23,7 @@ API Definition below
 """
 
 
+# TODO Need an IsAdminOrReadOnly to help uploading and modifying the course objects
 class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
     query_parameters = ["school", "major", "limit"]
     queryset = CourseMeta.objects.all()
@@ -171,6 +172,13 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if coursemetaid is not None:
             try:
                 queryset = queryset.filter(course_meta_id=coursemetaid)
+                # TODO Possible performance improvement?
+                # TODO Create API to upload course and course meta and then
+                #  create the default questions after the course meta objects are created
+                # Check if the pinned question exists in Question db
+                if not Question.objects.filter(course_meta_id=coursemetaid, is_pin=True).exists():
+                    self.create_default_questions(coursemetaid)
+                    queryset = self.get_queryset().filter(course_meta_id=coursemetaid)
             except ValueError:
                 raise InvalidQueryValue()
         # Sort by scheme:
@@ -244,6 +252,33 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if not user.is_anonymous:
             qs = qs | Q(created_by=user.student)
         return Question.objects.filter(qs)
+
+    @staticmethod
+    def create_default_questions(course_meta_id):
+        """
+        Create basic questions in database for the course
+        Check for their exact existence in db
+        :return:
+        """
+        question_template = {
+            "course_meta_id": course_meta_id,
+            "created_by": Student.get_site_bot(),
+            "is_pin": True,
+            "is_private": False,
+            "title": "",
+            "pin_order": 0
+        }
+        questions = [
+            ("What is this class about? What can I learn from this class?", 0),
+            ("How hard it is?", 1),
+            ("Which professor’s class to take?", 2)
+        ]
+
+        for title, order in questions:
+            question_data = question_template.copy()
+            question_data["title"] = title
+            question_data["pin_order"] = order
+            Question.objects.create(**question_data)
 
 
 # TODO Search by question array or modify to have question-note pair returned?
