@@ -2,3 +2,4 @@
 -r comm.txt
 
 psycopg2-binary==2.8.6
+tblib==1.7.0

@@ -18,6 +18,21 @@ class Student(models.Model):
     sex:        Student's sex/gender
     type:       Student's Type: freshman, sophomore, junior, senior, graduate
     """
+    FRESHMAN = 'FR'
+    SOPHOMORE = 'SO'
+    JUNIOR = 'JR'
+    SENIOR = 'SR'
+    GRADUATE = 'GR'
+    UNKNOWN = 'UK'
+    YEAR_IN_SCHOOL_CHOICES = [
+        (FRESHMAN, 'Freshman'),
+        (SOPHOMORE, 'Sophomore'),
+        (JUNIOR, 'Junior'),
+        (SENIOR, 'Senior'),
+        (GRADUATE, 'Graduate'),
+        (UNKNOWN, 'Unknown')
+    ]
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     school = models.CharField(max_length=100, null=True)
     major = models.CharField(max_length=100, null=True)
@@ -26,7 +41,9 @@ class Student(models.Model):
     graduation = models.DateField(blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
     sex = models.CharField(max_length=20, null=True)
-    type = models.CharField(max_length=10, null=True)
+    type = models.CharField(max_length=2,
+                            choices=YEAR_IN_SCHOOL_CHOICES,
+                            null=True)
 
     @classmethod
     def get_sentinel_user(cls):

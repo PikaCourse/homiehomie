@@ -2,7 +2,11 @@ from django.db import models
 
 # from django.contrib.auth.models import User
 from user.models import Student
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
+# TODO Use choices options of fields to limit user input and as
+# TODO validation
 
 # Create your models here.
 class CourseMeta(models.Model):
@@ -38,6 +42,9 @@ class CourseMeta(models.Model):
     school = models.CharField(max_length=100)
     description = models.CharField(max_length=2048, default="empty course description", blank=True, null=True)
     tags = models.JSONField(default=list, blank=True, null=True)
+
+    class Meta:
+        ordering = ["title"]
 
     def __str__(self):
         return "_".join([self.school, self.title, self.name])
@@ -100,6 +107,9 @@ class Course(models.Model):
     registered = models.IntegerField(default=-1, null=True)
     capacity = models.IntegerField(default=-1, null=True, blank=True)
     openseat = models.IntegerField(default=-1, null=True)
+
+    class Meta:
+        ordering = ["course_meta__title"]
 
     def __str__(self):
         return "_".join([str(self.year), str(self.semester), str(self.course_meta)])
@@ -230,10 +240,12 @@ class PostAnswer(models.Model):
 class Schedule(models.Model):
     """
     Course scheduled created by USER
-    user:           User creating this schedule
+    student:        User creating this schedule
     created_at:     The time this schedule is created
-    last_edited:    The most recent time this schedule is edited
+    last_edited:    The most recent time this schedule is edited, default order
+                    list according to this in descending direction
     is_star:        Is this schedule starred by user?
+    is_private      Do user want to let others view the schedule?
     year:           Year of the schedule for
     semester:       Semester of the schedule
     name:           Name of the schedule
@@ -242,18 +254,55 @@ class Schedule(models.Model):
 
     coursesid:      Access all the courses in this schedule via id array
     """
-    user = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
+    SEMESTER_CHOICES = [
+        ("fall", "fall"),
+        ("spring", "spring"),
+        ("summer", "summer"),
+        ("winter", "winter")
+    ]
+    student = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     is_star = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=True)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
-    semester = models.CharField(max_length=20)
-    name = models.CharField(max_length=200)
-    note = models.TextField()
-    coursesid = models.JSONField(default=list)
-    tags = models.JSONField(default=list)
+    semester = models.CharField(max_length=8, choices=SEMESTER_CHOICES)
+    name = models.CharField(max_length=200, blank=True)
+    note = models.TextField(blank=True, null=True)
+    courses = models.ManyToManyField(Course)
+    tags = models.JSONField(default=list, null=True)
+
+    class Meta:
+        # Default to put last edited schedule to first
+        ordering = ["-last_edited"]
 
     def __str__(self):
-        return str(self.user) + "_" + str(self.year) + "_" + self.semester + "_" + self.name
+        return str(self.student) + "_" + str(self.year) + "_" + self.semester + "_" + self.name
 
 
+class WishList(models.Model):
+    """
+    Course wishlist by user, each user only has one wishlist as it is
+    only meant for temporarily saving user courses
+    student:        User creating this wishlist
+    created_at:     The time this wishlist is created
+    last_edited:    The most recent time this schedule is edited
+    note:           Note of the wishlist
+
+    coursesid:      Access all the courses in this wishlist via id array
+    """
+    student = models.OneToOneField(Student, on_delete=models.SET(Student.get_sentinel_user))
+    created_at = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now_add=True)
+    note = models.TextField(blank=True, null=True)
+    courses = models.ManyToManyField(Course, blank=True)
+
+    def __str__(self):
+        return f"Wishlist_{self.student}"
+
+# Create a wishlist after a student instance is created
+@receiver(post_save, sender=Student)
+def create_user_profile(sender, instance, created, raw, **kwargs):
+    # Prevent creating instance upon loading fixtures, which is used for testing
+    if created and not raw:
+        WishList.objects.create(student=instance)
