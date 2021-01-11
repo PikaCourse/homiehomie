@@ -89,6 +89,17 @@ class WishListSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ("id", "last_edited", "created_at", "student")
 
+    def validate(self, data):
+        """
+        Object-level validation on object data
+        :param data:
+        :return:
+        """
+        # Check if there already exists a wishlist from the user
+        user = self.context["request"].user
+        if WishList.objects.filter(student__user=user).exists():
+            raise serializers.ValidationError("wishlist already exists")
+
     def create(self, validated_data):
         """
         Create a instance based on the validated data

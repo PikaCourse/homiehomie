@@ -2,6 +2,8 @@ from django.db import models
 
 # from django.contrib.auth.models import User
 from user.models import Student
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # TODO Use choices options of fields to limit user input and as
 # TODO validation
@@ -293,7 +295,14 @@ class WishList(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     note = models.TextField(blank=True, null=True)
-    courses = models.ManyToManyField(Course)
+    courses = models.ManyToManyField(Course, blank=True)
 
     def __str__(self):
         return f"Wishlist_{self.student}"
+
+# Create a wishlist after a student instance is created
+@receiver(post_save, sender=Student)
+def create_user_profile(sender, instance, created, raw, **kwargs):
+    # Prevent creating instance upon loading fixtures, which is used for testing
+    if created and not raw:
+        WishList.objects.create(student=instance)
