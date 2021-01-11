@@ -55,7 +55,6 @@ class CourseMetaViewSetTests(APITestCase):
     @classmethod
     def tearDownClass(cls):
         # Delete test user
-        User.objects.get(id=cls.test_user.id).delete()
         super(CourseMetaViewSetTests, cls).tearDownClass()
 
     def setUp(self) -> None:
@@ -419,7 +418,6 @@ class CourseViewSetTests(APITestCase):
     @classmethod
     def tearDownClass(cls):
         # Delete test user
-        User.objects.get(id=cls.test_user.id).delete()
         super(CourseViewSetTests, cls).tearDownClass()
 
     def setUp(self) -> None:
