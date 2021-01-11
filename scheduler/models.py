@@ -127,11 +127,12 @@ class Question(models.Model):
     star_count:     Star/favorite count
     dislike_count:  Dislike count
     is_pin:         Is this question pinned by admin?
+    is_private:     Is this question only viewable by the creator?
     pin_order:      Dictate the order of the question, 0 is the first element
     title:          Question text
     tags:           User tagging
     """
-    course_meta = models.ForeignKey(CourseMeta, on_delete=models.PROTECT, default=-1)    # Prevent deleting course object
+    course_meta = models.ForeignKey(CourseMeta, on_delete=models.PROTECT, default=-1)  # Prevent deleting course object
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     last_edited = models.DateTimeField(auto_now_add=True)
@@ -140,6 +141,7 @@ class Question(models.Model):
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
     is_pin = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=False)
     pin_order = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
     tags = models.JSONField(default=list)
@@ -149,6 +151,7 @@ class Question(models.Model):
 
 
 # TODO Enable referring to past editing via git?
+# TODO Add test for private note
 class Note(models.Model):
     """
     Share note Data model
@@ -161,6 +164,7 @@ class Note(models.Model):
     star_count:     Star/favorite count
     dislike_count:  Dislike count
     title:          Note title
+    is_private:     Is this question only viewable by creater?
     content:        Note content in markdown
     tags:           User tagging
     """
@@ -173,6 +177,7 @@ class Note(models.Model):
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200, null=True, default=None)
+    is_private = models.BooleanField(default=False)
     content = models.TextField(blank=True)    # In markdown
     tags = models.JSONField(default=list)
 

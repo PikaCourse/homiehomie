@@ -7,10 +7,11 @@ from django.utils import timezone
 
 
 # TODO User id verification/authentication
+# TODO No same name public question
 class QuestionCreationForm(ModelForm):
     class Meta:
         model = Question
-        fields = ["course_meta", "title", "tags"]
+        fields = ["course_meta", "title", "tags", "is_private"]
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
@@ -33,7 +34,7 @@ class QuestionCreationForm(ModelForm):
 class QuestionModificationForm(ModelForm):
     class Meta:
         model = Question
-        fields = ["title", "tags"]
+        fields = ["title", "tags", "is_private"]
 
     def save(self, commit=True):
         # NOTE Did not check for if the user has the permission,
@@ -49,7 +50,7 @@ class QuestionModificationForm(ModelForm):
 class NoteCreationForm(ModelForm):
     class Meta:
         model = Note
-        fields = ["course", "question", "title", "content", "tags"]
+        fields = ["course", "question", "title", "content", "tags", "is_private"]
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)
@@ -79,7 +80,7 @@ class NoteCreationForm(ModelForm):
 class NoteModificationForm(ModelForm):
     class Meta:
         model = Note
-        fields = ["title", "content", "tags"]
+        fields = ["title", "content", "tags", "is_private"]
 
     def save(self, commit=True):
         # NOTE Did not check for if the user is valid or authenticated
