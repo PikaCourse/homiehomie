@@ -175,8 +175,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
                 # TODO Possible performance improvement?
                 # TODO Create API to upload course and course meta and then
                 #  create the default questions after the course meta objects are created
-                # Check if the pinned question exists in Question db
-                if not Question.objects.filter(course_meta_id=coursemetaid, is_pin=True).exists():
+                # Check if the course meta id is valid and that the pinned question not exists in Question db
+                if queryset.exists() and not Question.objects.filter(course_meta_id=coursemetaid, is_pin=True).exists():
                     self.create_default_questions(coursemetaid)
                     queryset = self.get_queryset().filter(course_meta_id=coursemetaid)
             except ValueError:
