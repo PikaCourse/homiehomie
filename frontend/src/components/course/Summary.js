@@ -71,21 +71,37 @@ function WikiSummary() {
                 )}
               </p>
             </div>
-            <div>
-              <Radio.Group
-                defaultValue={selectedCourse.professor}
-                size="small"
-                buttonStyle="solid"
+            <Radio.Group
+              defaultValue={selectedCourse.professor}
+              size="small"
+              buttonStyle="solid"
+              className="row"
+            >
+              <Radio.Button
+                className="mr-1 mb-1"
+                value="default"
+                disabled
+                style={{
+                  borderRadius: "0px",
+                  border: "none",
+                  fontWeight: "800",
+                  paddingLeft: "0px",
+                  backgroundColor: "#ffffff",
+                  Color: "black",
+                }}
               >
-                {professors.map((prof, index) => {
-                  index % 4 == 0 ? (
-                    <Radio.Button value={prof}>{prof}</Radio.Button>
-                  ){"\n"}: (
-                    <Radio.Button value={prof}>{prof}</Radio.Button>
-                  );
-                })}
-              </Radio.Group>
-            </div>
+                Instructor:
+              </Radio.Button>
+              {professors.map((prof) => (
+                <Radio.Button
+                  className="mr-1 mb-1"
+                  value={prof}
+                  style={{ borderRadius: "0px" }}
+                >
+                  {prof}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
           </div>
         ) : (
           <Card bordered={false} loading={true}></Card>
