@@ -243,6 +243,7 @@ class Schedule(models.Model):
     last_edited:    The most recent time this schedule is edited, default order
                     list according to this in descending direction
     is_star:        Is this schedule starred by user?
+    is_private      Do user want to let others view the schedule?
     year:           Year of the schedule for
     semester:       Semester of the schedule
     name:           Name of the schedule
@@ -261,6 +262,7 @@ class Schedule(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     is_star = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=True)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
     semester = models.CharField(max_length=8, choices=SEMESTER_CHOICES)
     name = models.CharField(max_length=200, blank=True)

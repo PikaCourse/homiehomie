@@ -134,12 +134,14 @@ class ScheduleViewSetPermission(IsOwnerOrWriteOnly):
 
     def has_object_permission(self, request, view, obj):
         """
+        If the is_private is true, check if the user own the oject
+        else just return it
         :param request:
         :param view:
         :param obj:
         :return:
         """
-        return obj.student.user == request.user
+        return obj.student.user == request.user or not obj.is_private
 
 
 class WishListViewSetPermission(IsOwnerOrWriteOnly):
