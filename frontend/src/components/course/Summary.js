@@ -36,30 +36,23 @@ function WikiSummary() {
       <div className="p-4 my-2 mt-4" style={CardStyle}>
         {!isEmpty(selectedCourse) ? (
           <div>
-          {headerLoader(selectedCourse)}
-          {tagLoader(selectedCourse)}
-           
+            {headerLoader(selectedCourse)}
+            {tagLoader(selectedCourse)}
+
             <Radio.Group
               defaultValue={selectedCourse.professor}
               size="small"
               buttonStyle="solid"
-              className="row"
             >
-              <Radio.Button
-                className="mr-1 mb-1"
-                value="default"
-                disabled
+              <h5
                 style={{
-                  borderRadius: "0px",
-                  border: "none",
-                  fontWeight: "800",
-                  paddingLeft: "0px",
-                  backgroundColor: "#ffffff",
-                  Color: "black",
+                  fontSize: "0.8rem",
+                  Color: "grey",
                 }}
               >
-                Instructor:
-              </Radio.Button>
+                Instructor
+              </h5>
+
               {professors.map((prof) => (
                 <Radio.Button
                   className="mr-1 mb-1"
@@ -77,21 +70,14 @@ function WikiSummary() {
               buttonStyle="solid"
               className="row"
             >
-              <Radio.Button
-                className="mr-1 mb-1"
-                value="default"
-                disabled
+              <h5
                 style={{
-                  borderRadius: "0px",
-                  border: "none",
-                  fontWeight: "800",
-                  paddingLeft: "0px",
-                  backgroundColor: "#ffffff",
-                  Color: "black",
+                  fontSize: "0.8rem",
+                  Color: "grey",
                 }}
               >
-                Days:
-              </Radio.Button>
+                Days
+              </h5>
 
               {dayslot.map((day) => (
                 <Radio.Button
@@ -110,21 +96,15 @@ function WikiSummary() {
               buttonStyle="solid"
               className="row"
             >
-              <Radio.Button
-                className="mr-1 mb-1"
-                value="default"
-                disabled
+              <h5
                 style={{
-                  borderRadius: "0px",
-                  border: "none",
-                  fontWeight: "800",
-                  paddingLeft: "0px",
-                  backgroundColor: "#ffffff",
-                  Color: "black",
+                  fontSize: "0.8rem",
+                  Color: "grey",
                 }}
               >
-                Time:
-              </Radio.Button>
+                Times
+              </h5>
+
               {timeslot.map((time) => (
                 <Radio.Button
                   className="mr-1 mb-1"
@@ -143,43 +123,43 @@ function WikiSummary() {
     </Fragment>
   );
 }
-function headerLoader(selectedCourse){
-  return  <h1 className="mr-2 align-middle" style={{ display: "inline" }}>
-  <span style={{ color: Color }}>
-    {selectedCourse.course_meta.title}{" "}
-  </span>
-  {selectedCourse.course_meta.name}
-</h1>
+function headerLoader(selectedCourse) {
+  return (
+    <h1 className="mr-2 align-middle" style={{ display: "inline" }}>
+      <span style={{ color: Color }}>{selectedCourse.course_meta.title} </span>
+      {selectedCourse.course_meta.name}
+    </h1>
+  );
 }
-function tagLoader(selectedCourse){
-  return  <div>
-  <p className="my-2" style={{ fontFamily: "Montserrat" }}>
-    {weekday.map((day, i) => (
-      <span className={weekdayToClass(i, selectedCourse.time)}>
-        {day}
-      </span>
-    ))}
+function tagLoader(selectedCourse) {
+  return (
+    <div>
+      <p className="my-2" style={{ fontFamily: "Montserrat" }}>
+        {weekday.map((day, i) => (
+          <span className={weekdayToClass(i, selectedCourse.time)}>{day}</span>
+        ))}
 
-    <span className="ml-2 mb-1 badge bg-secondary">
-      {selectedCourse.crn == null
-        ? selectedCourse.section
-        : selectedCourse.crn}
-    </span>
+        <span className="ml-2 mb-1 badge bg-secondary">
+          {selectedCourse.crn == null
+            ? selectedCourse.section
+            : selectedCourse.crn}
+        </span>
 
-    {selectedCourse.course_meta.credit_hours == null ? null : (
-      <span className="ml-2 mb-1 badge bg-secondary">
-        {selectedCourse.course_meta.credit_hours}
-        {" credits"}
-      </span>
-    )}
+        {selectedCourse.course_meta.credit_hours == null ? null : (
+          <span className="ml-2 mb-1 badge bg-secondary">
+            {selectedCourse.course_meta.credit_hours}
+            {" credits"}
+          </span>
+        )}
 
-    {selectedCourse.type == null ? null : (
-      <span className="ml-2 mb-1 badge bg-secondary">
-        {selectedCourse.type}
-      </span>
-    )}
-  </p>
-</div>
+        {selectedCourse.type == null ? null : (
+          <span className="ml-2 mb-1 badge bg-secondary">
+            {selectedCourse.type}
+          </span>
+        )}
+      </p>
+    </div>
+  );
 }
 function weekdayToClass(index, timeArray) {
   let timecp = timeArray;
