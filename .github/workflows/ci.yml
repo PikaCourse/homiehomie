@@ -131,6 +131,6 @@ jobs:
           # The commit sha that will be pushed (default: detected from GITHUB_SHA)
           # A string containing a set of flags to set on push
           # The dokku app's git repository url (in SSH format)
-          git_remote_url: format('ssh://dokku@{0}:{1}/test-homiehomie', ${{secrets.DOKKU_HOST}}, ${{secrets.DOKKU_SSH_PORT}})
+          git_remote_url: ${{ format('ssh://dokku@{0}:{1}/test-homiehomie', ${{secrets.DOKKU_HOST}}, ${{secrets.DOKKU_SSH_PORT}}) }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
