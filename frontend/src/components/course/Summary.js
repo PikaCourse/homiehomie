@@ -1,11 +1,18 @@
 import React, { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Card, Radio } from "antd";
+import { Card, Radio, Button, Tooltip, message, Space } from "antd";
 import { isEmpty } from "../../helper/dataCheck";
 import { timeObjFommatter, weekday, Color } from "../../helper/global";
-
 import { setCourseByProf, setCourseByTime } from "../../actions/course";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faMinus,
+  faPlus,
+  faStar,
+  faSave,
+} from "@fortawesome/free-solid-svg-icons";
+import { addCurrCourse, removeCurrCourse } from "../../actions/calendar";
+import { addCurrCourseToWish } from "../../actions/wishlist";
 const CardStyle = { backgroundColor: "#ffffff", borderRadius: "1.5rem" };
 
 function WikiSummary() {
@@ -28,6 +35,7 @@ function WikiSummary() {
             {headerLoader(selectedCourse)}
             {tagLoader(selectedCourse)}
             {filterLoader(selectedCourseArray, selectedCourse, dispatch)}
+            {buttonsLoader(dispatch)}
           </div>
         ) : (
           <Card bordered={false} loading={true}></Card>
@@ -36,6 +44,56 @@ function WikiSummary() {
     </Fragment>
   );
 }
+function buttonsLoader(dispatch) {
+  let addButtonText = "Add Course";
+
+  return (
+    <div className="mt-2">
+      <Space>
+        <Tooltip title={addButtonText}>
+          <Button
+            className="bubbly-button"
+            type="primary"
+            size="large"
+            onClick={(event) => {
+              dispatch(addCurrCourse());
+              message.success(`${addButtonText} Successfully`);
+            }}
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </Button>
+        </Tooltip>
+
+        <Tooltip title="Remove">
+          <Button
+            type="primary"
+            size="large"
+            onClick={(event) => {
+              dispatch(removeCurrCourse());
+              message.success("Course Removed Successfully");
+            }}
+          >
+            <FontAwesomeIcon icon={faMinus} />
+          </Button>
+        </Tooltip>
+
+        <Tooltip title="Add to Wishlist">
+          <Button
+            type="primary"
+            size="large"
+            onClick={(event) => {
+              dispatch(addCurrCourseToWish());
+              message.success("Course Added To Wishlist");
+            }}
+          >
+            <FontAwesomeIcon icon={faStar} />
+          </Button>
+        </Tooltip>
+      </Space>
+    </div>
+  );
+}
+
 function headerLoader(selectedCourse) {
   return (
     <h1 className="mr-2 align-middle" style={{ display: "inline" }}>
