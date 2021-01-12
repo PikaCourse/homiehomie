@@ -5,7 +5,7 @@ import { Card, Radio } from "antd";
 import { isEmpty } from "../../helper/dataCheck";
 import { timeObjFommatter, weekday, Color } from "../../helper/global";
 
-import { setCourseByProf } from "../../actions/course";
+import { setCourseByProf, setCourseByTime } from "../../actions/course";
 
 const CardStyle = { backgroundColor: "#ffffff", borderRadius: "1.5rem" };
 
@@ -27,14 +27,8 @@ function WikiSummary() {
     ...new Set(selectedCourseArray.map((course) => course.professor)),
   ]; // [ 'A', 'B']
 
-  const dayslot = [
-    ...new Set(selectedCourseArray.map((course) => dayFormatter(course.time))),
-  ];
-
   const timeslot = [
-    ...new Set(
-      selectedCourseArray.map((course) => timeObjFommatter(course.time))
-    ),
+    ...new Set(selectedCourseArray.map((course) => course.timeString)),
   ];
 
   return (
@@ -68,11 +62,13 @@ function WikiSummary() {
                   className="mr-1 mb-1"
                   value={prof}
                   onChange={(e) => dispatch(setCourseByProf(e.target.value))}
+                  style={{ borderRadius: "0" }}
                 >
                   {prof}
                 </Radio.Button>
               ))}
             </Radio.Group>
+            <br />
             <Radio.Group
               value={timeObjFommatter(selectedCourse.time)}
               size="small"
@@ -90,7 +86,17 @@ function WikiSummary() {
               </h5>
 
               {timeslot.map((time) => (
-                <Radio.Button className="mr-1 mb-1" value={time}>
+                <Radio.Button
+                  className="mr-1 mb-1"
+                  value={time}
+                  disabled={
+                    selectedCourseArray.filter(
+                      (item) => item.professor == selectedCourse.professor
+                    ).length == 0
+                  }
+                  style={{ borderRadius: "0" }}
+                  onChange={(e) => dispatch(setCourseByTime(e.target.value))}
+                >
                   {time}
                 </Radio.Button>
               ))}

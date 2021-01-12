@@ -16,7 +16,6 @@ export class Wiki extends Component {
         <div className="px-1 mt-4" style={WikiStyle}>
           <WikiSearch />
           <WikiSummary />
-
           <WikiNotebook />
         </div>
       </Fragment>

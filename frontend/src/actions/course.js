@@ -1,6 +1,11 @@
 import axios from "axios";
 import store from "../store";
-import { GET_COURSE, SET_COURSE, SET_COURSE_BY_PROF } from "./types";
+import {
+  GET_COURSE,
+  SET_COURSE,
+  SET_COURSE_BY_PROF,
+  SET_COURSE_BY_TIME,
+} from "./types";
 import { year, semester, courseDataPatch } from "../helper/global";
 
 export const getCourse = (title) => (dispatch) => {
@@ -33,5 +38,19 @@ export const setCourseByProf = (prof) => {
     selectedCourse: store
       .getState()
       .course.selectedCourseArray.find(({ professor }) => professor == prof),
+  };
+};
+
+export const setCourseByTime = (time) => {
+  const currSelectedCourseProf = store.getState().course.selectedCourse
+    .professor;
+  return {
+    type: SET_COURSE_BY_TIME,
+    selectedCourse: store
+      .getState()
+      .course.selectedCourseArray.find(
+        ({ professor, timeString }) =>
+          professor == currSelectedCourseProf && timeString == time
+      ),
   };
 };

@@ -1,4 +1,9 @@
-import { GET_COURSE, SET_COURSE, SET_COURSE_BY_PROF } from "../actions/types.js";
+import {
+  GET_COURSE,
+  SET_COURSE,
+  SET_COURSE_BY_PROF,
+  SET_COURSE_BY_TIME,
+} from "../actions/types.js";
 
 const initialState = {
   selectedCourseArray: [],
@@ -20,11 +25,16 @@ export default function (state = initialState, action) {
         selectedCourse: action.selectedCourse,
         selectedCourseArray: action.selectedCourseArray,
       };
-      case SET_COURSE_BY_PROF:
-        return {
-          ...state,
-          selectedCourse: action.selectedCourse,
-        };
+    case SET_COURSE_BY_PROF:
+      return {
+        ...state,
+        selectedCourse: action.selectedCourse,
+      };
+    case SET_COURSE_BY_TIME:
+      return {
+        ...state,
+        selectedCourse: action.selectedCourse,
+      };
     default:
       return state;
   }

@@ -2,6 +2,7 @@ export const GET_LEADS = "GET_LEADS"
 export const GET_COURSE = "GET_COURSE"
 export const SET_COURSE = "SET_COURSE"
 export const SET_COURSE_BY_PROF = "SET_COURSE_BY_PROF"
+export const SET_COURSE_BY_TIME = "SET_COURSE_BY_TIME"
 
 
 export const GET_QUE = "GET_QUE"
