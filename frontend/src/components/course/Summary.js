@@ -23,11 +23,7 @@ function WikiSummary() {
   ]; // [ 'A', 'B']
 
   const dayslot = [
-    ...new Set(
-      selectedCourseArray.map((course) =>
-        dayFormatter(daysSeralizer(course.time))
-      )
-    ),
+    ...new Set(selectedCourseArray.map((course) => dayFormatter(course.time))),
   ];
 
   const timeslot = [
@@ -51,7 +47,7 @@ function WikiSummary() {
               <p className="my-2" style={{ fontFamily: "Montserrat" }}>
                 {weekday.map((day, i) => (
                   <span className={weekdayToClass(i, selectedCourse.time)}>
-                    {day} {console.log(selectedCourse)}
+                    {day}
                   </span>
                 ))}
 
@@ -107,7 +103,12 @@ function WikiSummary() {
               ))}
             </Radio.Group>
 
-            <Radio.Group size="small" buttonStyle="solid" className="row">
+            <Radio.Group
+              defaultValue={dayFormatter(selectedCourse.time)}
+              size="small"
+              buttonStyle="solid"
+              className="row"
+            >
               <Radio.Button
                 className="mr-1 mb-1"
                 value="default"
@@ -189,15 +190,16 @@ function weekdayToClass(index, timeArray) {
 function daysSeralizer(time) {
   if (isEmpty(time)) return null;
   let res = [];
-
   time.map((obj) => res.push(obj.weekday));
   return res;
 }
 
-function dayFormatter(days) {
+function dayFormatter(time) {
+  const days = daysSeralizer(time);
   let res = "";
-  days.map((i) => {
-    res = res + "/" + weekday[i];
+  days.map((i, index) => {
+    if (index == 0) res = weekday[i];
+    else res = res + "/" + weekday[i];
   });
   return res;
 }
@@ -205,17 +207,20 @@ function dayFormatter(days) {
 function timeObjFommatter(time) {
   if (isEmpty(time)) return null;
   let res = "";
-  time.map((obj) => {
-    res =
-      res +
-      ", " +
-      weekday[obj.weekday] +
-      "-" +
-      obj.start_at +
-      "--" +
-      obj.end_at;
+  time.map((obj, index) => {
+    if (index == 0)
+      res = weekday[obj.weekday] + "-" + obj.start_at + "--" + obj.end_at;
+    else
+      res =
+        res +
+        ", " +
+        weekday[obj.weekday] +
+        "-" +
+        obj.start_at +
+        "--" +
+        obj.end_at;
   });
-  console.log(res);
   return res;
 }
+
 export default WikiSummary;
