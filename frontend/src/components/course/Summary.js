@@ -36,41 +36,9 @@ function WikiSummary() {
       <div className="p-4 my-2 mt-4" style={CardStyle}>
         {!isEmpty(selectedCourse) ? (
           <div>
-            <h1 className="mr-2 align-middle" style={{ display: "inline" }}>
-              <span style={{ color: Color }}>
-                {selectedCourse.course_meta.title}{" "}
-              </span>
-              {selectedCourse.course_meta.name}
-            </h1>
-
-            <div>
-              <p className="my-2" style={{ fontFamily: "Montserrat" }}>
-                {weekday.map((day, i) => (
-                  <span className={weekdayToClass(i, selectedCourse.time)}>
-                    {day}
-                  </span>
-                ))}
-
-                <span className="ml-2 mb-1 badge bg-secondary">
-                  {selectedCourse.crn == null
-                    ? selectedCourse.section
-                    : selectedCourse.crn}
-                </span>
-
-                {selectedCourse.course_meta.credit_hours == null ? null : (
-                  <span className="ml-2 mb-1 badge bg-secondary">
-                    {selectedCourse.course_meta.credit_hours}
-                    {" credits"}
-                  </span>
-                )}
-
-                {selectedCourse.type == null ? null : (
-                  <span className="ml-2 mb-1 badge bg-secondary">
-                    {selectedCourse.type}
-                  </span>
-                )}
-              </p>
-            </div>
+          {headerLoader(selectedCourse)}
+          {tagLoader(selectedCourse)}
+           
             <Radio.Group
               defaultValue={selectedCourse.professor}
               size="small"
@@ -175,7 +143,44 @@ function WikiSummary() {
     </Fragment>
   );
 }
+function headerLoader(selectedCourse){
+  return  <h1 className="mr-2 align-middle" style={{ display: "inline" }}>
+  <span style={{ color: Color }}>
+    {selectedCourse.course_meta.title}{" "}
+  </span>
+  {selectedCourse.course_meta.name}
+</h1>
+}
+function tagLoader(selectedCourse){
+  return  <div>
+  <p className="my-2" style={{ fontFamily: "Montserrat" }}>
+    {weekday.map((day, i) => (
+      <span className={weekdayToClass(i, selectedCourse.time)}>
+        {day}
+      </span>
+    ))}
 
+    <span className="ml-2 mb-1 badge bg-secondary">
+      {selectedCourse.crn == null
+        ? selectedCourse.section
+        : selectedCourse.crn}
+    </span>
+
+    {selectedCourse.course_meta.credit_hours == null ? null : (
+      <span className="ml-2 mb-1 badge bg-secondary">
+        {selectedCourse.course_meta.credit_hours}
+        {" credits"}
+      </span>
+    )}
+
+    {selectedCourse.type == null ? null : (
+      <span className="ml-2 mb-1 badge bg-secondary">
+        {selectedCourse.type}
+      </span>
+    )}
+  </p>
+</div>
+}
 function weekdayToClass(index, timeArray) {
   let timecp = timeArray;
   let result = "badge bg-light mb-1";
