@@ -19,13 +19,6 @@ function WikiSummary() {
   );
 
   const dispatch = useDispatch();
-  const professors = [
-    ...new Set(selectedCourseArray.map((course) => course.professor)),
-  ]; // [ 'A', 'B']
-
-  const timeslot = [
-    ...new Set(selectedCourseArray.map((course) => course.timeString)),
-  ];
 
   return (
     <Fragment>
@@ -34,71 +27,7 @@ function WikiSummary() {
           <div>
             {headerLoader(selectedCourse)}
             {tagLoader(selectedCourse)}
-            {/* {setProfFilter(selectedCourse.prof)} */}
-            {/* {setDayFilter(dayFormatter(selectedCourse.time))} */}
-            {/* {setTimeFilter(timeObjFommatter(selectedCourse.time))} */}
-
-            <Radio.Group
-              value={selectedCourse.professor}
-              size="medium"
-              name="prof"
-              buttonStyle="solid"
-            >
-              <h5
-                style={{
-                  fontSize: "0.8rem",
-                  Color: "grey",
-                }}
-              >
-                Instructor
-              </h5>
-
-              {professors.map((prof) => (
-                <Radio.Button
-                  className="mr-1 mb-1"
-                  value={prof}
-                  onChange={(e) => dispatch(setCourseByProf(e.target.value))}
-                  style={{ borderRadius: "0" }}
-                >
-                  {prof}
-                </Radio.Button>
-              ))}
-            </Radio.Group>
-            <br />
-            <Radio.Group
-              value={timeObjFommatter(selectedCourse.time)}
-              size="small"
-              buttonStyle="solid"
-              className="row"
-              name="times"
-            >
-              <h5
-                style={{
-                  fontSize: "0.8rem",
-                  Color: "grey",
-                }}
-              >
-                Times
-              </h5>
-
-              {timeslot.map((time) => (
-                <Radio.Button
-                  className="mr-1 mb-1"
-                  value={time}
-                  disabled={
-                    selectedCourseArray.filter(
-                      ({ professor, timeString }) =>
-                        professor == selectedCourse.professor &&
-                        time == timeString
-                    ).length == 0
-                  }
-                  style={{ borderRadius: "0" }}
-                  onChange={(e) => dispatch(setCourseByTime(e.target.value))}
-                >
-                  {time}
-                </Radio.Button>
-              ))}
-            </Radio.Group>
+            {filterLoader(selectedCourseArray, selectedCourse, dispatch)}
           </div>
         ) : (
           <Card bordered={false} loading={true}></Card>
@@ -145,6 +74,81 @@ function tagLoader(selectedCourse) {
     </div>
   );
 }
+
+function filterLoader(selectedCourseArray, selectedCourse, dispatch) {
+  const professors = [
+    ...new Set(selectedCourseArray.map((course) => course.professor)),
+  ]; // [ 'A', 'B']
+
+  const timeslot = [
+    ...new Set(selectedCourseArray.map((course) => course.timeString)),
+  ];
+  return (
+    <div>
+      <Radio.Group
+        value={selectedCourse.professor}
+        size="small"
+        name="prof"
+        buttonStyle="solid"
+      >
+        <h5
+          style={{
+            fontSize: "0.8rem",
+            Color: "grey",
+          }}
+        >
+          Instructor
+        </h5>
+
+        {professors.map((prof) => (
+          <Radio.Button
+            className="mr-1 mb-1"
+            value={prof}
+            onChange={(e) => dispatch(setCourseByProf(e.target.value))}
+            style={{ borderRadius: "0" }}
+          >
+            {prof}
+          </Radio.Button>
+        ))}
+      </Radio.Group>
+      <br />
+      <Radio.Group
+        value={timeObjFommatter(selectedCourse.time)}
+        size="small"
+        buttonStyle="solid"
+        className="row"
+        name="times"
+      >
+        <h5
+          style={{
+            fontSize: "0.8rem",
+            Color: "grey",
+          }}
+        >
+          Times
+        </h5>
+
+        {timeslot.map((time) => (
+          <Radio.Button
+            className="mr-1 mb-1"
+            value={time}
+            disabled={
+              selectedCourseArray.filter(
+                ({ professor, timeString }) =>
+                  professor == selectedCourse.professor && time == timeString
+              ).length == 0
+            }
+            style={{ borderRadius: "0" }}
+            onChange={(e) => dispatch(setCourseByTime(e.target.value))}
+          >
+            {time}
+          </Radio.Button>
+        ))}
+      </Radio.Group>
+    </div>
+  );
+}
+
 function weekdayToClass(index, timeArray) {
   let timecp = timeArray;
   let result = "badge bg-light mb-1";

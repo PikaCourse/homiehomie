@@ -8,8 +8,7 @@ const prompt = "Search subject, CRN or course name";
 function WikiSearch() {
   const option = useSelector((state) => state.course.option);
   const [timer, setTimer] = useState(null);
-  const [interval, setInterval] = useState(500);
-
+  const interval = 500;
   const dispatch = useDispatch();
 
   function searchOnChange(query) {

@@ -9,7 +9,6 @@ import {
 const initialState = {
   selectedCourseArray: [],
   selectedCourse: {},
-  selectedCRN: 0,
   option: [],
 };
 
@@ -18,14 +17,12 @@ export default function (state = initialState, action) {
     case GET_COURSE:
       return {
         option: [],
-        selectedCRN: action.payload[0].crn,
         selectedCourse: action.payload[0],
         selectedCourseArray: action.payload,
       };
     case SET_COURSE:
       return {
         option: [],
-        selectedCRN: action.selectedCRN,
         selectedCourse: action.selectedCourse,
         selectedCourseArray: action.selectedCourseArray,
       };
