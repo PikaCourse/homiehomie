@@ -12,6 +12,11 @@ function WikiSummary() {
   const [addBtn, setAddBtn] = useState(true);
   const [rmBtn, setRmBtn] = useState(true);
   const [starBtn, setStarBtn] = useState(true);
+
+  const [profFilter, setProfFilter] = useState();
+  const [dayFilter, setDayFilter] = useState();
+  const [timeFilter, setTimeFilter] = useState();
+
   const selectedCourse = useSelector((state) => state.course.selectedCourse);
   const selectedCourseArray = useSelector(
     (state) => state.course.selectedCourseArray
@@ -31,6 +36,7 @@ function WikiSummary() {
       selectedCourseArray.map((course) => timeObjFommatter(course.time))
     ),
   ];
+
   return (
     <Fragment>
       <div className="p-4 my-2 mt-4" style={CardStyle}>
@@ -38,10 +44,14 @@ function WikiSummary() {
           <div>
             {headerLoader(selectedCourse)}
             {tagLoader(selectedCourse)}
+            {/* {setProfFilter(selectedCourse.prof)} */}
+            {/* {setDayFilter(dayFormatter(selectedCourse.time))} */}
+            {/* {setTimeFilter(timeObjFommatter(selectedCourse.time))} */}
 
             <Radio.Group
-              defaultValue={selectedCourse.professor}
+              value={selectedCourse.professor}
               size="small"
+              name="prof"
               buttonStyle="solid"
             >
               <h5
@@ -54,20 +64,17 @@ function WikiSummary() {
               </h5>
 
               {professors.map((prof) => (
-                <Radio.Button
-                  className="mr-1 mb-1"
-                  value={prof}
-                  style={{ borderRadius: "0px" }}
-                >
+                <Radio.Button className="mr-1 mb-1" value={prof}>
                   {prof}
                 </Radio.Button>
               ))}
             </Radio.Group>
 
             <Radio.Group
-              defaultValue={dayFormatter(selectedCourse.time)}
+              value={dayFormatter(selectedCourse.time)}
               size="small"
               buttonStyle="solid"
+              name="days"
               className="row"
             >
               <h5
@@ -80,21 +87,18 @@ function WikiSummary() {
               </h5>
 
               {dayslot.map((day) => (
-                <Radio.Button
-                  className="mr-1 mb-1"
-                  value={day}
-                  style={{ borderRadius: "0px" }}
-                >
+                <Radio.Button className="mr-1 mb-1" value={day}>
                   {day}
                 </Radio.Button>
               ))}
             </Radio.Group>
 
             <Radio.Group
-              defaultValue={timeObjFommatter(selectedCourse.time)}
+              value={timeObjFommatter(selectedCourse.time)}
               size="small"
               buttonStyle="solid"
               className="row"
+              name="times"
             >
               <h5
                 style={{
@@ -106,11 +110,7 @@ function WikiSummary() {
               </h5>
 
               {timeslot.map((time) => (
-                <Radio.Button
-                  className="mr-1 mb-1"
-                  value={time}
-                  style={{ borderRadius: "0px" }}
-                >
+                <Radio.Button className="mr-1 mb-1" value={time}>
                   {time}
                 </Radio.Button>
               ))}
@@ -184,7 +184,7 @@ function dayFormatter(time) {
   let res = "";
   days.map((i, index) => {
     if (index == 0) res = weekday[i];
-    else res = res + "/" + weekday[i];
+    else res = res + "," + weekday[i];
   });
   return res;
 }
