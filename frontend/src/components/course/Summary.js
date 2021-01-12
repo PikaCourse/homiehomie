@@ -24,6 +24,9 @@ function WikiSummary() {
   const selectedCourseArray = useSelector(
     (state) => state.course.selectedCourseArray
   );
+  const calendarCourseBag = useSelector(
+    (state) => state.calendar.calendarCourseBag
+  );
 
   const dispatch = useDispatch();
 
@@ -35,7 +38,12 @@ function WikiSummary() {
             {headerLoader(selectedCourse)}
             {tagLoader(selectedCourse)}
             {filterLoader(selectedCourseArray, selectedCourse, dispatch)}
-            {buttonsLoader(dispatch)}
+            {buttonsLoader(
+              dispatch,
+              calendarCourseBag,
+              selectedCourse,
+              selectedCourseArray
+            )}
           </div>
         ) : (
           <Card bordered={false} loading={true}></Card>
@@ -44,30 +52,56 @@ function WikiSummary() {
     </Fragment>
   );
 }
-function buttonsLoader(dispatch) {
+
+function buttonsLoader(
+  dispatch,
+  calendarCourseBag,
+  selectedCourse,
+  selectedCourseArray
+) {
+  const courseArray = calendarCourseBag.filter(
+    (item) => item.raw.selectedCourseArray == selectedCourseArray //&& (item.type != 'preview'))
+  );
+  let enableAdd = true;
+  let enableRemove = true;
   let addButtonText = "Add Course";
 
+  if (!courseArray.length) enableRemove = false;
+  else {
+    const course = calendarCourseBag.filter(
+      (item) => item.raw.id == selectedCourse.id //&& (item.type != 'preview')
+    );
+    if (!course.length) {
+      // course different crn
+      addButtonText = "Change CRN";
+      enableRemove = false;
+    }
+    // course same crn
+    else enableAdd = false;
+  }
   return (
     <div className="mt-2">
       <Space>
         <Tooltip title={addButtonText}>
           <Button
+            disabled={!enableAdd}
             className="bubbly-button"
             type="primary"
-            size="large"
             onClick={(event) => {
               dispatch(addCurrCourse());
               message.success(`${addButtonText} Successfully`);
             }}
           >
-            <FontAwesomeIcon icon={faPlus} />
+            <FontAwesomeIcon
+              icon={addButtonText != "Change CRN" ? faPlus : faSave}
+            />
           </Button>
         </Tooltip>
 
         <Tooltip title="Remove">
           <Button
+            disabled={!enableRemove}
             type="primary"
-            size="large"
             onClick={(event) => {
               dispatch(removeCurrCourse());
               message.success("Course Removed Successfully");
@@ -80,7 +114,6 @@ function buttonsLoader(dispatch) {
         <Tooltip title="Add to Wishlist">
           <Button
             type="primary"
-            size="large"
             onClick={(event) => {
               dispatch(addCurrCourseToWish());
               message.success("Course Added To Wishlist");
