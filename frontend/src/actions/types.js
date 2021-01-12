@@ -3,6 +3,7 @@ export const GET_COURSE = "GET_COURSE"
 export const SET_COURSE = "SET_COURSE"
 export const SET_COURSE_BY_PROF = "SET_COURSE_BY_PROF"
 export const SET_COURSE_BY_TIME = "SET_COURSE_BY_TIME"
+export const GET_COURSELIST = "GET_COURSELIST"
 
 
 export const GET_QUE = "GET_QUE"
@@ -22,6 +23,8 @@ export const REMOVE_COURSE_FROM_WISH = "REMOVE_COURSE_FROM_WISH"
 export const ADD_CUS_EVENT_IN_CAL = "ADD_CUS_EVENT_IN_CAL"
 export const DO_NOTHING = "DO_NOTHING"
 export const REMOVE_CUS_EVENT_IN_CAL = "REMOVE_CUS_EVENT_IN_CAL"
+export const LOGIN_USER = "LOGIN_USER"
+export const LOGOUT_USER = "LOGOUT_USERs"
 
 // export const UPDATE_PREVIEW = "UPDATE_PREVIEW"
 // export const CLEAR_PREVIEW = "CLEAR_PREVIEW"

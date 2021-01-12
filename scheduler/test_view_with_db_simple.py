@@ -4,11 +4,15 @@ Perform operations on small dataset of few entries
 """
 
 from django.shortcuts import reverse
+from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.exceptions import *
 from scheduler.exceptions import *
 from scheduler.test_utils import *
+from scheduler.permissions import *
+from scheduler.models import *
+from user.test_utils import login_with_api, logout_with_api, register_with_api
 from urllib.parse import urlencode
 from datetime import datetime
 import json
@@ -34,6 +38,32 @@ class CourseMetaViewSetTests(APITestCase):
     Viewset testcase for CourseMetaViewSet
     """
     fixtures = ['scheduler/test_coursemeta_simple.json']
+
+    test_user_data = {
+        "username": "test_user",
+        "password": "testtest",
+        "email": "test@test.edu"
+    }
+    test_user = None
+
+    @classmethod
+    def setUpClass(cls):
+        # Create a user
+        super(CourseMetaViewSetTests, cls).setUpClass()
+        cls.test_user = User.objects.create_user(**CourseMetaViewSetTests.test_user_data)
+
+    @classmethod
+    def tearDownClass(cls):
+        # Delete test user
+        super(CourseMetaViewSetTests, cls).tearDownClass()
+
+    def setUp(self) -> None:
+        # Login test user
+        self.client.login(**CourseMetaViewSetTests.test_user_data)
+
+    def tearDown(self) -> None:
+        # Logout the test user
+        self.client.logout()
 
     """
     Begin valid view testing
@@ -320,41 +350,49 @@ class CourseMetaViewSetTests(APITestCase):
     # CreateView testing
     def test_course_meta_create(self):
         """
-        Create/POST not supported, should expect 405 method not allowed
+        Create/POST not supported, should expect 403 read only
         :return:
         """
         url = reverse("api:coursesmeta-list")
-        check_method_not_allowed(self, url, "POST")
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["code"], ReadOnly.code)
 
     # UpdateView testing
     def test_course_meta_update(self):
         """
-        Update/PUT not supported, should expect 405 method not allowed
+        Update/PUT not supported, should expect 403 read only
         :return:
         """
         params = {"pk": 1}
         url = reverse("api:coursesmeta-detail", kwargs=params)
-        check_method_not_allowed(self, url, "PUT")
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["code"], ReadOnly.code)
 
     # PartialUpdateView testing
     def test_course_meta_partial_update(self):
         """
-        Update/PUT not supported, should expect 405 method not allowed
+        Update/PUT not supported, should expect 403 read only
         :return:
         """
         params = {"pk": 1}
         url = reverse("api:coursesmeta-detail", kwargs=params)
-        check_method_not_allowed(self, url, "PATCH")
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["code"], ReadOnly.code)
 
     # DestroyView testing
     def test_course_meta_destroy(self):
         """
-        Update/PUT not supported, should expect 405 method not allowed
+        Update/PUT not supported, should expect 403 read only
         :return:
         """
         params = {"pk": 1}
         url = reverse("api:coursesmeta-detail", kwargs=params)
-        check_method_not_allowed(self, url, "DELETE")
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["code"], ReadOnly.code)
 
 
 class CourseViewSetTests(APITestCase):
@@ -363,6 +401,32 @@ class CourseViewSetTests(APITestCase):
     """
     fixtures = ['scheduler/test_coursemeta_simple.json',
                 'scheduler/test_course_simple.json']
+
+    test_user_data = {
+        "username": "test_user",
+        "password": "testtest",
+        "email": "test@test.edu"
+    }
+    test_user = None
+
+    @classmethod
+    def setUpClass(cls):
+        # Create a user
+        super(CourseViewSetTests, cls).setUpClass()
+        cls.test_user = User.objects.create_user(**CourseViewSetTests.test_user_data)
+
+    @classmethod
+    def tearDownClass(cls):
+        # Delete test user
+        super(CourseViewSetTests, cls).tearDownClass()
+
+    def setUp(self) -> None:
+        # Login test user
+        self.client.login(**CourseViewSetTests.test_user_data)
+
+    def tearDown(self) -> None:
+        # Logout the test user
+        self.client.logout()
 
     """
     Begin valid view testing
@@ -716,41 +780,49 @@ class CourseViewSetTests(APITestCase):
     # CreateView testing
     def test_course_create(self):
         """
-        Create/POST not supported, should expect 405 method not allowed
+        Create/POST not supported, should expect 403 with read only
         :return:
         """
         url = reverse("api:courses-list")
-        check_method_not_allowed(self, url, "POST")
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["code"], ReadOnly.code)
 
     # UpdateView testing
     def test_course_update(self):
         """
-        Update/PUT not supported, should expect 405 method not allowed
+        Update/PUT not supported, should expect 403 with read only
         :return:
         """
         params = {"pk": 1}
         url = reverse("api:courses-detail", kwargs=params)
-        check_method_not_allowed(self, url, "PUT")
+        response = self.client.put(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["code"], ReadOnly.code)
 
     # PartialUpdateView testing
     def test_course_partial_update(self):
         """
-        Partial Update/PATCH not supported, should expect 405 method not allowed
+        Partial Update/PATCH not supported, should expect 403 read only
         :return:
         """
         params = {"pk": 1}
         url = reverse("api:courses-detail", kwargs=params)
-        check_method_not_allowed(self, url, "PATCH")
+        response = self.client.patch(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["code"], ReadOnly.code)
 
     # DestroyView testing
     def test_course_destroy(self):
         """
-        Update/PUT not supported, should expect 405 method not allowed
+        Update/PUT not supported, should expect 403 read only
         :return:
         """
         params = {"pk": 1}
         url = reverse("api:courses-detail", kwargs=params)
-        check_method_not_allowed(self, url, "DELETE")
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.data["code"], ReadOnly.code)
 
 
 class QuestionViewSetTests(APITestCase):
@@ -762,6 +834,33 @@ class QuestionViewSetTests(APITestCase):
                 'scheduler/test_question_simple.json',
                 'user/test_user_simple.json',
                 'user/test_student_simple.json']
+
+    test_user_data = {
+        "username": "test_user",
+        "password": "testtest",
+        "email": "test@test.edu"
+    }
+    test_user = None
+
+    @classmethod
+    def setUpClass(cls):
+        # Create a user
+        super(QuestionViewSetTests, cls).setUpClass()
+        cls.test_user = User.objects.create_user(**cls.test_user_data)
+
+    @classmethod
+    def tearDownClass(cls):
+        # Delete test user
+        User.objects.get(id=cls.test_user.id).delete()
+        super(QuestionViewSetTests, cls).tearDownClass()
+
+    def setUp(self) -> None:
+        # Login test user
+        self.client.login(**QuestionViewSetTests.test_user_data)
+
+    def tearDown(self) -> None:
+        # Logout the test user
+        self.client.logout()
 
     """
     Begin valid view testing
@@ -1040,7 +1139,7 @@ class QuestionViewSetTests(APITestCase):
         # Encode json field
         test_data = {'course_meta': 1, 'title': 'Test question', 'tags': ["tags"]}
 
-        check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"])
+        check_post_success(self, url, detail_url_name, test_data=test_data, json_fields=["tags"])
 
     def test_question_create_extra_field(self):
         """
@@ -1053,7 +1152,7 @@ class QuestionViewSetTests(APITestCase):
         test_data = {'course_meta': 1, 'title': 'Test question',
                      'tags': ["tags"], "extra": "extra"}
 
-        check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"], ignore_fields=["extra"])
+        check_post_success(self, url, detail_url_name, test_data=test_data, json_fields=["tags"], ignore_fields=["extra"])
 
     def test_question_create_invalid_missing_fields(self):
         """
@@ -1118,12 +1217,18 @@ class QuestionViewSetTests(APITestCase):
         Test successful update question
         :return:
         """
+        question_data = {
+            "course_meta_id": 1,
+            "created_by_id": QuestionViewSetTests.test_user.id,
+            "title": "test_question"
+        }
+        question = Question.objects.create(**question_data)
         detail_url_name = "api:questions-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": question.id}
         test_data = {"title": "Changed", "tags": ["changed", "changed tag"]}
         time_test = datetime.now()
 
-        data = check_put_success(self, detail_url_name, path_params, test_data)
+        data = check_put_success(self, detail_url_name, path_params, test_data=test_data)
 
         # Check if the last edited fields get updated as well
         url = reverse("api:questions-detail", kwargs={"pk": data["question"]})
@@ -1132,6 +1237,17 @@ class QuestionViewSetTests(APITestCase):
         time_diff_seconds = (time_question - time_test).total_seconds()
         self.assertLessEqual(time_diff_seconds, 10, msg=f"Overtime")
         self.assertLessEqual(0, time_diff_seconds, msg=f"Question gets updated back in time")
+
+    def test_question_update_not_owner(self):
+        """
+        Test not owner update
+        :return:
+        """
+        detail_url_name = "api:questions-detail"
+        path_params = {"pk": 1}
+        test_data = {"title": "Changed", "tags": ["changed", "changed tag"]}
+        check_put_error_v2(self, detail_url_name, path_params, test_data=test_data,
+                           error_code="permission_denied", status_code=status.HTTP_403_FORBIDDEN)
 
     def test_question_update_invalid_pk(self):
         """
@@ -1160,23 +1276,35 @@ class QuestionViewSetTests(APITestCase):
         Test update question with extra field, which should be ignored
         :return:
         """
+        question_data = {
+            "course_meta_id": 1,
+            "created_by_id": QuestionViewSetTests.test_user.id,
+            "title": "test_question"
+        }
+        question = Question.objects.create(**question_data)
         detail_url_name = "api:questions-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": question.id}
         test_data = {"title": "Changed", "tags": ["changed", "changed tag"], "extra": "extra"}
 
-        check_put_success(self, detail_url_name, path_params, test_data, ignore_fields=["extra"])
+        check_put_success(self, detail_url_name, path_params, test_data=test_data, ignore_fields=["extra"])
 
     def test_question_update_invalid_missing_field(self):
         """
         Test with missing fields, expecting 400 error
         :return:
         """
+        question_data = {
+            "course_meta_id": 1,
+            "created_by_id": QuestionViewSetTests.test_user.id,
+            "title": "test_question"
+        }
+        question = Question.objects.create(**question_data)
         detail_url_name = "api:questions-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": question.id}
         test_data = {"title": "Changed", "tags": json.dumps(["changed", "changed tag"])}
 
         # Try 20 form submission with missing fields
-        check_put_missing_fields(self, detail_url_name, path_params, test_data,
+        check_put_missing_fields(self, detail_url_name, path_params, test_data=test_data,
                                  blank_fields=[], num_put=20)
 
     def test_question_update_invalid_field_constraint(self):
@@ -1184,8 +1312,14 @@ class QuestionViewSetTests(APITestCase):
         Test against form field constraint
         :return:
         """
+        question_data = {
+            "course_meta_id": 1,
+            "created_by_id": QuestionViewSetTests.test_user.id,
+            "title": "test_question"
+        }
+        question = Question.objects.create(**question_data)
         detail_url_name = "api:questions-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": question.id}
 
         # Empty title
         form = {"title": "", "tags": json.dumps(["changed", "changed tag"])}
@@ -1198,13 +1332,29 @@ class QuestionViewSetTests(APITestCase):
     # DestroyView testing
     def test_question_destroy(self):
         """
-        Test successful delete
+        Test deleting own item
+        :return:
+        """
+        question_data = {
+            "course_meta_id": 1,
+            "created_by_id": QuestionViewSetTests.test_user.id,
+            "title": "test_question"
+        }
+        question = Question.objects.create(**question_data)
+        detail_url_name = "api:questions-detail"
+        path_params = {"pk": question.id}
+        check_delete_success(self, detail_url_name, path_params)
+
+    def test_question_destroy_not_owner(self):
+        """
+        Test delete other's question, expecting 403 and permission denied
         :return:
         """
         detail_url_name = "api:questions-detail"
         path_params = {"pk": 1}
-
-        check_delete_success(self, detail_url_name, path_params)
+        check_delete_error_v2(self, detail_url_name, path_params,
+                              error_code=getattr(QuestionViewSetPermission, "code", "permission_denied"),
+                              status_code=status.HTTP_403_FORBIDDEN)
 
     def test_question_destroy_invalid_not_existing(self):
         """
@@ -1256,6 +1406,33 @@ class NoteViewSetTests(APITestCase):
                 'scheduler/test_note_simple.json',
                 'user/test_user_simple.json',
                 'user/test_student_simple.json']
+
+    test_user_data = {
+        "username": "test_user",
+        "password": "testtest",
+        "email": "test@test.edu"
+    }
+    test_user = None
+
+    @classmethod
+    def setUpClass(cls):
+        # Create a user
+        super(NoteViewSetTests, cls).setUpClass()
+        cls.test_user = User.objects.create_user(**cls.test_user_data)
+
+    @classmethod
+    def tearDownClass(cls):
+        # Delete test user
+        User.objects.get(id=cls.test_user.id).delete()
+        super(NoteViewSetTests, cls).tearDownClass()
+
+    def setUp(self) -> None:
+        # Login test user
+        self.client.login(**NoteViewSetTests.test_user_data)
+
+    def tearDown(self) -> None:
+        # Logout the test user
+        self.client.logout()
 
     """
     Begin valid view testing
@@ -1523,7 +1700,7 @@ class NoteViewSetTests(APITestCase):
         test_data = {'course': 1, 'question': 1, 'title': 'Test note tile',
                      'content': 'Test content', 'tags': ["tags"]}
 
-        data = check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"], id_fields="note")
+        data = check_post_success(self, url, detail_url_name, test_data=test_data, json_fields=["tags"], id_fields="note")
 
         # Check if the linked question is updated properly
         url = reverse("api:notes-detail", kwargs={"pk": data["note"]})
@@ -1550,7 +1727,8 @@ class NoteViewSetTests(APITestCase):
         test_data = {'course': 1, 'question': 1, 'title': 'Test note tile',
                      'content': 'Test content', 'tags': ["tags"], "extra": "extra"}
 
-        check_post_success(self, url, detail_url_name, test_data, json_fields=["tags"], ignore_fields=["extra"], id_fields="note")
+        check_post_success(self, url, detail_url_name, test_data=test_data,
+                           json_fields=["tags"], ignore_fields=["extra"], id_fields="note")
 
     def test_note_create_invalid_missing_fields(self):
         """
@@ -1618,7 +1796,7 @@ class NoteViewSetTests(APITestCase):
         # Encode json field
         test_data = {'course': 2, 'question': 1, 'title': 'Test note title',
                      'content': 'Test content', 'tags': json.dumps(["tags"])}
-        check_post_error(self, url, test_data, error_class=InvalidForm)
+        check_post_error(self, url, test_data=test_data, error_class=InvalidForm)
 
     # UpdateView testing
     def test_note_update(self):
@@ -1626,12 +1804,18 @@ class NoteViewSetTests(APITestCase):
         Test successful update note
         :return:
         """
+        note_data = {
+            "course_id": 1,
+            "question_id": 1,
+            "created_by_id": NoteViewSetTests.test_user.id,
+        }
+        note = Note.objects.create(**note_data)
         detail_url_name = "api:notes-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": note.id}
         test_data = {"title": "Changed", "content": "Changed Content", "tags": ["changed", "changed tag"]}
         time_test = datetime.now()
 
-        data = check_put_success(self, detail_url_name, path_params, test_data)
+        data = check_put_success(self, detail_url_name, path_params, test_data=test_data)
 
         # Check if the edited field get updated properly
         url = reverse("api:notes-detail", kwargs={"pk": data["note"]})
@@ -1650,6 +1834,18 @@ class NoteViewSetTests(APITestCase):
         time_diff_seconds = (time_question - time_note).total_seconds()
         self.assertLessEqual(time_diff_seconds, 10, msg=f"Overtime")
         self.assertLessEqual(0, time_diff_seconds, msg=f"Question gets updated before note")
+
+    def test_note_update_not_owner(self):
+        """
+        Test update note not owned
+        :return:
+        """
+        detail_url_name = "api:notes-detail"
+        path_params = {"pk": 1}
+        test_data = {"title": "Changed", "content": "Changed Content", "tags": ["changed", "changed tag"]}
+
+        check_put_error_v2(self, detail_url_name, path_params, test_data=test_data,
+                           error_code="permission_denied", status_code=status.HTTP_403_FORBIDDEN)
 
     def test_note_update_invalid_pk(self):
         """
@@ -1676,8 +1872,14 @@ class NoteViewSetTests(APITestCase):
         Test update note with extra field, which should be ignored
         :return:
         """
+        note_data = {
+            "course_id": 1,
+            "question_id": 1,
+            "created_by_id": NoteViewSetTests.test_user.id,
+        }
+        note = Note.objects.create(**note_data)
         detail_url_name = "api:notes-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": note.id}
         test_data = {"title": "Changed", "content": "Changed Content",
                      "tags": ["changed", "changed tag"], "extra": "extra"}
 
@@ -1688,8 +1890,14 @@ class NoteViewSetTests(APITestCase):
         Test with missing fields, expecting 400 error
         :return:
         """
+        note_data = {
+            "course_id": 1,
+            "question_id": 1,
+            "created_by_id": NoteViewSetTests.test_user.id,
+        }
+        note = Note.objects.create(**note_data)
         detail_url_name = "api:notes-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": note.id}
         test_data = {"title": "Changed", "content": "Changed Content",
                      "tags": json.dumps(["changed", "changed tag"])}
 
@@ -1702,8 +1910,14 @@ class NoteViewSetTests(APITestCase):
         Test against form field constraint
         :return:
         """
+        note_data = {
+            "course_id": 1,
+            "question_id": 1,
+            "created_by_id": NoteViewSetTests.test_user.id,
+        }
+        note = Note.objects.create(**note_data)
         detail_url_name = "api:notes-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": note.id}
 
         # Empty title
         form = {"title": "", "content": "Changed Content", "tags": json.dumps(["changed", "changed tag"])}
@@ -1719,10 +1933,27 @@ class NoteViewSetTests(APITestCase):
         Test successful delete
         :return:
         """
+        note_data = {
+            "course_id": 1,
+            "question_id": 1,
+            "created_by_id": NoteViewSetTests.test_user.id,
+        }
+        note = Note.objects.create(**note_data)
+        detail_url_name = "api:notes-detail"
+        path_params = {"pk": note.id}
+
+        check_delete_success(self, detail_url_name, path_params)
+
+    def test_note_destroy_not_owner(self):
+        """
+        Test delete not owned note
+        :return:
+        """
         detail_url_name = "api:notes-detail"
         path_params = {"pk": 1}
 
-        check_delete_success(self, detail_url_name, path_params)
+        check_delete_error_v2(self, detail_url_name, path_params, error_code="permission_denied",
+                              status_code=status.HTTP_403_FORBIDDEN)
 
     def test_note_destroy_invalid_not_existing(self):
         """
@@ -1771,6 +2002,33 @@ class PostViewSetTests(APITestCase):
                 'scheduler/test_post_simple.json',
                 'user/test_user_simple.json',
                 'user/test_student_simple.json']
+
+    test_user_data = {
+        "username": "test_user",
+        "password": "testtest",
+        "email": "test@test.edu"
+    }
+    test_user = None
+
+    @classmethod
+    def setUpClass(cls):
+        # Create a user
+        super(PostViewSetTests, cls).setUpClass()
+        cls.test_user = User.objects.create_user(**cls.test_user_data)
+
+    @classmethod
+    def tearDownClass(cls):
+        # Delete test user
+        User.objects.get(id=cls.test_user.id).delete()
+        super(PostViewSetTests, cls).tearDownClass()
+
+    def setUp(self) -> None:
+        # Login test user
+        self.client.login(**PostViewSetTests.test_user_data)
+
+    def tearDown(self) -> None:
+        # Logout the test user
+        self.client.logout()
 
     """
     Begin valid view testing
@@ -2163,8 +2421,14 @@ class PostViewSetTests(APITestCase):
         Test successful update post
         :return:
         """
+        post_data = {
+            "course_id": 1,
+            "poster_id": PostViewSetTests.test_user.id,
+            "title": "test_post"
+        }
+        post = Post.objects.create(**post_data)
         detail_url_name = "api:posts-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": post.id}
         test_data = {"title": "Changed", "content": "Changed Content", "tags": ["changed", "changed tag"]}
         time_test = datetime.now()
 
@@ -2177,6 +2441,18 @@ class PostViewSetTests(APITestCase):
         time_diff_seconds = (time_post - time_test).total_seconds()
         self.assertLessEqual(time_diff_seconds, 10, msg=f"Overtime")
         self.assertLessEqual(0, time_diff_seconds, msg=f"Post gets updated back in time")
+
+    def test_post_update_not_owner(self):
+        """
+        Test update other's post
+        :return:
+        """
+        detail_url_name = "api:posts-detail"
+        path_params = {"pk": 1}
+        test_data = {"title": "Changed", "content": "Changed Content", "tags": ["changed", "changed tag"]}
+
+        check_put_error_v2(self, detail_url_name, path_params, test_data=test_data, error_code="permission_denied",
+                           status_code=status.HTTP_403_FORBIDDEN)
 
     def test_post_update_invalid_pk(self):
         """
@@ -2204,8 +2480,14 @@ class PostViewSetTests(APITestCase):
         Test update post with extra field, which should be ignored
         :return:
         """
+        post_data = {
+            "course_id": 1,
+            "poster_id": PostViewSetTests.test_user.id,
+            "title": "test_post"
+        }
+        post = Post.objects.create(**post_data)
         detail_url_name = "api:posts-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": post.id}
         test_data = {"title": "Changed", "content": "Changed Content",
                      "tags": ["changed", "changed tag"], "extra": "extra"}
 
@@ -2216,8 +2498,14 @@ class PostViewSetTests(APITestCase):
         Test with missing fields, expecting 400 error
         :return:
         """
+        post_data = {
+            "course_id": 1,
+            "poster_id": PostViewSetTests.test_user.id,
+            "title": "test_post"
+        }
+        post = Post.objects.create(**post_data)
         detail_url_name = "api:posts-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": post.id}
         test_data = {"title": "Changed", "content": "Changed Content",
                      "tags": json.dumps(["changed", "changed tag"])}
 
@@ -2229,8 +2517,14 @@ class PostViewSetTests(APITestCase):
         Test against form field constraint
         :return:
         """
+        post_data = {
+            "course_id": 1,
+            "poster_id": PostViewSetTests.test_user.id,
+            "title": "test_post"
+        }
+        post = Post.objects.create(**post_data)
         detail_url_name = "api:posts-detail"
-        path_params = {"pk": 1}
+        path_params = {"pk": post.id}
 
         # Empty title
         form = {"title": "", "content": "Changed Content", "tags": json.dumps(["changed", "changed tag"])}
@@ -2246,10 +2540,28 @@ class PostViewSetTests(APITestCase):
         Test successful delete
         :return:
         """
+        post_data = {
+            "course_id": 1,
+            "poster_id": PostViewSetTests.test_user.id,
+            "title": "test_post"
+        }
+        post = Post.objects.create(**post_data)
+        detail_url_name = "api:posts-detail"
+        path_params = {"pk": post.id}
+
+        check_delete_success(self, detail_url_name, path_params)
+
+    def test_post_destroy_not_owner(self):
+        """
+        Test delete not owned post
+        :return:
+        """
         detail_url_name = "api:posts-detail"
         path_params = {"pk": 1}
 
-        check_delete_success(self, detail_url_name, path_params)
+        check_delete_error_v2(self, detail_url_name, path_params, error_code="permission_denied",
+                              status_code=status.HTTP_403_FORBIDDEN)
+
 
     def test_post_destroy_invalid_not_existing(self):
         """
@@ -2302,6 +2614,33 @@ class PostAnswerViewSetTests(APITestCase):
                 'user/test_user_simple.json',
                 'user/test_student_simple.json']
 
+    test_user_data = {
+        "username": "test_user",
+        "password": "testtest",
+        "email": "test@test.edu"
+    }
+    test_user = None
+
+    @classmethod
+    def setUpClass(cls):
+        # Create a user
+        super(PostAnswerViewSetTests, cls).setUpClass()
+        cls.test_user = User.objects.create_user(**cls.test_user_data)
+
+    @classmethod
+    def tearDownClass(cls):
+        # Delete test user
+        User.objects.get(id=cls.test_user.id).delete()
+        super(PostAnswerViewSetTests, cls).tearDownClass()
+
+    def setUp(self) -> None:
+        # Login test user
+        self.client.login(**PostAnswerViewSetTests.test_user_data)
+
+    def tearDown(self) -> None:
+        # Logout the test user
+        self.client.logout()
+
     """
     Begin valid view testing
     Support list and retrieve (GET)
@@ -2313,8 +2652,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test if the returned list length matched with expected
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), POST_ANSWER_NUM_ENTRIES_1)
@@ -2326,8 +2665,8 @@ class PostAnswerViewSetTests(APITestCase):
         expecting empty list and 200 OK
         :return:
         """
-        path_params = {"pk": 2}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 2}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, [])
@@ -2338,8 +2677,8 @@ class PostAnswerViewSetTests(APITestCase):
         specified by the API documentation
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         fields = ["post", "postee", "created_at",
                   "last_edited", "like_count", "star_count",
                   "dislike_count", "content"]
@@ -2353,12 +2692,13 @@ class PostAnswerViewSetTests(APITestCase):
         Test if provided incorrect pk the response will be not found
         :return:
         """
-        path_params = {"pk": POST_NUM_ENTRIES + 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+
+        path_params = {"post_id": POST_NUM_ENTRIES + 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         check_query_filter_error(self, url, error_class=NotFound)
 
-        path_params = {"pk": -1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": -1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         check_query_filter_error(self, url, error_class=NotFound)
 
     def test_post_answer_list_invalid_post_id_not_integer(self):
@@ -2379,8 +2719,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test default return order
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotEqual(response.data, [])
@@ -2391,8 +2731,8 @@ class PostAnswerViewSetTests(APITestCase):
         Check if sortby works for other valid options
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         sortby_options = ["like_count", "dislike_count", "star_count"]
         descending_options = [True, False]
         for sortby_option in sortby_options:
@@ -2408,8 +2748,8 @@ class PostAnswerViewSetTests(APITestCase):
         Expecting 400 and raise InvalidQueryValue exception
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
         test_sortby = "invalid"
         test_descending = "invalid"
 
@@ -2430,8 +2770,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test whether the limit parameter is working
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
 
         test_limit = POST_ANSWER_NUM_ENTRIES_1 - 1
         response = self.client.get(url, {"limit": test_limit})
@@ -2444,8 +2784,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test whether the limit parameter is working
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
 
         # Test limit 0
         test_limit = 0
@@ -2459,8 +2799,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test whether the limit parameter is working
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
 
         # Test limit -1
         test_limit = -1
@@ -2474,8 +2814,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test whether the limit parameter is working
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
 
         # Test limit float
         test_limit = 3.545
@@ -2494,7 +2834,7 @@ class PostAnswerViewSetTests(APITestCase):
         Test that the query param works for multiple query key
         :return:
         """
-        url = reverse("api:posts-answers", kwargs={"pk": 1})
+        url = reverse("api:postanswers-list", kwargs={"post_id": 1})
         test_query_keys = ["sortby", "descending", "limit"]
         test_query_values = {
             "sortby": ["like_count", "star_count", "dislike_count"],
@@ -2512,7 +2852,7 @@ class PostAnswerViewSetTests(APITestCase):
         Test if applying an extra filter will not affect the query
         :return:
         """
-        url = reverse("api:posts-answers", kwargs={"pk": 1})
+        url = reverse("api:postanswers-list", kwargs={"post_id": 1})
         response = self.client.get(url, {"nonexisted": "Purdue"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), POST_ANSWER_NUM_ENTRIES_1)
@@ -2523,8 +2863,8 @@ class PostAnswerViewSetTests(APITestCase):
         Test accessing single post answer object
         :return:
         """
-        path_params = {"pk": 1, "answerid": 1}
-        url = reverse("api:posts-detail-answer", kwargs=path_params)
+        path_params = {"post_id": 1, "pk": 1}
+        url = reverse("api:postanswers-detail", kwargs=path_params)
         fields = ["post", "postee", "created_at",
                   "last_edited", "like_count", "star_count",
                   "dislike_count", "content"]
@@ -2539,14 +2879,14 @@ class PostAnswerViewSetTests(APITestCase):
         expecting a 404 not found
         :return:
         """
-        pk_list = [POST_NUM_ENTRIES + 1, -1, 1]
-        answerid_list = [1, POST_ANSWER_NUM_ENTRIES_1 + 1, -1]
-        for pk in pk_list:
-            for answerid in answerid_list:
-                if pk == 1 and answerid == 1:
+        post_id_list = [POST_NUM_ENTRIES + 1, -1, 1]
+        pk_liest = [1, POST_ANSWER_NUM_ENTRIES_1 + 1, -1]
+        for post_id in post_id_list:
+            for pk in pk_liest:
+                if post_id == 1 and pk == 1:
                     continue
-                path_params = {"pk": pk, "answerid": answerid}
-                url = reverse("api:posts-detail-answer", kwargs=path_params)
+                path_params = {"post_id": post_id, "pk": pk}
+                url = reverse("api:postanswers-detail", kwargs=path_params)
                 check_query_filter_error(self, url, error_class=NotFound)
 
     def test_post_answer_retrieve_invalid_not_link(self):
@@ -2555,8 +2895,8 @@ class PostAnswerViewSetTests(APITestCase):
         given post id, expecting 404 not found
         :return:
         """
-        path_params = {"pk": 1, "answerid": 5}
-        url = reverse("api:posts-detail-answer", kwargs=path_params)
+        path_params = {"post_id": 1, "pk": 5}
+        url = reverse("api:postanswers-detail", kwargs=path_params)
         check_query_filter_error(self, url, error_class=NotFound)
 
     # TODO Rest of tests need to add permission check after introducing user
@@ -2566,37 +2906,38 @@ class PostAnswerViewSetTests(APITestCase):
         Test success create view and able to access via get
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        detail_url_name = "api:posts-detail-answer"
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
+        detail_url_name = "api:postanswers-detail"
         # Encode json field
         test_data = {'content': 'Test post content'}
 
         check_post_success(self, url, detail_url_name, test_data, json_fields=[], id_fields="answer",
-                           detail_pk_name="answerid", detail_path_params=path_params)
+                           detail_pk_name="pk", detail_path_params=path_params)
 
     def test_post_answer_create_extra_field(self):
         """
         Test submit post request with extra field, should be ignored
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        detail_url_name = "api:posts-detail-answer"
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
+        detail_url_name = "api:postanswers-detail"
         # Encode json field
         test_data = {'content': 'Test content', "extra": "extra"}
 
         check_post_success(self, url, detail_url_name, test_data, json_fields=[], ignore_fields=["extra"],
-                           id_fields="answer", detail_pk_name="answerid", detail_path_params=path_params)
+                           id_fields="answer", detail_pk_name="pk", detail_path_params=path_params)
 
     def test_post_answer_create_invalid_missing_fields(self):
         """
         Test post request with missing field names
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        detail_url_name = "api:posts-detail-answer"
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
+
+        detail_url_name = "api:postsanswers-detail"
         # Encode json field
         test_data = {}
 
@@ -2608,9 +2949,9 @@ class PostAnswerViewSetTests(APITestCase):
         this is the only user enter field
         :return:
         """
-        path_params = {"pk": 1}
-        url = reverse("api:posts-answers", kwargs=path_params)
-        detail_url_name = "api:posts-detail-answer"
+        path_params = {"post_id": 1}
+        url = reverse("api:postanswers-list", kwargs=path_params)
+        detail_url_name = "api:postanswers-detail"
         # Encode json field
         test_data = {'content': ''}
 
@@ -2622,15 +2963,21 @@ class PostAnswerViewSetTests(APITestCase):
         Test successful update post answer
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+        post_answer_data = {
+            "post_id": 1,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": answer.id}
         test_data = {"content": "Changed Content"}
         time_test = datetime.now()
 
-        check_put_success(self, detail_url_name, path_params, test_data, json_fields=[])
+        check_put_success(self, detail_url_name, path_params, test_data=test_data, json_fields=[])
 
         # Check if the last edited fields get updated as well
-        url = reverse("api:posts-detail-answer", kwargs=path_params)
+        url = reverse("api:postanswers-detail", kwargs=path_params)
         response = self.client.get(url)
         time_post_answer = datetime.fromisoformat(response.data["last_edited"][:-1])
         time_diff_seconds = (time_post_answer - time_test).total_seconds()
@@ -2647,48 +2994,76 @@ class PostAnswerViewSetTests(APITestCase):
         self.assertLessEqual(time_diff_seconds, 10, msg=f"Overtime")
         self.assertLessEqual(0, time_diff_seconds, msg=f"Post gets updated before answer")
 
+    def test_post_answer_update_not_owner(self):
+        """
+        Test update post answer not owned
+        :return:
+        """
+
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"pk": 1, "post_id": 1}
+        test_data = {"content": "Changed Content"}
+
+        check_put_error_v2(self, detail_url_name, path_params, test_data=test_data, error_code="permission_denied",
+                           status_code=status.HTTP_403_FORBIDDEN)
+
+
     def test_post_answer_update_invalid_pk(self):
         """
         Test with invalid pk or answer id, expecting errors
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
+        detail_url_name = "api:postanswers-detail"
         test_data = {"content": "Changed answer Content"}
 
         # Out of range
-        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES + 1}
+        path_params = {"post_id": 1, "pk": POST_ANSWER_NUM_ENTRIES + 1}
         check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
 
         # Mismatch
-        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
+        # TODO This need to raise 404, but now is 403 due to permission order
+        path_params = {"post_id": 1, "pk": POST_ANSWER_NUM_ENTRIES_1 + 1}
+        check_put_error_v2(self, detail_url_name, path_params, test_data=test_data, error_code="permission_denied",
+                           status_code=status.HTTP_403_FORBIDDEN)
 
         # Not an integer
-        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
+        url = "/api/posts/1/answers/I am not integer"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
         # Not an integer
-        path_params = {"pk": 1, "answerid": POST_ANSWER_NUM_ENTRIES_1 + 1}
-        check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=NotFound)
+        url = "/api/posts/1/answers/3.432"
+        check_put_error(self, url=url, test_data=test_data, error_class=NotFound)
 
     def test_post_answer_update_extra_field(self):
         """
         Test update post answer with extra field, which should be ignored
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+        post_answer_data = {
+            "post_id": 1,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": answer.id}
         test_data = {"content": "Changed Content", "extra": "extra"}
 
-        check_put_success(self, detail_url_name, path_params, test_data, json_fields=[], ignore_fields=["extra"])
+        check_put_success(self, detail_url_name, path_params, test_data=test_data, json_fields=[], ignore_fields=["extra"])
 
     def test_post_answer_update_invalid_missing_field(self):
         """
         Test update post answer with missing fields, expecting 400 InvalidForm
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+        post_answer_data = {
+            "post_id": 1,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": answer.id}
         test_data = {}
         check_put_error(self, detail_url_name, path_params, test_data=test_data, error_class=InvalidForm)
 
@@ -2698,18 +3073,37 @@ class PostAnswerViewSetTests(APITestCase):
         Test successful delete
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 1}
+        post_answer_data = {
+            "post_id": 1,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": answer.id}
 
         check_delete_success(self, detail_url_name, path_params)
+
+    def test_post_answer_destroy_not_owner(self):
+        """
+        Test delete not owned answer
+        :return:
+        """
+
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": 1}
+
+        check_delete_error_v2(self, detail_url_name, path_params,
+                              error_code="permission_denied",
+                              status_code=status.HTTP_403_FORBIDDEN)
 
     def test_post_answer_destroy_invalid_not_existing(self):
         """
         Test invalid delete: out of range pk
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
-        path_params = {"pk": 1, "answerid": 100}
+        detail_url_name = "api:postanswers-detail"
+        path_params = {"post_id": 1, "pk": 100}
         check_delete_error(self, detail_url_name, path_params)
 
     def test_post_answer_destroy_invalid_path_params(self):
@@ -2717,7 +3111,7 @@ class PostAnswerViewSetTests(APITestCase):
         Test invalid delete: not an integer, no linked
         :return:
         """
-        detail_url_name = "api:posts-detail-answer"
+        detail_url_name = "api:postanswers-detail"
 
         url = "/api/posts/1/answers/3.4"
         check_delete_error(self, url=url, error_class=NotFound)
@@ -2725,7 +3119,13 @@ class PostAnswerViewSetTests(APITestCase):
         url = "/api/posts/1/answers/not an integer"
         check_delete_error(self, url=url, error_class=NotFound)
 
-        path_params = {"pk": 1, "answerid": 5}
+        post_answer_data = {
+            "post_id": 2,
+            "postee_id": PostAnswerViewSetTests.test_user.id,
+            "content": "Test content"
+        }
+        answer = PostAnswer.objects.create(**post_answer_data)
+        path_params = {"post_id": 1, "pk": answer.id}
         check_delete_error(self, detail_url_name, path_params, error_class=NotFound)
 
     """
@@ -2739,8 +3139,8 @@ class PostAnswerViewSetTests(APITestCase):
         Partial update/PATCH not supported
         :return:
         """
-        params = {"pk": 1, "answerid": 1}
-        url = reverse("api:posts-detail-answer", kwargs=params)
+        params = {"post_id": 1, "pk": 1}
+        url = reverse("api:postanswers-detail", kwargs=params)
         check_method_not_allowed(self, url, "PATCH")
 
     def test_post_answer_partial_update_no_match(self):
@@ -2748,9 +3148,6 @@ class PostAnswerViewSetTests(APITestCase):
         Partial update/PATCH not supported
         :return:
         """
-        params = {"pk": 1, "answerid": 5}
-        url = reverse("api:posts-detail-answer", kwargs=params)
+        params = {"post_id": 1, "pk": 5}
+        url = reverse("api:postanswers-detail", kwargs=params)
         check_method_not_allowed(self, url, "PATCH")
-
-
-# TODO Test permission

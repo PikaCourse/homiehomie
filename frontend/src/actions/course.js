@@ -6,6 +6,7 @@ import {
   SET_COURSE_BY_PROF,
   SET_COURSE_BY_TIME,
 } from "./types";
+import {GET_COURSELIST} from './types'
 import { year, semester, courseDataPatch } from "../helper/global";
 
 export const getCourse = (title) => (dispatch) => {
@@ -19,6 +20,16 @@ export const getCourse = (title) => (dispatch) => {
     })
     .catch((err) => console.log(err));
 };
+
+export const getCourseList = (title) => dispatch =>{
+    axios.get('api/coursesmeta?title='+title)
+    .then(res=>{
+        dispatch({
+            type:GET_COURSELIST,
+            list: res.data
+        });
+    }).catch(err =>console.log(err));
+}
 
 // courseBag = {selectedCourse, selectedCourseArray}
 export const setCourse = (courseBag) => {

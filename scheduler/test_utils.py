@@ -24,6 +24,7 @@ def get_packet_details(exc):
     packet['status'] = exc.status_code
     return packet
 
+
 def check_fields(test_case, obj, fields):
     for field in fields:
         test_case.assertTrue(field in obj, msg=f"field name: {field}")
@@ -263,7 +264,12 @@ def check_query_filter_error(test_case, url, query_params=None, error_class=Inva
 
 def check_order(test_case, arr, key, descending=True):
     prev_count = None
+    pinned_list = []
     for obj in arr:
+        if "is_pin" in obj and obj["is_pin"]:
+            test_case.assertIsNone(prev_count, msg="Pinned question should come first in sequence")
+            pinned_list.append(obj)
+            continue
         if prev_count is None:
             prev_count = obj[key]
             continue
@@ -276,6 +282,18 @@ def check_order(test_case, arr, key, descending=True):
                 test_case.assertGreaterEqual(cur_count, prev_count, msg=f"Key: {key}\tdescending: {descending}\t"
                                                                      f"Prev: {prev_count}\tCur: {cur_count}")
             prev_count = cur_count
+
+    # Pin order with less value should be in front place
+    # meaning that the pinned list should be in ascending order
+    prev_order = None
+    for pinned_obj in pinned_list:
+        if prev_order is None:
+            prev_order = pinned_obj["pin_order"]
+            continue
+        else:
+            cur_order = pinned_obj["pin_order"]
+            test_case.assertLessEqual(cur_order, prev_order, msg=f"Key: pin_order\t"
+                                                                 f"Prev: {prev_order}\tCur: {cur_order}")
 
 
 def check_post_success(test_case, url, detail_url_name, test_data,
@@ -413,6 +431,30 @@ def check_put_error(test_case, detail_url_name=None, path_params={}, url=None, t
     test_case.assertEqual(response.data, get_packet_details(error_class()), msg=f"Response: {response}\tURL: {url}")
 
 
+def check_put_error_v2(test_case, detail_url_name=None, path_params={}, url=None, test_data={},
+                       error_code="not_found", status_code=status.HTTP_404_NOT_FOUND):
+    """
+    Expecting error on put submission
+    :param test_case:
+    :param detail_url_name:
+    :param path_params:
+    :param url:
+    :param test_data:
+    :param error_code:
+    :param status_code:
+    :return:
+    """
+    if url is None:
+        url = reverse(detail_url_name, kwargs=path_params)
+
+    test_form_encoded = urlencode(test_data)
+    response = test_case.client.put(url,
+                                    data=test_form_encoded,
+                                    content_type='application/x-www-form-urlencoded')
+    test_case.assertEqual(response.status_code, status_code, msg=f"Test Data: {test_data}\tURL: {url}")
+    test_case.assertEqual(response.data["code"], error_code, msg=f"Response: {response}\tURL: {url}")
+
+
 def check_put_missing_fields(test_case, detail_url_name, path_params, test_data, blank_fields=("content",), num_put=20):
     """
     Perform `num_put` times put request with missing at least one of the field
@@ -487,6 +529,26 @@ def check_delete_error(test_case, detail_url_name=None, path_params={}, url=None
     test_case.assertEqual(response.data, get_packet_details(error_class()), msg=f"URL: {url}")
 
 
+def check_delete_error_v2(test_case, detail_url_name=None, path_params={}, url=None,
+                          error_code="not_found", status_code=status.HTTP_404_NOT_FOUND):
+    """
+    Test unsuccessful delete with error specified as error code and status code
+    :param test_case:
+    :param detail_url_name:
+    :param path_params:
+    :param url:
+    :param error_code:
+    :param status_code:
+    :return:
+    """
+
+    if url is None:
+        url = reverse(detail_url_name, kwargs=path_params)
+    # Perform delete operation
+    response = test_case.client.delete(url)
+    test_case.assertEqual(response.status_code, status_code)
+    test_case.assertEqual(response.data["code"], error_code)
+
 
 def check_method_not_allowed(test_case, url, method):
     """
@@ -496,7 +558,9 @@ def check_method_not_allowed(test_case, url, method):
     :param method:
     :return:
     """
-    if method == "POST":
+    if method == "GET":
+        response = test_case.client.get(url)
+    elif method == "POST":
         response = test_case.client.post(url)
     elif method == "PUT":
         response = test_case.client.put(url)

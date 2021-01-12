@@ -1,14 +1,16 @@
 from django.urls import path, include
-from user.views import *
+from user import views, routers
+from rest_framework.routers import SimpleRouter
+# router = SimpleRouter(trailing_slash=False)
+
+router = routers.UserRouter(trailing_slash=False)
+router.register(r'users', views.UserLoginViewSet, basename='users')
+router.register(r'users', views.UserManagementViewSet, basename='users')
+
 
 urlpatterns = [
-    path('login',
-         LoginView.as_view(template_name="user/login.html",
-                           redirect_authenticated_user=True),
-         name='login'),
-    path('register', RegisterUserView.as_view(), name='register'),
-    # path('', include('django.contrib.auth.urls')),
-    # path('', include(router.urls)),
+    path('', include(router.urls), name='login')
 ]
 
+# TODO Create a util to handle shared app_name?
 app_name = 'user'
