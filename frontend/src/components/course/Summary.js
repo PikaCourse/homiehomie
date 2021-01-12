@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import store from "../../store";
 import { Card, Radio } from "antd";
 import { isEmpty } from "../../helper/dataCheck";
+import { setCourseByProf } from "../../actions/course";
 
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const CardStyle = { backgroundColor: "#ffffff", borderRadius: "1.5rem" };
@@ -64,35 +65,15 @@ function WikiSummary() {
               </h5>
 
               {professors.map((prof) => (
-                <Radio.Button className="mr-1 mb-1" value={prof}>
+                <Radio.Button
+                  className="mr-1 mb-1"
+                  value={prof}
+                  onChange={(e) => dispatch(setCourseByProf(e.target.value))}
+                >
                   {prof}
                 </Radio.Button>
               ))}
             </Radio.Group>
-{/* 
-            <Radio.Group
-              value={dayFormatter(selectedCourse.time)}
-              size="small"
-              buttonStyle="solid"
-              name="days"
-              className="row"
-            >
-              <h5
-                style={{
-                  fontSize: "0.8rem",
-                  Color: "grey",
-                }}
-              >
-                Days
-              </h5>
-
-              {dayslot.map((day) => (
-                <Radio.Button className="mr-1 mb-1" value={day}>
-                  {day}
-                </Radio.Button>
-              ))}
-            </Radio.Group> */}
-
             <Radio.Group
               value={timeObjFommatter(selectedCourse.time)}
               size="small"

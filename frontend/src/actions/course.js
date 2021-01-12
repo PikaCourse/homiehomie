@@ -1,6 +1,6 @@
 import axios from 'axios'
-import {GET_COURSE} from './types'
-import {SET_COURSE} from './types'
+import store from '../store';
+import {GET_COURSE, SET_COURSE, SET_COURSE_BY_PROF} from './types'
 
 export const getCourse = (title) => dispatch =>
 {
@@ -23,5 +23,16 @@ export const setCourse = (courseBag)  =>
         ({ crn }) => crn === courseBag.selectedCRN
     ),
     selectedCourseArray: courseBag.selectedCourseArray,
+   }
+}
+
+
+export const setCourseByProf = (prof)  =>
+{
+   return {
+    type:SET_COURSE_BY_PROF,
+    selectedCourse: store.getState().course.selectedCourseArray.find(
+        ({ professor }) => professor == prof
+    )
    }
 }
