@@ -25,7 +25,7 @@ function WikiSearch() {
   return (
     <AutoComplete
       // dropdownMatchSelectWidth={252}
-      // style={{ width: 500 }}
+      style={{ width: "100%" }}
       options={option}
       onSearch={(value) => searchOnChange(value)}
       onSelect={(value) => {
@@ -40,6 +40,7 @@ function WikiSearch() {
           borderBottomLeftRadius: "5rem",
           borderTopRightRadius: "10rem",
           borderBottomRightRadius: "10rem",
+          width: "100%",
         }}
         placeholder={prompt}
         allowClear
