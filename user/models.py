@@ -18,7 +18,22 @@ class Student(models.Model):
     sex:        Student's sex/gender
     type:       Student's Type: freshman, sophomore, junior, senior, graduate
     """
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    FRESHMAN = 'FR'
+    SOPHOMORE = 'SO'
+    JUNIOR = 'JR'
+    SENIOR = 'SR'
+    GRADUATE = 'GR'
+    UNKNOWN = 'UK'
+    YEAR_IN_SCHOOL_CHOICES = [
+        (FRESHMAN, 'Freshman'),
+        (SOPHOMORE, 'Sophomore'),
+        (JUNIOR, 'Junior'),
+        (SENIOR, 'Senior'),
+        (GRADUATE, 'Graduate'),
+        (UNKNOWN, 'Unknown')
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student")
     school = models.CharField(max_length=100, null=True)
     major = models.CharField(max_length=100, null=True)
     majors = models.JSONField(default=list, blank=True, null=True)
@@ -26,17 +41,24 @@ class Student(models.Model):
     graduation = models.DateField(blank=True, null=True)
     birthday = models.DateField(blank=True, null=True)
     sex = models.CharField(max_length=20, null=True)
-    type = models.CharField(max_length=10, null=True)
+    type = models.CharField(max_length=2,
+                            choices=YEAR_IN_SCHOOL_CHOICES,
+                            null=True)
 
     @classmethod
     def get_sentinel_user(cls):
-        user = User.objects.get_or_create(username='deleted')[0]
+        user, _ = User.objects.get_or_create(username='deleted')
         return Student.objects.get(user=user)
 
     @classmethod
     def get_tester_user(cls):
-        tester = User.objects.get_or_create(username='tester')[0]
+        tester, _ = User.objects.get_or_create(username='tester')
         return Student.objects.get(user=tester)
+
+    @classmethod
+    def get_site_bot(cls):
+        site, _ = User.objects.get_or_create(username='site')
+        return Student.objects.get(user=site)
 
     def __str__(self):
         return self.user.username

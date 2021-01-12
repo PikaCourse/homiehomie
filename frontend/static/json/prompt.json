@@ -1,0 +1,19 @@
+{
+    "registerRules": {
+
+        "emailRules": {
+            "rules": "The email need to be valid and unqiue",
+            "nonvalid": "The email is not valid",
+            "nonunqiue": "The email is not unique"
+        },
+        "usernameRules": {
+            "rules": "The username need to be unique",
+            "non-unique": "The username is taken"
+        },
+        "passwordRules": {
+            "rules": "The password need to be longer than 8 characters and less than 150 characters\\nCannot be all number\\nAvoid using username or email\\nAvoid using common passwords",
+            "nonlength": "The password need to be longer than 8 characters and less than 150 characters",
+            "allNum": "The password cannot be all number"
+        }
+    }
+}

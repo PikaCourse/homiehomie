@@ -1,35 +1,41 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404
-from django.db.models import Model
+from django.db.models import Model, Q
+from django.utils.decorators import method_decorator
 from scheduler.models import *
 from scheduler.forms import *
 from scheduler.serializers import *
 from scheduler.exceptions import *
-from rest_framework import viewsets, status, permissions
+from scheduler.permissions import *
+from scheduler.permissions import ReadOnly
+from rest_framework import viewsets, status
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.decorators import action
+from rest_framework.decorators import permission_classes as rest_permission_classes
 from rest_framework.parsers import JSONParser, FormParser
 from datetime import datetime
 
-
-# TODO Add isOwnerOrReadOnly Permission
 
 """
 API Definition below
 """
 
 
+# TODO Need an IsAdminOrReadOnly to help uploading and modifying the course objects
 class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
     query_parameters = ["school", "major", "limit"]
     queryset = CourseMeta.objects.all()
     serializer_class = CourseMetaSerializer
+    permission_classes = [ReadOnly]
 
     def list(self, request, *args, **kwargs):
         queryset = CourseMeta.objects.all()
 
         # TODO Better way?
         # TODO Query parameter Vaildation
+        # TODO Consider using: https://www.django-rest-framework.org/api-guide/filtering/
         school      = self.request.query_params.get("school", None)
         college     = self.request.query_params.get("college", None)
         title       = self.request.query_params.get("title", None)
@@ -70,6 +76,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
                         "semester", "professor", "limit"]
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = [ReadOnly]
 
     def list(self, request, *args, **kwargs):
         queryset = Course.objects.all()
@@ -126,24 +133,25 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = CourseSerializer(queryset, many=True)
         return Response(serializer.data)
 
-
+# TODO Paging
 class QuestionViewSet(viewsets.ModelViewSet):
     query_parameters = ["courseid", "sortby", "descending", "limit"]
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    permission_classes = [QuestionViewSetPermission]
 
     # TODO Better way to valdiate query param
     # Supported fields for sortby option
     supported_sortby_options = ["like_count", "star_count", "dislike_count"]
 
-    # TODO Tmp disable to ease debugging
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly, permissions.IsAdminUser]
-
     # GET method to get list of question related to the query
+    # that are not in private and is belong to the logged user
+    # TODO User private questions should be separated? since it always
+    #  need to be in the list
     def list(self, request, *args, **kwargs):
-        queryset = Question.objects.all()
+        queryset = self.get_queryset()
 
         # TODO Better way?
         # TODO Query parameter Validation according to API DOC
@@ -164,14 +172,25 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if coursemetaid is not None:
             try:
                 queryset = queryset.filter(course_meta_id=coursemetaid)
+                # TODO Possible performance improvement?
+                # TODO Create API to upload course and course meta and then
+                #  create the default questions after the course meta objects are created
+                # Check if the course meta id is valid and that the pinned question not exists in Question db
+                if queryset.exists() and not Question.objects.filter(course_meta_id=coursemetaid, is_pin=True).exists():
+                    self.create_default_questions(coursemetaid)
+                    queryset = self.get_queryset().filter(course_meta_id=coursemetaid)
             except ValueError:
                 raise InvalidQueryValue()
+        # Sort by scheme:
+        # 1. Pinned question first
+        # 2. User private question next
+        # 3. Rest question
         if sortby is not None:
             if sortby not in self.supported_sortby_options:
                 raise InvalidQueryValue()
-            queryset = queryset.order_by(("-" if descending else "") + sortby, "-last_answered")
+            queryset = queryset.order_by("-is_pin", "pin_order", "-is_private", ("-" if descending else "") + sortby, "-last_answered")
         else:
-            queryset = queryset.order_by(("-" if descending else "") + "like_count", "-last_answered")
+            queryset = queryset.order_by("-is_pin", "pin_order", "-is_private", ("-" if descending else "") + "like_count", "-last_answered")
         # Also sub order by created time, the newest is at top
         if limit is not None:
             try:
@@ -200,9 +219,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         raise InvalidForm()
 
     # PUT method used to update existing question
-    # TODO Add permission control to allow only owner or admin to modify
     def update(self, request, pk=None, *args, **kwargs):
-        # TODO Verify the user is the owner
         question = request.data
 
         # Get the object via DRF
@@ -225,7 +242,46 @@ class QuestionViewSet(viewsets.ModelViewSet):
                       "question": question.id, "status": status.HTTP_200_OK}
         return Response(error_pack)
 
+    def get_queryset(self):
+        """
+        Return a list of public questions and questions belong to logged user
+        :return:
+        """
+        user = self.request.user
+        qs = Q(is_private=False)
+        if not user.is_anonymous:
+            qs = qs | Q(created_by=user.student)
+        return Question.objects.filter(qs)
 
+    @staticmethod
+    def create_default_questions(course_meta_id):
+        """
+        Create basic questions in database for the course
+        Check for their exact existence in db
+        :return:
+        """
+        question_template = {
+            "course_meta_id": course_meta_id,
+            "created_by": Student.get_site_bot(),
+            "is_pin": True,
+            "is_private": False,
+            "title": "",
+            "pin_order": 0
+        }
+        questions = [
+            ("What is this class about? What can I learn from this class?", 0),
+            ("How hard it is?", 1),
+            ("Which professor’s class to take?", 2)
+        ]
+
+        for title, order in questions:
+            question_data = question_template.copy()
+            question_data["title"] = title
+            question_data["pin_order"] = order
+            Question.objects.create(**question_data)
+
+
+# TODO Search by question array or modify to have question-note pair returned?
 class NoteViewSet(viewsets.ModelViewSet):
     query_parameters = ["courseid", "questionid", "sortby", "descending", "limit"]
 
@@ -233,13 +289,14 @@ class NoteViewSet(viewsets.ModelViewSet):
     serializer_class = NoteSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    permission_classes = [NoteViewSetPermission]
 
-    # TODO Better way to valdiate query param
+    # TODO Better way to valdiate query param, use serializer
     # Supported fields for sortby option
     supported_sortby_options = ["like_count", "star_count", "dislike_count"]
 
     def list(self, request, *args, **kwargs):
-        queryset = Note.objects.all()
+        queryset = self.get_queryset()
 
         # TODO Better way?
         # TODO Query parameter Validation according to API DOC
@@ -332,6 +389,17 @@ class NoteViewSet(viewsets.ModelViewSet):
                       "note": note.id, "status": status.HTTP_200_OK}
         return Response(error_pack)
 
+    def get_queryset(self):
+        """
+        Return a list of public questions and questions belong to logged user
+        :return:
+        """
+        user = self.request.user
+        qs = Q(is_private=False)
+        if not user.is_anonymous:
+            qs = qs | Q(created_by=user.student)
+        return Note.objects.filter(qs)
+
 
 class PostViewSet(viewsets.ModelViewSet):
     """
@@ -342,6 +410,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    permission_classes = [PostViewSetPermission]
 
     # TODO Better way to valdiate query param
     # Supported fields for sortby option
@@ -422,7 +491,8 @@ class PostViewSet(viewsets.ModelViewSet):
         f = PostModificationForm(post, instance=old_post)
         if f.is_valid():
             post = f.save()
-            error_pack = {"errcode": 0, "errmsg": "successfully updated post", "post": post.id}
+            error_pack = {"code": "success", "detail": "successfully updated post",
+                          "post": post.id, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
         raise InvalidForm()
 
@@ -434,15 +504,34 @@ class PostViewSet(viewsets.ModelViewSet):
                       "post": post.id, "status": status.HTTP_200_OK}
         return Response(error_pack)
 
-    @action(detail=True, methods=['get'])
-    def answers(self, request, pk=None):
+
+class PostAnswerViewSet(viewsets.ModelViewSet):
+    """
+    Viewset for post answer
+    assume that the url prefix has a post_id field
+    """
+    queryset = PostAnswer.objects.all()
+    serializer_class = PostAnswerSerializer
+    parser_classes = [FormParser]
+    permission_classes = [PostAnswerViewSetPermission]
+    http_method_names = ['get', 'post', 'head', 'put', 'delete']
+
+
+    # TODO Better way to valdiate query param
+    # Supported fields for sortby option
+    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
+
+    def list(self, request, post_id=None, *args, **kwargs):
         queryset = PostAnswer.objects.all()
 
         # Verify that post with id pk exist in db
-        post = self.get_object()
-
+        try:
+            get_object_or_404(Post, id=post_id)
+        except ValueError:
+            # Not valid post_id
+            raise NotFound()
         # Parse Params
-        queryset = queryset.filter(post_id=pk)
+        queryset = queryset.filter(post_id=post_id)
         sortby = self.request.query_params.get("sortby", None)
         descending = self.request.query_params.get("descending", None)
         limit = self.request.query_params.get("limit", None)
@@ -472,57 +561,60 @@ class PostViewSet(viewsets.ModelViewSet):
             except ValueError as err:
                 raise InvalidQueryValue()
         else:
-            queryset = queryset[:50]
-
+            queryset = queryset[:10]
 
         serializer = PostAnswerSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @answers.mapping.post
-    def create_answer(self, request, pk=None):
+    def create(self, request, post_id=None, *args, **kwargs):
         answer = request.data
 
         try:
             # Set post id from path param
-            post = Post.objects.get(id=pk)
+            post = Post.objects.get(id=post_id)
             f = PostAnswerCreationForm(answer, request=request, post=post)
             if f.is_valid():
                 answer = f.save(debug=True)
-                error_pack = {"errcode": 0, "errmsg": "successfully created post answer", "answer": answer.id}
+                error_pack = {"code": "success", "detail": "successfully created post answer",
+                              "post": post.id, "answer": answer.id, "status": status.HTTP_201_CREATED}
                 return Response(error_pack, status=status.HTTP_201_CREATED)
         except Post.DoesNotExist:
             # Invalid post id path
             raise NotFound()
         raise InvalidForm()
 
-    @action(detail=True, methods=['get'], url_path="answers/(?P<answerid>[^/.]+)")
-    def detail_answer(self, request, pk=None, answerid=None):
-        # TODO Check for post id as well
-        # TODO Verify that the post answer and post is related
-        queryset = PostAnswer.objects.all()
-        post_answer = get_object_or_404(queryset, id=answerid, post_id=pk)
-        serializer = PostAnswerSerializer(post_answer, many=False)
+    def retrieve(self, request, post_id=None, *args, **kwargs):
+        # TODO Verify that the post_id matched with the object post_id
+        # TODO Validate post_id match internally to raise NotFound
+        try:
+            post = get_object_or_404(Post, id=post_id)
+        except ValueError:
+            raise NotFound()
+        answer = self.get_object()
+        if post.id != answer.post_id:
+            raise NotFound()
+        serializer = self.get_serializer(answer)
         return Response(serializer.data)
 
-    @detail_answer.mapping.put
-    def modify_answer(self, request, pk=None, answerid=None):
+    def update(self, request, post_id=None, *args, **kwargs):
         answer = request.data
         try:
             # Cannot use self.get_object since it is not in PostAnswer viewset
-            old_answer = PostAnswer.objects.get(id=answerid)
+            old_answer = self.get_object()
 
             # Check post answer and the post is linked
-            if eval(pk) != old_answer.post_id:
+            if eval(post_id) != old_answer.post_id:
                 raise ValidationError("mismatch between given post id and answer post id",
                                       code="mismatch")
             # Update post answer
             f = PostAnswerModificationForm(answer, instance=old_answer)
             if f.is_valid():
                 answer = f.save()
-                post = Post.objects.get(id=pk)
+                post = Post.objects.get(id=post_id)
                 post.last_answered = answer.last_edited
                 post.save()
-                error_pack = {"errcode": 0, "errmsg": "successfully modified post answer", "answer": answer.id}
+                error_pack = {"code": "success", "detail": "successfully modified post answer",
+                              "post": post.id, "answer": answer.id, "status": status.HTTP_200_OK}
                 return Response(error_pack, status=status.HTTP_200_OK)
 
         except Post.DoesNotExist:
@@ -536,13 +628,10 @@ class PostViewSet(viewsets.ModelViewSet):
         # Invalid form key
         raise InvalidForm()
 
-    @detail_answer.mapping.delete
-    def destroy_answer(self, request, pk=None, answerid=None):
-        # No request body
+    def destroy(self, request, pk=None, post_id=None, *args, **kwargs):
         try:
-            answerid = int(answerid)
-            old_answer = PostAnswer.objects.get(id=answerid)
-            post = self.get_object()
+            old_answer = self.get_object()
+            post = get_object_or_404(Post, id=post_id)
 
             # Check post answer and the post is linked
             if post.id != old_answer.post_id:
@@ -551,7 +640,7 @@ class PostViewSet(viewsets.ModelViewSet):
             # Delete post answer
             old_answer.delete()
             error_pack = {"code": "success", "detail": "successfully deleted post answer",
-                          "answer": answerid, "status": status.HTTP_200_OK}
+                          "answer": pk, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
         except PostAnswer.DoesNotExist:
             # Invalid question answer id
@@ -566,6 +655,46 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):
-    queryset = Schedule.objects.all()
     serializer_class = ScheduleSerializer
+    http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    parser_classes = [JSONParser]
+    permission_classes = [IsAuthenticated, ScheduleViewSetPermission]
+
+    def get_queryset(self):
+        # Make sure user only see his own schedule
+        # Prevent List method to show user others schedule
+        user = self.request.user
+        return Schedule.objects.filter(student__user=user)
+
+    def destroy(self, request, *args, **kwargs):
+        schedule = self.get_object()
+        self.perform_destroy(schedule)
+        error_pack = {"code": "success", "detail": "successfully deleted schedule",
+                      "schedule": schedule.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)
+
+
+class WishListViewSet(viewsets.ModelViewSet):
+    serializer_class = WishListSerializer
+    # No delete since we only got one now
+    # TODO Prevent deletion if only one wishlist in db?
     http_method_names = ['get', 'post', 'head', 'put']
+    parser_classes = [JSONParser]
+    permission_classes = [IsAuthenticated, WishListViewSetPermission]
+
+    def get_queryset(self):
+        # Make sure user only see his own wishlist
+        user = self.request.user
+        return WishList.objects.filter(student__user=user)
+
+    # TODO Simply redirect this? since only one wishlist for a user
+    # def list(self, request, *args, **kwargs):
+    #     # Since only one wishlist for one user, just redirect it
+    #     return super().retrieve(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        wishlist = self.get_object()
+        self.perform_destroy(wishlist)
+        error_pack = {"code": "success", "detail": "successfully deleted wishlist",
+                      "wishlist": wishlist.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)

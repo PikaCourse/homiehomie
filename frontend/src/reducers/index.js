@@ -1,10 +1,14 @@
-import {combineReducers} from 'redux';
-import leads from './leads'
-import course from './course'
-import question from './question'
-import calendar from './calendar'
-import wishlist from './wishlist'
+import { combineReducers } from "redux";
+import course from "./course";
+import question from "./question";
+import calendar from "./calendar";
+import wishlist from "./wishlist";
+import user from "./user"
 
 export default combineReducers({
-    leads, course, question, calendar, wishlist
+  course,
+  question,
+  calendar,
+  wishlist,
+  user, 
 });

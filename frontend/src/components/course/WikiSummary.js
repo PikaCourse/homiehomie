@@ -7,7 +7,8 @@ import {
   // previewCurrCourse,
   // updatePreviewCourse
 } from "../../actions/calendar";
-import { addCurrCourseToWish } from "../../actions/wishlist";
+import {addCurrCourseToWish} from "../../actions/wishlist"
+// import {  } from "../../actions/wishlist";
 import { setCourse } from "../../actions/course";
 import store from "../../store";
 // style
@@ -19,9 +20,9 @@ import {
   faSave,
 } from "@fortawesome/free-solid-svg-icons";
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-import { Switch, Select, Input, Button, Tooltip, message } from "antd";
+import { AutoComplete, Switch, Select, Input, Button, Tooltip, message } from "antd";
 
-import { getCourse } from "../../actions/course";
+import { getCourse, getCourseList } from "../../actions/course";
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
@@ -38,11 +39,17 @@ function weekdayToClass(index, timeArray) {
 export class WikiSummary extends Component {
   constructor(props) {
     super(props);
+    //this.showSearch = this.showSearch.bind(this);
+    //this.hideSearch = this.hideSearch.bind(this);
     this.state = {
       starButton: false,
+      timer: null,
+      interval: 500,
+      //showSearch: false
     };
   }
 
+  
   animateButton(e) {
     e.preventDefault;
     e.target.classList.remove("animate");
@@ -52,16 +59,19 @@ export class WikiSummary extends Component {
     }, 700);
   }
 
-  buttonLoader() {
-    const courseArray = store.getState().calendar.calendarCourseBag.filter(
-      (item) => item.raw.selectedCourseArray == this.props.selectedCourseArray //&& (item.type != 'preview'))
-    );
+  buttonLoader() { 
+    const courseArray = store
+      .getState()
+      .calendar.calendarCourseBag.filter(
+        (item) => (item.raw.selectedCourseArray == this.props.selectedCourseArray) //&& (item.type != 'preview'))
+      );
+
 
     let enableAdd = true;
     let enableRemove = true;
     let addButtonText = "Add Course";
-    console.log("courseArray");
-    console.log(courseArray);
+    //console.log("courseArray");
+    //console.log(courseArray);
     if (!Array.isArray(courseArray) || !courseArray.length) {
       // course not in calendarbag
       enableRemove = false;
@@ -169,10 +179,23 @@ export class WikiSummary extends Component {
       prevProps.wishlistCourseBag !== this.props.wishlistCourseBag ||
       prevProps.selectedCRN !== this.props.selectedCRN
     ) {
+
       const curr = this.props.wishlistCourseBag.find(
         ({ crn }) => crn === store.getState().course.selectedCRN
       );
       this.setState({ starButton: curr != null });
+    }
+  }
+
+  searchOnChange(Search) {
+    const { timer, interval } = this.state;
+    clearTimeout(timer);
+    if (Search && Search.length > 1) {
+      this.setState({
+        timer: setTimeout(() => {
+          this.props.dispatch(getCourseList(Search))
+        }, interval),
+      });
     }
   }
 
@@ -184,6 +207,15 @@ export class WikiSummary extends Component {
         ) != "undefined" ? (
           <div className="">
             <div className="mb-2">
+              <AutoComplete
+                dropdownMatchSelectWidth={252}
+                style={{width: 500, }}
+                options={this.props.option}
+                onSearch = {(value)=> this.searchOnChange(value)}
+                onSelect={(value) => {console.log("from auto onselect");this.props.dispatch(getCourse(value))}}
+                //onSearch={(value) => this.props.dispatch(getCourse(value))}
+              >
+              {/* <Input.Search size="large" placeholder="Search subject, CRN or course name" enterButton /> */}
               <Search
                 bordered={false}
                 style={{ backgroundColor: "#ffffff", borderRadius: "0.5rem" }}
@@ -196,8 +228,9 @@ export class WikiSummary extends Component {
                 }
                 size="large"
                 type="ghost"
-                onSearch={(value) => this.props.dispatch(getCourse(value))}
-              />
+                onSearch={(value) => {(value!="") ? this.props.dispatch(getCourse(value)): null}}
+                />
+              </AutoComplete>
             </div>
 
             <div
@@ -279,7 +312,9 @@ const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
   selectedCRN: state.course.selectedCRN,
   selectedCourse: state.course.selectedCourse,
-  wishlistCourseBag: state.wishlist.wishlistCourseBag,
+  calendarCourseBag: state.calendar.calendarCourseBag, 
+  option: state.course.option,
+  wishlistCourseBag: state.wishlist.wishlistCourseBag, 
 });
 
 export default connect(mapStateToProps)(WikiSummary);

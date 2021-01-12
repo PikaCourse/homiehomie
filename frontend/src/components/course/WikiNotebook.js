@@ -7,10 +7,11 @@ import {
   faThumbsDown,
   faPen,
   faTimes,
+  faThumbtack
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
-import { getQuestion, addQuestion } from "../../actions/question.js";
+import { getQuestion, addQuestion, addOBJ } from "../../actions/question.js";
 
 import {
   Button,
@@ -127,7 +128,29 @@ export class WikiNotebook extends Component {
                 });
             this.forceUpdate();
           });
+          //console.log("res = ");
+          //console.log(res.data.question);
+          //console.log(this.props.noteBag.length);
+          let queObj = {
+            id: this.props.noteBag.length,
+            question: {
+              id: res.data.question,
+              course_meta: this.props.selectedCourse.course_meta.id,
+                title: values.question,
+                tags: JSON.stringify(["hi", "h2"]),
+            },
+            notes:[{course: this.props.selectedCourse.id,
+              question: values.question,
+              title: "whatever",
+              content: values.note,
+              tags: JSON.stringify(["hi"])}],
+      
+          };
+          //console.log("from handlesubmit");
+          //console.log(queObj);
+          store.dispatch(addOBJ(queObj));
       });
+      this.setState({ addNewCard: false });
   };
 
   addNewQueInput = () => {
@@ -233,7 +256,7 @@ export class WikiNotebook extends Component {
                     rules={[
                       {
                         required: true,
-                        message: "Please input your title!",
+                        message: "Please input your note!",
                       },
                     ]}
                   >
@@ -257,7 +280,7 @@ export class WikiNotebook extends Component {
               </Card>
             ) : null
           }
-
+          
           {/* Question */}
           {this.props.noteBag.map((nbObj) => (
             <Card
@@ -266,6 +289,7 @@ export class WikiNotebook extends Component {
               bordered={false}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+              extra={(nbObj.question.is_pin)?<FontAwesomeIcon icon={faThumbtack}/> : null}
               key={nbObj.id}
             >
               {nbObj.notes.map((noteObj) => (

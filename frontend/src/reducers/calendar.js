@@ -10,8 +10,10 @@ import {
   // UPDATE_PREVIEW,
   // CLEAR_PREVIEW
 } from "../actions/types.js";
+import {loadState, saveState, loadCalendarCourseBag} from '../../src/helper/localStorage'
+
 const initialState = {
-  calendarCourseBag: [],
+  calendarCourseBag: loadCalendarCourseBag(),
 };
 
 function getMonday(d) {
@@ -133,6 +135,19 @@ function addNewCusEventToBag(state, action) {
   return tempArray;
 }
 
+
+// function getUniqueCourses(courseBag) {
+//   let uniqueCourseBag = Array.from(new Set(courseBag.map(a => a.title)))
+//       .map(title => {
+//         return courseBag.find(a => a.title === title)
+//       }); 
+//       uniqueCourseBag.filter(
+//     (item) => (item.type == 'course')
+//   ); 
+//   return uniqueCourseBag; 
+// }
+
+
 export default function (state = initialState, action) {
   switch (action.type) {
     case ADD_COURSE_TO_CAL:
@@ -172,12 +187,6 @@ export default function (state = initialState, action) {
       return {
         ...state,
         calendarCourseBag: addNewCusEventToBag(state, action),
-      };
-    
-    case DO_NOTHING:
-      return {
-        ...state,
-        calendarCourseBag: [...state.calendarCourseBag],
       };
 
     case REMOVE_CUS_EVENT_IN_CAL:
