@@ -11,6 +11,7 @@ import {
   // CLEAR_PREVIEW
 } from "../actions/types.js";
 import {loadState, saveState, loadCalendarCourseBag} from '../../src/helper/localStorage'
+import axios from "axios";
 
 const initialState = {
   calendarCourseBag: loadCalendarCourseBag(),
@@ -49,6 +50,7 @@ function addNewCourseToBag(state, action, update) {
     newBag.push({
       type: 'course',
       id: newId,
+      courseId: action.selectedCourse.id, 
       title: action.selectedCourse.course_meta.title,
       allDay: false,
       start: alignDate(timeslot.weekday, timeslot.start_at),
@@ -96,7 +98,7 @@ function addNewCusEventToBag(state, action) {
   let update = false;
 
   tempArray = tempArray.map((existingEvent) => {
-    if (existingEvent.id == action.event.id) {
+    if (addSelectCourse.id == action.event.id) { //addSelectCourse.id????????
       existingEvent.start = action.event.start;
       existingEvent.end = action.event.end;
       update = true;
@@ -135,7 +137,6 @@ function addNewCusEventToBag(state, action) {
   return tempArray;
 }
 
-
 // function getUniqueCourses(courseBag) {
 //   let uniqueCourseBag = Array.from(new Set(courseBag.map(a => a.title)))
 //       .map(title => {
@@ -146,6 +147,36 @@ function addNewCusEventToBag(state, action) {
 //   ); 
 //   return uniqueCourseBag; 
 // }
+
+function addCourseToUser(state, action, update) {
+  var userSchedule; 
+  axios
+      .get("/api/schedules", 
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+      )
+      .then((result) => {
+        userSchedule = result; 
+        console.log(result); 
+      })
+      .catch(err => {
+        console.log(err.response); 
+      });
+  if (update) {
+    let removeCourse = state.calendarCourseBag.find(
+      (item) => (item.raw.selectedCourseArray == action.selectedCourseArray)
+    ); 
+  }
+  let addCourse = action.selectedCourse; 
+
+}
+
+function removeCourseFromUser(state, action) {
+
+}
 
 
 export default function (state = initialState, action) {
