@@ -258,6 +258,14 @@ class Schedule(models.Model):
     tags:           User tagging
 
     coursesid:      Access all the courses in this schedule via id array
+    events:         User custom events in form of JSON array
+                    each object in the array is of form of
+                    {
+                        "weekday": 1,   // Tue
+                        "start_at": "13:30",
+                        "end_at": "14:45",
+                        "id": 1
+                    },
     """
     SEMESTER_CHOICES = [
         ("fall", "fall"),
@@ -274,7 +282,8 @@ class Schedule(models.Model):
     semester = models.CharField(max_length=8, choices=SEMESTER_CHOICES)
     name = models.CharField(max_length=200, blank=True)
     note = models.TextField(blank=True, null=True)
-    courses = models.ManyToManyField(Course)
+    courses = models.ManyToManyField(Course, blank=True)
+    events = models.JSONField(default=list, null=True)
     tags = models.JSONField(default=list, null=True)
 
     class Meta:
