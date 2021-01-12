@@ -17,6 +17,7 @@ export function courseDataPatch(courseArray) {
 export function timeObjFommatter(time) {
   if (isEmpty(time)) return null;
   let res = "";
+  if (!time.length) return "Asynchronous";
   time.map((obj, index) => {
     if (index == 0)
       res = weekday[obj.weekday] + "-" + obj.start_at + "--" + obj.end_at;

@@ -91,7 +91,9 @@ function WikiSummary() {
                   value={time}
                   disabled={
                     selectedCourseArray.filter(
-                      (item) => item.professor == selectedCourse.professor
+                      ({ professor, timeString }) =>
+                        professor == selectedCourse.professor &&
+                        time == timeString
                     ).length == 0
                   }
                   style={{ borderRadius: "0" }}

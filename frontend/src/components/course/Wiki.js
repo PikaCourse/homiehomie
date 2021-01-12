@@ -7,7 +7,7 @@ import WikiSearch from "./Search";
 import WikiSummary from "./Summary";
 export class Wiki extends Component {
   componentDidMount() {
-    this.props.dispatch(getCourse("CAS CS 103"));
+    this.props.dispatch(getCourse("CAS BI 315"));
   }
 
   render() {
