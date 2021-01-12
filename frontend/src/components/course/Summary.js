@@ -1,16 +1,7 @@
 import React, { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import store from "../../store";
-import {
-  Card,
-  Radio,
-  Switch,
-  Select,
-  Input,
-  Button,
-  Tooltip,
-  message,
-} from "antd";
+import { Card, Radio } from "antd";
 import { isEmpty } from "../../helper/dataCheck";
 
 const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
@@ -31,6 +22,19 @@ function WikiSummary() {
     ...new Set(selectedCourseArray.map((course) => course.professor)),
   ]; // [ 'A', 'B']
 
+  const dayslot = [
+    ...new Set(
+      selectedCourseArray.map((course) =>
+        dayFormatter(daysSeralizer(course.time))
+      )
+    ),
+  ];
+
+  const timeslot = [
+    ...new Set(
+      selectedCourseArray.map((course) => timeObjFommatter(course.time))
+    ),
+  ];
   return (
     <Fragment>
       <div className="p-4 my-2 mt-4" style={CardStyle}>
@@ -102,6 +106,66 @@ function WikiSummary() {
                 </Radio.Button>
               ))}
             </Radio.Group>
+
+            <Radio.Group size="small" buttonStyle="solid" className="row">
+              <Radio.Button
+                className="mr-1 mb-1"
+                value="default"
+                disabled
+                style={{
+                  borderRadius: "0px",
+                  border: "none",
+                  fontWeight: "800",
+                  paddingLeft: "0px",
+                  backgroundColor: "#ffffff",
+                  Color: "black",
+                }}
+              >
+                Days:
+              </Radio.Button>
+
+              {dayslot.map((day) => (
+                <Radio.Button
+                  className="mr-1 mb-1"
+                  value={day}
+                  style={{ borderRadius: "0px" }}
+                >
+                  {day}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+
+            <Radio.Group
+              defaultValue={timeObjFommatter(selectedCourse.time)}
+              size="small"
+              buttonStyle="solid"
+              className="row"
+            >
+              <Radio.Button
+                className="mr-1 mb-1"
+                value="default"
+                disabled
+                style={{
+                  borderRadius: "0px",
+                  border: "none",
+                  fontWeight: "800",
+                  paddingLeft: "0px",
+                  backgroundColor: "#ffffff",
+                  Color: "black",
+                }}
+              >
+                Time:
+              </Radio.Button>
+              {timeslot.map((time) => (
+                <Radio.Button
+                  className="mr-1 mb-1"
+                  value={time}
+                  style={{ borderRadius: "0px" }}
+                >
+                  {time}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
           </div>
         ) : (
           <Card bordered={false} loading={true}></Card>
@@ -122,4 +186,36 @@ function weekdayToClass(index, timeArray) {
   return result;
 }
 
+function daysSeralizer(time) {
+  if (isEmpty(time)) return null;
+  let res = [];
+
+  time.map((obj) => res.push(obj.weekday));
+  return res;
+}
+
+function dayFormatter(days) {
+  let res = "";
+  days.map((i) => {
+    res = res + "/" + weekday[i];
+  });
+  return res;
+}
+
+function timeObjFommatter(time) {
+  if (isEmpty(time)) return null;
+  let res = "";
+  time.map((obj) => {
+    res =
+      res +
+      ", " +
+      weekday[obj.weekday] +
+      "-" +
+      obj.start_at +
+      "--" +
+      obj.end_at;
+  });
+  console.log(res);
+  return res;
+}
 export default WikiSummary;
