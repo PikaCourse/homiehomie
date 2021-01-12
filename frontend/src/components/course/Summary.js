@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import store from "../../store";
 import { Card, Radio } from "antd";
 import { isEmpty } from "../../helper/dataCheck";
 import { timeObjFommatter, weekday, Color } from "../../helper/global";
@@ -13,9 +12,6 @@ function WikiSummary() {
   const [addBtn, setAddBtn] = useState(true);
   const [rmBtn, setRmBtn] = useState(true);
   const [starBtn, setStarBtn] = useState(true);
-
-  const [profFilter, setProfFilter] = useState();
-  const [timeFilter, setTimeFilter] = useState();
 
   const selectedCourse = useSelector((state) => state.course.selectedCourse);
   const selectedCourseArray = useSelector(
