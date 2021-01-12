@@ -69,7 +69,7 @@ function WikiSummary() {
                 </Radio.Button>
               ))}
             </Radio.Group>
-
+{/* 
             <Radio.Group
               value={dayFormatter(selectedCourse.time)}
               size="small"
@@ -91,7 +91,7 @@ function WikiSummary() {
                   {day}
                 </Radio.Button>
               ))}
-            </Radio.Group>
+            </Radio.Group> */}
 
             <Radio.Group
               value={timeObjFommatter(selectedCourse.time)}
