@@ -8,10 +8,10 @@ desc:        Production server setting for project
 """
 
 # Production setting file
-
+from decouple import config, Csv
 from homiehomie.settings_d.default import *
 
-ALLOWED_HOSTS = ["test-homiehomie.thexyzlab.studio", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1', cast=Csv(post_process=tuple))
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
