@@ -45,7 +45,7 @@ jobs:
         privateKey: ${{ secrets.SSH_PRIVATE_KEY_UPLOAD }}
         port: ${{ secrets.DOKKU_SSH_PORT }}
         local: "frontend/static/frontend/main.js"
-        remote: $${{ secrets.DOKKU_HOMIEHOMIE_STORAGE_DIR }}
+        remote: ${{ secrets.DOKKU_HOMIEHOMIE_STORAGE_DIR }}
         recursive: true
         rmRemote: true
       
