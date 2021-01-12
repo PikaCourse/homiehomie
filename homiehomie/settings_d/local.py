@@ -51,3 +51,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'storage/db.sqlite3',
     }
 }
+
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = 1025
