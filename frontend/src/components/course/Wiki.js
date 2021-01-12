@@ -4,10 +4,10 @@ import PropTypes from "prop-types";
 import { getCourse } from "../../actions/course";
 import { connect } from "react-redux";
 import WikiSearch from "./Search";
-import WikiSummary from "./Summary"
+import WikiSummary from "./Summary";
 export class Wiki extends Component {
   componentDidMount() {
-    this.props.dispatch(getCourse("CS-3114"));
+    this.props.dispatch(getCourse("CAS CS 103"));
   }
 
   render() {

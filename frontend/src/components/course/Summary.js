@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import store from "../../store";
 import { Card, Radio } from "antd";
 import { isEmpty } from "../../helper/dataCheck";
+import { timeObjFommatter, weekday, Color } from "../../helper/global";
+
 import { setCourseByProf } from "../../actions/course";
 
-const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const CardStyle = { backgroundColor: "#ffffff", borderRadius: "1.5rem" };
-const Color = "#419EF4";
 
 function WikiSummary() {
   const [addBtn, setAddBtn] = useState(true);
@@ -15,7 +15,6 @@ function WikiSummary() {
   const [starBtn, setStarBtn] = useState(true);
 
   const [profFilter, setProfFilter] = useState();
-  const [dayFilter, setDayFilter] = useState();
   const [timeFilter, setTimeFilter] = useState();
 
   const selectedCourse = useSelector((state) => state.course.selectedCourse);
@@ -51,7 +50,7 @@ function WikiSummary() {
 
             <Radio.Group
               value={selectedCourse.professor}
-              size="small"
+              size="medium"
               name="prof"
               buttonStyle="solid"
             >
@@ -166,25 +165,6 @@ function dayFormatter(time) {
   days.map((i, index) => {
     if (index == 0) res = weekday[i];
     else res = res + "," + weekday[i];
-  });
-  return res;
-}
-
-function timeObjFommatter(time) {
-  if (isEmpty(time)) return null;
-  let res = "";
-  time.map((obj, index) => {
-    if (index == 0)
-      res = weekday[obj.weekday] + "-" + obj.start_at + "--" + obj.end_at;
-    else
-      res =
-        res +
-        ", " +
-        weekday[obj.weekday] +
-        "-" +
-        obj.start_at +
-        "--" +
-        obj.end_at;
   });
   return res;
 }
