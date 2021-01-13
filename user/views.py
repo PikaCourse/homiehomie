@@ -9,6 +9,7 @@ desc:        User api for Course Wiki
 
 from user.serializers import *
 from user.permissions import *
+from user.tokens import *
 from django.shortcuts import redirect, resolve_url, reverse
 from django.conf import settings
 from django.contrib.auth import login as auth_login
@@ -68,6 +69,8 @@ class UserLoginViewSet(viewsets.GenericViewSet):
         """
         # If already login, simply return the response
         if not request.user.is_anonymous:
+            # Refresh user login timestamp for token usage
+            auth_login(request, request.user)
             error_pack = {"code": "success", "detail": "already login",
                           "user": request.user.id, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
@@ -119,10 +122,30 @@ class UserLoginViewSet(viewsets.GenericViewSet):
                           "user": user.id, "status": status.HTTP_200_OK}
             # Login user, removed after adding email registration
             auth_login(request, user)
+
+            # Send verification email to user
+            # TODO Call the serializer?
+            # send_verification_email(user)
             return Response(error_pack, status=status.HTTP_200_OK)
         else:
             raise ValidationError("invalid registration info",
                                   code="invalid_register")
+
+    # r'(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})'
+    # TODO Configure URL
+    #  /api/users/confirm_email/<uid64>/<token>
+    @action(detail=False, methods=['get'],
+            url_path=r'(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]+)')
+    def confirm_email(self, request, uidb64=None, token=None, *args, **kwargs):
+        # TODO Check user id and token as query params
+        #  Then modified the is_verified state of user
+        #  and display success message before redirecting user to index page
+        #  otherwise display error message
+        # todo Handle none token?
+        # URL Path config courtesy of:
+        #   https://simpleisbetterthancomplex.com/tutorial/2016/08/24/how-to-create-one-time-link.html
+        pass
+        return Response({"uidb64": uidb64, "token": token})
 
 
 class UserManagementViewSet(mixins.RetrieveModelMixin,
@@ -198,5 +221,58 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
                       "user": data["id"], "status": status.HTTP_200_OK}
         return Response(error_pack, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['get'])
+    def verify_email(self, request, *args, **kwargs):
+        """
+        Allow user to send a new verification link
+        will called the send_verification_email method
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        return send_verification_email(request)
+
+
 # TODO Add support for password management
 # TODO Add support for user profile
+
+def send_verification_email(request, from_email=None,
+                            email_template_name='registration/email_verification_email.html',
+                            subject_template_name='registration/email_verification_subject.txt',
+                            html_email_template_name=None,
+                            extra_email_context=None
+                            ):
+    """
+    Function to send verification email, not verify whether the user is logged in
+    verification link:
+        path param:
+            uidb64: user id (in base 64?)
+            token: authentication token to look up in db
+        /api/confirm_email?uid=&token=
+    send to: user.email
+    :return:
+    """
+    user = request.user
+    serializer = EmailTokenSerializer(data={"email": user.email})
+
+    opts = {
+        'use_https': request.is_secure(),
+        'token_generator': default_token_generator,
+        'from_email': from_email,
+        'email_template_name': email_template_name,
+        'subject_template_name': subject_template_name,
+        'request': request,
+        'html_email_template_name': html_email_template_name,
+        'extra_email_context': extra_email_context,
+    }
+
+    if serializer.is_valid(raise_exception=True):
+        serializer.save(**opts)
+
+        error_pack = {"code": "success", "detail": "successfully deliver verification email",
+                      "user": user.id, "status": status.HTTP_200_OK}
+        return Response(error_pack, status=status.HTTP_200_OK)
+    else:
+        raise ValidationError("invalid email",
+                              code="invalid_email")
