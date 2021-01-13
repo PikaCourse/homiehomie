@@ -317,10 +317,10 @@ def send_verification_email(request, from_email=None,
     }
 
     if serializer.is_valid(raise_exception=True):
-        serializer.save(**opts)
-
         error_pack = {"code": "success", "detail": "successfully deliver verification email",
                       "user": user.id, "email": user.email, "status": status.HTTP_200_OK}
+        serializer.save(**opts)
+
         return Response(error_pack, status=status.HTTP_200_OK)
     else:
         raise ValidationError("invalid email",
