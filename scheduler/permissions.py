@@ -26,18 +26,19 @@ class ReadOnly(permissions.BasePermission):
             return False
 
 
-# TODO Add this to the question and note part
 class IsVerifiedOrReadOnly(permissions.BasePermission):
     """
     Check if the user has verified the email, otherwise
     only grant read permissions to the view
     """
+    message = "Please verified your email to perform this action"
+
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
         else:
             # Need to be verified for write access
-            return request.user.is_verified
+            return request.user.student.is_verified
 
 
 # TODO Break into IsAuthenticatedOrReadOnly and IsOwnerOrReadOnly

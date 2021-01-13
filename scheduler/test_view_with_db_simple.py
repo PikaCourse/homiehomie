@@ -42,8 +42,9 @@ class CourseMetaViewSetTests(APITestCase):
     test_user_data = {
         "username": "test_user",
         "password": "testtest",
-        "email": "test@test.edu"
+        "email": "test@test.edu",
     }
+    # TODO Need to test for is_verified operation, currently just bypass it
     test_user = None
 
     @classmethod
@@ -51,6 +52,8 @@ class CourseMetaViewSetTests(APITestCase):
         # Create a user
         super(CourseMetaViewSetTests, cls).setUpClass()
         cls.test_user = User.objects.create_user(**CourseMetaViewSetTests.test_user_data)
+        cls.test_user.student.is_verified = True
+        cls.test_user.student.save()
 
     @classmethod
     def tearDownClass(cls):
@@ -414,6 +417,8 @@ class CourseViewSetTests(APITestCase):
         # Create a user
         super(CourseViewSetTests, cls).setUpClass()
         cls.test_user = User.objects.create_user(**CourseViewSetTests.test_user_data)
+        cls.test_user.student.is_verified = True
+        cls.test_user.student.save()
 
     @classmethod
     def tearDownClass(cls):
@@ -847,6 +852,8 @@ class QuestionViewSetTests(APITestCase):
         # Create a user
         super(QuestionViewSetTests, cls).setUpClass()
         cls.test_user = User.objects.create_user(**cls.test_user_data)
+        cls.test_user.student.is_verified = True
+        cls.test_user.student.save()
 
     @classmethod
     def tearDownClass(cls):
@@ -1419,6 +1426,8 @@ class NoteViewSetTests(APITestCase):
         # Create a user
         super(NoteViewSetTests, cls).setUpClass()
         cls.test_user = User.objects.create_user(**cls.test_user_data)
+        cls.test_user.student.is_verified = True
+        cls.test_user.student.save()
 
     @classmethod
     def tearDownClass(cls):
@@ -2015,6 +2024,8 @@ class PostViewSetTests(APITestCase):
         # Create a user
         super(PostViewSetTests, cls).setUpClass()
         cls.test_user = User.objects.create_user(**cls.test_user_data)
+        cls.test_user.student.is_verified = True
+        cls.test_user.student.save()
 
     @classmethod
     def tearDownClass(cls):
@@ -2626,6 +2637,8 @@ class PostAnswerViewSetTests(APITestCase):
         # Create a user
         super(PostAnswerViewSetTests, cls).setUpClass()
         cls.test_user = User.objects.create_user(**cls.test_user_data)
+        cls.test_user.student.is_verified = True
+        cls.test_user.student.save()
 
     @classmethod
     def tearDownClass(cls):
