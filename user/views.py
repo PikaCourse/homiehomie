@@ -10,13 +10,14 @@ desc:        User api for Course Wiki
 from user.serializers import *
 from user.permissions import *
 from user.tokens import *
-from django.shortcuts import redirect, resolve_url, reverse
+from django.shortcuts import redirect, resolve_url, reverse, render
 from django.conf import settings
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import viewsets, status, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action, permission_classes
@@ -40,6 +41,7 @@ DELETE:  user/{pk}, delete user
 """
 
 
+# TODO Add support for password management, like change password, reset password
 class UserLoginViewSet(viewsets.GenericViewSet):
     """
     User login viewset api, handle any operations related to users login, including:
@@ -47,11 +49,13 @@ class UserLoginViewSet(viewsets.GenericViewSet):
     - Login
     - Register
     - Logout
+    - Confirm email
     """
 
     serializer_class = StudentSerializer
     parser_classes = [JSONParser]
     permission_classes = [AllowAny]     # Should any no authenticated users to login/register
+    email_verification_token_generator = EmailVerificationTokenGenerator()
 
     # TODO Need to specify permission individually?
     @action(detail=False, methods=["post"])
@@ -117,35 +121,64 @@ class UserLoginViewSet(viewsets.GenericViewSet):
         if credentials.is_valid(raise_exception=True):
             # Credentials valid, creating new user/student instance
             user = credentials.save()
-            # TODO Add email registration step
             error_pack = {"code": "success", "detail": "successfully register user",
                           "user": user.id, "status": status.HTTP_200_OK}
             # Login user, removed after adding email registration
             auth_login(request, user)
 
             # Send verification email to user
-            # TODO Call the serializer?
-            # send_verification_email(user)
-            return Response(error_pack, status=status.HTTP_200_OK)
+            try:
+                send_verification_email(request)
+            except Exception:
+                # Ignore any issue with email system
+                # Undo user creation upon error
+                auth_logout(request)
+                user.delete()
+                error_pack = {"code": "error", "detail": "Unknown server error",
+                              "status": status.HTTP_500_INTERNAL_SERVER_ERROR}
+
+            return Response(error_pack, status=error_pack["status"])
         else:
             raise ValidationError("invalid registration info",
                                   code="invalid_register")
 
-    # r'(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})'
-    # TODO Configure URL
-    #  /api/users/confirm_email/<uid64>/<token>
     @action(detail=False, methods=['get'],
-            url_path=r'(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]+)')
+            url_path=r'confirm_email/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]+)')
+    @method_decorator(never_cache)
     def confirm_email(self, request, uidb64=None, token=None, *args, **kwargs):
-        # TODO Check user id and token as query params
-        #  Then modified the is_verified state of user
-        #  and display success message before redirecting user to index page
-        #  otherwise display error message
-        # todo Handle none token?
         # URL Path config courtesy of:
         #   https://simpleisbetterthancomplex.com/tutorial/2016/08/24/how-to-create-one-time-link.html
-        pass
-        return Response({"uidb64": uidb64, "token": token})
+        user = self.get_user(uidb64)
+        if self.email_verification_token_generator.check_token(user, token):
+            # Token verified, modified user `is_verified` and login user
+            user.student.is_verified = True
+            user.student.save()
+            auth_login(request, user)
+            # TODO Better template
+            context = {
+                "message": "You have successfully verified your email and we will be redirecting shortly.."
+            }
+            return render(request, 'registration/success_verification.html', context=context)
+        else:
+            context = {
+                "message": "Invalid link, please check the sent mail or request a new one at user panel..."
+            }
+            # TODO Better template
+            return render(request, 'registration/invalid_verification.html', context=context)
+
+    def get_user(self, uidb64):
+        """
+        Get user id from uidb64, see tokens.py for details
+        :param uidb64:
+        :return:
+        """
+        try:
+            # urlsafe_base64_decode() decodes to bytestring
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User._default_manager.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist, ValidationError):
+            user = None
+        return user
 
 
 class UserManagementViewSet(mixins.RetrieveModelMixin,
@@ -222,6 +255,7 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
         return Response(error_pack, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'])
+    @method_decorator(never_cache)
     def verify_email(self, request, *args, **kwargs):
         """
         Allow user to send a new verification link
@@ -231,11 +265,14 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
         :param kwargs:
         :return:
         """
-        return send_verification_email(request)
+        user = request.user
+        if not user.student.is_verified:
+            return send_verification_email(request)
+        else:
+            error_pack = {"code": "verified", "detail": "already verified",
+                          "user": user.id, "status": status.HTTP_200_OK}
+            return Response(error_pack, status=status.HTTP_200_OK)
 
-
-# TODO Add support for password management
-# TODO Add support for user profile
 
 def send_verification_email(request, from_email=None,
                             email_template_name='registration/email_verification_email.html',
@@ -271,7 +308,7 @@ def send_verification_email(request, from_email=None,
         serializer.save(**opts)
 
         error_pack = {"code": "success", "detail": "successfully deliver verification email",
-                      "user": user.id, "status": status.HTTP_200_OK}
+                      "user": user.id, "email": user.email, "status": status.HTTP_200_OK}
         return Response(error_pack, status=status.HTTP_200_OK)
     else:
         raise ValidationError("invalid email",
