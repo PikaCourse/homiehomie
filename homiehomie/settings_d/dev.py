@@ -18,3 +18,12 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 DATABASES = {
     'default': dj_database_url.parse(config("DATABASE_URL")),
 }
+
+# Email setting
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = config("EMAIL_PORT", default=25, cast=int)
+DEFAULT_FROM_EMAIL = "bot@test-homiehomie.thexyzlab.studio"
+
+# Verification token timeout in seconds
+# current setting: 3 hrs
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 3

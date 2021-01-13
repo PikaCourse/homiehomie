@@ -1,0 +1,4 @@
+Hello {{ user.username }},
+
+Welcome to Courseocean, to verify your email account ({{ email }}), follow the link below:
+{{ protocol}}://{{ domain }}{% url 'user:users-confirm-email' uidb64=uid token=token %}

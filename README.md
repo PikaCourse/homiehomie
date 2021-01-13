@@ -1,4 +1,5 @@
 # Homiehomie
+
 ![Project CI](https://github.com/MARX1108/homiehomie/workflows/Project%20CI/badge.svg)
 [![codecov](https://codecov.io/gh/MARX1108/homiehomie/branch/main/graph/badge.svg?token=2WPZQMGJV0)](https://codecov.io/gh/MARX1108/homiehomie)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMARX1108%2Fhomiehomie.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMARX1108%2Fhomiehomie?ref=badge_shield)
@@ -120,6 +121,15 @@
     # If in prod env
     pip install -r requirements.txt
 
+### Run dummy email server
+
+Since the project has included email verification, you will need
+a dummy smtp server to listen to it in order to get the verification
+email link. To run the email server, simply use:
+
+    make dummy-smtp
+    
+Which will launch a fake smtp server listening on `localhost:1025`
 
 ### Run
     source venv/bin/activate

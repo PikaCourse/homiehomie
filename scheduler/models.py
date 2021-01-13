@@ -305,7 +305,7 @@ class WishList(models.Model):
 
     coursesid:      Access all the courses in this wishlist via id array
     """
-    student = models.OneToOneField(Student, on_delete=models.SET(Student.get_sentinel_user))
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     note = models.TextField(blank=True, null=True)

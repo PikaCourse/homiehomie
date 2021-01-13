@@ -7,6 +7,7 @@ version:     v1.0.0
 desc:        Local setting file used for testing
 """
 
+from decouple import config
 from homiehomie.settings_d.default import *
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
@@ -52,5 +53,11 @@ DATABASES = {
     }
 }
 
+# Email settings
 EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
+DEFAULT_FROM_EMAIL = "bot@courseocean.cc"
+
+# Verification token timeout in seconds
+# current setting: 3 hrs
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 3
