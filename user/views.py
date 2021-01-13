@@ -156,7 +156,7 @@ class UserLoginViewSet(viewsets.GenericViewSet):
             auth_login(request, user)
             # TODO Better template
             context = {
-                "message": "You have successfully verified your email and we will be redirecting shortly.."
+                "message": "You have successfully verified your email and we will be redirecting you shortly.."
             }
             return render(request, 'registration/success_verification.html', context=context)
         else:
