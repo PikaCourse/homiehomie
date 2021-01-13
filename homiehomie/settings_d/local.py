@@ -12,7 +12,7 @@ from homiehomie.settings_d.default import *
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
-DEBUG = False
+DEBUG = True
 
 INSTALLED_APPS = [
     'django.contrib.admin',
