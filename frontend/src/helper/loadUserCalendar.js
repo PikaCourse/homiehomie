@@ -14,6 +14,8 @@ export const loadUserCourseBag = () => {
     var userSchedule = getUserSchedule(); 
     // if (!userSchedule.length) return; 
     var courseBag = []; 
+    console.log("userSchedule"); 
+    console.log(userSchedule); 
     userSchedule.courses.forEach((value, index) => {
         axios
         .get("/api/courses/"+value, 
@@ -94,21 +96,28 @@ export const getUserSchedule = () => {
               },
             })
             .then((result) => {
+              console.log("post schedule result"); 
               console.log(result);
             })
             .catch(err => {
               console.log(err.response);
             });
           userSchedule = newSchedule; 
+          return newSchedule; 
         }
         else {
-          userSchedule = result; 
+          console.log("userSchedule = result.data"); 
+          console.log(result.data[0]); 
+          userSchedule = result.data[0]; 
+          return result.data[0]; 
         }
         
       })
       .catch(err => {
         console.log(err.response); 
       });
+  console.log("userSchedule return"); 
+  console.log(userSchedule); 
   return userSchedule; 
 }
 
