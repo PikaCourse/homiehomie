@@ -4,6 +4,7 @@
 .PHONY: coverage-report_%
 .PHONY: clean
 .PHONY: clean-coverage
+.PHONY: dummy-smtp
 
 clean: clean-coverage
 
@@ -29,5 +30,10 @@ coverage-report :
 coverage-report_% :
 	coverage $* -o coverage.$*
 
+# Launch fake smtp server to listen to email
+dummy-smtp :
+	python -m smtpd -n -c DebuggingServer localhost:1025
+
+# Generate Django Random Key
 random-key :
 	python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
