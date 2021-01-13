@@ -5,7 +5,7 @@ export const addCurrCourseToWish = ()  =>
 {
     return {
         type: ADD_COURSE_TO_WISH,
-        selectedCRN: store.getState().course.selectedCRN,
+        selectedCourse: store.getState().course.selectedCourse,
         selectedCourseArray: store.getState().course.selectedCourseArray,
     };  
 }
