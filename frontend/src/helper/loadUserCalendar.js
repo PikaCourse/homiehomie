@@ -1,171 +1,117 @@
-import store from '../store'
+import store from "../store";
 import axios from "axios";
-import {getMonday, alignDate} from '../reducers/calendar'
+import { getMonday, alignDate } from "../reducers/calendar";
 
 function getSelectedCourseArray(title) {
-  let selectedCourseArray = []; 
-  axios.get('api/courses?title='+title)
-        .then(res=>{
-            selectedCourseArray = res.data; 
-        }).catch(err =>console.log(err));
-  return selectedCourseArray; 
+  let selectedCourseArray = [];
+  axios
+    .get("api/courses?title=" + title)
+    .then((res) => {
+      selectedCourseArray = res.data;
+    })
+    .catch((err) => console.log(err));
+  return selectedCourseArray;
 }
 export const loadUserCourseBag = () => {
-    var userSchedule = getUserSchedule(); 
-    // if (!userSchedule.length) return; 
-    var courseBag = []; 
-    console.log("userSchedule"); 
-    console.log(userSchedule); 
-    userSchedule.courses.forEach((value, index) => {
-        axios
-        .get("/api/courses/"+value, 
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-        )
-        .then((result) => {
-          console.log(result); 
-            courseBag.push({
-                type: 'course',
-                id: index,
-                courseId: value, 
-                title: result.data.course_meta.title,
-                allDay: false,
-                start: alignDate(result.data.time.weekday, result.data.time.start_at),
-                end: alignDate(result.data.time.weekday, result.data.time.end_at),
-                raw: {
-                    crn: result.data.crn,
-                    name: result.data.course_meta.name,
-                    instructor: result.data.professor,
-                    course: result.data,
-                    selectedCourseArray: getSelectedCourseArray(result.data.course_meta.title),
-                },
-            });  
-        })
-        .catch(err => {
-          console.log(err.response); 
-        });
-    }
-    ); 
-    return courseBag; 
-}
-
-//turn guest's calendar course bag into an array contains courses' id 
-export const loadGuestCourseBag = () => {
-    var calendarCourseBag = store.getState().calendar.calendarCourseBag; 
-    if (!calendarCourseBag.length) {return [];}
-    var updatedCourse = []; 
-    calendarCourseBag.forEach(course => {
-        if (course.courseId != -1) //it is a custom event 
-        {updatedCourse.push(course.courseId); }
-    }); 
-    return updatedCourse; 
-}
-
-export const getUserSchedule = () => {
-  var userSchedule = []; 
-  axios
-      .get("/api/schedules", 
-      {
+  var userSchedule = getUserSchedule();
+  console.log("userSchedule");
+  console.log(getUserSchedule());
+  
+  // if (!userSchedule.length) return;
+  var courseBag = [];
+  
+  userSchedule.courses.forEach((value, index) => {
+    axios
+      .get("/api/courses/" + value, {
         headers: {
           "Content-Type": "application/json",
         },
-      }
-      )
-      .then((result) => {
-        console.log(result); 
-        if (!result.data.length) {
-          let newSchedule = {
-              "is_star": true,
-              "is_private": true,
-              "year": 2020,
-              "semester": "spring",
-              "name": "string",
-              "note": "string",
-              "tags": [
-                "string"
-              ],
-              "courses": []
-          }; 
-          axios
-            .post("/api/schedules", newSchedule, {
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
-            .then((result) => {
-              console.log("post schedule result"); 
-              console.log(result);
-            })
-            .catch(err => {
-              console.log(err.response);
-            });
-          userSchedule = newSchedule; 
-          return newSchedule; 
-        }
-        else {
-          console.log("userSchedule = result.data"); 
-          console.log(result.data[0]); 
-          userSchedule = result.data[0]; 
-          return result.data[0]; 
-        }
-        
       })
-      .catch(err => {
-        console.log(err.response); 
+      .then((result) => {
+        console.log(result);
+        courseBag.push({
+          type: "course",
+          id: index,
+          courseId: value,
+          title: result.data.course_meta.title,
+          allDay: false,
+          start: alignDate(result.data.time.weekday, result.data.time.start_at),
+          end: alignDate(result.data.time.weekday, result.data.time.end_at),
+          raw: {
+            crn: result.data.crn,
+            name: result.data.course_meta.name,
+            instructor: result.data.professor,
+            course: result.data,
+            selectedCourseArray: getSelectedCourseArray(
+              result.data.course_meta.title
+            ),
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err.response);
       });
-  console.log("userSchedule return"); 
-  console.log(userSchedule); 
-  return userSchedule; 
-}
+  });
+  return courseBag;
+};
+
+//turn guest's calendar course bag into an array contains courses' id
+export const loadGuestCourseBag = () => {
+  var calendarCourseBag = store.getState().calendar.calendarCourseBag;
+  if (!calendarCourseBag.length) {
+    return [];
+  }
+  var updatedCourse = [];
+  calendarCourseBag.forEach((course) => {
+    if (course.courseId != -1) {
+      //it is a custom event
+      updatedCourse.push(course.courseId);
+    }
+  });
+  return updatedCourse;
+};
 
 export const addCourseToUser = (schedule, courseId) => {
-  console.log("addCourseToUser"); 
+  console.log("addCourseToUser");
   if (!store.getState().user.loginStatus || !schedule.length) {
-    console.log("check pt 2"); 
-    console.log(store.getState().user.loginStatus); 
-    console.log(schedule.length); 
-    return; 
+    console.log("check pt 2");
+    console.log(store.getState().user.loginStatus);
+    console.log(schedule.length);
+    return;
   }
-  var newCourses = {courses: [...schedule.courses]};
-  newCourses.courses.push(courseId); 
-  console.log(newCourses); 
+  var newCourses = { courses: [...schedule.courses] };
+  newCourses.courses.push(courseId);
+  console.log(newCourses);
   axios
-      .patch("/api/schedules/"+schedule.id, newCourses, 
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-      )
-      .then((result) => {
-        console.log(result); 
-      })
-      .catch(err => {
-        console.log(err.response); 
-      });
-}
+    .patch("/api/schedules/" + schedule.id, newCourses, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((err) => {
+      console.log(err.response);
+    });
+};
 
 export const removeCourseFromUser = (schedule, courseId) => {
   if (!store.getState().user.loginStatus || !schedule.length) {
-    return; 
+    return;
   }
   var updatedCourses = [...schedule.courses];
-  updatedCourses.filter(course => course != courseId); 
+  updatedCourses.filter((course) => course != courseId);
   axios
-      .patch("/api/schedules/"+schedule.id, updatedCourses, 
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-      )
-      .then((result) => {
-        console.log(result); 
-      })
-      .catch(err => {
-        console.log(err.response); 
-      });
-}
+    .patch("/api/schedules/" + schedule.id, updatedCourses, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    .then((result) => {
+      console.log(result);
+    })
+    .catch((err) => {
+      console.log(err.response);
+    });
+};

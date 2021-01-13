@@ -11,7 +11,7 @@ const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import prompt from "../../../static/json/prompt.json"
 import store from '../../store'
-import {updateLoginStatus} from '../../actions/user'
+import {updateLoginStatus, getUserSchedule} from '../../actions/user'
 import {useDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -528,8 +528,9 @@ function UserModule() {
               {loginStatus ? userProfileModal : loginSignupModal}
               < Button onClick = {
                   () => {
-                    console.log("loadUserCourseBag()");
-                    console.log(loadUserCourseBag());
+                    dispatch(getUserSchedule()); 
+                    console.log("getUserSchedule"); 
+                    console.log(store.getState().user.schedule); 
                   }
                 } >
                 Testing purpose 

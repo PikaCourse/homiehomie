@@ -22,10 +22,10 @@ export const addCurrCourse = () => {
       item.raw.selectedCourseArray ==
       store.getState().course.selectedCourseArray,
     ); 
-  const userSchedule = getUserSchedule(); 
+  // const userSchedule = getUserSchedule(); 
   if (!Array.isArray(courseArray) || !courseArray.length) {
-    console.log("check pt 1"); 
-    addCourseToUser(userSchedule, store.getState().course.selectedCourse.courseId); 
+    // console.log("check pt 1"); 
+    // addCourseToUser(userSchedule, store.getState().course.selectedCourse.courseId); 
     return {
       type: ADD_COURSE_TO_CAL,
       selectedCRN: store.getState().course.selectedCRN,
@@ -33,16 +33,16 @@ export const addCurrCourse = () => {
       selectedCourseArray: store.getState().course.selectedCourseArray,
     }
   } else { 
-    const redundantCourse = store
-    .getState()
-    .calendar.calendarCourseBag.find(
-      (item) =>
-      item.raw.selectedCourseArray ==
-      store.getState().course.selectedCourseArray,
-    );
-    console.log(redundantCourse);
-    removeCourseFromUser(userSchedule, redundantCourse.courseId); 
-    addCourseToUser(userSchedule, store.getState().course.selectedCourse.courseId); 
+    // const redundantCourse = store
+    // .getState()
+    // .calendar.calendarCourseBag.find(
+    //   (item) =>
+    //   item.raw.selectedCourseArray ==
+    //   store.getState().course.selectedCourseArray,
+    // );
+    // console.log(redundantCourse);
+    // removeCourseFromUser(userSchedule, redundantCourse.courseId); 
+    // addCourseToUser(userSchedule, store.getState().course.selectedCourse.courseId); 
     // update same course to different crn or update from preview to course
     return {
       type: UPDATE_COURSE_IN_CAL,
