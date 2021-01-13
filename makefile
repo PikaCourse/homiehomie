@@ -9,6 +9,40 @@
 .PHONY: help
 
 help:
+	@echo "----------------------------------------------------------------"
+	@echo "Administrative targets:"
+	@echo "  clean            - removes generated coverage files"
+	@echo
+	@echo "Server preparation"
+	@echo "  migratedb_%      - migrate database with setting file specified"
+	@echo "                     see README.md for setting files listed"
+	@echo
+	@echo "  collectstatic_%  - collect static files for whitenoise"
+	@echo
+	@echo "  dummy-smtp       - launch fake smtp email server on localhost:1025"
+	@echo
+	@echo "Running server"
+	@echo "  testserver       - run test server with default local setting"
+	@echo "                     handle database migration as well"
+	@echo
+	@echo "  testserver_%     - run test server with setting file specified"
+	@echo "                     handle database migration as well"
+	@echo
+	@echo "  prodserver_%     - run production server with setting file specified"
+	@echo "                     handle database migration and static file collection"
+	@echo "                     as well"
+	@echo
+	@echo "Coverage testing related"
+	@echo "  coverage             - run coverage tests with default local setting"
+	@echo
+	@echo "  coverage_%           - run coverage tests with setting file specified"
+	@echo
+	@echo "  coverage-report      - generate report after running coverage tests"
+	@echo
+	@echo "  coverage-report_%    - generate report with designated format"
+	@echo
+	@echo "  clean-coverage       - clean generated coverage related files"
+	@echo "----------------------------------------------------------------"
 
 clean: clean-coverage
 
