@@ -1,7 +1,11 @@
 export const GET_LEADS = "GET_LEADS"
 export const GET_COURSE = "GET_COURSE"
 export const SET_COURSE = "SET_COURSE"
+export const SET_COURSE_BY_PROF = "SET_COURSE_BY_PROF"
+export const SET_COURSE_BY_TIME = "SET_COURSE_BY_TIME"
 export const GET_COURSELIST = "GET_COURSELIST"
+
+
 export const GET_QUE = "GET_QUE"
 export const CLEAR_QUE = "CLEAR_QUE"
 export const ADD_QUE = "ADD_QUE"

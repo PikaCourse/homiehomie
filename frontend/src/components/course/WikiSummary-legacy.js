@@ -26,8 +26,8 @@ import { getCourse, getCourseList } from "../../actions/course";
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
-
-const { Search } = Input;
+import { Search } from "./Search";
+// const { Search } = Input;
 function weekdayToClass(index, timeArray) {
   for (let i = 0; i < timeArray.length; i++) {
     if (timeArray[i].weekday == index) return "mb-1 badge bg-secondary";
@@ -59,13 +59,10 @@ export class WikiSummary extends Component {
     }, 700);
   }
 
-  buttonLoader() { 
-    const courseArray = store
-      .getState()
-      .calendar.calendarCourseBag.filter(
-        (item) => (item.raw.selectedCourseArray == this.props.selectedCourseArray) //&& (item.type != 'preview'))
-      );
-
+  buttonLoader() {
+    const courseArray = store.getState().calendar.calendarCourseBag.filter(
+      (item) => item.raw.selectedCourseArray == this.props.selectedCourseArray //&& (item.type != 'preview'))
+    );
 
     let enableAdd = true;
     let enableRemove = true;
@@ -105,15 +102,9 @@ export class WikiSummary extends Component {
               addButtonText != "Change CRN"
                 ? message.success({
                     content: "Course Added Successfully",
-                    style: {
-                      marginTop: "5vh",
-                    },
                   })
                 : message.success({
                     content: "CRN Changed Successfully",
-                    style: {
-                      marginTop: "5vh",
-                    },
                   });
             }}
           >
@@ -135,9 +126,6 @@ export class WikiSummary extends Component {
               this.forceUpdate();
               message.success({
                 content: "Course Removed Successfully",
-                style: {
-                  marginTop: "5vh",
-                },
               });
             }}
           >
@@ -154,9 +142,6 @@ export class WikiSummary extends Component {
               store.dispatch(addCurrCourseToWish());
               message.success({
                 content: "Course Added To Wishlist",
-                style: {
-                  marginTop: "5vh",
-                },
               });
             }}
             disabled={this.state.starButton}
@@ -205,7 +190,7 @@ export class WikiSummary extends Component {
         {typeof this.props.selectedCourseArray.find(
           ({ crn }) => crn === this.props.selectedCRN
         ) != "undefined" ? (
-          <div className="">
+          <div>
             <div className="mb-2">
               <AutoComplete
                 dropdownMatchSelectWidth={252}
@@ -232,7 +217,7 @@ export class WikiSummary extends Component {
                 />
               </AutoComplete>
             </div>
-
+            
             <div
               className="p-4 my-2 mt-4"
               style={{ backgroundColor: "#ffffff", borderRadius: "1.5rem" }}
