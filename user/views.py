@@ -180,6 +180,12 @@ class UserLoginViewSet(viewsets.GenericViewSet):
             user = None
         return user
 
+    # TODO More sophisticated setting on this
+    def get_throttles(self):
+        if self.action in ['register']:
+            self.throttle_scope = 'user.' + self.action
+        return super().get_throttles()
+
 
 class UserManagementViewSet(mixins.RetrieveModelMixin,
                             mixins.UpdateModelMixin,
@@ -272,6 +278,12 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
             error_pack = {"code": "verified", "detail": "already verified",
                           "user": user.id, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
+
+    # TODO More sophisticated setting on this
+    def get_throttles(self):
+        if self.action in ['verify_email']:
+            self.throttle_scope = 'user.' + self.action
+        return super().get_throttles()
 
 
 def send_verification_email(request, from_email=None,
