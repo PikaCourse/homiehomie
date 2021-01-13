@@ -24,6 +24,9 @@ function WikiSummary() {
   const selectedCourseArray = useSelector(
     (state) => state.course.selectedCourseArray
   );
+  const wishlistCourseBag = useSelector(
+    (state) => state.wishlist.wishlistCourseBag
+  );
   const calendarCourseBag = useSelector(
     (state) => state.calendar.calendarCourseBag
   );
@@ -42,7 +45,8 @@ function WikiSummary() {
               dispatch,
               calendarCourseBag,
               selectedCourse,
-              selectedCourseArray
+              selectedCourseArray,
+              wishlistCourseBag
             )}
           </div>
         ) : (
@@ -57,7 +61,8 @@ function buttonsLoader(
   dispatch,
   calendarCourseBag,
   selectedCourse,
-  selectedCourseArray
+  selectedCourseArray,
+  wishlistCourseBag
 ) {
   const courseArray = calendarCourseBag.filter(
     (item) => item.raw.selectedCourseArray == selectedCourseArray //&& (item.type != 'preview'))
@@ -115,8 +120,15 @@ function buttonsLoader(
           <Button
             type="primary"
             onClick={(event) => {
-              dispatch(addCurrCourseToWish());
-              message.success("Course Added To Wishlist");
+              if (
+                wishlistCourseBag.filter(({ id }) => id == selectedCourse.id)
+                  .length == 0
+              )
+                message.error("Course Already in Wishlist");
+              else
+                dispatch(addCurrCourseToWish()).then(
+                  message.success("Course Added To Wishlist")
+                );
             }}
           >
             <FontAwesomeIcon icon={faStar} />
