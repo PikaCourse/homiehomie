@@ -17,16 +17,15 @@ const initialState = {
   calendarCourseBag: loadCalendarCourseBag(),
 };
 
-function getMonday(d) {
+export const getMonday = (d) => {
   d = new Date(d);
   var day = d.getDay(),
     diff = d.getDate() - day + 1; // adjust when day is sunday
   return new Date(d.setDate(diff));
 }
 
-const today = new Date();
-
-function alignDate(weekDayIndex, timestamp) {
+export const alignDate = (weekDayIndex, timestamp) => {
+  const today = new Date();
   let date = new Date(today.toDateString() + ", " + timestamp);
   return new Date(
     getMonday(date).setDate(getMonday(date).getDate() + weekDayIndex)

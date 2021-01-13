@@ -11,70 +11,7 @@ import {
 } from './types'
 import store from '../store'
 import axios from "axios";
-
-function getUserSchedule() {
-  var userSchedule = []; 
-  axios
-      .get("/api/schedules", 
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-      )
-      .then((result) => {
-        userSchedule = result; 
-        console.log(result); 
-      })
-      .catch(err => {
-        console.log(err.response); 
-      });
-  return userSchedule; 
-}
-
-function addCourseToUser(schedule, courseId) {
-  if (!store.getState().user.loginStatus || !schedule.length) {
-    return; 
-  }
-  var updatedCourses = [...schedule.courses];
-  updatedCourses.push(courseId); 
-  axios
-      .patch("/api/schedules/"+schedule.id, updatedCourses, 
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-      )
-      .then((result) => {
-        console.log(result); 
-      })
-      .catch(err => {
-        console.log(err.response); 
-      });
-}
-
-function removeCourseFromUser(schedule, courseId) {
-  if (!store.getState().user.loginStatus || !schedule.length) {
-    return; 
-  }
-  var updatedCourses = [...schedule.courses];
-  updatedCourses.filter(course => course != courseId); 
-  axios
-      .patch("/api/schedules/"+schedule.id, updatedCourses, 
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-      )
-      .then((result) => {
-        console.log(result); 
-      })
-      .catch(err => {
-        console.log(err.response); 
-      });
-}
+import {getUserSchedule, addCourseToUser, removeCourseFromUser} from '../../src/helper/loadUserCalendar'
 
 export const addCurrCourse = () => {
   // check if curr course is in calendar
@@ -87,6 +24,7 @@ export const addCurrCourse = () => {
     ); 
   const userSchedule = getUserSchedule(); 
   if (!Array.isArray(courseArray) || !courseArray.length) {
+    console.log("check pt 1"); 
     addCourseToUser(userSchedule, store.getState().course.selectedCourse.courseId); 
     return {
       type: ADD_COURSE_TO_CAL,

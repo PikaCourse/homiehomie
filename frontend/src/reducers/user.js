@@ -14,11 +14,11 @@ export default function (state = initialState, action) {
 	switch (action.type) {
 		case LOGIN_USER:
 			return { 
-                loginStatus: loginUser(state, action)
+                loginStatus: true
             };
         case LOGOUT_USER:
             return { 
-                loginStatus: logoutUser(state, action)
+                loginStatus: false
             };
 
 		default:

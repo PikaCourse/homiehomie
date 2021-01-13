@@ -15,6 +15,7 @@ import {updateLoginStatus} from '../../actions/user'
 import {useDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
+import {loadUserCourseBag} from '../../helper/loadUserCalendar'
 
 function UserModule() {
   //local usage 
@@ -525,6 +526,14 @@ function UserModule() {
                 {loginStatus ? userProfile.username : "Login"}
               </Button>
               {loginStatus ? userProfileModal : loginSignupModal}
+              < Button onClick = {
+                  () => {
+                    console.log("loadUserCourseBag()");
+                    console.log(loadUserCourseBag());
+                  }
+                } >
+                Testing purpose 
+                </Button>
             </>
   );
 }
