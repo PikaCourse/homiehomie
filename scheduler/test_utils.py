@@ -292,7 +292,7 @@ def check_order(test_case, arr, key, descending=True):
             continue
         else:
             cur_order = pinned_obj["pin_order"]
-            test_case.assertLessEqual(cur_order, prev_order, msg=f"Key: pin_order\t"
+            test_case.assertGreaterEqual(cur_order, prev_order, msg=f"Key: pin_order\t"
                                                                  f"Prev: {prev_order}\tCur: {cur_order}")
 
 

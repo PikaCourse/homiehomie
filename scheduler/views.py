@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_list_or_404, get_object_or_404
-from django.db.models import Model
+from django.db.models import Model, Q
 from django.utils.decorators import method_decorator
 from scheduler.models import *
 from scheduler.forms import *
@@ -23,6 +23,7 @@ API Definition below
 """
 
 
+# TODO Need an IsAdminOrReadOnly to help uploading and modifying the course objects
 class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
     query_parameters = ["school", "major", "limit"]
     queryset = CourseMeta.objects.all()
@@ -132,7 +133,7 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = CourseSerializer(queryset, many=True)
         return Response(serializer.data)
 
-
+# TODO Paging
 class QuestionViewSet(viewsets.ModelViewSet):
     query_parameters = ["courseid", "sortby", "descending", "limit"]
     queryset = Question.objects.all()
@@ -146,8 +147,11 @@ class QuestionViewSet(viewsets.ModelViewSet):
     supported_sortby_options = ["like_count", "star_count", "dislike_count"]
 
     # GET method to get list of question related to the query
+    # that are not in private and is belong to the logged user
+    # TODO User private questions should be separated? since it always
+    #  need to be in the list
     def list(self, request, *args, **kwargs):
-        queryset = Question.objects.all()
+        queryset = self.get_queryset()
 
         # TODO Better way?
         # TODO Query parameter Validation according to API DOC
@@ -168,14 +172,26 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if coursemetaid is not None:
             try:
                 queryset = queryset.filter(course_meta_id=coursemetaid)
+                # TODO Possible performance improvement?
+                # TODO Create API to upload course and course meta and then
+                #  create the default questions after the course meta objects are created
+                # Check if the course meta id is valid and that the pinned question not exists in Question db
+                if CourseMeta.objects.filter(id=coursemetaid).exists() and \
+                        not Question.objects.filter(course_meta_id=coursemetaid, is_pin=True).exists():
+                    self.create_default_questions(coursemetaid)
+                    queryset = self.get_queryset().filter(course_meta_id=coursemetaid)
             except ValueError:
                 raise InvalidQueryValue()
+        # Sort by scheme:
+        # 1. Pinned question first
+        # 2. User private question next
+        # 3. Rest question
         if sortby is not None:
             if sortby not in self.supported_sortby_options:
                 raise InvalidQueryValue()
-            queryset = queryset.order_by("-is_pin", "pin_order", ("-" if descending else "") + sortby, "-last_answered")
+            queryset = queryset.order_by("-is_pin", "pin_order", "-is_private", ("-" if descending else "") + sortby, "-last_answered")
         else:
-            queryset = queryset.order_by("-is_pin", "pin_order", ("-" if descending else "") + "like_count", "-last_answered")
+            queryset = queryset.order_by("-is_pin", "pin_order", "-is_private", ("-" if descending else "") + "like_count", "-last_answered")
         # Also sub order by created time, the newest is at top
         if limit is not None:
             try:
@@ -227,7 +243,46 @@ class QuestionViewSet(viewsets.ModelViewSet):
                       "question": question.id, "status": status.HTTP_200_OK}
         return Response(error_pack)
 
+    def get_queryset(self):
+        """
+        Return a list of public questions and questions belong to logged user
+        :return:
+        """
+        user = self.request.user
+        qs = Q(is_private=False)
+        if not user.is_anonymous:
+            qs = qs | Q(created_by=user.student)
+        return Question.objects.filter(qs)
 
+    @staticmethod
+    def create_default_questions(course_meta_id):
+        """
+        Create basic questions in database for the course
+        Check for their exact existence in db
+        :return:
+        """
+        question_template = {
+            "course_meta_id": course_meta_id,
+            "created_by": Student.get_site_bot(),
+            "is_pin": True,
+            "is_private": False,
+            "title": "",
+            "pin_order": 0
+        }
+        questions = [
+            ("What is this class about? What can I learn from this class?", 0),
+            ("How hard it is?", 1),
+            ("Which professor’s class to take?", 2)
+        ]
+
+        for title, order in questions:
+            question_data = question_template.copy()
+            question_data["title"] = title
+            question_data["pin_order"] = order
+            Question.objects.create(**question_data)
+
+
+# TODO Search by question array or modify to have question-note pair returned?
 class NoteViewSet(viewsets.ModelViewSet):
     query_parameters = ["courseid", "questionid", "sortby", "descending", "limit"]
 
@@ -242,7 +297,7 @@ class NoteViewSet(viewsets.ModelViewSet):
     supported_sortby_options = ["like_count", "star_count", "dislike_count"]
 
     def list(self, request, *args, **kwargs):
-        queryset = Note.objects.all()
+        queryset = self.get_queryset()
 
         # TODO Better way?
         # TODO Query parameter Validation according to API DOC
@@ -334,6 +389,17 @@ class NoteViewSet(viewsets.ModelViewSet):
         error_pack = {"code": "success", "detail": "successfully deleted note",
                       "note": note.id, "status": status.HTTP_200_OK}
         return Response(error_pack)
+
+    def get_queryset(self):
+        """
+        Return a list of public questions and questions belong to logged user
+        :return:
+        """
+        user = self.request.user
+        qs = Q(is_private=False)
+        if not user.is_anonymous:
+            qs = qs | Q(created_by=user.student)
+        return Note.objects.filter(qs)
 
 
 class PostViewSet(viewsets.ModelViewSet):

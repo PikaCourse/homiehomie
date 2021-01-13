@@ -40,6 +40,8 @@ class PostAnswerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# TODO Validate that the courses in the schedule matched
+#  with the year and semester
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule

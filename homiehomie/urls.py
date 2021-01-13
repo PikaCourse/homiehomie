@@ -18,10 +18,13 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
+import debug_toolbar
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('frontend.urls')),
     path('api/', include('scheduler.urls')),
-    path('api/', include('user.urls'))
+    path('api/', include('user.urls')),
+    path('__debug__/', include(debug_toolbar.urls)),
 ]
