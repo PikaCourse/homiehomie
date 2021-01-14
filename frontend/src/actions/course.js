@@ -23,7 +23,7 @@ export const getCourse = (title) => (dispatch) => {
 
 export const getCourseList = (title) => dispatch =>{
     axios
-    .get(`api/coursesmeta?title=${title}&year=${year}&semester=${semester}&school=${school}`)
+    .get(`api/coursesmeta?title=${title}&year=${year}&limit=10&school=${school}`)
     .then(res=>{
         dispatch({
             type:GET_COURSELIST,

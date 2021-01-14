@@ -4,11 +4,11 @@ const { Search } = Input;
 import { getCourse, getCourseList } from "../../actions/course";
 import { useDispatch, useSelector } from "react-redux";
 
-const prompt = "Search subject, CRN or course name";
+const prompt = "Try CAS CS 111";
 function WikiSearch() {
   const option = useSelector((state) => state.course.option);
   const [timer, setTimer] = useState(null);
-  const interval = 500;
+  const interval = 100;
   const dispatch = useDispatch();
 
   function searchOnChange(query) {
