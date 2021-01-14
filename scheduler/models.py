@@ -281,9 +281,9 @@ class Schedule(models.Model):
     is_star = models.BooleanField(default=False)
     is_private = models.BooleanField(default=True)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
-    semester = models.CharField(max_length=8, choices=SEMESTER_CHOICES)
-    name = models.CharField(max_length=200, blank=True)
-    note = models.TextField(blank=True, null=True)
+    semester = models.CharField(max_length=8, choices=SEMESTER_CHOICES, default="fall")
+    name = models.CharField(max_length=200, blank=True, default="Default schedule")
+    note = models.TextField(blank=True, null=True, default="")
     courses = models.ManyToManyField(Course, blank=True)
     events = models.JSONField(default=list, null=True)
     tags = models.JSONField(default=list, null=True)
@@ -296,6 +296,13 @@ class Schedule(models.Model):
 
     def __str__(self):
         return str(self.student) + "_" + str(self.year) + "_" + self.semester + "_" + self.name
+
+# Create a schedule after a student instance is created
+@receiver(post_save, sender=Student)
+def create_user_schedule(sender, instance, created, raw, **kwargs):
+    # Prevent creating instance upon loading fixtures, which is used for testing
+    if created and not raw:
+        Schedule.objects.create(student=instance)
 
 
 class WishList(models.Model):
@@ -323,7 +330,7 @@ class WishList(models.Model):
 
 # Create a wishlist after a student instance is created
 @receiver(post_save, sender=Student)
-def create_user_profile(sender, instance, created, raw, **kwargs):
+def create_user_wishlist(sender, instance, created, raw, **kwargs):
     # Prevent creating instance upon loading fixtures, which is used for testing
     if created and not raw:
         WishList.objects.create(student=instance)
