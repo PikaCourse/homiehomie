@@ -1,4 +1,7 @@
-# Makefile for Course Wiki
+#############################################
+# Makefile for CourseOcean
+#############################################
+
 .PHONY: coverage_%
 .PHONY: coverage-report
 .PHONY: coverage-report_%
@@ -9,6 +12,10 @@
 .PHONY: help
 .PHONY: migrations_%
 .PHONY: migratedb_%
+
+#############################################
+# Help
+#############################################
 
 help:
 	@echo "----------------------------------------------------------------"
@@ -46,6 +53,10 @@ help:
 	@echo "  clean-coverage       - clean generated coverage related files"
 	@echo "----------------------------------------------------------------"
 
+#############################################
+# Clean up directory
+#############################################
+
 clean: clean-coverage
 
 # Clean coverage statistics and report related files
@@ -54,31 +65,20 @@ clean-coverage:
 	rm .coverage.*
 	rm coverage.*
 
-# Run coverage test on the project with specified setting files
-coverage_% :
-	@COVERAGE_PROCESS_START=./.coveragerc coverage run \
-		--concurrency=multiprocessing \
-		--rcfile=./.coveragerc manage.py test \
-		--settings=homiehomie.settings_d.$* --parallel
-	@coverage combine
 
-coverage : coverage_local
+#############################################
+# Install dependency
+#############################################
 
-# Generate coverage report in terminal
-coverage-report :
-	@coverage report
+dependency:
+	source venv/bin/activate
+	pip install -r requirements/dev.txt
+	npm install
 
-# Choose a format for coverage report
-coverage-report_% :
-	@coverage $* -o coverage.$*
 
-# Launch fake smtp server to listen to email
-dummy-smtp :
-	python -m smtpd -n -c DebuggingServer localhost:1025
-
-# Generate Django Random Key
-random-key :
-	python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+#############################################
+# Django server related
+#############################################
 
 # Database
 migrations_% :
@@ -103,3 +103,37 @@ prodserver_% : collectstatic_% migratedb_%
 	DJANGO_SETTINGS_MODULE=homiehomie.settings_d.$* gunicorn homiehomie.wsgi:application
 
 
+#############################################
+# Django coverage testing related
+#############################################
+
+# Run coverage test on the project with specified setting files
+coverage_% :
+	@COVERAGE_PROCESS_START=./.coveragerc coverage run \
+		--concurrency=multiprocessing \
+		--rcfile=./.coveragerc manage.py test \
+		--settings=homiehomie.settings_d.$* --parallel
+	@coverage combine
+
+coverage : coverage_local
+
+# Generate coverage report in terminal
+coverage-report :
+	@coverage report
+
+# Choose a format for coverage report
+coverage-report_% :
+	@coverage $* -o coverage.$*
+
+
+#############################################
+# Django utils
+#############################################
+
+# Launch fake smtp server to listen to email
+dummy-smtp :
+	python -m smtpd -n -c DebuggingServer localhost:1025
+
+# Generate Django Random Key
+random-key :
+	python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
