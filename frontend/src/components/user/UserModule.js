@@ -11,7 +11,7 @@ const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import prompt from "../../../static/json/prompt.json"
 import store from '../../store'
-import {updateLoginStatus, getUserSchedule, updateUserSchedule} from '../../actions/user'
+import {updateLoginStatus, getUserSchedule, updateUserSchedule, updateUserCalendarBag} from '../../actions/user'
 import {useDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -529,18 +529,18 @@ function UserModule() {
               {loginStatus ? userProfileModal : loginSignupModal}
               < Button onClick = {
                   () => {
-                    dispatch(getUserSchedule()); 
-                    let scheduleCopy = [...store.getState().calendar.calendarCourseBag]; 
-                    let scheduleCopyMotified = scheduleCopy.map(event => {
-                      event.raw.course = [], 
-                      event.raw.selectedCourseArray = []; 
-                      return event; 
-                    }); 
-                    console.log("scheduleCopy"); 
-                    console.log(scheduleCopy); 
-                    console.log("scheduleCopyMotified"); 
-                    console.log(scheduleCopyMotified); 
-                    dispatch(updateUserSchedule(scheduleCopyMotified)); 
+                    // dispatch(getUserSchedule()); 
+                    // let scheduleCopy = [...store.getState().calendar.calendarCourseBag]; 
+                    // let scheduleCopyMotified = scheduleCopy.map(event => {
+                    //   event.raw.course = [], 
+                    //   event.raw.selectedCourseArray = []; 
+                    //   return event; 
+                    // }); 
+                    // console.log("scheduleCopy"); 
+                    // console.log(scheduleCopy); 
+                    // console.log("scheduleCopyMotified"); 
+                    // console.log(scheduleCopyMotified); 
+                    dispatch(updateUserCalendarBag(store.getState().calendar.calendarCourseBag)); 
                     console.log("getUserSchedule"); 
                     console.log(store.getState().user.schedule); 
                     console.log(store.getState().user.scheduleId); 

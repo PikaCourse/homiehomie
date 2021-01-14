@@ -29,8 +29,30 @@ export const getUserSchedule = () => (dispatch) => {
       });
 }
 
+//directly upload input array to schedule.custom 
 export const updateUserSchedule = (newSchedule) => (dispatch) => {
     let newScheduleObj = {custom: [...newSchedule]}
+    axios
+      .patch("/api/schedules/"+store.getState().user.scheduleId, newScheduleObj)
+      .then((result) => { 
+        dispatch ({
+            type: UPDATE_USER_SCHEDULE,
+            userSchedule: newSchedule, 
+        }); 
+      })
+      .catch((err) => {  
+      });
+}
+
+//for calendar course bag 
+export const updateUserCalendarBag = (newSchedule) => (dispatch) => {
+    let scheduleCopy = [...store.getState().calendar.calendarCourseBag]; 
+    let scheduleCopyMotified = scheduleCopy.map(event => {
+        event.raw.course = [], 
+        event.raw.selectedCourseArray = []; 
+        return event; 
+    }); 
+    let newScheduleObj = {custom: [...scheduleCopyMotified]}
     axios
       .patch("/api/schedules/"+store.getState().user.scheduleId, newScheduleObj)
       .then((result) => { 
