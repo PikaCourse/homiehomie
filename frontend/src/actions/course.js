@@ -7,7 +7,7 @@ import {
   SET_COURSE_BY_TIME,
 } from "./types";
 import {GET_COURSELIST} from './types'
-import { year, semester, courseDataPatch } from "../helper/global";
+import { year, semester, courseDataPatch, school } from "../helper/global";
 
 export const getCourse = (title) => (dispatch) => {
   axios
@@ -22,7 +22,8 @@ export const getCourse = (title) => (dispatch) => {
 };
 
 export const getCourseList = (title) => dispatch =>{
-    axios.get('api/coursesmeta?title='+title)
+    axios
+    .get(`api/coursesmeta?title=${title}&year=${year}&semester=${semester}&school=${school}`)
     .then(res=>{
         dispatch({
             type:GET_COURSELIST,
