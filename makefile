@@ -7,6 +7,8 @@
 .PHONY: dummy-smtp
 .PHONY: testserver_%
 .PHONY: help
+.PHONY: migrations_%
+.PHONY: migratedb_%
 
 help:
 	@echo "----------------------------------------------------------------"
@@ -79,6 +81,9 @@ random-key :
 	python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
 
 # Database
+migrations_% :
+	python manage.py makemigrations --settings=homiehomie.settings_d.$*
+
 migratedb_% :
 	python manage.py migrate --settings=homiehomie.settings_d.$*
 
