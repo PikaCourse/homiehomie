@@ -21,8 +21,8 @@ export const getUserSchedule = () => (dispatch) => {
         console.log(result); 
         dispatch ({
             type: GET_USER_SCHEDULE,
-            userSchedule: result.data.custom, 
-            userScheduleId: result.data.id, 
+            userSchedule: result.data[0].custom, 
+            userScheduleId: result.data[0].id, 
         }); 
       })
       .catch((err) => {  
@@ -32,7 +32,7 @@ export const getUserSchedule = () => (dispatch) => {
 export const updateUserSchedule = (newSchedule) => (dispatch) => {
     let newScheduleObj = {custom: [...newSchedule]}
     axios
-      .patch("/api/schedules/"+userScheduleId, newScheduleObj)
+      .patch("/api/schedules/"+store.getState().user.scheduleId, newScheduleObj)
       .then((result) => { 
         dispatch ({
             type: UPDATE_USER_SCHEDULE,
