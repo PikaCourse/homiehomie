@@ -7,25 +7,26 @@ import {
   ADD_CUS_EVENT_IN_CAL,
   DO_NOTHING, 
   REMOVE_CUS_EVENT_IN_CAL, 
+  OVERWRITE_COURSE_BAG, 
   // UPDATE_PREVIEW,
   // CLEAR_PREVIEW
 } from "../actions/types.js";
 import {loadState, saveState, loadCalendarCourseBag} from '../../src/helper/localStorage'
+import axios from "axios";
 
 const initialState = {
   calendarCourseBag: loadCalendarCourseBag(),
 };
 
-function getMonday(d) {
+export const getMonday = (d) => {
   d = new Date(d);
   var day = d.getDay(),
     diff = d.getDate() - day + 1; // adjust when day is sunday
   return new Date(d.setDate(diff));
 }
 
-const today = new Date();
-
-function alignDate(weekDayIndex, timestamp) {
+export const alignDate = (weekDayIndex, timestamp) => {
+  const today = new Date();
   let date = new Date(today.toDateString() + ", " + timestamp);
   return new Date(
     getMonday(date).setDate(getMonday(date).getDate() + weekDayIndex)
@@ -49,6 +50,7 @@ function addNewCourseToBag(state, action, update) {
     newBag.push({
       type: 'course',
       id: newId,
+      courseId: action.selectedCourse.id, 
       title: action.selectedCourse.course_meta.title,
       allDay: false,
       start: alignDate(timeslot.weekday, timeslot.start_at),
@@ -96,7 +98,7 @@ function addNewCusEventToBag(state, action) {
   let update = false;
 
   tempArray = tempArray.map((existingEvent) => {
-    if (existingEvent.id == action.event.id) {
+    if (addSelectCourse.id == action.event.id) { //addSelectCourse.id????????
       existingEvent.start = action.event.start;
       existingEvent.end = action.event.end;
       update = true;
@@ -135,7 +137,6 @@ function addNewCusEventToBag(state, action) {
   return tempArray;
 }
 
-
 // function getUniqueCourses(courseBag) {
 //   let uniqueCourseBag = Array.from(new Set(courseBag.map(a => a.title)))
 //       .map(title => {
@@ -146,6 +147,36 @@ function addNewCusEventToBag(state, action) {
 //   ); 
 //   return uniqueCourseBag; 
 // }
+
+function addCourseToUser(state, action, update) {
+  var userSchedule; 
+  axios
+      .get("/api/schedules", 
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+      )
+      .then((result) => {
+        userSchedule = result; 
+        console.log(result); 
+      })
+      .catch(err => {
+        console.log(err.response); 
+      });
+  if (update) {
+    let removeCourse = state.calendarCourseBag.find(
+      (item) => (item.raw.selectedCourseArray == action.selectedCourseArray)
+    ); 
+  }
+  let addCourse = action.selectedCourse; 
+
+}
+
+function removeCourseFromUser(state, action) {
+
+}
 
 
 export default function (state = initialState, action) {
@@ -199,6 +230,11 @@ export default function (state = initialState, action) {
         calendarCourseBag: state.calendarCourseBag.filter(
           (item) => (item.id != action.event.id) 
         ),
+      };
+    case OVERWRITE_COURSE_BAG: 
+      return {
+        ...state,
+        calendarCourseBag: action.newBag,
       };
     default:
       return state;
