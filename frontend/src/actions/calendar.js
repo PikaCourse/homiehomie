@@ -7,6 +7,7 @@ import {
   REMOVE_CUS_EVENT_IN_CAL,
   ADD_COURSE_TO_WISH,
   REMOVE_COURSE_FROM_WISH,
+  OVERWRITE_COURSE_BAG, 
 
 } from './types'
 import store from '../store'
@@ -142,5 +143,12 @@ export const removeCustomEvent = (inputEvent) => {
   return {
     type: REMOVE_CUS_EVENT_IN_CAL,
     event: inputEvent,
+  }
+}
+
+export const overwriteCourseBag = (newCourseBag) => {
+  return {
+    type: OVERWRITE_COURSE_BAG,
+    newBag: newCourseBag,
   }
 }

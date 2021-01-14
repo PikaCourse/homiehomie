@@ -7,6 +7,7 @@ import {
   ADD_CUS_EVENT_IN_CAL,
   DO_NOTHING, 
   REMOVE_CUS_EVENT_IN_CAL, 
+  OVERWRITE_COURSE_BAG, 
   // UPDATE_PREVIEW,
   // CLEAR_PREVIEW
 } from "../actions/types.js";
@@ -229,6 +230,11 @@ export default function (state = initialState, action) {
         calendarCourseBag: state.calendarCourseBag.filter(
           (item) => (item.id != action.event.id) 
         ),
+      };
+    case OVERWRITE_COURSE_BAG: 
+      return {
+        ...state,
+        calendarCourseBag: action.newBag,
       };
     default:
       return state;

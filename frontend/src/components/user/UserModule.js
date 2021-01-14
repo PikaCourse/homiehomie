@@ -12,6 +12,7 @@ import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import prompt from "../../../static/json/prompt.json"
 import store from '../../store'
 import {updateLoginStatus, getUserSchedule, updateUserSchedule, updateUserCalendarBag} from '../../actions/user'
+import {overwriteCourseBag} from '../../actions/calendar'
 import {useDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -427,6 +428,9 @@ function UserModule() {
             "last_active_time",
             JSON.stringify(new Date())
           );
+          console.log("store.getState().user.schedule in login"); 
+          console.log(store.getState().user.schedule);  
+          dispatch(overwriteCourseBag(store.getState().user.schedule)); //default overwrite existing schedule 
         }
       })
       .catch(err => {
