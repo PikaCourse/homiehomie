@@ -140,7 +140,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
-    permission_classes = [QuestionViewSetPermission]
+    permission_classes = [QuestionViewSetPermission, IsVerifiedOrReadOnly]
 
     # TODO Better way to valdiate query param
     # Supported fields for sortby option
@@ -176,7 +176,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
                 # TODO Create API to upload course and course meta and then
                 #  create the default questions after the course meta objects are created
                 # Check if the course meta id is valid and that the pinned question not exists in Question db
-                if queryset.exists() and not Question.objects.filter(course_meta_id=coursemetaid, is_pin=True).exists():
+                if CourseMeta.objects.filter(id=coursemetaid).exists() and \
+                        not Question.objects.filter(course_meta_id=coursemetaid, is_pin=True).exists():
                     self.create_default_questions(coursemetaid)
                     queryset = self.get_queryset().filter(course_meta_id=coursemetaid)
             except ValueError:
@@ -289,7 +290,7 @@ class NoteViewSet(viewsets.ModelViewSet):
     serializer_class = NoteSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
-    permission_classes = [NoteViewSetPermission]
+    permission_classes = [NoteViewSetPermission, IsVerifiedOrReadOnly]
 
     # TODO Better way to valdiate query param, use serializer
     # Supported fields for sortby option
@@ -410,7 +411,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
-    permission_classes = [PostViewSetPermission]
+    permission_classes = [PostViewSetPermission, IsVerifiedOrReadOnly]
 
     # TODO Better way to valdiate query param
     # Supported fields for sortby option
@@ -513,7 +514,7 @@ class PostAnswerViewSet(viewsets.ModelViewSet):
     queryset = PostAnswer.objects.all()
     serializer_class = PostAnswerSerializer
     parser_classes = [FormParser]
-    permission_classes = [PostAnswerViewSetPermission]
+    permission_classes = [PostAnswerViewSetPermission, IsVerifiedOrReadOnly]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
 
 

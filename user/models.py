@@ -8,15 +8,16 @@ class Student(models.Model):
     """
     Student User
 
-    user:       User mapping
-    school:     Student's School
-    major:      Student's Primary major
-    majors:     Student's Other Majors list
-    minors:     Student's Minors list
-    graduation: Student's expected graduation
-    birthday:   Student's Birthday
-    sex:        Student's sex/gender
-    type:       Student's Type: freshman, sophomore, junior, senior, graduate
+    user:           User mapping
+    is_verified:    Whether or not the user has verified his/her email
+    school:         Student's School
+    major:          Student's Primary major
+    majors:         Student's Other Majors list
+    minors:         Student's Minors list
+    graduation:     Student's expected graduation
+    birthday:       Student's Birthday
+    sex:            Student's sex/gender
+    type:           Student's Type: freshman, sophomore, junior, senior, graduate
     """
     FRESHMAN = 'FR'
     SOPHOMORE = 'SO'
@@ -34,6 +35,7 @@ class Student(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="student")
+    is_verified = models.BooleanField(default=False)
     school = models.CharField(max_length=100, null=True)
     major = models.CharField(max_length=100, null=True)
     majors = models.JSONField(default=list, blank=True, null=True)

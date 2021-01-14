@@ -266,6 +266,8 @@ class Schedule(models.Model):
                         "end_at": "14:45",
                         "id": 1
                     },
+
+    custom:         A custom json field for frontend to temporarily store custom json content
     """
     SEMESTER_CHOICES = [
         ("fall", "fall"),
@@ -286,6 +288,8 @@ class Schedule(models.Model):
     events = models.JSONField(default=list, null=True)
     tags = models.JSONField(default=list, null=True)
 
+    custom = models.JSONField(default=list, null=True)
+
     class Meta:
         # Default to put last edited schedule to first
         ordering = ["-last_edited"]
@@ -302,14 +306,17 @@ class WishList(models.Model):
     created_at:     The time this wishlist is created
     last_edited:    The most recent time this schedule is edited
     note:           Note of the wishlist
+    courses:        Access all the courses in this wishlist via id array
 
-    coursesid:      Access all the courses in this wishlist via id array
+    custom:         A custom json field for frontend to temporarily store custom json content
     """
-    student = models.OneToOneField(Student, on_delete=models.SET(Student.get_sentinel_user))
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     last_edited = models.DateTimeField(auto_now_add=True)
     note = models.TextField(blank=True, null=True)
     courses = models.ManyToManyField(Course, blank=True)
+
+    custom = models.JSONField(default=list, null=True)
 
     def __str__(self):
         return f"Wishlist_{self.student}"

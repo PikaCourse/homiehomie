@@ -1,268 +1,188 @@
-# Homiehomie
-![Project CI](https://github.com/MARX1108/homiehomie/workflows/Project%20CI/badge.svg)
+# CourseOcean
+
+![Prod CI](https://github.com/coursewiki/homiehomie/workflows/Prod%20CI/badge.svg?branch=main)
+![Dev CI](https://github.com/coursewiki/homiehomie/workflows/Dev%20CI/badge.svg?branch=dev)
 [![codecov](https://codecov.io/gh/MARX1108/homiehomie/branch/main/graph/badge.svg?token=2WPZQMGJV0)](https://codecov.io/gh/MARX1108/homiehomie)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FMARX1108%2Fhomiehomie.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FMARX1108%2Fhomiehomie?ref=badge_shield)
 
-## TODO
+## Intro
 
-### Backend
+A scheduling platform for student to choose courses.
 
-1. [ ] Scheduler
-    1. [x] Model
-    2. [x] API Documentation
-    3. [x] API Backend implementation
-    3. [x] Add course section num field?
-    3. [ ] Make a new table for school for ease of searching school when creating user?
-    4. [ ] Set up test
-        1. [x] Test model method
-        2. [ ] Test view
-            1. [ ] Regular access
-                1. Valid access
-                2. Multiple valid access
-                3. Large access
-            2. [ ] Irregular access
-                1. Invalid access
-                2. access not existing object
-                3. invalid url
-            3. [ ] Permission testing
-        3. [ ] Coverage report
-        4. [ ] GitHub action
-        5. [ ] Advance testing
-            1. [ ] Do we need separate test db to run unit testing?
-                1. Probably not
-                1. But do need a test db
-                1. Specify test db in `setting.py`?
-                1. Use [test fixture](https://docs.djangoproject.com/en/3.1/topics/testing/tools/#fixture-loading)
-    5. [x] API Post and Put
-        1. [x] Create/Modify question
-        2. [x] Create/Modify note
-        3. [x] Create/Modify Post
-        4. [x] Create/Modify PostAnswer
-    6. [ ] API Delete
-        1. [ ] API Doc
-        2. [ ] API Implementation
-            1. [ ] Post answer deletion
-    6. [ ] Better tagging model
-        1. Create a table? shared by question, note, and post or even course
-    7. Code optimization
-        1. [x] Use django form for POST/PUT
-        1. [ ] Use mixin to add GET/POST/PUT/DELETE for api
-    8. Detail documentation
-2. [ ] User
-    1. [X] User model
-    2. [x] Password transmission
-        1. [x] plain text over HTTPS
-        2. [x] Store as hashed value using django API
-    3. [ ] Register/Login
-        1. [x] Registration Form
-            1. Use form
-        2. [x] Link with customized user model
-        3. [ ] Implement other user password related views
-            1. Change
-            2. reset
-            3. etc
-    4. [ ] Permission Setting
-        1. [ ] User group
-            1. [ ] standard
-                1. Normal user
-            2. [ ] moderator
-                1. User with some ability to modify/moderate content
-            3. [ ] staff
-                1. Staff to manage the db
-                2. Can do anything except delete
-            4. [ ] superuser
-        2. [ ] Permission
-            1. Add isOwnerOrReadOnly Permission
-        3. Require permissions on all api scope
-    5. [ ] User Profile
-        1. [ ] Student information
-        2. [ ] Link with scheduler app
-3. [ ] General Search API
-    1. [ ] Advanced search via hashtag
-4. [ ] Instant Messaging
-5. [x] Test server deployment on dokku 
-    1. [x] Test server
-    2. [x] Upgrade dokku to use `Procfile`
-6. [x] GitHub action auto deploy to dokku
-7. [ ] Dockerify
-8. [ ] Production Deployment
-    1. [ ] Docker?
-    2. [ ] Static file serving issue
-        1. [ ] Use server
-        2. [ ] CDN
-9. [ ] Importing Course
-    1. [x] Detail schema of course data
-    2. [ ] Purdue
-    3. [ ] UNC/BU
-10. [ ] Support for dynamic/partially loading notes 
-11. [ ] Add admin api for easily updating course and course meta info like field `registered`
+### API
 
-## how to
+1. [API Document](https://app.swaggerhub.com/apis/NeX-Studio/HomieHomie)
+2. [Dev Server](https://test-homiehomie.thexyzlab.studio/)
+3. [Prod Server](https://courseocean.cc)
 
-### Install virtualenv and initialize venv
+## Preparing for development
+
+### Prerequisites
+
+To successfully run the following configuration commands, you will need:
+
+1. Python 3.7 or 3.8 with download instruction [here](https://www.python.org/downloads/)
+2. Node.js 14.x with download instruction [here](https://nodejs.org/en/download/)
+
+You can check whether or not your system has the above binaries via:
+
+    # For python version checking, 
+    python3 --version
+    python --version
+    
+    # For Node.js
+    node -v
+    
+### Installation
+
+#### Install virtualenv and other python packages
+
+    # Install virtualenv for python
+    # Do make sure that your `python3` points to a python3.7 or python3.8 version
     python -m pip install --user virtualenv
     python -m virtualenv --help
     virtualenv -p python3 venv
     
-### Additional packages (for production only)
-
-#### Ubuntu
-
-    sudo apt install libpq-dev
-    
-### Setup
+    # Activate virtualenv for python
     source venv/bin/activate
-    npm install
     
+    # Install python packages
     # If in test env
     pip install -r requirements/dev.txt
     
-    # If in prod env
+    # If in prod env, which you usually do not need to
     pip install -r requirements.txt
-
-
-### Run
-    source venv/bin/activate
-    # Development Use local db
-    python manage.py runserver --settings=homiehomie.settings_d.local
     
-    # Use remote db
-    python manage.py runserver --settings=homiehomie.settings_d.remote
-    
-    # Use Production server and local setting
-    DJANGO_SETTINGS_MODULE=homiehomie.settings_d.local gunicorn homiehomie.wsgi:application
-    
-    # Use dev db
-    # Run collectstatic since the dev setting use whitenoise to serve files
-    python manage.py collectstatic --noinput
-    python manage.py runserver --settings=homiehomie.settings_d.dev
+#### Install Node.js packages
 
+    npm install
+    
+#### Additional packages (for production only)
+
+    # Ubuntu
+    # postgresql requirement for python package psycopg2
+    sudo apt install libpq-dev
+    
+### Build the project (for Node.js part only)
+
+    # Build in dev setting, allow compilation on file changes
     npm run dev
     
-### Migrate Database
-    python manage.py makemigrations --settings=homiehomie.settings_d.local
+    # Build in production setting, maximize performance and minimize space
+    npm run build
+
+### Run the project
+
+#### Setup
+
+Prepare the environment for projects
+
+    # Use the virtualenv for python
+    source venv/bin/activate
+    
+    # Frontend code realtime compilation
+    # Run this in another terminal tab
+    npm run dev
+
+
+#### Run dummy email server
+
+Since the project has included email service, you will need
+a dummy smtp server to listen to it in order to get, for instance, the verification
+email link. To run the email server, simply run the following command in another
+terminal tab:
+
+    make dummy-smtp
+    
+Which will launch a fake smtp server listening on `localhost:1025`
+
+#### Migrate database
+
+Database migration will apply database changes to the database specified in the setting file
+specified by the `--settings` flag here. You can change the setting file specified by changing
+the package string after it. Currently we have four setting configuration:
+
+1. `homiehomie.settings_d.local` 
+    1. setting for local testing only
+    2. Will use local `sqlite3` db
+    3. `DEBUG=True`
+2. `homiehomie.settings_d.remote`
+    1. Setting nearly identical to `homiehomie.settings_d.local` 
+    2. Except the database is connected to development database hosted on `thexyzlab.studio`
+3. `homiehomie.settings_d.dev`
+    1. **NOT suitable for local testing**
+    2. Setting for development server
+    3. use development database, which is the same as `homiehomie.settings_d.remote`
+    4. `DEBUG=False`
+    5. Use `whitenoise` to serve static file, need to run `python manage.py collectstatic --noinput` before launching
+4. `homiehomie.settings_d.prod`
+    1. **NOT suitable for local testing**
+    2. Setting for production server
+
+
+You should always run this part prior
+to start the server. 
+
+    # Migrate database for local testing setting
+    # Python
     python manage.py migrate --settings=homiehomie.settings_d.local
+    
+    # Or makefile
+    make migratedb_local
 
-## API
+#### Launching server
 
-1. [API Document](https://app.swaggerhub.com/apis/NeX-Studio/HomieHomie/1.0.0)
-2. [Test Server](http://test-homiehomie.thexyzlab.studio/)
+If you use makefile command, `collectstatic` and `migrate` are automatically
+handled by it so you do not need to run them again
 
-## workflowy
+    # Development Use local db
+    make testserver
+    
+    # Or
+    make testserver_local
+    
+    # Use remote db
+    make testserver_remote
+    
+    # Use Production server and local setting
+    make prodserver_local
+    
+    # Use dev db
+    make testserver_dev
 
-https://workflowy.com/s/homiehomie/qLpaReYIIj7eGbsl
+#### Testing and coverage
 
-## database
-backend
-- Data
-  - VT
-    - Course
-      - Use https://github.com/PhillipNgo/PScheduler/tree/spring-2020-update
-      - Import txt files directly to database
-    - Grade
-      - https://udc.vt.edu/irdata/data/course_grades/teaching_load/index
-      - https://github.com/PhillipNgo/PScheduler/tree/spring-2020-update
-      - Import CSV to database
-  - Purdue
-    - Course
-      - https://github.com/Purdue-io/PurdueApi
-- Django
-  - https://www.djangoproject.com/
-  - API
-    - https://www.openapis.org/
-    - TODO API specification
-    - Course page
-      - Course page summary
-      - Course notes
-      - Course post
-      - TODO Instant message
-    - Schedule page
-      - Course info request
-      - Save info
-- MySQL
-  - TODO
-    - spam filter
-    - similar comment recommendation to prevent similar/repeated post
-      - keyword
-      - ML
-  - course
-    - TODO 
-      - Search
-        - 模糊搜索 course name
-    - notes
-    - index id
-    - Course name
-    - Course Time
-    - CRN
-    - Professor
-    - Course Semester
-    - etc
-    - tag
-    - major
-    - department
-  - shared Notes
-    - Comment like
-    - id
-    - timestamp
-    - title
-    - content
-      - markdown
-    - tags
-    - userid
-    - like count
-    - dislike count
-    - star count
-    - courseid
-    - note type
-      - Q1
-        - What will I learn/What is this class about?
-      - Q2
-        - How hard it is/How much time will I spent ?
-      - Q3
-        - Which instructor should I choose?
-  - Post
-    - todo
-      - search functionality
-      - 模糊搜索
-    - Piazza like
-    - id
-    - tags
-    - userid
-    - title
-    - content
-      - markdown
-    - timestamp
-  - Instant message/discussion
-    - TODO
-      - Receiver scope
-        - people in course with same CRN?
-        - people in same course
-        - private messaging
-    - timestamp
-    - UID (who sent)
-    - content
-  - Users
-    - uid
-    - Email
-    - Hashed password
-    - Name
-    - School
-    - Major
-    - Graduation date
-    - Age
-    - Sex/gender
-    - Schedule id
-      - array
-  - Schedule
-    - TODO
-      - prerequisite issue?
-    - uid
-    - timestamp
-    - course array (foreign)
-      - course table index id
-      - (size is guaranteed less than 10)
-    - star
-    - name
-    - semester
-    - tag
-    - Note (markdown)
+You can use either the IDE or `manage.py` to run the test scripts, but
+a series of makefile commands are already set up for you to use:
+
+    # Python Django testing
+    # Run coverage testing on local machine
+    make coverage
+    
+    # See coverage report
+    make coverage-report
+
+### Additional note
+ 
+#### Makefile
+
+A series of makefile commands are set up to ease debugging.
+
+    # Display help message
+    make help
+    
+    # Run coverage test
+    make coverage
+    
+    # Display coverage report
+    make coverage-report
+    
+    # Run test smtp server
+    make dummy-smtp
+    
+    # Run test server
+    make testserver
+    
+    # Generate Django key
+    make random-key
+

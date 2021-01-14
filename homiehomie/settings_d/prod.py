@@ -8,13 +8,19 @@ desc:        Production server setting for project
 """
 
 # Production setting file
-
+from decouple import config, Csv
 from homiehomie.settings_d.default import *
 
-ALLOWED_HOSTS = ["test-homiehomie.thexyzlab.studio", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='127.0.0.1', cast=Csv(post_process=tuple))
 
-DEBUG = False
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 DATABASES = {
     'default': dj_database_url.parse(config("DATABASE_URL")),
 }
+
+# Disable Browsable api view in production
+REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
+    'rest_framework.renderers.JSONRenderer',
+    # 'rest_framework.renderers.BrowsableAPIRenderer',
+]

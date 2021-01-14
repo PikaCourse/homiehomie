@@ -7,6 +7,7 @@ version:     v1.0.0
 desc:        Local setting file used for testing
 """
 
+from decouple import config
 from homiehomie.settings_d.default import *
 
 ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
@@ -51,3 +52,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'storage/db.sqlite3',
     }
 }
+
+# Email settings
+EMAIL_PORT = config("EMAIL_PORT", default=1025, cast=int)
+DEFAULT_FROM_EMAIL = "bot@local.test"

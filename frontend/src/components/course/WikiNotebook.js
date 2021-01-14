@@ -114,7 +114,6 @@ export class WikiNotebook extends Component {
   };
   handleSubmit = (values) => {
     //console.log(this.props.selectedCourse.course_meta.id);
-    //console.log("test private: " + !this.state.public);
     axios
       .post(
         "api/questions",
@@ -222,7 +221,7 @@ export class WikiNotebook extends Component {
         {/* first qu */}
 
         <div>
-          <div onClick={() => this.setState({ addNewCard: true })}>
+          {this.props.loginStatus ? (<div onClick={() => this.setState({ addNewCard: true })}>
             <Card
               bordered={false}
               hoverable
@@ -242,7 +241,26 @@ export class WikiNotebook extends Component {
                 </span>
               </p>
             </Card>
-          </div>
+          </div>) : (<Card
+              bordered={false}
+              hoverable
+              title=""
+              hoverable = {false}
+              className="my-2"
+              style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+            >
+              <p
+                className="text-center"
+                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+              >
+                <span
+                  style={{ borderBottom: "4px solid rgba(65, 158, 244, 1)" }}
+                >
+                  <FontAwesomeIcon icon={faPen} />
+                  PLEASE LOGIN TO ADD QUESTIONS OR NOTES
+                </span>
+              </p>
+            </Card>)}
           {
             /* New Card */
             this.state.addNewCard ? (
@@ -370,7 +388,7 @@ export class WikiNotebook extends Component {
           ): 
           (//if the question and post is public
             <Card
-              hoverable
+              hoverable = {false}
               title={nbObj.question.title}
               bordered={false}
               className="my-2"
@@ -389,7 +407,7 @@ export class WikiNotebook extends Component {
                   <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> {noteObj.dislike_count} */}
                 </p>
               ))}
-              <div className="row">
+              {this.props.loginStatus ? (<div className="row">
                 <div className="col-sm-11 pr-0">
                   <form className="form-inline my-2 my-lg-0">
                     <TextArea
@@ -411,7 +429,7 @@ export class WikiNotebook extends Component {
                     save
                   </Button>
                 </div>
-              </div>
+              </div>): null}
             </Card>
           )
             )}
@@ -430,5 +448,6 @@ const noteBookStyle = {
 const mapStateToProps = (state) => ({
   selectedCourse: state.course.selectedCourse,
   noteBag: state.question.noteBag,
+  loginStatus: state.user.loginStatus,
 });
 export default connect(mapStateToProps)(WikiNotebook);

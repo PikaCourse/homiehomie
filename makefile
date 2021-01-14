@@ -4,6 +4,47 @@
 .PHONY: coverage-report_%
 .PHONY: clean
 .PHONY: clean-coverage
+.PHONY: dummy-smtp
+.PHONY: testserver_%
+.PHONY: help
+.PHONY: migrations_%
+.PHONY: migratedb_%
+
+help:
+	@echo "----------------------------------------------------------------"
+	@echo "Administrative targets:"
+	@echo "  clean            - removes generated coverage files"
+	@echo
+	@echo "Server preparation"
+	@echo "  migratedb_%      - migrate database with setting file specified"
+	@echo "                     see README.md for setting files listed"
+	@echo
+	@echo "  collectstatic_%  - collect static files for whitenoise"
+	@echo
+	@echo "  dummy-smtp       - launch fake smtp email server on localhost:1025"
+	@echo
+	@echo "Running server"
+	@echo "  testserver       - run test server with default local setting"
+	@echo "                     handle database migration as well"
+	@echo
+	@echo "  testserver_%     - run test server with setting file specified"
+	@echo "                     handle database migration as well"
+	@echo
+	@echo "  prodserver_%     - run production server with setting file specified"
+	@echo "                     handle database migration and static file collection"
+	@echo "                     as well"
+	@echo
+	@echo "Coverage testing related"
+	@echo "  coverage             - run coverage tests with default local setting"
+	@echo
+	@echo "  coverage_%           - run coverage tests with setting file specified"
+	@echo
+	@echo "  coverage-report      - generate report after running coverage tests"
+	@echo
+	@echo "  coverage-report_%    - generate report with designated format"
+	@echo
+	@echo "  clean-coverage       - clean generated coverage related files"
+	@echo "----------------------------------------------------------------"
 
 clean: clean-coverage
 
@@ -15,19 +56,50 @@ clean-coverage:
 
 # Run coverage test on the project with specified setting files
 coverage_% :
-	COVERAGE_PROCESS_START=./.coveragerc coverage run \
+	@COVERAGE_PROCESS_START=./.coveragerc coverage run \
 		--concurrency=multiprocessing \
 		--rcfile=./.coveragerc manage.py test \
 		--settings=homiehomie.settings_d.$* --parallel
-	coverage combine
+	@coverage combine
+
+coverage : coverage_local
 
 # Generate coverage report in terminal
 coverage-report :
-	coverage report
+	@coverage report
 
 # Choose a format for coverage report
 coverage-report_% :
-	coverage $* -o coverage.$*
+	@coverage $* -o coverage.$*
 
+# Launch fake smtp server to listen to email
+dummy-smtp :
+	python -m smtpd -n -c DebuggingServer localhost:1025
+
+# Generate Django Random Key
 random-key :
 	python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+
+# Database
+migrations_% :
+	python manage.py makemigrations --settings=homiehomie.settings_d.$*
+
+migratedb_% :
+	python manage.py migrate --settings=homiehomie.settings_d.$*
+
+# Static files
+collectstatic_% :
+	python manage.py collectstatic --noinput --settings=homiehomie.settings_d.$*
+
+# Launching server
+# Launch test server
+testserver_% : migratedb_%
+	python manage.py runserver --settings=homiehomie.settings_d.$*
+
+testserver : testserver_local
+
+# Launch server used in production
+prodserver_% : collectstatic_% migratedb_%
+	DJANGO_SETTINGS_MODULE=homiehomie.settings_d.$* gunicorn homiehomie.wsgi:application
+
+
