@@ -17,9 +17,10 @@ class UniqueOrOwnerValidator:
     """
     requires_context = True
 
-    def __init__(self, queryset, db_owner_id_field="id"):
+    def __init__(self, queryset, db_owner_id_field="id", ignore_case=False):
         self.queryset = queryset
         self.db_owner_id_field = db_owner_id_field
+        self.ignore_case = ignore_case
 
     def __call__(self, value, serializer_field):
         assert (hasattr(serializer_field, "context") and isinstance(serializer_field.context, dict)), \
@@ -30,7 +31,7 @@ class UniqueOrOwnerValidator:
         assert (not request.user.is_anonymous), "User should be authenticated before using this validator"
 
         field_name = serializer_field.field_name
-        kwargs = {field_name: value}
+        kwargs = {f"{field_name}{'__iexact' if self.ignore_case else ''}": value}
         if self.queryset.filter(**kwargs).exists():
             # Try fetch the record and see if the user is the owner
             user_db = self.queryset.get(**kwargs)

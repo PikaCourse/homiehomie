@@ -191,3 +191,9 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="bot@courseocean.cc")
 # Verification token timeout in seconds
 # current setting: 3 hrs
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 3
+
+# Authenticate backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'user.backends.EmailAuthBackend'
+]
