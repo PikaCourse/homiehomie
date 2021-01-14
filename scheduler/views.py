@@ -657,7 +657,7 @@ class PostAnswerViewSet(viewsets.ModelViewSet):
 
 class ScheduleViewSet(viewsets.ModelViewSet):
     serializer_class = ScheduleSerializer
-    http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    http_method_names = ['get', 'post', 'head', 'put', 'delete', 'patch']
     parser_classes = [JSONParser]
     permission_classes = [IsAuthenticated, ScheduleViewSetPermission]
 
@@ -679,7 +679,7 @@ class WishListViewSet(viewsets.ModelViewSet):
     serializer_class = WishListSerializer
     # No delete since we only got one now
     # TODO Prevent deletion if only one wishlist in db?
-    http_method_names = ['get', 'post', 'head', 'put']
+    http_method_names = ['get', 'post', 'head', 'put', 'patch']
     parser_classes = [JSONParser]
     permission_classes = [IsAuthenticated, WishListViewSetPermission]
 
