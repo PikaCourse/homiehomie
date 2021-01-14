@@ -531,6 +531,7 @@ function UserModule() {
                     dispatch(getUserSchedule()); 
                     console.log("getUserSchedule"); 
                     console.log(store.getState().user.schedule); 
+                    console.log(store.getState().user.scheduleId); 
                   }
                 } >
                 Testing purpose 
