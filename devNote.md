@@ -18,3 +18,14 @@ both fields will be changed.
 
 The timestamp part allows the Django to track how many minutes has passed
 since the token issued and thus can expire it.
+
+## Multiple authenticate backend 
+
+Why do we need to specified the authentication backend for `login` 
+when there is multiple backends in setting?  
+
+Suspecting that this is to help django know what authentication method
+the user was using.
+
+Ref: [here](https://docs.djangoproject.com/en/3.1/topics/auth/default/#selecting-the-authentication-backend)  
+Ref: [here](https://stackoverflow.com/questions/64235399/django-why-do-i-need-to-specify-the-user-backend-when-logging-in-with-a-custom)

@@ -10,6 +10,7 @@ desc:        User api for Course Wiki
 from user.serializers import *
 from user.permissions import *
 from user.tokens import *
+from user.backends import *
 from django.shortcuts import redirect, resolve_url, reverse, render
 from django.conf import settings
 from django.contrib.auth import login as auth_login
@@ -74,7 +75,8 @@ class UserLoginViewSet(viewsets.GenericViewSet):
         # If already login, simply return the response
         if not request.user.is_anonymous:
             # Refresh user login timestamp for token usage
-            auth_login(request, request.user)
+            # todo why need to specify backend?
+            auth_login(request, request.user, backend="django.contrib.auth.backends.ModelBackend")
             error_pack = {"code": "success", "detail": "already login",
                           "user": request.user.id, "status": status.HTTP_200_OK}
             return Response(error_pack, status=status.HTTP_200_OK)
@@ -85,6 +87,8 @@ class UserLoginViewSet(viewsets.GenericViewSet):
             # Check if the credentials are correct and can be login
             user = credentials.save()
             # Credential correct, login user
+            # No need to specify backend as the user is returned by `authenticate()`, which will
+            # set the `.backend` attribute for the user
             auth_login(request, user)
             error_pack = {"code": "success", "detail": "successfully login user",
                           "user": user.id, "status": status.HTTP_200_OK}
@@ -117,24 +121,27 @@ class UserLoginViewSet(viewsets.GenericViewSet):
         :return:
         """
 
-        credentials = UserRegisterSerializer(data=request.data)
+        # TODO Use smarter self.get_serializer to automatically give the correct
+        #  serializer instead of manually assign one
+        credentials = UserRegisterSerializer(data=request.data, context={'request': request})
         if credentials.is_valid(raise_exception=True):
             # Credentials valid, creating new user/student instance
             user = credentials.save()
-            error_pack = {"code": "success", "detail": "successfully register user",
-                          "user": user.id, "status": status.HTTP_200_OK}
-            # Login user, removed after adding email registration
-            auth_login(request, user)
-
-            # Send verification email to user
             try:
+                error_pack = {"code": "success", "detail": "successfully register user",
+                              "user": user.id, "status": status.HTTP_200_OK}
+                # Login user, removed after adding email registration
+                # Specify default auth backend since the user is not authenticated but created
+                auth_login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+
+                # Send verification email to user
                 send_verification_email(request)
-            except Exception:
+            except Exception as exc:
                 # Ignore any issue with email system
                 # Undo user creation upon error
                 auth_logout(request)
                 user.delete()
-                error_pack = {"code": "error", "detail": "Unknown server error: email service",
+                error_pack = {"code": "error", "detail": "Unknown server error",
                               "status": status.HTTP_500_INTERNAL_SERVER_ERROR}
 
             return Response(error_pack, status=error_pack["status"])
@@ -153,7 +160,8 @@ class UserLoginViewSet(viewsets.GenericViewSet):
             # Token verified, modified user `is_verified` and login user
             user.student.is_verified = True
             user.student.save()
-            auth_login(request, user)
+            # Need to specify authenticated backend
+            auth_login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             # TODO Better template
             context = {
                 "message": "You have successfully verified your email and we will be redirecting you shortly.."
