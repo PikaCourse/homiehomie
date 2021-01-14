@@ -7,11 +7,13 @@ on:
       - 'README.md'
       - '.gitignore'
       - '.github/**'
+      - 'makefile'
   pull_request:
     paths-ignore: 
       - 'README.md'
       - '.gitignore'
       - '.github/**'
+      - 'makefile'
     branches: [ dev ]
     
   workflow_dispatch:
