@@ -134,7 +134,7 @@ class UserLoginViewSet(viewsets.GenericViewSet):
                 # Undo user creation upon error
                 auth_logout(request)
                 user.delete()
-                error_pack = {"code": "error", "detail": "Unknown server error",
+                error_pack = {"code": "error", "detail": "Unknown server error: email service",
                               "status": status.HTTP_500_INTERNAL_SERVER_ERROR}
 
             return Response(error_pack, status=error_pack["status"])
