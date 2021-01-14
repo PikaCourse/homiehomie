@@ -1,5 +1,7 @@
 import {LOGIN_USER, LOGOUT_USER, GET_USER_SCHEDULE, UPDATE_USER_SCHEDULE} from '../actions/types'
 import axios from "axios";
+import { year, semester, courseDataPatch, school } from "../helper/global";
+
 
 const initialState = {
     loginStatus: false,
@@ -51,6 +53,26 @@ const initialState = {
 //       });
 //       return testVar; 
 //   };
+
+function getUserSchedule(state, action) {
+    let schedule = action.userSchedule.map(event => {
+
+        axios
+            .get(`api/courses?title=${event.title}&year=${year}&semester=${semester}`)
+            .then((res) => {
+                event.raw.selectedCourseArray = res.data; 
+            })
+            .catch((err) => console.log(err));
+        axios
+            .get(`api/courses/${event.courseId}`)
+            .then((result) => {
+                event.raw.course = result.data; 
+            })
+            .catch((error) => console.log(error));
+        return event; 
+    }); 
+    return schedule; 
+}
 export default function (state = initialState, action) {
 	switch (action.type) {
 		case LOGIN_USER:
@@ -66,7 +88,7 @@ export default function (state = initialState, action) {
         case GET_USER_SCHEDULE:
             return { 
                 ...state,
-                schedule: action.userSchedule, 
+                schedule: getUserSchedule(state, action), 
                 scheduleId: action.userScheduleId, 
             };
         case UPDATE_USER_SCHEDULE:
