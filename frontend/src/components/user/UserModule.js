@@ -349,6 +349,8 @@ function UserModule() {
         console.log("Successfully logout user");
         dispatch(updateLoginStatus(false)); //use getSessionStatus
         localStorage.removeItem("last_active_time");
+        window.location.reload(); 
+        localStorage.clear();
       })
       .catch(err => {
         setError(
@@ -418,7 +420,13 @@ function UserModule() {
         console.log("result"); 
         console.log(result); 
         if (result.status == 200) {
+          // dispatch(overwriteCourseBag(store.getState().user.schedule)); //default overwrite existing schedule 
           getUserProfile(); 
+          setTimeout(
+            () => {console.log("store.getState().user.schedule in login"); 
+            console.log(store.getState().user.schedule);},
+            3000
+          );
           handleOk(true);
           console.log("Successfully login user");
           setError("");
@@ -427,10 +435,7 @@ function UserModule() {
           localStorage.setItem(
             "last_active_time",
             JSON.stringify(new Date())
-          );
-          console.log("store.getState().user.schedule in login"); 
-          console.log(store.getState().user.schedule);  
-          dispatch(overwriteCourseBag(store.getState().user.schedule)); //default overwrite existing schedule 
+          );  
         }
       })
       .catch(err => {
