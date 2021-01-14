@@ -21,6 +21,8 @@ import {
   Checkbox,
   message,
   resetFields,
+  Switch,
+  Space
 } from "antd";
 
 const { TextArea } = Input;
@@ -43,8 +45,11 @@ export class WikiNotebook extends Component {
 
     this.state = {
       value: [],
+      editVal: "",
       courseIndex: 0,
       addNewCard: false,
+      public: true,
+      input: true,
     };
   }
 
@@ -74,20 +79,51 @@ export class WikiNotebook extends Component {
         }
       )
       .then((result) => {});
+      this.setState({value: []})
   }
 
+  handleEdit(noteObj){
+    axios.put(
+      "api/notes/"+noteObj.id,
+      querystring.stringify({
+        course: noteObj.course,
+        question: noteObj.question,
+        title: noteObj.title,
+        content: this.state.editVal,
+        tags: noteObj.tags,
+        is_private: true
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    )
+    console.log("api/notes/"+noteObj.id+" "+querystring.stringify({
+      course: noteObj.course,
+      question: noteObj.question,
+      title: noteObj.title,
+      content: this.state.editVal,
+      tags: noteObj.tags,
+      is_private: true
+    }),)
+    this.setState({editVal: "", input: false})
+  }
   onChange = ({ target: { value } }) => {
     this.setState({ value });
   };
   handleSubmit = (values) => {
-    console.log(this.props.selectedCourse.course_meta.id);
+    //console.log(this.props.selectedCourse.course_meta.id);
+    //console.log("test private: " + !this.state.public);
     axios
       .post(
         "api/questions",
         querystring.stringify({
           course_meta: this.props.selectedCourse.course_meta.id,
           title: values.question,
+          is_pin: !this.state.public,
           tags: JSON.stringify(["hi", "h2"]),
+          is_private: !this.state.public,
         }),
         {
           headers: {
@@ -105,6 +141,7 @@ export class WikiNotebook extends Component {
               title: "whatever",
               content: values.note,
               tags: JSON.stringify(["hi"]),
+              is_private: !this.state.public
             }),
             {
               headers: {
@@ -137,13 +174,16 @@ export class WikiNotebook extends Component {
               id: res.data.question,
               course_meta: this.props.selectedCourse.course_meta.id,
                 title: values.question,
+                is_pin: !this.state.public,
                 tags: JSON.stringify(["hi", "h2"]),
+                is_private: !this.state.public
             },
             notes:[{course: this.props.selectedCourse.id,
               question: values.question,
               title: "whatever",
               content: values.note,
               tags: JSON.stringify(["hi"])}],
+              is_private: !this.state.public
       
           };
           //console.log("from handlesubmit");
@@ -167,6 +207,7 @@ export class WikiNotebook extends Component {
   }
 
   render() {
+
     return (
       <div className="" style={noteBookStyle}>
         <div className="text-center">
@@ -268,7 +309,7 @@ export class WikiNotebook extends Component {
                   </Form.Item>
 
                   <Form.Item name="remember" valuePropName="checked">
-                    <Checkbox>Public</Checkbox>
+                    <Checkbox onChange={(e)=>{this.setState({public: e.target.checked});}}>Public</Checkbox>
                   </Form.Item>
 
                   <Form.Item>
@@ -282,7 +323,52 @@ export class WikiNotebook extends Component {
           }
           
           {/* Question */}
-          {this.props.noteBag.map((nbObj) => (
+          {this.props.noteBag.map((nbObj) => (nbObj.question.is_private)?(
+            <Card
+            hoverable
+            title={nbObj.question.title}
+            bordered={false}
+            className="my-2"
+            style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+          extra= {<FontAwesomeIcon icon={faThumbtack}/>,"private"}
+            key={nbObj.id}
+          >
+          {nbObj.notes.map((noteObj) => (
+          <>
+          <Space
+              direction="vertical"
+              style={{
+              width: '100%',
+              }}
+           >
+        <Space>
+          <Switch
+            checked={this.state.input}
+            checkedChildren="Read"
+            unCheckedChildren="Edit"
+            size = "small"
+            //defaltValue = {nbObj.notes[0].content}
+            onChange={() => {
+              this.setState(prevState => {
+                return {input: !prevState.input}
+             });
+            }}
+          />
+        </Space>
+        <Input 
+          defaultValue = {noteObj.content} 
+          disabled= {this.state.input}
+          onChange = {(event)=>this.setState({editVal: event.target.value})}
+        />
+        </Space>
+          <Button type="link" size = "large" onClick = {(event)=>this.handleEdit(noteObj)}>
+            Save 
+          </Button>
+          </>
+          ))}
+        </Card>
+          ): 
+          (//if the question and post is public
             <Card
               hoverable
               title={nbObj.question.title}
@@ -327,7 +413,8 @@ export class WikiNotebook extends Component {
                 </div>
               </div>
             </Card>
-          ))}
+          )
+            )}
         </div>
       </div>
     );
