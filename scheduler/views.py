@@ -140,7 +140,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
-    permission_classes = [QuestionViewSetPermission]
+    permission_classes = [QuestionViewSetPermission, IsVerifiedOrReadOnly]
 
     # TODO Better way to valdiate query param
     # Supported fields for sortby option
@@ -290,7 +290,7 @@ class NoteViewSet(viewsets.ModelViewSet):
     serializer_class = NoteSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
-    permission_classes = [NoteViewSetPermission]
+    permission_classes = [NoteViewSetPermission, IsVerifiedOrReadOnly]
 
     # TODO Better way to valdiate query param, use serializer
     # Supported fields for sortby option
@@ -411,7 +411,7 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
-    permission_classes = [PostViewSetPermission]
+    permission_classes = [PostViewSetPermission, IsVerifiedOrReadOnly]
 
     # TODO Better way to valdiate query param
     # Supported fields for sortby option
@@ -514,7 +514,7 @@ class PostAnswerViewSet(viewsets.ModelViewSet):
     queryset = PostAnswer.objects.all()
     serializer_class = PostAnswerSerializer
     parser_classes = [FormParser]
-    permission_classes = [PostAnswerViewSetPermission]
+    permission_classes = [PostAnswerViewSetPermission, IsVerifiedOrReadOnly]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
 
 
@@ -657,7 +657,7 @@ class PostAnswerViewSet(viewsets.ModelViewSet):
 
 class ScheduleViewSet(viewsets.ModelViewSet):
     serializer_class = ScheduleSerializer
-    http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    http_method_names = ['get', 'post', 'head', 'put', 'delete', 'patch']
     parser_classes = [JSONParser]
     permission_classes = [IsAuthenticated, ScheduleViewSetPermission]
 
@@ -679,7 +679,7 @@ class WishListViewSet(viewsets.ModelViewSet):
     serializer_class = WishListSerializer
     # No delete since we only got one now
     # TODO Prevent deletion if only one wishlist in db?
-    http_method_names = ['get', 'post', 'head', 'put']
+    http_method_names = ['get', 'post', 'head', 'put', 'patch']
     parser_classes = [JSONParser]
     permission_classes = [IsAuthenticated, WishListViewSetPermission]
 
