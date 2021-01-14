@@ -197,7 +197,7 @@ export class WikiSummary extends Component {
                 style={{width: 500, }}
                 options={this.props.option}
                 onSearch = {(value)=> this.searchOnChange(value)}
-                onSelect={(value) => {console.log("from auto onselect");this.props.dispatch(getCourse(value))}}
+                onSelect={(value) => {this.props.dispatch(getCourse(value))}}
                 //onSearch={(value) => this.props.dispatch(getCourse(value))}
               >
               {/* <Input.Search size="large" placeholder="Search subject, CRN or course name" enterButton /> */}
