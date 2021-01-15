@@ -5,6 +5,8 @@ import axios from "axios";
 export const getNotes = (noteBag) => (dispatch) => {
   for (var i = 0; i < noteBag.length; i++) {
     //question id has to be unique
+    // TODO Change to querystring lib
+    // TODO Add support for other filter option as well?
     axios
       .get("api/notes?questionid=" + noteBag[i].question.id)
       .then((res) => {
@@ -17,10 +19,13 @@ export const getNotes = (noteBag) => (dispatch) => {
       .catch((err) => console.log(err));
   }
 };
-//getQuestion(Meta id) => reducer
-// dispatch/action (actions/note.js, types.js )
-// reducer (reducers/note.js, index.js)
-//  WikiNotebook.js
+
+/* 
+ * getQuestion(Meta id) => reducer
+ * dispatch/action (actions/note.js, types.js )
+ * reducer (reducers/note.js, index.js)
+ *  WikiNotebook.js
+ */
 export const getQuestion = (metaid) => (dispatch) => {
   //get question array depend on coursemetaid
   dispatch({

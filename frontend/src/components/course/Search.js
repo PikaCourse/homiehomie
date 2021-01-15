@@ -12,6 +12,7 @@ function WikiSearch() {
   const dispatch = useDispatch();
 
   function searchOnChange(query) {
+    // Search list of course meta objects via the value query
     clearTimeout(timer);
     if (query && query.length > 1) {
       setTimer(

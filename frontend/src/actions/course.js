@@ -10,6 +10,8 @@ import {GET_COURSELIST} from './types'
 import { year, semester, courseDataPatch, school } from "../helper/global";
 
 export const getCourse = (title) => (dispatch) => {
+  // Get the course section list via the title and hardcoded year, semester, and school parameters
+  // TODO Add support for other filter options listed in the API doc
   axios
     .get(`api/courses?title=${title}&year=${year}&semester=${semester}`)
     .then((res) => {
@@ -22,6 +24,7 @@ export const getCourse = (title) => (dispatch) => {
 };
 
 export const getCourseList = (title) => dispatch =>{
+  // Get the course meta list via title and hardcoded year, semester, and school parameters
     axios
     .get(`api/coursesmeta?title=${title}&year=${year}&semester=${semester}&school=${school}`)
     .then(res=>{
