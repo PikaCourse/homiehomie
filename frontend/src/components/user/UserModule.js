@@ -11,10 +11,12 @@ const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import prompt from "../../../static/json/prompt.json"
 import store from '../../store'
-import {updateLoginStatus} from '../../actions/user'
+import {updateLoginStatus, getUserSchedule, updateUserSchedule, updateUserCalendarBag} from '../../actions/user'
+import {overwriteCourseBag} from '../../actions/calendar'
 import {useDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
+import {loadUserCourseBag} from '../../helper/loadUserCalendar'
 
 function UserModule() {
   //local usage 
@@ -282,6 +284,7 @@ function UserModule() {
   useEffect(() => {
     // Update the document title using the browser API
     getUserProfile();
+    dispatch(getUserSchedule()); 
   }, []);
 
   function getUserProfile() {
@@ -425,6 +428,9 @@ function UserModule() {
             "last_active_time",
             JSON.stringify(new Date())
           );
+          console.log("store.getState().user.schedule in login"); 
+          console.log(store.getState().user.schedule);  
+          dispatch(overwriteCourseBag(store.getState().user.schedule)); //default overwrite existing schedule 
         }
       })
       .catch(err => {
@@ -525,6 +531,28 @@ function UserModule() {
                 {loginStatus ? userProfile.username : "Login"}
               </Button>
               {loginStatus ? userProfileModal : loginSignupModal}
+              < Button onClick = {
+                  () => {
+                    // dispatch(getUserSchedule()); 
+                    // let scheduleCopy = [...store.getState().calendar.calendarCourseBag]; 
+                    // let scheduleCopyMotified = scheduleCopy.map(event => {
+                    //   event.raw.course = [], 
+                    //   event.raw.selectedCourseArray = []; 
+                    //   return event; 
+                    // }); 
+                    // console.log("scheduleCopy"); 
+                    // console.log(scheduleCopy); 
+                    // console.log("scheduleCopyMotified"); 
+                    // console.log(scheduleCopyMotified); 
+                    dispatch(updateUserCalendarBag(store.getState().calendar.calendarCourseBag)); 
+                    console.log("getUserSchedule"); 
+                    console.log(store.getState().user.schedule); 
+                    console.log(store.getState().user.scheduleId); 
+
+                  }
+                } >
+                Testing purpose 
+                </Button>
             </>
   );
 }

@@ -109,6 +109,7 @@ class DnDCalendar extends React.Component {
       let hour = {
         type: "custom",
         id: newId,
+        courseId: -1, 
         title: title,
         allDay: event.slots.length == 1,
         start: event.start,

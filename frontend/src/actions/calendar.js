@@ -7,9 +7,12 @@ import {
   REMOVE_CUS_EVENT_IN_CAL,
   ADD_COURSE_TO_WISH,
   REMOVE_COURSE_FROM_WISH,
+  OVERWRITE_COURSE_BAG, 
 
 } from './types'
 import store from '../store'
+import axios from "axios";
+import {getUserSchedule, addCourseToUser, removeCourseFromUser} from '../../src/helper/loadUserCalendar'
 
 export const addCurrCourse = () => {
   // check if curr course is in calendar
@@ -19,15 +22,28 @@ export const addCurrCourse = () => {
       (item) =>
       item.raw.selectedCourseArray ==
       store.getState().course.selectedCourseArray,
-    )
+    ); 
+  // const userSchedule = getUserSchedule(); 
   if (!Array.isArray(courseArray) || !courseArray.length) {
+    // console.log("check pt 1"); 
+    // addCourseToUser(userSchedule, store.getState().course.selectedCourse.courseId); 
     return {
       type: ADD_COURSE_TO_CAL,
       selectedCRN: store.getState().course.selectedCRN,
       selectedCourse: store.getState().course.selectedCourse,
       selectedCourseArray: store.getState().course.selectedCourseArray,
     }
-  } else {
+  } else { 
+    // const redundantCourse = store
+    // .getState()
+    // .calendar.calendarCourseBag.find(
+    //   (item) =>
+    //   item.raw.selectedCourseArray ==
+    //   store.getState().course.selectedCourseArray,
+    // );
+    // console.log(redundantCourse);
+    // removeCourseFromUser(userSchedule, redundantCourse.courseId); 
+    // addCourseToUser(userSchedule, store.getState().course.selectedCourse.courseId); 
     // update same course to different crn or update from preview to course
     return {
       type: UPDATE_COURSE_IN_CAL,
@@ -39,40 +55,40 @@ export const addCurrCourse = () => {
   }
 }
 
+// add wishlist selected course to calendar 
+// export const addSelectCourse = (crnPara, selectedCourseArrayPara) => {
+//   const courseArray = store
+//     .getState()
+//     .calendar.calendarCourseBag.filter(
+//       (item) =>
+//       item.raw.selectedCourseArray == selectedCourseArrayPara //||
+//     )
 
-export const addSelectCourse = (crnPara, selectedCourseArrayPara) => {
-  const courseArray = store
-    .getState()
-    .calendar.calendarCourseBag.filter(
-      (item) =>
-      item.raw.selectedCourseArray == selectedCourseArrayPara //||
-    )
+//   const selectedCoursePara = selectedCourseArrayPara.find(
+//     ({
+//       crn
+//     }) => crn === crnPara,
+//   )
 
-  const selectedCoursePara = selectedCourseArrayPara.find(
-    ({
-      crn
-    }) => crn === crnPara,
-  )
-
-  if (!Array.isArray(courseArray) || !courseArray.length) {
-    // add new course
-    return {
-      type: ADD_COURSE_TO_CAL,
-      selectedCRN: crnPara,
-      selectedCourse: selectedCoursePara,
-      selectedCourseArray: selectedCourseArrayPara,
-    }
-  } else {
-    // add same course different crn
-    return {
-      type: UPDATE_COURSE_IN_CAL,
-      selectedCRN: crnPara,
-      selectedCourse: selectedCoursePara,
-      selectedCourseArray: selectedCourseArrayPara,
-      oldId: courseArray[0].id,
-    }
-  }
-}
+//   if (!Array.isArray(courseArray) || !courseArray.length) {
+//     // add new course
+//     return {
+//       type: ADD_COURSE_TO_CAL,
+//       selectedCRN: crnPara,
+//       selectedCourse: selectedCoursePara,
+//       selectedCourseArray: selectedCourseArrayPara,
+//     }
+//   } else {
+//     // add same course different crn
+//     return {
+//       type: UPDATE_COURSE_IN_CAL,
+//       selectedCRN: crnPara,
+//       selectedCourse: selectedCoursePara,
+//       selectedCourseArray: selectedCourseArrayPara,
+//       oldId: courseArray[0].id,
+//     }
+//   }
+// }
 
 export const removeCurrCourse = () => {
   return {
@@ -127,5 +143,12 @@ export const removeCustomEvent = (inputEvent) => {
   return {
     type: REMOVE_CUS_EVENT_IN_CAL,
     event: inputEvent,
+  }
+}
+
+export const overwriteCourseBag = (newCourseBag) => {
+  return {
+    type: OVERWRITE_COURSE_BAG,
+    newBag: newCourseBag,
   }
 }
