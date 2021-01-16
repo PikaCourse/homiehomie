@@ -64,7 +64,7 @@ function buttonsLoader(
   selectedCourseArray,
   wishlistCourseBag
 ) {
-  //debugger;
+  debugger;
   const courseArray = calendarCourseBag.filter(
     (item) =>
       item.raw.selectedCourseArray[0].course_meta.title ===
@@ -74,7 +74,7 @@ function buttonsLoader(
   let remove = true;
   let addButtonText = "Add Course";
 
-  // check if current ondisplay course is already in calendar
+  // check if current on display course is already in calendar
   // false: add:true, remove:false
   // true: check if it is the same crn as the one in calendar
   //    true: add: false, remove true
@@ -83,7 +83,7 @@ function buttonsLoader(
   if (!courseArray.length) remove = false;
   else {
     const course = calendarCourseBag.filter(
-      (item) => item.raw.id == selectedCourse.id //&& (item.type != 'preview')
+      (item) => item.courseId === selectedCourse.id //&& (item.type != 'preview')
     );
     if (!course.length) {
       addButtonText = "Change CRN";
