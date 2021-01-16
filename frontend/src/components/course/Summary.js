@@ -64,10 +64,10 @@ function buttonsLoader(
   selectedCourseArray,
   wishlistCourseBag
 ) {
-  debugger;
+  //debugger;
   const courseArray = calendarCourseBag.filter(
     (item) =>
-      item.raw.selectedCourseArray[0].course_meta.title ===
+      item.raw.selectedCourseArray[0]?.course_meta.title ===
       selectedCourse.course_meta.title //&& (item.type != 'preview'))
   );
   let add = true;
