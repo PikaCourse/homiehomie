@@ -17,7 +17,6 @@ const store = createStore(
 store.subscribe((listener) => {
   saveState("calendarCourseBag", store.getState().calendar.calendarCourseBag);
   saveState("wishlistCourseBag", store.getState().wishlist.wishlistCourseBag);
-  // console.log(listener.getState()); 
 });
 
 export default store;
