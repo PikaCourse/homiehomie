@@ -85,6 +85,7 @@ function buttonsLoader(
     const course = calendarCourseBag.filter(
       (item) => item.courseId === selectedCourse.id //&& (item.type != 'preview')
     );
+    //debugger;
     if (!course.length) {
       addButtonText = "Change CRN";
       remove = false;
