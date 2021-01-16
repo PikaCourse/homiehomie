@@ -21,6 +21,7 @@ export default function (state = initialState, action) {
         selectedCourseArray: action.payload,
       };
     case SET_COURSE:
+      // debugger;
       return {
         option: [],
         selectedCourse: action.selectedCourse,
@@ -37,12 +38,7 @@ export default function (state = initialState, action) {
         selectedCourse: action.selectedCourse,
       };
     case GET_COURSELIST:
-      //console.log("from getcourseList");
-      //let objlist = action.list.slice(0, 10);
-      //console.log(objlist);
       let strlist = action.list.map((x) => ({ value: x.title }));
-      //console.log(objlist);
-      //console.log(strlist);
       return {
         ...state,
         option: strlist,

@@ -77,6 +77,7 @@ class DnDCalendar extends React.Component {
 
   moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
     // debugger;
+    if (event.type != "custom") return;
     const nextEvents = this.props.calendarCourseBag.map((existingEvent) => {
       if (existingEvent.id === event.id) {
         existingEvent.start = start;
@@ -85,7 +86,6 @@ class DnDCalendar extends React.Component {
       }
       return existingEvent;
     });
-
   };
 
   resizeEvent = ({ event, start, end }) => {
@@ -97,7 +97,6 @@ class DnDCalendar extends React.Component {
       }
       return existingEvent;
     });
-
   };
 
   newEvent(event) {
@@ -159,9 +158,11 @@ class DnDCalendar extends React.Component {
       selected: event,
     });
     if (event.type != "custom") {
+      // debugger;
+
       store.dispatch(
         setCourse({
-          selectedCRN: event.raw.crn,
+          selectedCourse: event.raw.course,
           selectedCourseArray: event.raw.selectedCourseArray,
         })
       );
