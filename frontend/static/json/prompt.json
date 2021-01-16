@@ -15,5 +15,6 @@
             "nonlength": "The password need to be longer than 8 characters and less than 150 characters",
             "allNum": "The password cannot be all number"
         }
-    }
+    }, 
+    "userScheduleConflictMessage" : "Your current schedule conflicts with your saved schedule associated with your account, please choose to overwrite saved schedule with current one or disgard current schedule"
 }

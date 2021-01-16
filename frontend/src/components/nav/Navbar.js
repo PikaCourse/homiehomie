@@ -9,16 +9,14 @@ import { Layout, Menu } from "antd";
 import Wishlist from "../wishlist/Wishlist";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
-import UserModule from "../user/UserModule"
-
+import UserModule from "../user/UserModule";
 
 function Navbar() {
-
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
       <div className="container-fluid">
         <a className="navbar-brand mx-4 pl-4" href="#" style={selectedStyle}>
-          CourseWiki
+          CourseOcean
         </a>
         <div>
           <ul class="navbar-nav ml-auto pr-4">

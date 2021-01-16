@@ -90,7 +90,7 @@ export class WikiNotebook extends Component {
         question: noteObj.question,
         title: noteObj.title,
         content: this.state.editVal,
-        tags: noteObj.tags,
+        tags: JSON.stringify(["hi"]),
         is_private: true
       }),
       {
@@ -99,15 +99,7 @@ export class WikiNotebook extends Component {
         },
       }
     )
-    console.log("api/notes/"+noteObj.id+" "+querystring.stringify({
-      course: noteObj.course,
-      question: noteObj.question,
-      title: noteObj.title,
-      content: this.state.editVal,
-      tags: noteObj.tags,
-      is_private: true
-    }),)
-    this.setState({editVal: "", input: false})
+    this.setState({editVal: "", input: true})
   }
   onChange = ({ target: { value } }) => {
     this.setState({ value });
@@ -162,9 +154,7 @@ export class WikiNotebook extends Component {
                     marginTop: "5vh",
                   },
                 });
-            this.forceUpdate();
-          });
-          //console.log("res = ");
+            //console.log("res = ");
           //console.log(res.data.question);
           //console.log(this.props.noteBag.length);
           let queObj = {
@@ -178,6 +168,7 @@ export class WikiNotebook extends Component {
                 is_private: !this.state.public
             },
             notes:[{course: this.props.selectedCourse.id,
+              id: result.data.note,
               question: values.question,
               title: "whatever",
               content: values.note,
@@ -187,7 +178,11 @@ export class WikiNotebook extends Component {
           };
           //console.log("from handlesubmit");
           //console.log(queObj);
+          //console.log("note id: "+result.data.id)
+          //console.log("question id: "+res.data.question)
           store.dispatch(addOBJ(queObj));
+            this.forceUpdate();
+          });
       });
       this.setState({ addNewCard: false });
   };
@@ -198,8 +193,8 @@ export class WikiNotebook extends Component {
 
   componentDidUpdate(prevProps) {
     if (
-      this.props.selectedCourse.crn &&
-      prevProps.selectedCourse.crn !== this.props.selectedCourse.crn
+      this.props.selectedCourse.id &&
+      prevProps.selectedCourse.id !== this.props.selectedCourse.id
     ) {
       store.dispatch(getQuestion(this.props.selectedCourse.course_meta.id));
     }
@@ -339,7 +334,6 @@ export class WikiNotebook extends Component {
               </Card>
             ) : null
           }
-          
           {/* Question */}
           {this.props.noteBag.map((nbObj) => (nbObj.question.is_private)?(
             <Card

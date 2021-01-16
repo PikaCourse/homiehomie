@@ -64,32 +64,38 @@ function buttonsLoader(
   selectedCourseArray,
   wishlistCourseBag
 ) {
+  //debugger;
   const courseArray = calendarCourseBag.filter(
-    (item) => item.raw.selectedCourseArray == selectedCourseArray //&& (item.type != 'preview'))
+    (item) =>
+      item.raw.selectedCourseArray[0]?.course_meta.title ===
+      selectedCourse.course_meta.title //&& (item.type != 'preview'))
   );
-  let enableAdd = true;
-  let enableRemove = true;
+  let add = true;
+  let remove = true;
   let addButtonText = "Add Course";
 
-  if (!courseArray.length) enableRemove = false;
+  // check if current on display course is already in calendar
+  // false: add:true, remove:false
+  // true: check if it is the same crn as the one in calendar
+  //    true: add: false, remove true
+  //    false: add->save: true, remove false
+
+  if (!courseArray.length) remove = false;
   else {
     const course = calendarCourseBag.filter(
-      (item) => item.raw.id == selectedCourse.id //&& (item.type != 'preview')
+      (item) => item.courseId === selectedCourse.id //&& (item.type != 'preview')
     );
     if (!course.length) {
-      // course different crn
       addButtonText = "Change CRN";
-      enableRemove = false;
-    }
-    // course same crn
-    else enableAdd = false;
+      remove = false;
+    } else add = false;
   }
   return (
     <div className="mt-2">
       <Space>
         <Tooltip title={addButtonText}>
           <Button
-            disabled={!enableAdd}
+            disabled={!add}
             className="bubbly-button"
             type="primary"
             onClick={(event) => {
@@ -105,7 +111,7 @@ function buttonsLoader(
 
         <Tooltip title="Remove">
           <Button
-            disabled={!enableRemove}
+            disabled={!remove}
             type="primary"
             onClick={(event) => {
               dispatch(removeCurrCourse());

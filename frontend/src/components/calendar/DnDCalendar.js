@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
 import { addCustomEvent, removeCustomEvent } from "../../actions/calendar";
+import { updateUserCalendarBag } from "../../actions/user";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
 import { colors, pcolors } from "./Color.js";
@@ -23,7 +24,6 @@ class DnDCalendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: [],
       displayDragItemInCell: true,
       selected: {},
     };
@@ -32,9 +32,18 @@ class DnDCalendar extends React.Component {
     this.newEvent = this.newEvent.bind(this);
   }
 
+  componentDidUpdate() {
+    if (store.getState().user.loginStatus) {
+      store.dispatch(
+        updateUserCalendarBag(store.getState().calendar.calendarCourseBag)
+      );
+    }
+  }
+
   componentDidMount() {
     document.addEventListener("keydown", this.deleteKeyDown, false);
     document.addEventListener("mousedown", this.pageClick, false);
+    this.setState({ events: store.getState().calendar.calendarCourseBag });
   }
 
   componentWillUnmount() {
@@ -67,9 +76,9 @@ class DnDCalendar extends React.Component {
   };
 
   moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
-    const { events } = this.state;
-    const nextEvents = events.map((existingEvent) => {
-      if (existingEvent.id == event.id) {
+    // debugger;
+    const nextEvents = this.props.calendarCourseBag.map((existingEvent) => {
+      if (existingEvent.id === event.id) {
         existingEvent.start = start;
         existingEvent.end = end;
         store.dispatch(addCustomEvent(existingEvent));
@@ -77,14 +86,9 @@ class DnDCalendar extends React.Component {
       return existingEvent;
     });
 
-    this.setState({
-      events: nextEvents,
-    });
   };
 
   resizeEvent = ({ event, start, end }) => {
-    const { events } = this.state;
-
     const nextEvents = events.map((existingEvent) => {
       if (existingEvent.id == event.id) {
         existingEvent.start = start;
@@ -93,9 +97,7 @@ class DnDCalendar extends React.Component {
       }
       return existingEvent;
     });
-    this.setState({
-      events: nextEvents,
-    });
+
   };
 
   newEvent(event) {
@@ -109,7 +111,7 @@ class DnDCalendar extends React.Component {
       let hour = {
         type: "custom",
         id: newId,
-        courseId: -1, 
+        courseId: -1,
         title: title,
         allDay: event.slots.length == 1,
         start: event.start,
@@ -117,9 +119,7 @@ class DnDCalendar extends React.Component {
         crn: -1,
         raw: { selectedCourseArray: [] },
       };
-      this.setState({
-        events: this.state.events.concat([hour]),
-      });
+
       store.dispatch(addCustomEvent(hour));
     }
   }
@@ -188,10 +188,15 @@ class DnDCalendar extends React.Component {
     return (
       <div
         className="p-4 mt-4"
-        style={{ backgroundColor: "#ffffff", borderRadius: "1.5rem",overflowY: "auto", height: "82vh" }}
+        style={{
+          backgroundColor: "#ffffff",
+          borderRadius: "1.5rem",
+          overflowY: "auto",
+          height: "82vh",
+        }}
       >
         <DragAndDropCalendar
-          formats={{ timeGutterFormat: 'hh:mm' }}
+          formats={{ timeGutterFormat: "hh:mm" }}
           min={
             new Date(
               today.getFullYear(),
@@ -216,12 +221,12 @@ class DnDCalendar extends React.Component {
           formats={formats}
           selectable
           localizer={mlocalizer}
-          events={store.getState().calendar.calendarCourseBag} //data input
+          events={this.props.calendarCourseBag} //data input
           onEventDrop={this.moveEvent}
           resizable={true}
           onEventResize={this.resizeEvent}
           onSelectSlot={this.newEvent}
-          onDragStart={console.log}
+          // onDragStart={console.log}
           defaultView={Views.WEEK}
           defaultDate={today}
           popup={true}

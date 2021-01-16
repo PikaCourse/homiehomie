@@ -26,7 +26,7 @@ export const getCourse = (title) => (dispatch) => {
 export const getCourseList = (title) => dispatch =>{
   // Get the course meta list via title and hardcoded year, semester, and school parameters
     axios
-    .get(`api/coursesmeta?title=${title}&year=${year}&semester=${semester}&school=${school}`)
+    .get(`api/coursesmeta?title=${title}&year=${year}&limit=10&school=${school}`)
     .then(res=>{
         dispatch({
             type:GET_COURSELIST,
