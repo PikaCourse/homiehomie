@@ -24,7 +24,6 @@ class DnDCalendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: [],
       displayDragItemInCell: true,
       selected: {},
     };
@@ -78,8 +77,7 @@ class DnDCalendar extends React.Component {
 
   moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
     // debugger;
-    const { events } = this.state;
-    const nextEvents = events.map((existingEvent) => {
+    const nextEvents = this.props.calendarCourseBag.map((existingEvent) => {
       if (existingEvent.id === event.id) {
         existingEvent.start = start;
         existingEvent.end = end;
@@ -88,14 +86,9 @@ class DnDCalendar extends React.Component {
       return existingEvent;
     });
 
-    this.setState({
-      events: nextEvents,
-    });
   };
 
   resizeEvent = ({ event, start, end }) => {
-    const { events } = this.state;
-
     const nextEvents = events.map((existingEvent) => {
       if (existingEvent.id == event.id) {
         existingEvent.start = start;
@@ -104,9 +97,7 @@ class DnDCalendar extends React.Component {
       }
       return existingEvent;
     });
-    this.setState({
-      events: nextEvents,
-    });
+
   };
 
   newEvent(event) {
@@ -128,9 +119,7 @@ class DnDCalendar extends React.Component {
         crn: -1,
         raw: { selectedCourseArray: [] },
       };
-      this.setState({
-        events: this.state.events.concat([hour]),
-      });
+
       store.dispatch(addCustomEvent(hour));
     }
   }
@@ -196,8 +185,6 @@ class DnDCalendar extends React.Component {
     local.format(start, "hh:mm", culture);
 
   render() {
-    const { events } = this.state;
-
     return (
       <div
         className="p-4 mt-4"
@@ -234,7 +221,7 @@ class DnDCalendar extends React.Component {
           formats={formats}
           selectable
           localizer={mlocalizer}
-          events={events} //data input
+          events={this.props.calendarCourseBag} //data input
           onEventDrop={this.moveEvent}
           resizable={true}
           onEventResize={this.resizeEvent}
