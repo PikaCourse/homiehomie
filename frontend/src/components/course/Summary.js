@@ -45,7 +45,6 @@ function WikiSummary() {
               dispatch,
               calendarCourseBag,
               selectedCourse,
-              selectedCourseArray,
               wishlistCourseBag
             )}
           </div>
@@ -61,7 +60,6 @@ function buttonsLoader(
   dispatch,
   calendarCourseBag,
   selectedCourse,
-  selectedCourseArray,
   wishlistCourseBag
 ) {
   //debugger;
@@ -73,7 +71,10 @@ function buttonsLoader(
   let add = true;
   let remove = true;
   let addButtonText = "Add Course";
-
+  //debugger;
+  let star =
+    wishlistCourseBag.filter((item) => item.courseId === selectedCourse.id)
+      .length == 0; //true if in the wishlist
   // check if current on display course is already in calendar
   // false: add:true, remove:false
   // true: check if it is the same crn as the one in calendar
@@ -125,13 +126,10 @@ function buttonsLoader(
 
         <Tooltip title="Add to Wishlist">
           <Button
+            disabled={!star}
             type="primary"
             onClick={(event) => {
-              if (
-                wishlistCourseBag.filter(({ id }) => id == selectedCourse.id)
-                  .length == 0
-              )
-                message.error("Course Already in Wishlist");
+              if (!star) message.error("Course Already in Wishlist");
               else
                 dispatch(addCurrCourseToWish()).then(
                   message.success("Course Added To Wishlist")
