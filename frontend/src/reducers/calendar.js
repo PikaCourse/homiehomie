@@ -137,47 +137,6 @@ function addNewCusEventToBag(state, action) {
   return tempArray;
 }
 
-// function getUniqueCourses(courseBag) {
-//   let uniqueCourseBag = Array.from(new Set(courseBag.map(a => a.title)))
-//       .map(title => {
-//         return courseBag.find(a => a.title === title)
-//       }); 
-//       uniqueCourseBag.filter(
-//     (item) => (item.type == 'course')
-//   ); 
-//   return uniqueCourseBag; 
-// }
-
-function addCourseToUser(state, action, update) {
-  var userSchedule; 
-  axios
-      .get("/api/schedules", 
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-      )
-      .then((result) => {
-        userSchedule = result; 
-        console.log(result); 
-      })
-      .catch(err => {
-        console.log(err.response); 
-      });
-  if (update) {
-    let removeCourse = state.calendarCourseBag.find(
-      (item) => (item.raw.selectedCourseArray == action.selectedCourseArray)
-    ); 
-  }
-  let addCourse = action.selectedCourse; 
-
-}
-
-function removeCourseFromUser(state, action) {
-
-}
-
 
 export default function (state = initialState, action) {
   switch (action.type) {

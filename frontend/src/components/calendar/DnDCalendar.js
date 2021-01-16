@@ -11,6 +11,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { setCourse } from "../../actions/course";
 import { addCustomEvent, removeCustomEvent } from "../../actions/calendar";
+import {updateUserCalendarBag} from "../../actions/user"
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
 import { colors, pcolors } from "./Color.js";
@@ -30,6 +31,12 @@ class DnDCalendar extends React.Component {
 
     this.moveEvent = this.moveEvent.bind(this);
     this.newEvent = this.newEvent.bind(this);
+  }
+
+  componentDidUpdate() {
+    if (store.getState().user.loginStatus) {
+      store.dispatch(updateUserCalendarBag(store.getState().calendar.calendarCourseBag)); 
+    }
   }
 
   componentDidMount() {

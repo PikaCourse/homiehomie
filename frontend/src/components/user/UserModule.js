@@ -17,6 +17,7 @@ import {useDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 import {loadUserCourseBag} from '../../helper/loadUserCalendar'
+import { year, semester, courseDataPatch, school } from "../../helper/global";
 
 function UserModule() {
   //local usage 
@@ -24,9 +25,11 @@ function UserModule() {
   const [visible, setVisible] = useState(false);
   const [login, setLogin] = useState(true); //if user is in login tab
   const [error, setError] = useState("");
+  const [scheduleConflictVisible, setScheduleConflict] = useState(false); //visibility
   //global usage 
   const [userProfile, setUserProfile] = useState({ username: "user" }); //loginStatus?getUserProfile:{}
-  // const [loginStatus, dispatch(updateLoginStatus] = useState(false); //getSessionStatus()
+  const [schedules, setSchedules] = useState({current:[], server:[]}); 
+  // const [loginStatus, dispatch(updateLoginStatus] = useState(false); //()
   //store 
   const loginStatus = useSelector(state => state.user.loginStatus); 
   const dispatch = useDispatch(); 
@@ -280,11 +283,28 @@ function UserModule() {
       </Form>
     </Modal>
   );
+  const scheduleConflict = <Modal 
+  title="Schedule Conflict" 
+  visible={scheduleConflictVisible} 
+  onOk={handleOk} 
+  onCancel={handleCancel}
+  closable={false}
+  footer={null}
+  >
+    <p>{prompt.userScheduleConflictMessage}</p>
+    <Button onClick={()=>{
+      dispatch(updateUserCalendarBag(schedules.current)); 
+      setScheduleConflict(false); 
+    }}>Save Current Schedule</Button>
+    <Button onClick={()=>{
+      dispatch(overwriteCourseBag(schedules.server)); 
+      setScheduleConflict(false); 
+    }}>Disgard Current Schedule</Button>
+  </Modal>; 
 
   useEffect(() => {
     // Update the document title using the browser API
-    getUserProfile();
-    dispatch(getUserSchedule()); 
+    getUserProfile(); 
   }, []);
 
   function getUserProfile() {
@@ -312,11 +332,12 @@ function UserModule() {
           dispatch(updateLoginStatus(true)); 
           // setUserProfile({result}); 
           setUserProfile({username: result.data.username, email: result.data.email}); 
+          dispatch(getUserSchedule());
         } 
       })
       .catch(err => {
         console.log("get user err.response"); 
-        console.log(err.response); 
+        console.log(err); 
         if (err.response.status == 403 || err.response.status == 401) {
           console.log("user is not logged in"); 
           dispatch(updateLoginStatus(false)); 
@@ -326,6 +347,9 @@ function UserModule() {
             "Sorry, we cannot keep you login at this time due to unknown error, please try later."
           );
         }
+     })
+     .finally(()=>{
+      
      });
   }
 
@@ -418,28 +442,29 @@ function UserModule() {
       })
       .then((result) => {
         console.log("result"); 
-        console.log(result); 
+        console.log(result);  
         if (result.status == 200) {
           // dispatch(overwriteCourseBag(store.getState().user.schedule)); //default overwrite existing schedule 
           getUserProfile(); 
-          setTimeout(
-            () => {console.log("store.getState().user.schedule in login"); 
-            console.log(store.getState().user.schedule);},
-            3000
-          );
           handleOk(true);
           console.log("Successfully login user");
           setError("");
           dispatch(updateLoginStatus(true)); //use getSessionStatus
-          getSessionStatus();
           localStorage.setItem(
             "last_active_time",
             JSON.stringify(new Date())
           );  
+          setTimeout(function () {
+            console.log("store.getState().user.schedule in login");
+            console.log(store.getState().user.schedule);
+            // dispatch(overwriteCourseBag(store.getState().user.schedule)); 
+          }, 10000);
         }
       })
       .catch(err => {
         handleOk(false);
+        console.log("login submit error:");  
+        console.log(err); 
         // console.log(err.response.status);
         if (err.response.status >= 400 && err.response.status < 500) {
           console.log("Error due to invalid password or username");
@@ -450,7 +475,89 @@ function UserModule() {
             "Sorry, we cannot complete your request at this time due to unknown error, please try later."
           );
         }
+     })
+     .finally(()=>{
+       console.log("finally in login submit"); 
+       console.log(store.getState().calendar.calendarCourseBag.length); 
+       axios
+         .get("/api/schedules")
+         .then((result) => {
+           console.log(result);
+           var localCourseIds = store.getState().calendar.calendarCourseBag.map(a => a.courseId); 
+           var serverCourseIds = result.data[0].custom.map(b => b.courseId); 
+           console.log(localCourseIds); 
+           console.log(serverCourseIds); 
+           console.log(arraysEqual(localCourseIds, serverCourseIds)); 
+           console.log(store.getState().calendar.calendarCourseBag.length != 0 && result.data[0].custom != 0 &&
+           !arraysEqual(localCourseIds, serverCourseIds)); 
+           console.log("point ");
+           if (result.data[0].custom.length != 0) {
+            console.log("point 0");
+            var serverSchedule = result.data[0].custom.map(event => {
+              axios
+                .get(`api/courses?title=${event.title}&year=${year}&semester=${semester}`)
+                .then((res) => {
+                  event.raw.selectedCourseArray = res.data;
+                })
+                .catch((err) => console.log(err));
+              axios
+                .get(`api/courses/${event.courseId}`)
+                .then((result) => {
+                  event.raw.course = result.data;
+                })
+                .catch((error) => console.log(error));
+                console.log("point 1"); 
+              return event;
+            });
+            console.log("point 2"); 
+            setSchedules({
+              current: store.getState().calendar.calendarCourseBag,
+              server: serverSchedule, 
+            });
+            console.log("point 3"); 
+           }
+           console.log("point 4"); 
+           if (store.getState().calendar.calendarCourseBag.length != 0 && result.data[0].custom != 0 &&
+             !arraysEqual(localCourseIds, serverCourseIds)) {
+               console.log("conflict found"); 
+             setScheduleConflict(true);
+             console.log(scheduleConflictVisible); 
+           } else if (store.getState().calendar.calendarCourseBag.length == 0 && result.data[0].custom != 0) { 
+            dispatch(overwriteCourseBag(serverSchedule)); 
+           } else if (store.getState().calendar.calendarCourseBag.length != 0 && result.data[0].custom == 0) {
+            dispatch(updateUserCalendarBag(store.getState().calendar.calendarCourseBag));
+           }
+           })
+           .catch((err) => {});
      });
+  }
+
+  function arraysEqual(_arr1, _arr2) {
+    if (
+      !Array.isArray(_arr1)
+      || !Array.isArray(_arr2)
+      || _arr1.length !== _arr2.length
+      ) {
+        return false;
+      }
+    
+    // .concat() is used so the original arrays are unaffected
+    const arr1 = _arr1.concat().sort();
+    const arr2 = _arr2.concat().sort();
+    
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+         }
+    }
+    
+    return true;
+}
+
+  function handleScheduleConflict() {
+    if (!store.getState().calendar.calendarCourseBag.length) {
+      return; 
+    }
   }
 
   function signupSubmit(values) {
@@ -549,15 +656,18 @@ function UserModule() {
                     // console.log(scheduleCopy); 
                     // console.log("scheduleCopyMotified"); 
                     // console.log(scheduleCopyMotified); 
-                    dispatch(updateUserCalendarBag(store.getState().calendar.calendarCourseBag)); 
-                    console.log("getUserSchedule"); 
-                    console.log(store.getState().user.schedule); 
-                    console.log(store.getState().user.scheduleId); 
+                    // dispatch(updateUserCalendarBag(store.getState().calendar.calendarCourseBag)); 
+                    // console.log("getUserSchedule"); 
+                    // console.log(store.getState().user.schedule); 
+                    // console.log(store.getState().user.scheduleId); 
+                    console.log("store.getState().user.schedule in login");
+                    console.log(store.getState().user.schedule);
 
                   }
                 } >
                 Testing purpose 
                 </Button>
+                {scheduleConflict}
             </>
   );
 }

@@ -26,7 +26,7 @@ export const addCurrCourse = () => {
   // const userSchedule = getUserSchedule(); 
   if (!Array.isArray(courseArray) || !courseArray.length) {
     // console.log("check pt 1"); 
-    // addCourseToUser(userSchedule, store.getState().course.selectedCourse.courseId); 
+    // addCourseToUser(store.getState().user.schedule, store.getState().course.selectedCourse.courseId); 
     return {
       type: ADD_COURSE_TO_CAL,
       selectedCRN: store.getState().course.selectedCRN,
@@ -42,8 +42,8 @@ export const addCurrCourse = () => {
     //   store.getState().course.selectedCourseArray,
     // );
     // console.log(redundantCourse);
-    // removeCourseFromUser(userSchedule, redundantCourse.courseId); 
-    // addCourseToUser(userSchedule, store.getState().course.selectedCourse.courseId); 
+    // removeCourseFromUser(store.getState().user.schedule, redundantCourse.courseId); 
+    // addCourseToUser(store.getState().user.schedule, store.getState().course.selectedCourse.courseId); 
     // update same course to different crn or update from preview to course
     return {
       type: UPDATE_COURSE_IN_CAL,
@@ -147,6 +147,10 @@ export const removeCustomEvent = (inputEvent) => {
 }
 
 export const overwriteCourseBag = (newCourseBag) => {
+  newCourseBag.map(element => {
+    element.start = new Date(element.start);
+    element.end = new Date(element.end);
+  })
   return {
     type: OVERWRITE_COURSE_BAG,
     newBag: newCourseBag,
