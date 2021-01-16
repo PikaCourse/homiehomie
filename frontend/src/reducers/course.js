@@ -38,9 +38,9 @@ export default function (state = initialState, action) {
       };
     case GET_COURSELIST:
       //console.log("from getcourseList");
-      let objlist = action.list.slice(0, 10);
+      //let objlist = action.list.slice(0, 10);
       //console.log(objlist);
-      let strlist = objlist.map((x) => ({ value: x.title }));
+      let strlist = action.list.map((x) => ({ value: x.title }));
       //console.log(objlist);
       //console.log(strlist);
       return {
