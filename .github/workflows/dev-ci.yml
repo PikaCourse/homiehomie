@@ -89,7 +89,7 @@ jobs:
         npm run build
     - name: Run Coverage and Unit test
       run: |
-        python manage.py collectstatic --noinput
+        make collectstatic_dev
         make coverage_dev
       env:
         # Fake SECRET KEY used for run test only 
