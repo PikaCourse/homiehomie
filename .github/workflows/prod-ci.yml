@@ -89,8 +89,8 @@ jobs:
         npm run build
     - name: Run Coverage and Unit test
       run: |
-        python manage.py collectstatic --noinput
-        make coverage_dev
+        make collectstatic_prod
+        make coverage_prod
       env:
         # Fake SECRET KEY used for run test only 
         HOMIE_HOMIE_DJANGO_SECRET_KEY: wtelrbj_4zy@(16_f0vvvxa85i4otovka)a)651ccxm7ng9tuv

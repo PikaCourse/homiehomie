@@ -25,6 +25,12 @@ REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
     # 'rest_framework.renderers.BrowsableAPIRenderer',
 ]
 
+REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'] = [
+    'rest_framework.throttling.AnonRateThrottle',
+    'rest_framework.throttling.UserRateThrottle',
+    'rest_framework.throttling.ScopedRateThrottle'
+]
+
 REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
     'anon': '500/day',
     'user': '5000/day',
