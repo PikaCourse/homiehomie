@@ -476,8 +476,9 @@ function UserModule() {
         axios
           .get("/api/wishlists")
           .then((result) => {
-            // var uniqueServerWishlist = result.data[0].custom.filter(x => !wishlistCourseBag.find(y => x.courseId === y.courseId));
-            var mergedWishlist = [...result.data[0].custom, ...wishlistCourseBag]; 
+            var uniqueServerWishlist = result.data[0].custom.filter(x => !wishlistCourseBag.find(y => x.courseId === y.courseId));
+            debugger
+            var mergedWishlist = [...uniqueServerWishlist, ...wishlistCourseBag]; 
             mergedWishlist.map((currElement, index) => {
               currElement.id = index + 1; 
               currElement.key = index + 1; 
