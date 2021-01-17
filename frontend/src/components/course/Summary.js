@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, {useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, Radio, Button, Tooltip, message, Space } from "antd";
 import { isEmpty } from "../../helper/dataCheck";
@@ -34,7 +34,6 @@ function WikiSummary() {
   const dispatch = useDispatch();
 
   return (
-    <Fragment>
       <div className="p-4 my-2 mt-4" style={CardStyle}>
         {!isEmpty(selectedCourse) ? (
           <div>
@@ -52,7 +51,6 @@ function WikiSummary() {
           <Card bordered={false} loading={true}></Card>
         )}
       </div>
-    </Fragment>
   );
 }
 
