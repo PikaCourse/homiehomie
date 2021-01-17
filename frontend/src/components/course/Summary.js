@@ -57,7 +57,6 @@ function buttonsLoader(
   selectedCourse,
   wishlistCourseBag
 ) {
-  //debugger;
   const courseArray = calendarCourseBag.filter(
     (item) =>
       item.title ===
