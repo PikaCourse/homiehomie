@@ -154,9 +154,7 @@ export class WikiNotebook extends Component {
                     marginTop: "5vh",
                   },
                 });
-            //console.log("res = ");
-          //console.log(res.data.question);
-          //console.log(this.props.noteBag.length);
+
           let queObj = {
             id: this.props.noteBag.length,
             question: {
@@ -176,10 +174,6 @@ export class WikiNotebook extends Component {
               is_private: !this.state.public
       
           };
-          //console.log("from handlesubmit");
-          //console.log(queObj);
-          //console.log("note id: "+result.data.id)
-          //console.log("question id: "+res.data.question)
           store.dispatch(addOBJ(queObj));
             this.forceUpdate();
           });
@@ -187,9 +181,6 @@ export class WikiNotebook extends Component {
       this.setState({ addNewCard: false });
   };
 
-  addNewQueInput = () => {
-    //new question, note and a post bottom
-  };
 
   componentDidUpdate(prevProps) {
     if (
