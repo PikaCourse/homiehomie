@@ -43,6 +43,8 @@ function Wishlist() {
       title: "Actions",
       key: "operation",
       fixed: "left",
+      width: 100, 
+      align: "center", 
       //width: 30,
       render: (text, record) => (
         <div>
@@ -83,62 +85,61 @@ function Wishlist() {
     //     return <h5>{inCourseBag}</h5>;
     //   },
     // },
+    // {
+    //   title: "ID",
+    //   dataIndex: "id",
+    // },
     {
-      title: "id",
-      dataIndex: "id",
-    },
-    {
-      title: "tags",
-      dataIndex: "tags",
-    },
-    {
-      title: "time",
-      dataIndex: "time",
-    },
-    {
-      title: "crn",
-      dataIndex: "crn",
-    },
-    {
-      title: "registered",
-      dataIndex: "registered",
-    },
-    {
-      title: "capacity",
-      dataIndex: "capacity",
-    },
-    {
-      title: "type",
-      dataIndex: "type", //need to be merged with semester
-    },
-    {
-      title: "professor",
-      dataIndex: "professor",
-    },
-    {
-      title: "location",
-      dataIndex: "location",
-    },
-    {
-      title: "title",
+      title: "Title",
       dataIndex: "title",
     },
     {
-      title: "name",
+      title: "Name",
       dataIndex: "name",
     },
     {
-      title: "credit_hours",
+      title: "Time",
+      dataIndex: "time",
+    },
+    {
+      title: "Location",
+      dataIndex: "location",
+    },
+    {
+      title: "Professor",
+      dataIndex: "professor",
+    },
+    {
+      title: "Credit_hours",
       dataIndex: "credit_hours",
-      width: 150, 
-      textWrap: 'word-break',
     },
     {
-      title: "description",
+      title: "Type",
+      dataIndex: "type", //need to be merged with semester
+    },
+    {
+      title: "Description",
       dataIndex: "description",
+      width: 800, 
     },
     {
-      title: "college",
+      title: "Capacity",
+      dataIndex: "capacity",
+    },
+    {
+      title: "Tags",
+      dataIndex: "tags",
+    },
+    {
+      title: "CRN",
+      dataIndex: "crn",
+    },
+    {
+      title: "Registered",
+      dataIndex: "registered",
+    },
+    {
+      title: "College",
       dataIndex: "college",
     },
   ];
