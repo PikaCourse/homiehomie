@@ -477,19 +477,15 @@ function UserModule() {
           .get("/api/wishlists")
           .then((result) => {
             var uniqueServerWishlist = result.data[0].custom.filter(x => !wishlistCourseBag.find(y => x.courseId === y.courseId));
-            debugger
             var mergedWishlist = [...uniqueServerWishlist, ...wishlistCourseBag]; 
             mergedWishlist.map((currElement, index) => {
               currElement.id = index + 1; 
               currElement.key = index + 1; 
               return currElement; //equivalent to list[index]
             });
-            debugger
             //remove duplicate and reset id 
             dispatch(overwriteWish(mergedWishlist)); 
-            debugger
             dispatch(updateUserWishlist(mergedWishlist)); 
-            debugger
           })
           .catch((err) => {});
       });

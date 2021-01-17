@@ -29,7 +29,6 @@ export const addCurrCourse = () => {
       // store.getState().course.selectedCourse.course_meta.id
     );
   if (!Array.isArray(courseArray) || !courseArray.length) {
-    debugger
     return {
       type: ADD_COURSE_TO_CAL,
       selectedCourse: store.getState().course.selectedCourse,

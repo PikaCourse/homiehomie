@@ -47,7 +47,6 @@ export const setCourse = (courseId, title) => (dispatch) => {
       `api/courses?title=${title}&year=${year}&semester=${semester}&school=${school}`
     )
     .then((res) => {
-      debugger
       if (!res.data.length) message.error("This course do not exist");
       else {
         var selectedCourse = res.data.find(element => element.id == courseId); 
@@ -60,7 +59,6 @@ export const setCourse = (courseId, title) => (dispatch) => {
         
     })
     .catch((err) => console.log(err));
-  debugger
   // return {
   //   type: SET_COURSE,
   //   selectedCourse: courseBag.selectedCourse,
