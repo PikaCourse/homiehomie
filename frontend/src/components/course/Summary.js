@@ -16,10 +16,6 @@ import { addCurrCourseToWish } from "../../actions/wishlist";
 const CardStyle = { backgroundColor: "#ffffff", borderRadius: "1.5rem" };
 
 function WikiSummary() {
-  const [addBtn, setAddBtn] = useState(true);
-  const [rmBtn, setRmBtn] = useState(true);
-  const [starBtn, setStarBtn] = useState(true);
-
   const selectedCourse = useSelector((state) => state.course.selectedCourse);
   const selectedCourseArray = useSelector(
     (state) => state.course.selectedCourseArray
