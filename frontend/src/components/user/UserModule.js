@@ -259,7 +259,7 @@ function UserModule() {
   const loginSignupModal = (
     <Modal
       visible={visible}
-      title="Title"
+      // title="Title"
       onOk={handleOk}
       onCancel={handleCancel}
       footer={null}
