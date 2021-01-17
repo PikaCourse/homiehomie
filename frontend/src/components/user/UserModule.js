@@ -617,31 +617,7 @@ function UserModule() {
                 {loginStatus ? userProfile.username : "Login"}
               </Button>
               {loginStatus ? userProfileModal : loginSignupModal}
-              < Button onClick = {
-                  () => {
-                    // dispatch(getUserSchedule()); 
-                    // let scheduleCopy = [...store.getState().calendar.calendarCourseBag]; 
-                    // let scheduleCopyMotified = scheduleCopy.map(event => {
-                    //   event.raw.course = [], 
-                    //   event.raw.selectedCourseArray = []; 
-                    //   return event; 
-                    // }); 
-                    // console.log("scheduleCopy"); 
-                    // console.log(scheduleCopy); 
-                    // console.log("scheduleCopyMotified"); 
-                    // console.log(scheduleCopyMotified); 
-                    // dispatch(updateUserCalendarBag(store.getState().calendar.calendarCourseBag)); 
-                    // console.log("getUserSchedule"); 
-                    // console.log(store.getState().user.schedule); 
-                    // console.log(store.getState().user.scheduleId); 
-                    console.log("store.getState().user.schedule in login");
-                    console.log(store.getState().user.schedule);
-
-                  }
-                } >
-                Testing purpose 
-                </Button>
-                {scheduleConflict}
+              {scheduleConflict}
             </>
   );
 }
