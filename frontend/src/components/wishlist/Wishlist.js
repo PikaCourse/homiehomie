@@ -57,15 +57,8 @@ function Wishlist() {
           </Button>
           <Button
             onClick={(e) => {
-              store.dispatch(
-                setCourse({
-                  selectedCourse: record.selectedCourseArray.filter(
-                    (item) => item.id === record.courseId
-                  )[0],
-                  selectedCourseArray: record.selectedCourseArray,
-                })
-              );
-              setIsWishlistVisible(false);
+              store.dispatch(setCourse(record.courseId,record.title));
+              setVisible(false);
             }}
           >
             View
