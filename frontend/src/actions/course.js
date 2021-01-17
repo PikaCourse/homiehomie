@@ -41,12 +41,31 @@ export const getCourseList = (title) => (dispatch) => {
     .catch((err) => console.log(err));
 };
 
-export const setCourse = (courseBag) => {
-  return {
-    type: SET_COURSE,
-    selectedCourse: courseBag.selectedCourse,
-    selectedCourseArray: courseBag.selectedCourseArray,
-  };
+export const setCourse = (courseId, title) => (dispatch) => {
+  axios
+    .get(
+      `api/courses?title=${title}&year=${year}&semester=${semester}&school=${school}`
+    )
+    .then((res) => {
+      debugger
+      if (!res.data.length) message.error("This course do not exist");
+      else {
+        var selectedCourse = res.data.find(element => element.id == courseId); 
+        dispatch({
+          type: SET_COURSE,
+          selectedCourse: selectedCourse,
+          selectedCourseArray: courseDataPatch(res.data),
+        });
+      }
+        
+    })
+    .catch((err) => console.log(err));
+  debugger
+  // return {
+  //   type: SET_COURSE,
+  //   selectedCourse: courseBag.selectedCourse,
+  //   selectedCourseArray: courseBag.selectedCourseArray,
+  // };
 };
 
 export const setCourseByProf = (prof) => {

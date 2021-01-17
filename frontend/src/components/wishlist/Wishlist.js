@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import store from "../../store";
@@ -6,6 +6,7 @@ import store from "../../store";
 import { CaretRightOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import {updateUserWishlist} from "../../actions/user"
 
 import {
   Table,
@@ -27,9 +28,11 @@ import { removeCurrCourseFromWish } from "../../actions/wishlist";
 import { useDispatch, useSelector } from "react-redux";
 
 function Wishlist() {
+  const dispatch = useDispatch();
   const wishlistCourseBag = useSelector(
     (state) => state.wishlist.wishlistCourseBag
   );
+  const loginStatus = useSelector(state => state.user.loginStatus); 
   // const calendarCourseBag = useSelector(
   //   (state) => state.calendar.calendarCourseBag
   // );
@@ -137,6 +140,13 @@ function Wishlist() {
       dataIndex: "college",
     },
   ];
+
+  useEffect(() => {
+    //update course list to user 
+    if (loginStatus) {
+      dispatch(updateUserWishlist(wishlistCourseBag)); 
+    }
+  });
 
   return (
     <div>

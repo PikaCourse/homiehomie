@@ -23,10 +23,13 @@ export const addCurrCourse = () => {
     .getState()
     .calendar.calendarCourseBag.filter(
       (item) =>
-        item.raw.course?.course_meta.id ===
-        store.getState().course.selectedCourse.course_meta.id
+      item.courseId != -1 && (item.title ===
+      store.getState().course.selectedCourse.course_meta.title)
+      // item.raw.course?.course_meta.id ===
+      // store.getState().course.selectedCourse.course_meta.id
     );
   if (!Array.isArray(courseArray) || !courseArray.length) {
+    debugger
     return {
       type: ADD_COURSE_TO_CAL,
       selectedCourse: store.getState().course.selectedCourse,

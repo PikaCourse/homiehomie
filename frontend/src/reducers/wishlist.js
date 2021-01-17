@@ -1,6 +1,7 @@
 import {
   ADD_COURSE_TO_WISH,
   REMOVE_COURSE_FROM_WISH,
+  OVER_WRITE_WISH, 
 } from "../actions/types.js";
 import store from "../store";
 import { loadWishlistCourseBag } from "../../src/helper/localStorage";
@@ -95,7 +96,10 @@ export default function (state = initialState, action) {
       return {
         wishlistCourseBag: removeCourseFromWish(state, action),
       };
-
+    case OVER_WRITE_WISH:
+      return {
+        wishlistCourseBag: action.newWishlist,
+      };
     default:
       return state;
   }
