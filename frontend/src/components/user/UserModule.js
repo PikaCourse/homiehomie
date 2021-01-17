@@ -19,7 +19,6 @@ axios.defaults.xsrfHeaderName = "X-CSRFToken";
 import {loadUserCourseBag} from '../../helper/loadUserCalendar'
 import { year, semester, courseDataPatch, school } from "../../helper/global";
 import {overwriteWish} from "../../actions/wishlist"
-import { debug } from "webpack";
 
 function UserModule() {
   const wishlistCourseBag = useSelector(
@@ -477,8 +476,8 @@ function UserModule() {
         axios
           .get("/api/wishlists")
           .then((result) => {
-            var uniqueServerWishlist = result.data[0].custom.filter(x => !wishlistCourseBag.find(y => x.courseId === y.courseId));
-            var mergedWishlist = [...uniqueServerWishlist, ...wishlistCourseBag]; 
+            // var uniqueServerWishlist = result.data[0].custom.filter(x => !wishlistCourseBag.find(y => x.courseId === y.courseId));
+            var mergedWishlist = [...result.data[0].custom, ...wishlistCourseBag]; 
             mergedWishlist.map((currElement, index) => {
               currElement.id = index + 1; 
               currElement.key = index + 1; 
