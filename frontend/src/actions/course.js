@@ -14,9 +14,7 @@ export const getCourse = (title) => (dispatch) => {
   // Get the course section list via the title and hardcoded year, semester, and school parameters
   // TODO Add support for other filter options listed in the API doc
   axios
-    .get(
-      `api/courses?title=${title}&year=${year}&semester=${semester}&school=${school}`
-    )
+    .get(`api/courses?title=${title}&year=${year}&semester=${semester}`)
     .then((res) => {
       if (!res.data.length) message.error("This course do not exist");
       else
@@ -32,7 +30,7 @@ export const getCourseList = (title) => (dispatch) => {
   // Get the course meta list via title and hardcoded year, semester, and school parameters
   axios
     .get(
-      `api/coursesmeta?title=${title}&year=${year}&limit=15&school=${school}&semester=${semester}`
+      `api/coursesmeta?title=${title}&year=${year}&limit=15&semester=${semester}`
     )
     .then((res) => {
       dispatch({
