@@ -11,7 +11,7 @@ const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import prompt from "../../../static/json/prompt.json"
 import store from '../../store'
-import {updateLoginStatus, getUserSchedule, updateUserSchedule, updateUserCalendarBag} from '../../actions/user'
+import {updateLoginStatus, getUserSchedule, updateUserSchedule} from '../../actions/user'
 import {overwriteCourseBag} from '../../actions/calendar'
 import {useDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
@@ -293,7 +293,7 @@ function UserModule() {
   >
     <p>{prompt.userScheduleConflictMessage}</p>
     <Button onClick={()=>{
-      dispatch(updateUserCalendarBag(schedules.current)); 
+      dispatch(updateUserSchedule(schedules.current)); 
       setScheduleConflict(false); 
     }}>Save Current Schedule</Button>
     <Button onClick={()=>{
@@ -309,8 +309,6 @@ function UserModule() {
 
   function getUserProfile() {
     var csrftoken = getCookie("csrftoken");
-    console.log(csrftoken);
-    console.log("getUserProfile ran"); 
     axios
       .get("/api/users",  {
         headers: {
@@ -320,8 +318,6 @@ function UserModule() {
         },
       })
       .then((result) => {
-        console.log("result"); 
-        console.log(result); 
         if (result.status == 302 || result.status == 200) {
           console.log("Successfully get user profile info");
           setError("");
@@ -423,15 +419,13 @@ function UserModule() {
     return cookieValue;
   }
 
-  function loginSubmit(values) {
-    console.log(values);
+  async function loginSubmit(values) {
     console.log("login submit ran");
     var userLoginObj = {
       username: values.username,
       password: values.password,
     };
     var csrftoken = getCookie("csrftoken");
-    console.log(csrftoken);
     axios
       .post("/api/users/login", userLoginObj, {
         headers: {
@@ -441,8 +435,6 @@ function UserModule() {
         },
       })
       .then((result) => {
-        console.log("result"); 
-        console.log(result);  
         if (result.status == 200) {
           // dispatch(overwriteCourseBag(store.getState().user.schedule)); //default overwrite existing schedule 
           getUserProfile(); 
@@ -454,11 +446,6 @@ function UserModule() {
             "last_active_time",
             JSON.stringify(new Date())
           );  
-          setTimeout(function () {
-            console.log("store.getState().user.schedule in login");
-            console.log(store.getState().user.schedule);
-            // dispatch(overwriteCourseBag(store.getState().user.schedule)); 
-          }, 10000);
         }
       })
       .catch(err => {
@@ -476,60 +463,64 @@ function UserModule() {
           );
         }
      })
-     .finally(()=>{
-       console.log("finally in login submit"); 
-       console.log(store.getState().calendar.calendarCourseBag.length); 
+     .finally(async ()=>{
        axios
          .get("/api/schedules")
-         .then((result) => {
-           console.log(result);
+         .then(result => {
            var localCourseIds = store.getState().calendar.calendarCourseBag.map(a => a.courseId); 
            var serverCourseIds = result.data[0].custom.map(b => b.courseId); 
-           console.log(localCourseIds); 
-           console.log(serverCourseIds); 
-           console.log(arraysEqual(localCourseIds, serverCourseIds)); 
-           console.log(store.getState().calendar.calendarCourseBag.length != 0 && result.data[0].custom != 0 &&
-           !arraysEqual(localCourseIds, serverCourseIds)); 
-           console.log("point ");
            if (result.data[0].custom.length != 0) {
-            console.log("point 0");
-            var serverSchedule = result.data[0].custom.map(event => {
-              axios
-                .get(`api/courses?title=${event.title}&year=${year}&semester=${semester}`)
-                .then((res) => {
-                  event.raw.selectedCourseArray = res.data;
-                })
-                .catch((err) => console.log(err));
-              axios
-                .get(`api/courses/${event.courseId}`)
-                .then((result) => {
-                  event.raw.course = result.data;
-                })
-                .catch((error) => console.log(error));
-                console.log("point 1"); 
-              return event;
-            });
-            console.log("point 2"); 
+            // var serverSchedule = result.data[0].custom.map(async event => {
+              
+            //   event.raw.selectedCourseArray = getSelectedCourseArray(event.title); 
+            //    axios
+            //     .get(`api/courses/${event.courseId}`)
+            //     .then((result) => {
+            //       event.raw.course = result.data;
+            //       debugger
+            //     })
+            //     .catch((error) => console.log(error));
+            //   debugger
+            //   return event;
+            // });
             setSchedules({
               current: store.getState().calendar.calendarCourseBag,
-              server: serverSchedule, 
+              server: result.data[0].custom, 
             });
-            console.log("point 3"); 
+            debugger
            }
-           console.log("point 4"); 
            if (store.getState().calendar.calendarCourseBag.length != 0 && result.data[0].custom != 0 &&
              !arraysEqual(localCourseIds, serverCourseIds)) {
                console.log("conflict found"); 
              setScheduleConflict(true);
-             console.log(scheduleConflictVisible); 
+             debugger
            } else if (store.getState().calendar.calendarCourseBag.length == 0 && result.data[0].custom != 0) { 
             dispatch(overwriteCourseBag(serverSchedule)); 
            } else if (store.getState().calendar.calendarCourseBag.length != 0 && result.data[0].custom == 0) {
             dispatch(updateUserCalendarBag(store.getState().calendar.calendarCourseBag));
            }
+           debugger
            })
            .catch((err) => {});
      });
+  }
+
+  async function getSelectedCourseArray(title) {
+    const response = await axios.get(`api/courses?title=${title}&year=${year}&semester=${semester}`); 
+    debugger
+    return response.data; 
+    // try {
+    //   axios
+    //     .get(`api/courses?title=${title}&year=${year}&semester=${semester}`)
+    //     .then((res) => {
+    //       event.raw.selectedCourseArray = res.data;
+    //       debugger
+    //     })
+    //     .catch((err) => console.log(err));
+    // } catch (err) {
+    //   // Handle Error Here
+    //   console.error(err);
+    // }
   }
 
   function arraysEqual(_arr1, _arr2) {
@@ -561,16 +552,12 @@ function UserModule() {
   }
 
   function signupSubmit(values) {
-    console.log(values);
-    console.log("signup submit ran");
-    console.log(values.email);
     let userRegObj = {
       username: values.username,
       email: values.email,
       password: values.password,
     };
     var csrftoken = getCookie("csrftoken");
-    console.log(csrftoken);
     axios
       .post("/api/users/register", userRegObj, {
         headers: {
