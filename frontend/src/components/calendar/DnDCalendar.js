@@ -76,7 +76,6 @@ class DnDCalendar extends React.Component {
   };
 
   moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
-    // debugger;
     if (event.type != "custom") return;
     const nextEvents = this.props.calendarCourseBag.map((existingEvent) => {
       if (existingEvent.id === event.id) {
@@ -158,12 +157,9 @@ class DnDCalendar extends React.Component {
       selected: event,
     });
     if (event.type != "custom") {
-      // debugger;
-      debugger
       store.dispatch(
         setCourse(event.courseId, event.title)
       );
-      debugger
     }
   };
 

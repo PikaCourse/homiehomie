@@ -15,6 +15,7 @@ import { addCurrCourse, removeCurrCourse } from "../../actions/calendar";
 import { addCurrCourseToWish } from "../../actions/wishlist";
 const CardStyle = { backgroundColor: "#ffffff", borderRadius: "1.5rem" };
 
+
 function WikiSummary() {
   const selectedCourse = useSelector((state) => state.course.selectedCourse);
   const selectedCourseArray = useSelector(
@@ -122,10 +123,10 @@ function buttonsLoader(
             type="primary"
             onClick={(event) => {
               if (!star) message.error("Course Already in Wishlist");
-              else
-                dispatch(addCurrCourseToWish()).then(
-                  message.success("Course Added To Wishlist")
-                );
+              else {
+                dispatch(addCurrCourseToWish()); //remove dispatch.then 
+                message.success("Course Added To Wishlist");
+              }
             }}
           >
             <FontAwesomeIcon icon={faStar} />
