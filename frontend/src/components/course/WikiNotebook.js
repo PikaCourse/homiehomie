@@ -349,7 +349,7 @@ export class WikiNotebook extends Component {
                 extra={((<FontAwesomeIcon icon={faThumbtack} />), "private")}
                 key={nbObj.id}
               >
-                {this.state.privateCardEditArray.push(true)}
+                {()=>{this.state.privateCardEditArray.push(true);}}
                 {nbObj.notes.map((noteObj) => (
                   <>
                     <Space

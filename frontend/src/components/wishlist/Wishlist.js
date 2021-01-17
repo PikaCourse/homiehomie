@@ -130,6 +130,8 @@ function Wishlist() {
     {
       title: "credit_hours",
       dataIndex: "credit_hours",
+      width: 150, 
+      textWrap: 'word-break',
     },
     {
       title: "description",
