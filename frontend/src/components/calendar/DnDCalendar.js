@@ -88,7 +88,7 @@ class DnDCalendar extends React.Component {
   };
 
   resizeEvent = ({ event, start, end }) => {
-    const nextEvents = events.map((existingEvent) => {
+    const nextEvents = this.props.calendarCourseBag.map((existingEvent) => {
       if (existingEvent.id == event.id) {
         existingEvent.start = start;
         existingEvent.end = end;

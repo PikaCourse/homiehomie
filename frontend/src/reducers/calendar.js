@@ -58,7 +58,6 @@ function addNewCourseToBag(state, action, update) {
       },
     });
   });
-  debugger
   return newBag;
 }
 
