@@ -54,6 +54,7 @@ function addNewCourseToWish(state, action) {
   tempArray.push({
     key: state.wishlistCourseBag.length + 1,
     id: state.wishlistCourseBag.length + 1,
+    courseId: selectedCourse.id,
     crn: selectedCourse.crn,
     time: formatTimeDisplay(selectedCourse.time),
     capacity: selectedCourse.capacity,

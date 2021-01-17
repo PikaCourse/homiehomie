@@ -7,12 +7,7 @@ import {
   REMOVE_CUS_EVENT_IN_CAL,
   OVERWRITE_COURSE_BAG,
 } from "../actions/types.js";
-import {
-  loadState,
-  saveState,
-  loadCalendarCourseBag,
-} from "../../src/helper/localStorage";
-import axios from "axios";
+import { loadCalendarCourseBag } from "../../src/helper/localStorage";
 
 const initialState = {
   calendarCourseBag: loadCalendarCourseBag(),
@@ -56,7 +51,6 @@ function addNewCourseToBag(state, action, update) {
       start: alignDate(timeslot.weekday, timeslot.start_at),
       end: alignDate(timeslot.weekday, timeslot.end_at),
       raw: {
-        crn: action.selectedCourse.crn,
         name: action.selectedCourse.course_meta.name,
         instructor: action.selectedCourse.professor,
         course: action.selectedCourse,
@@ -106,11 +100,12 @@ export default function (state = initialState, action) {
       };
 
     case REMOVE_COURSE_FROM_CAL:
+      //debugger;
       return {
         ...state,
         calendarCourseBag: state.calendarCourseBag.filter(
-          (item) => item.raw.crn != action.selectedCRN
-        ), //assume CRN is unique!!
+          (item) => item.courseId != action.selectedCourse.id
+        ),
       };
     case UPDATE_COURSE_IN_CAL:
       return {

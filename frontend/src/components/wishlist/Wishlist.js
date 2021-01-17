@@ -54,7 +54,9 @@ function Wishlist() {
             onClick={(e) => {
               store.dispatch(
                 setCourse({
-                  selectedCRN: record.crn,
+                  selectedCourse: record.selectedCourseArray.filter(
+                    (item) => item.id === record.courseId
+                  )[0],
                   selectedCourseArray: record.selectedCourseArray,
                 })
               );
