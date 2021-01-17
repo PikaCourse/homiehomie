@@ -7,7 +7,7 @@ import {
   faThumbsDown,
   faPen,
   faTimes,
-  faThumbtack
+  faThumbtack,
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
@@ -22,7 +22,7 @@ import {
   message,
   resetFields,
   Switch,
-  Space
+  Space,
 } from "antd";
 
 const { TextArea } = Input;
@@ -50,6 +50,7 @@ export class WikiNotebook extends Component {
       addNewCard: false,
       public: true,
       input: true,
+      privateCardEditArray: [],
     };
   }
 
@@ -79,27 +80,27 @@ export class WikiNotebook extends Component {
         }
       )
       .then((result) => {});
-      this.setState({value: []})
+    this.setState({ value: [] });
   }
 
-  handleEdit(noteObj){
+  handleEdit(noteObj) {
     axios.put(
-      "api/notes/"+noteObj.id,
+      "api/notes/" + noteObj.id,
       querystring.stringify({
         course: noteObj.course,
         question: noteObj.question,
         title: noteObj.title,
         content: this.state.editVal,
         tags: JSON.stringify(["hi"]),
-        is_private: true
+        is_private: true,
       }),
       {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       }
-    )
-    this.setState({editVal: "", input: true})
+    );
+    this.setState({ editVal: "", input: true });
   }
   onChange = ({ target: { value } }) => {
     this.setState({ value });
@@ -132,7 +133,7 @@ export class WikiNotebook extends Component {
               title: "whatever",
               content: values.note,
               tags: JSON.stringify(["hi"]),
-              is_private: !this.state.public
+              is_private: !this.state.public,
             }),
             {
               headers: {
@@ -155,32 +156,34 @@ export class WikiNotebook extends Component {
                   },
                 });
 
-          let queObj = {
-            id: this.props.noteBag.length,
-            question: {
-              id: res.data.question,
-              course_meta: this.props.selectedCourse.course_meta.id,
+            let queObj = {
+              id: this.props.noteBag.length,
+              question: {
+                id: res.data.question,
+                course_meta: this.props.selectedCourse.course_meta.id,
                 title: values.question,
                 is_pin: !this.state.public,
                 tags: JSON.stringify(["hi", "h2"]),
-                is_private: !this.state.public
-            },
-            notes:[{course: this.props.selectedCourse.id,
-              id: result.data.note,
-              question: values.question,
-              title: "whatever",
-              content: values.note,
-              tags: JSON.stringify(["hi"])}],
-              is_private: !this.state.public
-      
-          };
-          store.dispatch(addOBJ(queObj));
+                is_private: !this.state.public,
+              },
+              notes: [
+                {
+                  course: this.props.selectedCourse.id,
+                  id: result.data.note,
+                  question: values.question,
+                  title: "whatever",
+                  content: values.note,
+                  tags: JSON.stringify(["hi"]),
+                },
+              ],
+              is_private: !this.state.public,
+            };
+            store.dispatch(addOBJ(queObj));
             this.forceUpdate();
           });
       });
-      this.setState({ addNewCard: false });
+    this.setState({ addNewCard: false });
   };
-
 
   componentDidUpdate(prevProps) {
     if (
@@ -192,7 +195,6 @@ export class WikiNotebook extends Component {
   }
 
   render() {
-
     return (
       <div className="" style={noteBookStyle}>
         <div className="text-center">
@@ -207,31 +209,34 @@ export class WikiNotebook extends Component {
         {/* first qu */}
 
         <div>
-          {this.props.loginStatus ? (<div onClick={() => this.setState({ addNewCard: true })}>
+          {this.props.loginStatus ? (
+            <div onClick={() => this.setState({ addNewCard: true })}>
+              <Card
+                bordered={false}
+                hoverable
+                title=""
+                className="my-2"
+                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+              >
+                <p
+                  className="text-center"
+                  style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                >
+                  <span
+                    style={{ borderBottom: "4px solid rgba(65, 158, 244, 1)" }}
+                  >
+                    <FontAwesomeIcon icon={faPen} />
+                    ADD NOTE
+                  </span>
+                </p>
+              </Card>
+            </div>
+          ) : (
             <Card
               bordered={false}
               hoverable
               title=""
-              className="my-2"
-              style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-            >
-              <p
-                className="text-center"
-                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-              >
-                <span
-                  style={{ borderBottom: "4px solid rgba(65, 158, 244, 1)" }}
-                >
-                  <FontAwesomeIcon icon={faPen} />
-                  ADD NOTE
-                </span>
-              </p>
-            </Card>
-          </div>) : (<Card
-              bordered={false}
-              hoverable
-              title=""
-              hoverable = {false}
+              hoverable={false}
               className="my-2"
               style={{ fontFamily: "Montserrat", color: "#596C7E" }}
             >
@@ -246,7 +251,8 @@ export class WikiNotebook extends Component {
                   PLEASE LOGIN TO ADD QUESTIONS OR NOTES
                 </span>
               </p>
-            </Card>)}
+            </Card>
+          )}
           {
             /* New Card */
             this.state.addNewCard ? (
@@ -313,7 +319,13 @@ export class WikiNotebook extends Component {
                   </Form.Item>
 
                   <Form.Item name="remember" valuePropName="checked">
-                    <Checkbox onChange={(e)=>{this.setState({public: e.target.checked});}}>Public</Checkbox>
+                    <Checkbox
+                      onChange={(e) => {
+                        this.setState({ public: e.target.checked });
+                      }}
+                    >
+                      Public
+                    </Checkbox>
                   </Form.Item>
 
                   <Form.Item>
@@ -326,98 +338,113 @@ export class WikiNotebook extends Component {
             ) : null
           }
           {/* Question */}
-          {this.props.noteBag.map((nbObj) => (nbObj.question.is_private)?(
-            <Card
-            hoverable
-            title={nbObj.question.title}
-            bordered={false}
-            className="my-2"
-            style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-          extra= {<FontAwesomeIcon icon={faThumbtack}/>,"private"}
-            key={nbObj.id}
-          >
-          {nbObj.notes.map((noteObj) => (
-          <>
-          <Space
-              direction="vertical"
-              style={{
-              width: '100%',
-              }}
-           >
-        <Space>
-          <Switch
-            checked={this.state.input}
-            checkedChildren="Read"
-            unCheckedChildren="Edit"
-            size = "small"
-            //defaltValue = {nbObj.notes[0].content}
-            onChange={() => {
-              this.setState(prevState => {
-                return {input: !prevState.input}
-             });
-            }}
-          />
-        </Space>
-        <Input 
-          defaultValue = {noteObj.content} 
-          disabled= {this.state.input}
-          onChange = {(event)=>this.setState({editVal: event.target.value})}
-        />
-        </Space>
-          <Button type="link" size = "large" onClick = {(event)=>this.handleEdit(noteObj)}>
-            Save 
-          </Button>
-          </>
-          ))}
-        </Card>
-          ): 
-          (//if the question and post is public
-            <Card
-              hoverable = {false}
-              title={nbObj.question.title}
-              bordered={false}
-              className="my-2"
-              style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-              extra={(nbObj.question.is_pin)?<FontAwesomeIcon icon={faThumbtack}/> : null}
-              key={nbObj.id}
-            >
-              {nbObj.notes.map((noteObj) => (
-                <p
-                  className="pl-2"
-                  style={{ fontFamily: "Montserrat", color: "#596C7E" }}
-                  key={noteObj.id}
-                >
-                  {noteObj.content}
-                  {/* <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> {noteObj.like_count}
-                  <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> {noteObj.dislike_count} */}
-                </p>
-              ))}
-              {this.props.loginStatus ? (<div className="row">
-                <div className="col-sm-11 pr-0">
-                  <form className="form-inline my-2 my-lg-0">
-                    <TextArea
-                      onChange={this.onChange}
-                      placeholder="Write some amazing notes"
-                      autoSize={{ minRows: 3, maxRows: 5 }}
-                      style={{ borderRadius: "5px", borderColor: "white" }}
-                    />
-                  </form>
-                </div>
-                <div className="col-sm-1 pl-0">
-                  <Button
-                    size="medium"
-                    type="primary"
-                    onClick={(event) => {
-                      this.handleSaveClicked(nbObj);
-                    }}
+          {this.props.noteBag.map((nbObj, cardIndex) =>
+            nbObj.question.is_private ? (
+              <Card
+                hoverable
+                title={nbObj.question.title}
+                bordered={false}
+                className="my-2"
+                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                extra={((<FontAwesomeIcon icon={faThumbtack} />), "private")}
+                key={nbObj.id}
+              >
+                {this.state.privateCardEditArray.push(true)}
+                {nbObj.notes.map((noteObj) => (
+                  <>
+                    <Space
+                      direction="vertical"
+                      style={{
+                        width: "100%",
+                      }}
+                    >
+                      <Switch
+                        checked={this.state.privateCardEditArray[cardIndex]}
+                        checkedChildren="Read"
+                        unCheckedChildren="Edit"
+                        size="medium"
+                        onChange={() => {
+                          let arr = [...this.state.privateCardEditArray];
+                          arr[cardIndex] = !this.state.privateCardEditArray[
+                            cardIndex
+                          ];
+                          this.setState({
+                            privateCardEditArray: arr,
+                          });
+                        }}
+                      />
+                      <Input.TextArea
+                        defaultValue={noteObj.content}
+                        disabled={this.state.privateCardEditArray[cardIndex]}
+                        onChange={(event) =>
+                          this.setState({ editVal: event.target.value })
+                        }
+                      />
+                    </Space>
+                    <Button
+                      type="link"
+                      size="large"
+                      onClick={(event) => this.handleEdit(noteObj)}
+                    >
+                      Save
+                    </Button>
+                  </>
+                ))}
+              </Card>
+            ) : (
+              //if the question and post is public
+              <Card
+                hoverable={false}
+                title={nbObj.question.title}
+                bordered={false}
+                className="my-2"
+                style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                extra={
+                  nbObj.question.is_pin ? (
+                    <FontAwesomeIcon icon={faThumbtack} />
+                  ) : null
+                }
+                key={nbObj.id}
+              >
+                {nbObj.notes.map((noteObj) => (
+                  <p
+                    className="pl-2"
+                    style={{ fontFamily: "Montserrat", color: "#596C7E" }}
+                    key={noteObj.id}
                   >
-                    save
-                  </Button>
-                </div>
-              </div>): null}
-            </Card>
-          )
-            )}
+                    {noteObj.content}
+                    {/* <FontAwesomeIcon className="mx-1" icon={faThumbsUp} /> {noteObj.like_count}
+                  <FontAwesomeIcon className="mx-1" icon={faThumbsDown} /> {noteObj.dislike_count} */}
+                  </p>
+                ))}
+                {this.props.loginStatus ? (
+                  <div className="row">
+                    <div className="col-sm-11 pr-0">
+                      <form className="form-inline my-2 my-lg-0">
+                        <TextArea
+                          onChange={this.onChange}
+                          placeholder="Write some amazing notes"
+                          autoSize={{ minRows: 3, maxRows: 5 }}
+                          style={{ borderRadius: "5px", borderColor: "white" }}
+                        />
+                      </form>
+                    </div>
+                    <div className="col-sm-1 pl-0">
+                      <Button
+                        size="medium"
+                        type="primary"
+                        onClick={(event) => {
+                          this.handleSaveClicked(nbObj);
+                        }}
+                      >
+                        save
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
+              </Card>
+            )
+          )}
         </div>
       </div>
     );
@@ -425,8 +452,6 @@ export class WikiNotebook extends Component {
 }
 
 const noteBookStyle = {
-  // background: "#FFFFFF",
-  // border: "5px solid rgba(65, 158, 244, 0.27)",
   boxSizing: "border-box",
   borderRadius: "1.5rem",
 };
