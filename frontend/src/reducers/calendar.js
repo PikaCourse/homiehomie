@@ -35,6 +35,7 @@ function addNewCourseToBag(state, action, update) {
         (item) => item.title != action.selectedCourse.course_meta.title
       )
     : [...state.calendarCourseBag];
+    console.log("deploy is successful"+newBag); 
   let idList = state.calendarCourseBag.map((a) => a.id);
   let newId = update
     ? action.oldId
@@ -133,7 +134,7 @@ export default function (state = initialState, action) {
         ...state,
         calendarCourseBag: action.newBag,
       };
-      
+
     default:
       return state;
   }
