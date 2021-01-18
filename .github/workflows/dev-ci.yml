@@ -50,6 +50,7 @@ jobs:
         remote: ${{ secrets.DOKKU_HOMIEHOMIE_STORAGE_DIR }}
         recursive: true
         rmRemote: true
+        atomicPut: true
       
   test_backend:
     name: Test backend
