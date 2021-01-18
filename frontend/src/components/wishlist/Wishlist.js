@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import store from "../../store";
@@ -6,6 +6,7 @@ import store from "../../store";
 import { CaretRightOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import {updateUserWishlist} from "../../actions/user"
 
 import {
   Table,
@@ -27,9 +28,11 @@ import { removeCurrCourseFromWish } from "../../actions/wishlist";
 import { useDispatch, useSelector } from "react-redux";
 
 function Wishlist() {
+  const dispatch = useDispatch();
   const wishlistCourseBag = useSelector(
     (state) => state.wishlist.wishlistCourseBag
   );
+  const loginStatus = useSelector(state => state.user.loginStatus); 
   // const calendarCourseBag = useSelector(
   //   (state) => state.calendar.calendarCourseBag
   // );
@@ -40,6 +43,8 @@ function Wishlist() {
       title: "Actions",
       key: "operation",
       fixed: "left",
+      width: 100, 
+      align: "center", 
       //width: 30,
       render: (text, record) => (
         <div>
@@ -52,15 +57,8 @@ function Wishlist() {
           </Button>
           <Button
             onClick={(e) => {
-              store.dispatch(
-                setCourse({
-                  selectedCourse: record.selectedCourseArray.filter(
-                    (item) => item.id === record.courseId
-                  )[0],
-                  selectedCourseArray: record.selectedCourseArray,
-                })
-              );
-              setIsWishlistVisible(false);
+              store.dispatch(setCourse(record.courseId,record.title));
+              setVisible(false);
             }}
           >
             View
@@ -80,63 +78,71 @@ function Wishlist() {
     //     return <h5>{inCourseBag}</h5>;
     //   },
     // },
+    // {
+    //   title: "ID",
+    //   dataIndex: "id",
+    // },
     {
-      title: "id",
-      dataIndex: "id",
-    },
-    {
-      title: "tags",
-      dataIndex: "tags",
-    },
-    {
-      title: "time",
-      dataIndex: "time",
-    },
-    {
-      title: "crn",
-      dataIndex: "crn",
-    },
-    {
-      title: "registered",
-      dataIndex: "registered",
-    },
-    {
-      title: "capacity",
-      dataIndex: "capacity",
-    },
-    {
-      title: "type",
-      dataIndex: "type", //need to be merged with semester
-    },
-    {
-      title: "professor",
-      dataIndex: "professor",
-    },
-    {
-      title: "location",
-      dataIndex: "location",
-    },
-    {
-      title: "title",
+      title: "Title",
       dataIndex: "title",
     },
     {
-      title: "name",
+      title: "Name",
       dataIndex: "name",
     },
     {
-      title: "credit_hours",
+      title: "Time",
+      dataIndex: "time",
+    },
+    {
+      title: "Location",
+      dataIndex: "location",
+    },
+    {
+      title: "Professor",
+      dataIndex: "professor",
+    },
+    {
+      title: "Credit_hours",
       dataIndex: "credit_hours",
     },
     {
-      title: "description",
-      dataIndex: "description",
+      title: "Type",
+      dataIndex: "type", //need to be merged with semester
     },
     {
-      title: "college",
+      title: "Description",
+      dataIndex: "description",
+      width: 800, 
+    },
+    {
+      title: "Capacity",
+      dataIndex: "capacity",
+    },
+    {
+      title: "Tags",
+      dataIndex: "tags",
+    },
+    {
+      title: "CRN",
+      dataIndex: "crn",
+    },
+    {
+      title: "Registered",
+      dataIndex: "registered",
+    },
+    {
+      title: "College",
       dataIndex: "college",
     },
   ];
+
+  useEffect(() => {
+    //update course list to user 
+    if (loginStatus) {
+      dispatch(updateUserWishlist(wishlistCourseBag)); 
+    }
+  });
 
   return (
     <div>

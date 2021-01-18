@@ -31,9 +31,11 @@ export const alignDate = (weekDayIndex, timestamp) => {
 function addNewCourseToBag(state, action, update) {
   let newBag = update
     ? state.calendarCourseBag.filter(
-        (item) => item.raw.selectedCourseArray != action.selectedCourseArray
+        // (item) => item.raw.selectedCourseArray != action.selectedCourseArray
+        (item) => item.title != action.selectedCourse.course_meta.title
       )
     : [...state.calendarCourseBag];
+    console.log("deploy is successful"+newBag); 
   let idList = state.calendarCourseBag.map((a) => a.id);
   let newId = update
     ? action.oldId
@@ -126,11 +128,13 @@ export default function (state = initialState, action) {
           (item) => item.id != action.event.id
         ),
       };
+
     case OVERWRITE_COURSE_BAG:
       return {
         ...state,
         calendarCourseBag: action.newBag,
       };
+
     default:
       return state;
   }

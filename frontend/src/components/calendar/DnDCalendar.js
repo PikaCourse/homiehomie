@@ -9,9 +9,9 @@ import "react-big-calendar/lib/sass/styles.scss";
 import "../../../static/scss/calendar.scss";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { setCourse } from "../../actions/course";
+import { setCourse, getCourse } from "../../actions/course";
 import { addCustomEvent, removeCustomEvent } from "../../actions/calendar";
-import { updateUserCalendarBag } from "../../actions/user";
+import { updateUserSchedule } from "../../actions/user";
 import store from "../../store";
 import { EventComponent } from "./EventComponent";
 import { colors, pcolors } from "./Color.js";
@@ -35,7 +35,7 @@ class DnDCalendar extends React.Component {
   componentDidUpdate() {
     if (store.getState().user.loginStatus) {
       store.dispatch(
-        updateUserCalendarBag(store.getState().calendar.calendarCourseBag)
+        updateUserSchedule(store.getState().calendar.calendarCourseBag)
       );
     }
   }
@@ -76,7 +76,6 @@ class DnDCalendar extends React.Component {
   };
 
   moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot }) => {
-    // debugger;
     if (event.type != "custom") return;
     const nextEvents = this.props.calendarCourseBag.map((existingEvent) => {
       if (existingEvent.id === event.id) {
@@ -89,7 +88,7 @@ class DnDCalendar extends React.Component {
   };
 
   resizeEvent = ({ event, start, end }) => {
-    const nextEvents = events.map((existingEvent) => {
+    const nextEvents = this.props.calendarCourseBag.map((existingEvent) => {
       if (existingEvent.id == event.id) {
         existingEvent.start = start;
         existingEvent.end = end;
@@ -158,13 +157,8 @@ class DnDCalendar extends React.Component {
       selected: event,
     });
     if (event.type != "custom") {
-      // debugger;
-
       store.dispatch(
-        setCourse({
-          selectedCourse: event.raw.course,
-          selectedCourseArray: event.raw.selectedCourseArray,
-        })
+        setCourse(event.courseId, event.title)
       );
     }
   };
@@ -222,7 +216,7 @@ class DnDCalendar extends React.Component {
           formats={formats}
           selectable
           localizer={mlocalizer}
-          events={this.props.calendarCourseBag} //data input
+          events={store.getState().calendar.calendarCourseBag} //data input
           onEventDrop={this.moveEvent}
           resizable={true}
           onEventResize={this.resizeEvent}

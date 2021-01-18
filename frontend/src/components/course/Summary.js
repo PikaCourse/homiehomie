@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, {useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, Radio, Button, Tooltip, message, Space } from "antd";
 import { isEmpty } from "../../helper/dataCheck";
@@ -15,11 +15,8 @@ import { addCurrCourse, removeCurrCourse } from "../../actions/calendar";
 import { addCurrCourseToWish } from "../../actions/wishlist";
 const CardStyle = { backgroundColor: "#ffffff", borderRadius: "1.5rem" };
 
-function WikiSummary() {
-  const [addBtn, setAddBtn] = useState(true);
-  const [rmBtn, setRmBtn] = useState(true);
-  const [starBtn, setStarBtn] = useState(true);
 
+function WikiSummary() {
   const selectedCourse = useSelector((state) => state.course.selectedCourse);
   const selectedCourseArray = useSelector(
     (state) => state.course.selectedCourseArray
@@ -34,7 +31,6 @@ function WikiSummary() {
   const dispatch = useDispatch();
 
   return (
-    <Fragment>
       <div className="p-4 my-2 mt-4" style={CardStyle}>
         {!isEmpty(selectedCourse) ? (
           <div>
@@ -52,7 +48,6 @@ function WikiSummary() {
           <Card bordered={false} loading={true}></Card>
         )}
       </div>
-    </Fragment>
   );
 }
 
@@ -62,16 +57,14 @@ function buttonsLoader(
   selectedCourse,
   wishlistCourseBag
 ) {
-  //debugger;
   const courseArray = calendarCourseBag.filter(
     (item) =>
-      item.raw.selectedCourseArray[0]?.course_meta.title ===
+      item.title ===
       selectedCourse.course_meta.title //&& (item.type != 'preview'))
   );
   let add = true;
   let remove = true;
   let addButtonText = "Add Course";
-  //debugger;
   let star =
     wishlistCourseBag.filter((item) => item.courseId === selectedCourse.id)
       .length == 0; //true if in the wishlist
@@ -81,12 +74,11 @@ function buttonsLoader(
   //    true: add: false, remove true
   //    false: add->save: true, remove false
 
-  if (!courseArray.length) remove = false;
+  if (!courseArray.length) {remove = false; }
   else {
     const course = calendarCourseBag.filter(
       (item) => item.courseId === selectedCourse.id //&& (item.type != 'preview')
     );
-    //debugger;
     if (!course.length) {
       addButtonText = "Change CRN";
       remove = false;
@@ -130,10 +122,10 @@ function buttonsLoader(
             type="primary"
             onClick={(event) => {
               if (!star) message.error("Course Already in Wishlist");
-              else
-                dispatch(addCurrCourseToWish()).then(
-                  message.success("Course Added To Wishlist")
-                );
+              else {
+                dispatch(addCurrCourseToWish()); //remove dispatch.then 
+                message.success("Course Added To Wishlist");
+              }
             }}
           >
             <FontAwesomeIcon icon={faStar} />
@@ -235,7 +227,6 @@ function filterLoader(selectedCourseArray, selectedCourse, dispatch) {
         >
           Times
         </h5>
-
         {timeslot.map((time) => (
           <Radio.Button
             className="mr-1 mb-1"

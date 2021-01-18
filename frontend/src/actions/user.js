@@ -1,4 +1,4 @@
-import {LOGIN_USER, LOGOUT_USER, GET_USER_SCHEDULE, UPDATE_USER_SCHEDULE} from './types'
+import {LOGIN_USER, LOGOUT_USER, GET_USER_SCHEDULE, UPDATE_USER_SCHEDULE, GET_USER_WISHLIST, UPDATE_USER_WISHLIST} from './types'
 import store from '../store'
 import axios from "axios";
 
@@ -44,21 +44,28 @@ export const updateUserSchedule = (newSchedule) => (dispatch) => {
       });
 }
 
-//for calendar course bag 
-export const updateUserCalendarBag = (newSchedule) => (dispatch) => {
-    let scheduleCopy = [...store.getState().calendar.calendarCourseBag]; 
-    let scheduleCopyMotified = scheduleCopy.map(event => {
-        event.raw.course = [], 
-        event.raw.selectedCourseArray = []; 
-        return event; 
-    }); 
-    let newScheduleObj = {custom: [...scheduleCopyMotified]}
+export const getUserWishlist = () => (dispatch) => {
     axios
-      .patch("/api/schedules/"+store.getState().user.scheduleId, newScheduleObj)
+      .get("/api/wishlists")
       .then((result) => { 
         dispatch ({
-            type: UPDATE_USER_SCHEDULE,
-            userSchedule: newSchedule, 
+            type: GET_USER_WISHLIST,
+            userWislist: result.data[0].custom, 
+            userWishlistId: result.data[0].id,  
+        }); 
+      })
+      .catch((err) => {  
+      });
+}
+
+export const updateUserWishlist = (newWishlist) => (dispatch) => {
+    let newWishlistObj = {custom: [...newWishlist]}
+    axios
+      .patch("/api/wishlists/"+store.getState().user.wishlistId, newWishlistObj)
+      .then((result) => { 
+        dispatch ({
+            type: UPDATE_USER_WISHLIST,
+            userWishlist: newWishlist, 
         }); 
       })
       .catch((err) => {  
