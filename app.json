@@ -1,7 +1,7 @@
 {
   "scripts": {
     "dokku": {
-      "predeploy": "rsync -rv ./storage/frontend/ ./frontend/static/frontend/ && python manage.py migrate --noinput && python manage.py collectstatic --noinput"
+      "predeploy": "rsync -rv --chmod=ugo=rwX ./storage/frontend/ ./frontend/static/frontend/ && python manage.py migrate --noinput && python manage.py collectstatic --noinput"
     }
   }
 }
