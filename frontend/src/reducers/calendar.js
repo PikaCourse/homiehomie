@@ -127,11 +127,13 @@ export default function (state = initialState, action) {
           (item) => item.id != action.event.id
         ),
       };
+
     case OVERWRITE_COURSE_BAG:
       return {
         ...state,
         calendarCourseBag: action.newBag,
       };
+      
     default:
       return state;
   }
