@@ -31,7 +31,8 @@ export const alignDate = (weekDayIndex, timestamp) => {
 function addNewCourseToBag(state, action, update) {
   let newBag = update
     ? state.calendarCourseBag.filter(
-        (item) => item.raw.selectedCourseArray != action.selectedCourseArray
+        // (item) => item.raw.selectedCourseArray != action.selectedCourseArray
+        (item) => item.title != action.selectedCourse.course_meta.title
       )
     : [...state.calendarCourseBag];
   let idList = state.calendarCourseBag.map((a) => a.id);
