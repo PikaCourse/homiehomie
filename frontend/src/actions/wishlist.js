@@ -1,11 +1,11 @@
-import {ADD_COURSE_TO_WISH, REMOVE_COURSE_FROM_WISH} from './types'
+import {ADD_COURSE_TO_WISH, REMOVE_COURSE_FROM_WISH, OVER_WRITE_WISH} from './types'
 import store from '../store'
 
 export const addCurrCourseToWish = ()  =>
 {
     return {
         type: ADD_COURSE_TO_WISH,
-        selectedCRN: store.getState().course.selectedCRN,
+        selectedCourse: store.getState().course.selectedCourse,
         selectedCourseArray: store.getState().course.selectedCourseArray,
     };  
 }
@@ -14,8 +14,14 @@ export const removeCurrCourseFromWish = (id)  =>
 {
     return {
         type: REMOVE_COURSE_FROM_WISH,
-        selectedCRN: store.getState().course.selectedCRN,
         selectedCourseArray: store.getState().course.selectedCourseArray,
         id: id, 
     };  
+}
+
+export const overwriteWish = (newWishlist) => {
+    return {
+        type: OVER_WRITE_WISH,
+        newWishlist: newWishlist,
+    }; 
 }

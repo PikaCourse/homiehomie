@@ -4,6 +4,7 @@ export const year = "2021";
 export const semester = "spring";
 export const weekday = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 export const Color = "#419EF4";
+export const school = "Boston University"
 
 export function courseDataPatch(courseArray) {
   let Patched = [...courseArray];

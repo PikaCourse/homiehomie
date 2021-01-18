@@ -167,17 +167,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
-    'DEFAULT_THROTTLE_CLASSES': [
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle',
-        'rest_framework.throttling.ScopedRateThrottle'
-    ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '500/day',
-        'user': '5000/day',
-        'user.register': '20/day',
-        'user.verify_email': '5/hour'
-    }
 }
 
 # Email setting
@@ -191,3 +180,9 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="bot@courseocean.cc")
 # Verification token timeout in seconds
 # current setting: 3 hrs
 PASSWORD_RESET_TIMEOUT = 60 * 60 * 3
+
+# Authenticate backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'user.backends.EmailAuthBackend'
+]

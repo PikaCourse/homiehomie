@@ -11,20 +11,32 @@ const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import prompt from "../../../static/json/prompt.json"
 import store from '../../store'
-import {updateLoginStatus} from '../../actions/user'
+import {updateLoginStatus, getUserSchedule, updateUserSchedule, getUserWishlist, updateUserWishlist} from '../../actions/user'
+import {overwriteCourseBag} from '../../actions/calendar'
 import {useDispatch, useSelector} from "react-redux"
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
+import {loadUserCourseBag} from '../../helper/loadUserCalendar'
+import { year, semester, courseDataPatch, school } from "../../helper/global";
+import {overwriteWish} from "../../actions/wishlist"
 
 function UserModule() {
+  const wishlistCourseBag = useSelector(
+    (state) => state.wishlist.wishlistCourseBag
+  );
+  const calendarCourseBag = useSelector(
+    (state) => state.calendar.calendarCourseBag
+  );
   //local usage 
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [login, setLogin] = useState(true); //if user is in login tab
   const [error, setError] = useState("");
+  const [scheduleConflictVisible, setScheduleConflict] = useState(false); //visibility
   //global usage 
   const [userProfile, setUserProfile] = useState({ username: "user" }); //loginStatus?getUserProfile:{}
-  // const [loginStatus, dispatch(updateLoginStatus] = useState(false); //getSessionStatus()
+  const [schedules, setSchedules] = useState({current:[], server:[]}); 
+  // const [loginStatus, dispatch(updateLoginStatus] = useState(false); //()
   //store 
   const loginStatus = useSelector(state => state.user.loginStatus); 
   const dispatch = useDispatch(); 
@@ -247,7 +259,7 @@ function UserModule() {
   const loginSignupModal = (
     <Modal
       visible={visible}
-      title="Title"
+      // title="Title"
       onOk={handleOk}
       onCancel={handleCancel}
       footer={null}
@@ -278,16 +290,32 @@ function UserModule() {
       </Form>
     </Modal>
   );
+  const scheduleConflict = <Modal 
+  title="Schedule Conflict" 
+  visible={scheduleConflictVisible} 
+  onOk={handleOk} 
+  onCancel={handleCancel}
+  closable={false}
+  footer={null}
+  >
+    <p>{prompt.userScheduleConflictMessage}</p>
+    <Button onClick={()=>{
+      dispatch(updateUserSchedule(schedules.current)); 
+      setScheduleConflict(false); 
+    }}>Save Current Schedule</Button>
+    <Button onClick={()=>{
+      dispatch(overwriteCourseBag(schedules.server)); 
+      setScheduleConflict(false); 
+    }}>Disgard Current Schedule</Button>
+  </Modal>; 
 
   useEffect(() => {
     // Update the document title using the browser API
-    getUserProfile();
+    getUserProfile(); 
   }, []);
 
   function getUserProfile() {
     var csrftoken = getCookie("csrftoken");
-    console.log(csrftoken);
-    console.log("getUserProfile ran"); 
     axios
       .get("/api/users",  {
         headers: {
@@ -297,8 +325,6 @@ function UserModule() {
         },
       })
       .then((result) => {
-        console.log("result"); 
-        console.log(result); 
         if (result.status == 302 || result.status == 200) {
           console.log("Successfully get user profile info");
           setError("");
@@ -309,11 +335,13 @@ function UserModule() {
           dispatch(updateLoginStatus(true)); 
           // setUserProfile({result}); 
           setUserProfile({username: result.data.username, email: result.data.email}); 
+          dispatch(getUserSchedule());
+          dispatch(getUserWishlist());
         } 
       })
       .catch(err => {
         console.log("get user err.response"); 
-        console.log(err.response); 
+        console.log(err); 
         if (err.response.status == 403 || err.response.status == 401) {
           console.log("user is not logged in"); 
           dispatch(updateLoginStatus(false)); 
@@ -323,6 +351,9 @@ function UserModule() {
             "Sorry, we cannot keep you login at this time due to unknown error, please try later."
           );
         }
+     })
+     .finally(()=>{
+      
      });
   }
 
@@ -346,6 +377,8 @@ function UserModule() {
         console.log("Successfully logout user");
         dispatch(updateLoginStatus(false)); //use getSessionStatus
         localStorage.removeItem("last_active_time");
+        window.location.reload(); 
+        localStorage.clear();
       })
       .catch(err => {
         setError(
@@ -395,14 +428,12 @@ function UserModule() {
   }
 
   function loginSubmit(values) {
-    console.log(values);
     console.log("login submit ran");
     var userLoginObj = {
       username: values.username,
       password: values.password,
     };
     var csrftoken = getCookie("csrftoken");
-    console.log(csrftoken);
     axios
       .post("/api/users/login", userLoginObj, {
         headers: {
@@ -412,15 +443,13 @@ function UserModule() {
         },
       })
       .then((result) => {
-        console.log("result"); 
-        console.log(result); 
         if (result.status == 200) {
-          getUserProfile(); 
+          // dispatch(overwriteCourseBag(store.getState().user.schedule)); //default overwrite existing schedule 
+          getUserProfile();
           handleOk(true);
           console.log("Successfully login user");
           setError("");
           dispatch(updateLoginStatus(true)); //use getSessionStatus
-          getSessionStatus();
           localStorage.setItem(
             "last_active_time",
             JSON.stringify(new Date())
@@ -429,6 +458,8 @@ function UserModule() {
       })
       .catch(err => {
         handleOk(false);
+        console.log("login submit error:");
+        console.log(err);
         // console.log(err.response.status);
         if (err.response.status >= 400 && err.response.status < 500) {
           console.log("Error due to invalid password or username");
@@ -439,20 +470,81 @@ function UserModule() {
             "Sorry, we cannot complete your request at this time due to unknown error, please try later."
           );
         }
-     });
+      })
+      .finally(() => {
+        handleScheduleConflict();
+        axios
+          .get("/api/wishlists")
+          .then((result) => {
+            var uniqueServerWishlist = result.data[0].custom.filter(x => !wishlistCourseBag.find(y => x.courseId === y.courseId));
+            var mergedWishlist = [...uniqueServerWishlist, ...wishlistCourseBag]; 
+            mergedWishlist.map((currElement, index) => {
+              currElement.id = index + 1; 
+              currElement.key = index + 1; 
+              return currElement; //equivalent to list[index]
+            });
+            //remove duplicate and reset id 
+            dispatch(overwriteWish(mergedWishlist)); 
+            dispatch(updateUserWishlist(mergedWishlist)); 
+          })
+          .catch((err) => {});
+      });
+  }
+
+  function arraysEqual(_arr1, _arr2) {
+    if (
+      !Array.isArray(_arr1)
+      || !Array.isArray(_arr2)
+      || _arr1.length !== _arr2.length
+      ) {
+        return false;
+      }
+    
+    // .concat() is used so the original arrays are unaffected
+    const arr1 = _arr1.concat().sort();
+    const arr2 = _arr2.concat().sort();
+    
+    for (let i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) {
+            return false;
+         }
+    }
+    
+    return true;
+}
+
+  function handleScheduleConflict() {
+    axios
+      .get("/api/schedules")
+      .then(result => {
+        var localCourseIds = store.getState().calendar.calendarCourseBag.map(a => a.courseId);
+        var serverCourseIds = result.data[0].custom.map(b => b.courseId);
+        if (result.data[0].custom.length != 0) {
+          setSchedules({
+            current: store.getState().calendar.calendarCourseBag,
+            server: result.data[0].custom,
+          });
+        }
+        if (store.getState().calendar.calendarCourseBag.length != 0 && result.data[0].custom != 0 &&
+          !arraysEqual(localCourseIds, serverCourseIds)) {
+          console.log("conflict found");
+          setScheduleConflict(true);
+        } else if (store.getState().calendar.calendarCourseBag.length == 0 && result.data[0].custom != 0) {
+          dispatch(overwriteCourseBag(result.data[0].custom));
+        } else if (store.getState().calendar.calendarCourseBag.length != 0 && result.data[0].custom == 0) {
+          dispatch(updateUserCalendarBag(store.getState().calendar.calendarCourseBag));
+        }
+      })
+      .catch((err) => {});
   }
 
   function signupSubmit(values) {
-    console.log(values);
-    console.log("signup submit ran");
-    console.log(values.email);
     let userRegObj = {
       username: values.username,
       email: values.email,
       password: values.password,
     };
     var csrftoken = getCookie("csrftoken");
-    console.log(csrftoken);
     axios
       .post("/api/users/register", userRegObj, {
         headers: {
@@ -525,6 +617,7 @@ function UserModule() {
                 {loginStatus ? userProfile.username : "Login"}
               </Button>
               {loginStatus ? userProfileModal : loginSignupModal}
+              {scheduleConflict}
             </>
   );
 }

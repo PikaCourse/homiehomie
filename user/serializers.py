@@ -39,7 +39,7 @@ class StudentSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username",
                                      validators=[UniqueOrOwnerValidator(queryset=User.objects.all())])
     email = serializers.EmailField(source="user.email",
-                                   validators=[UniqueOrOwnerValidator(queryset=User.objects.all())])
+                                   validators=[UniqueOrOwnerValidator(queryset=User.objects.all(), ignore_case=True)])
     first_name = serializers.CharField(source="user.first_name", allow_blank=True)
     last_name = serializers.CharField(source="user.last_name", allow_blank=True)
     # If read only is true, will not be included in validated data
@@ -53,7 +53,9 @@ class StudentSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         # Value already check against model field Email constraint
-        email = value
+
+        # Force email to store in lowercase
+        email = value.lower()
         if not email:
             raise serializers.ValidationError("missing email field")
         if not email.endswith(".edu"):
@@ -179,12 +181,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         # Value already check against model field Email constraint
-        email = value
+        email = value.lower()
         if not email:
             raise serializers.ValidationError("missing email field")
         if not email.endswith(".edu"):
             raise serializers.ValidationError("requires .edu email for registration")
-        if User.objects.filter(email=email).count():
+        if User.objects.filter(email__iexact=email).count():
             raise serializers.ValidationError("email taken")
         return email
 

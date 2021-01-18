@@ -7,11 +7,13 @@ on:
       - 'README.md'
       - '.gitignore'
       - '.github/**'
+      - 'makefile'
   pull_request:
     paths-ignore: 
       - 'README.md'
       - '.gitignore'
       - '.github/**'
+      - 'makefile'
     branches: [ dev ]
     
   workflow_dispatch:
@@ -49,7 +51,7 @@ jobs:
         remote: ${{ secrets.DOKKU_HOMIEHOMIE_STORAGE_DIR }}
         recursive: true
         rmRemote: true
-        atomicPut: true 
+        atomicPut: true
       
   test_backend:
     name: Test backend
@@ -89,7 +91,7 @@ jobs:
         npm run build
     - name: Run Coverage and Unit test
       run: |
-        python manage.py collectstatic --noinput
+        make collectstatic_dev
         make coverage_dev
       env:
         # Fake SECRET KEY used for run test only 

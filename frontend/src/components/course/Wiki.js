@@ -5,6 +5,7 @@ import { getCourse } from "../../actions/course";
 import { connect } from "react-redux";
 import WikiSearch from "./Search";
 import WikiSummary from "./Summary";
+import Notebook from "./Notebook";
 export class Wiki extends Component {
   componentDidMount() {
     this.props.dispatch(getCourse("CAS BI 315"));
