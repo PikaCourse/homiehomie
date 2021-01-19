@@ -172,8 +172,10 @@ function Wishlist() {
   );
 }
 
+// TODO This also seems unnecessary?
 const mapStateToProps = (state) => ({
   selectedCourseArray: state.course.selectedCourseArray,
 });
 
+// TODO Can use connect to pass dispatch method
 export default connect(mapStateToProps)(Wishlist);

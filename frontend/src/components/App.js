@@ -1,3 +1,12 @@
+/**
+ * File name:	App.js
+ * Created:	01/17/2021
+ * Author:	Marx Wang
+ * Email:	foo@bar.com
+ * Version:	1.0 Initial file
+ * Description:	Frontend global container
+ */
+
 import React, { Component, Fragment } from "react";
 import ReactDOM from "react-dom";
 
@@ -12,6 +21,8 @@ import "../../static/scss/button.scss";
 import { Auth0Provider } from "@auth0/auth0-react";
 
 class App extends Component {
+  // App class to host sub modules
+  // TODO Might need to separate note section from wiki?
   render() {
     return (
       <Provider store={store}>
@@ -34,6 +45,7 @@ class App extends Component {
   }
 }
 
+// TODO Remove Auth0
 ReactDOM.render(
   <Auth0Provider
     domain="homiehomie.us.auth0.com"

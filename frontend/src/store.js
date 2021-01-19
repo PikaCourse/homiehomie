@@ -8,6 +8,7 @@ const initialState = {};
 
 const middleware = [thunk];
 
+// TODO Need to specify what kinds of data to store in the store
 const store = createStore(
   rootReducer,
   initialState,

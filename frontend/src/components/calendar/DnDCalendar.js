@@ -20,6 +20,10 @@ let formats = {
   dayFormat: (date, culture, localizer) => moment.utc(date).format("ddd"), //https://devhints.io/moment
 };
 const today = new Date();
+
+// TODO Unify component design language?
+// TODO Add support to display only one day?
+// TODO Mobile optimization: hide this calendar
 class DnDCalendar extends React.Component {
   constructor(props) {
     super(props);

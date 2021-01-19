@@ -1,3 +1,12 @@
+/**
+ * File name:	Navbar.js
+ * Created:	01/17/2021
+ * Author:	Marx Wang, Joanna Fang, Ji Zhang
+ * Email:	foo@bar.com
+ * Version:	1.0 Initial file 
+ * Description:	Navigation container for wishlist and user module
+ */
+
 import React, { Component, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button, Form, Input, Checkbox, Radio } from "antd";
@@ -11,6 +20,7 @@ const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import UserModule from "../user/UserModule";
 
+// TODO Mobile optimization
 function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
@@ -33,6 +43,7 @@ function Navbar() {
   );
 }
 
+// TODO Could be customized for different school theme color?
 const selectedStyle = {
   color: "#596C7E",
   fontWeight: "800",

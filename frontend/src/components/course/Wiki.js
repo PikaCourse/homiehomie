@@ -1,3 +1,12 @@
+/**
+ * File name:	Wiki.js
+ * Created:	01/18/2021
+ * Author:	Marx Wang, Ji Zhang
+ * Email:	foo@bar.com
+ * Version:	1.0 Initial file
+ * Description:	Container for search bar, course info, and note section
+ */
+
 import React, { Component, Fragment } from "react";
 import WikiNotebook from "./WikiNotebook";
 import PropTypes from "prop-types";
@@ -8,6 +17,8 @@ import WikiSummary from "./Summary";
 import Notebook from "./Notebook";
 export class Wiki extends Component {
   componentDidMount() {
+    // TODO Default should await user for searching
+    // TODO Or display the last course user searched for
     this.props.dispatch(getCourse("CAS BI 315"));
   }
 
@@ -30,6 +41,8 @@ const WikiStyle = {
   borderBottomRightRadius: "20px",
   borderBottomLeftRadius: "20px",
 };
+
+// TODO This seems useless
 const mapStateToProps = (state) => ({
   course: state.course.course,
 });
