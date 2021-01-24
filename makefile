@@ -51,6 +51,13 @@ help:
 	@echo "  coverage-report_%    - generate report with designated format"
 	@echo
 	@echo "  clean-coverage       - clean generated coverage related files"
+	@echo
+	@echo "Redis db related"
+	@echo "  install_redis        - install redis on local machine"
+	@echo
+	@echo "  start_redis          - start redis server"
+	@echo
+	@echo "  start_worker         - start worker process for redis queue"
 	@echo "----------------------------------------------------------------"
 
 #############################################
@@ -163,3 +170,7 @@ endif
 # Launch a redis db with default setting
 start_redis : install_redis
 	@redis-server
+
+# Start worker
+start_worker_% :
+	@python manage.py rqworker high default low --settings=homiehomie.settings_d.$*
