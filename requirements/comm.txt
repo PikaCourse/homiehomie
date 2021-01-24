@@ -29,4 +29,4 @@ rq==1.7.0
 django-rq==2.4.0
 
 # Custom packages
-courseocean-webapi @ git+ssh://github.com/coursewiki/courseocean-webapi@main#egg=courseocean_webapi
+courseocean-webapi @ git+ssh://git@github.com/coursewiki/courseocean-webapi@main#egg=courseocean_webapi
