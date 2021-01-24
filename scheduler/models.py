@@ -4,6 +4,8 @@ from django.db import models
 from user.models import Student
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
+import datetime
 
 # TODO Use choices options of fields to limit user input and as
 # TODO validation
@@ -48,6 +50,14 @@ class CourseMeta(models.Model):
 
     class Meta:
         ordering = ["title"]
+
+    def update_recently(self):
+        """
+        Check if the model has been updated recently (within 1 day)
+        :return:
+        """
+        now = timezone.now()
+        return now - datetime.timedelta(days=1) <= self.last_updated <= now
 
     def __str__(self):
         return "_".join([self.school, self.title, self.name])
