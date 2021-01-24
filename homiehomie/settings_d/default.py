@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'coverage',
     'django_extensions',
+    "django_rq",
     'scheduler.apps.SchedulerConfig',
     'frontend.apps.FrontendConfig',
     'user.apps.UserConfig',
@@ -186,3 +187,35 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'user.backends.EmailAuthBackend'
 ]
+
+# Redis backend worker queue db
+REDIS_WORKER_QUEUE_DATABASE_URL = config("REDIS_WORKER_QUEUE_DATABASE_URL", "redis://localhost:6379")
+
+RQ_QUEUES = {
+    'default': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'PASSWORD': 'some-password',
+        'DEFAULT_TIMEOUT': 360,
+    },
+    'with-sentinel': {
+        'SENTINELS': [('localhost', 26736), ('localhost', 26737)],
+        'MASTER_NAME': 'redismaster',
+        'DB': 0,
+        'PASSWORD': 'secret',
+        'SOCKET_TIMEOUT': None,
+        'CONNECTION_KWARGS': {
+            'socket_connect_timeout': 0.3
+        },
+    },
+    'high': {
+        'URL': config("REDIS_WORKER_QUEUE_DATABASE_URL", "redis://localhost:6379/0"),
+        'DEFAULT_TIMEOUT': 500,
+    },
+    'low': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+    }
+}
