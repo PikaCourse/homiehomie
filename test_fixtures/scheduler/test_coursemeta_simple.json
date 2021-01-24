@@ -4,6 +4,7 @@
     "pk": 1,
     "fields": {
         "created_at": "2020-12-25T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-4764",
@@ -19,6 +20,7 @@
     "pk": 2,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-5144",
@@ -34,6 +36,7 @@
     "pk": 3,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-5814G",
@@ -49,6 +52,7 @@
     "pk": 4,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-5804G",
@@ -64,6 +68,7 @@
     "pk": 5,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-6214",
@@ -79,6 +84,7 @@
     "pk": 6,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-5026",
@@ -94,6 +100,7 @@
     "pk": 7,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-3024",
@@ -109,6 +116,7 @@
     "pk": 8,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-4804",
@@ -124,6 +132,7 @@
     "pk": 9,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-2104",
@@ -139,6 +148,7 @@
     "pk": 10,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "AAEC",
         "college": "College of Agriculture and Life Sciences",
         "title": "AAEC-3314",
@@ -154,6 +164,7 @@
     "pk": 11,
     "fields": {
         "created_at": "2020-12-25T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "COM",
         "college": "College of Liberal Arts",
         "title": "COM-11400",
@@ -169,6 +180,7 @@
     "pk": 12,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "ENGL",
         "college": "College of Liberal Arts",
         "title": "ENGL 10600",
@@ -184,6 +196,7 @@
     "pk": 13,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "ECE",
         "college": "College of Engineering",
         "title": "ECE 20100",
@@ -199,6 +212,7 @@
     "pk": 14,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "ECE",
         "college": "College of Engineering",
         "title": "ECE 27000",
@@ -214,6 +228,7 @@
     "pk": 15,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "CS",
         "college": "College of Science",
         "title": "CS 38100",
@@ -229,6 +244,7 @@
     "pk": 16,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "CS",
         "college": "College of Science",
         "title": "CS 37300",
@@ -244,6 +260,7 @@
     "pk": 17,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "CS",
         "college": "College of Science",
         "title": "CS 25200",
@@ -259,6 +276,7 @@
     "pk": 18,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "ECE",
         "college": "College of Engineering",
         "title": "ECE 36200",
@@ -274,6 +292,7 @@
     "pk": 19,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "ECE",
         "college": "College of Engineering",
         "title": "ECE 43700",
@@ -289,6 +308,7 @@
     "pk": 20,
     "fields": {
         "created_at": "2020-12-24T05:30:57Z",
+        "last_updated": "2020-12-25T05:30:57Z",
         "major": "CS",
         "college": "College of Science",
         "title": "CS 47100",
