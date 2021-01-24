@@ -9,8 +9,10 @@ desc:        Util functions
 
 from scheduler.models import Course, CourseMeta
 from courseocean_webapi.course import GenericCourseAPI
+from django_rq import job
 
 
+@job('default')
 def update_course(school, course_title, year, semester):
     """
     Update course instance in the database via wrapper apis function to help
@@ -27,13 +29,16 @@ def update_course(school, course_title, year, semester):
     try:
         course_meta = CourseMeta.objects.get(title=course_title, school=school)
     except CourseMeta.DoesNotExist:
-        return
+        return "course not found"
 
     # Test if the course meta have been updated recently
     if course_meta.update_recently():
-        return
+        return "ignored"
     else:
-        api_client = GenericCourseAPI(school)
+        try:
+            api_client = GenericCourseAPI(school)
+        except AssertionError:
+            return "assert fail, might not be implemented yet"
         for course_section in api_client.get_course_section(course_title, year, semester):
             # Find the course section existing in the database and update its information
             #  if cannot find any, insert as a new record
@@ -55,3 +60,4 @@ def update_course(school, course_title, year, semester):
                 queryset.update_or_create(defaults=course_section, section=course_section["section"])
             else:
                 raise Exception(f"No reference key existed for course {course_meta} sections")
+        return "success"

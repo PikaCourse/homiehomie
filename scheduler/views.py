@@ -1,3 +1,12 @@
+"""
+filename:    views.py
+created at:  01/24/2021
+author:      Weili An
+email:       china_aisa@live.com
+version:     v1.0.0
+desc:        Views for scheduler, including course search and post
+"""
+
 from django.shortcuts import render, get_list_or_404, get_object_or_404
 from django.db.models import Model, Q
 from django.utils.decorators import method_decorator
@@ -16,7 +25,8 @@ from rest_framework.decorators import action
 from rest_framework.decorators import permission_classes as rest_permission_classes
 from rest_framework.parsers import JSONParser, FormParser
 from datetime import datetime
-
+import django_rq
+from scheduler.utils import update_course
 
 """
 API Definition below
@@ -132,6 +142,14 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
 
         serializer = CourseSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    def get_object(self):
+        obj = super().get_object()
+        # Request the worker process to update the course if necessary
+        django_rq.enqueue(update_course, school=obj.course_meta.school, course_title=obj.course_meta.title,
+                          year=int(obj.year), semester=obj.semester)
+        return obj
+
 
 # TODO Paging
 class QuestionViewSet(viewsets.ModelViewSet):
