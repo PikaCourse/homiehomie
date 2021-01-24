@@ -40,7 +40,7 @@ jobs:
     # Upload built js code directory to dokku and then the predeploy script in
     # in dokku will copy it to the app directory
     - name: Upload built main.js folder to server
-      uses: garygrossgarten/github-action-scp@release
+      uses: garygrossgarten/github-action-scp@v0.7.1
       with:
         host: ${{ secrets.PROD_HOST }}
         username: ${{ secrets.PROD_UPLOAD_USER }}
@@ -82,7 +82,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: [3.7]
 
     steps:
     - uses: actions/checkout@v2
