@@ -1,0 +1,3 @@
+[submodule "scheduler/courseocean-webapi"]
+	path = courseocean-webapi
+	url = https://github.com/coursewiki/courseocean-webapi
