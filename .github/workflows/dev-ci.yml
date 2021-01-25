@@ -39,7 +39,7 @@ jobs:
     # - run: npm test
     # Upload built js code directory to dokku and then the predeploy script in
     # in dokku will copy it to the app directory
-    - run: chmod -R o+rwx frontend/static/frontend/
+    - run: chmod -R a+rwx frontend/static/frontend/
     - name: Upload built main.js folder to server
       uses: garygrossgarten/github-action-scp@release
       with:
@@ -71,14 +71,29 @@ jobs:
           --health-retries 5
         ports:
           # Maps tcp port 5432 on service container to the host
-          - 5432:5432 
+          - 5432:5432
+      redis:
+        # Docker Hub image
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.7, 3.8]
+        python-version: [3.7]
 
     steps:
     - uses: actions/checkout@v2
+    - uses: webfactory/ssh-agent@v0.4.1
+      with:
+        ssh-private-key: ${{ secrets.SSH_REPO_PRIVATE_KEY }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
@@ -97,6 +112,7 @@ jobs:
         # Fake SECRET KEY used for run test only 
         HOMIE_HOMIE_DJANGO_SECRET_KEY: wtelrbj_4zy@(16_f0vvvxa85i4otovka)a)651ccxm7ng9tuv
         DATABASE_URL: postgres://postgres:postgres@localhost:5432/action
+        REDIS_URL: redis://localhost:6379/0
         COVERAGE_PROCESS_START: .coveragerc
     - name: Generate coverage report 
       run: |

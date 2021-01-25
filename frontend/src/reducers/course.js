@@ -6,12 +6,16 @@ import {
   GET_COURSELIST,
 } from "../actions/types.js";
 
+// TODO Need documentation for states
 const initialState = {
   selectedCourseArray: [],
   selectedCourse: {},
   option: [],
 };
 
+// TODO Need documentation for sake
+// TODO For instance, what are the differences between GET_COURSE and SET_COURSE???
+// TODO Also, why not use redux createSlice or createReducer functions?
 export default function (state = initialState, action) {
   switch (action.type) {
     case GET_COURSE:

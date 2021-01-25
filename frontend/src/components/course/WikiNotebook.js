@@ -194,6 +194,7 @@ export class WikiNotebook extends Component {
     }
   }
 
+  // TODO encapsulate components
   render() {
     return (
       <div className="" style={noteBookStyle}>

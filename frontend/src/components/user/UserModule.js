@@ -1,3 +1,12 @@
+/**
+ * File name:	UserModule.js
+ * Created:	01/18/2021
+ * Author:	Joanna Fang
+ * Email:	foo@bar.com
+ * Version:	1.0 Initial file
+ * Description:	User login and register module
+ */
+
 import React, { Component, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button, Form, Input, Checkbox, Radio } from "antd";
@@ -20,6 +29,7 @@ import {loadUserCourseBag} from '../../helper/loadUserCalendar'
 import { year, semester, courseDataPatch, school } from "../../helper/global";
 import {overwriteWish} from "../../actions/wishlist"
 
+// TODO Need documentation @joannafg
 function UserModule() {
   const wishlistCourseBag = useSelector(
     (state) => state.wishlist.wishlistCourseBag
@@ -41,6 +51,7 @@ function UserModule() {
   const loginStatus = useSelector(state => state.user.loginStatus); 
   const dispatch = useDispatch(); 
   //login signup 
+  // TODO Consider making this a component
   const loginForm = ( //login main form
     <>
       <Form.Item
@@ -77,12 +88,16 @@ function UserModule() {
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
 
+        // TODO Implement this
         <a className="login-form-forgot" href="">
           Forgot password
         </a>
       </Form.Item>
     </>
   );
+  // TODO Support backend api verifying whether the username or email is usuablee via additional apis
+  // TODO Example https://ant.design/components/form-cn/#components-form-demo-validate-static
+  // TODO Consider making this a component
   const signupForm = ( //signup main form 
     <>
       <Form.Item
@@ -122,6 +137,7 @@ function UserModule() {
             required: true,
             message: "Please input your password!",
           },
+          // TODO Password length checker, why not use `min` or `max` Rule?
           () => ({
             validator(_, value) {
               if (value.length >= 8) {
@@ -410,6 +426,7 @@ function UserModule() {
     }, 1000);
   }
 
+  // TODO Put these kinds of code snippets in utils file
   function getCookie(name) {
     var cookieValue = null;
     console.log("document.cookie: " + document.cookie);

@@ -51,6 +51,13 @@ help:
 	@echo "  coverage-report_%    - generate report with designated format"
 	@echo
 	@echo "  clean-coverage       - clean generated coverage related files"
+	@echo
+	@echo "Redis db related"
+	@echo "  install_redis        - install redis on local machine"
+	@echo
+	@echo "  start_redis          - start redis server"
+	@echo
+	@echo "  start_worker         - start worker process for redis queue"
 	@echo "----------------------------------------------------------------"
 
 #############################################
@@ -70,7 +77,11 @@ clean-coverage:
 # Install dependency
 #############################################
 
-dependency:
+# Install all necessary components
+install : dependency, install_redis
+
+
+dependency :
 	source venv/bin/activate
 	pip install -r requirements/dev.txt
 	npm install
@@ -137,3 +148,29 @@ dummy-smtp :
 # Generate Django Random Key
 random-key :
 	python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'
+
+#############################################
+# Redis db
+#############################################
+
+# Install redis db
+install_redis :
+# Redis server not found
+ifeq (, $(shell which redis-server))
+	@wget http://download.redis.io/redis-stable.tar.gz
+	@tar xvzf redis-stable.tar.gz
+	@$(MAKE) -C redis-stable
+	@$(MAKE) -C redis-stable test
+	@sudo $(MAKE) -C redis-stable install
+	@cd ..
+	@rm redis-stable.tar.gz
+	@rm -rf redis-stable
+endif
+
+# Launch a redis db with default setting
+start_redis : install_redis
+	@redis-server
+
+# Start worker
+start_worker_% :
+	@python manage.py rqworker high default low --settings=homiehomie.settings_d.$*

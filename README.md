@@ -96,6 +96,24 @@ terminal tab:
     
 Which will launch a fake smtp server listening on `localhost:1025`
 
+#### Launch redis db and worker process
+
+The project uses a redis database as a queue for pushing jobs to backend worker process
+in order to separate the external API requests from frontend website rendering. Therefore,
+a redis database installation is necessary, you can install and run the redis database via:
+
+    make start_redis
+
+Which will fetch and install the redis db when `redis-server` is not in the `PATH` params. The
+first this command runs might takes a few minutes due to download, compiling, and testing the 
+redis db. After the first pass, it will be pretty quick.
+
+In addition to redis db, a redis queue worker process must be started prior to launching the server via
+
+    make start_worker_%
+    
+Where `%` is the setting file config like `local`, `remote`
+
 #### Migrate database
 
 Database migration will apply database changes to the database specified in the setting file

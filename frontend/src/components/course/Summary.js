@@ -51,6 +51,7 @@ function WikiSummary() {
   );
 }
 
+// TODO The following should all be written as components 
 function buttonsLoader(
   dispatch,
   calendarCourseBag,

@@ -1,3 +1,12 @@
+/**
+ * File name:	Footer.js
+ * Created:	01/17/2021
+ * Author:	Marx Wang
+ * Email:	foo@bar.com
+ * Version:	1.0 Initial file 
+ * Description:	Footer container for copyright disclaimer
+ */
+
 import React, { Component } from "react";
 
 export class Footer extends Component {

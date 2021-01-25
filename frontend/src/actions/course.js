@@ -1,3 +1,12 @@
+/**
+ * File name:	course.js
+ * Created:	01/18/2021
+ * Author:	Marx Wang, Joanna Fang, Anna Zhang
+ * Email:	foo@bar.com
+ * Version:	1.0 Initial file
+ * Description:	Action creators for course related actions
+ */
+
 import axios from "axios";
 import store from "../store";
 import {
@@ -13,6 +22,8 @@ import { message } from "antd";
 export const getCourse = (title) => (dispatch) => {
   // Get the course section list via the title and hardcoded year, semester, and school parameters
   // TODO Add support for other filter options listed in the API doc
+  // TODO Need to add school filter
+  // TODO Use querystringify
   axios
     .get(`api/courses?title=${title}&year=${year}&semester=${semester}`)
     .then((res) => {
@@ -41,6 +52,9 @@ export const getCourseList = (title) => (dispatch) => {
     .catch((err) => console.log(err));
 };
 
+// TODO Change from setXXX to selectXXX
+// TODO Should check if the current cache hosts the course list?
+// TODO And also this function is quite identical to GET_COURSE, consider merging
 export const setCourse = (courseId, title) => (dispatch) => {
   axios
     .get(
@@ -66,6 +80,8 @@ export const setCourse = (courseId, title) => (dispatch) => {
   // };
 };
 
+// The following actions change on the current course list so do not
+// need to get from remote APIs
 export const setCourseByProf = (prof) => {
   return {
     type: SET_COURSE_BY_PROF,

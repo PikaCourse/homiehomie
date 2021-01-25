@@ -1,3 +1,5 @@
+// TODO Use "domain/eventName" naming convention as recommended by redux?
+// TODO Why not just use enum types?
 export const GET_LEADS = "GET_LEADS"
 export const GET_COURSE = "GET_COURSE"
 export const SET_COURSE = "SET_COURSE"

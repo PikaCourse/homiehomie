@@ -3,6 +3,7 @@ import axios from "axios";
 import { year, semester, courseDataPatch, school } from "../helper/global";
 
 
+// TODO Pass the whole user object returned from APIs here?
 const initialState = {
     loginStatus: false,
     schedule: "", //calendarCourseBag 
