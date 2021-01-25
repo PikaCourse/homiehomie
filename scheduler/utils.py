@@ -60,4 +60,6 @@ def update_course(school, course_title, year, semester):
                 queryset.update_or_create(defaults=course_section, section=course_section["section"])
             else:
                 raise Exception(f"No reference key existed for course {course_meta} sections")
+        # Call save to update last updated time
+        course_meta.save()
         return "success"
