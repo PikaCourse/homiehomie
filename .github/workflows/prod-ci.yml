@@ -39,8 +39,9 @@ jobs:
     # - run: npm test
     # Upload built js code directory to dokku and then the predeploy script in
     # in dokku will copy it to the app directory
+    - run: chmod -R o+rwx frontend/static/frontend/
     - name: Upload built main.js folder to server
-      uses: garygrossgarten/github-action-scp@v0.7.1
+      uses: garygrossgarten/github-action-scp@releases
       with:
         host: ${{ secrets.PROD_HOST }}
         username: ${{ secrets.PROD_UPLOAD_USER }}
@@ -50,7 +51,8 @@ jobs:
         remote: ${{ secrets.PROD_STORAGE_DIR }}
         recursive: true
         rmRemote: true
-      
+        atomicPut: true
+
   test_backend:
     name: Test backend
     runs-on: ubuntu-latest
