@@ -41,7 +41,7 @@ jobs:
     # in dokku will copy it to the app directory
     - run: chmod -R o+rwx frontend/static/frontend/
     - name: Upload built main.js folder to server
-      uses: garygrossgarten/github-action-scp@releases
+      uses: garygrossgarten/github-action-scp@release
       with:
         host: ${{ secrets.PROD_HOST }}
         username: ${{ secrets.PROD_UPLOAD_USER }}
