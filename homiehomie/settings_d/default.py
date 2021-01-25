@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'coverage',
     'django_extensions',
+    "django_rq",
     'scheduler.apps.SchedulerConfig',
     'frontend.apps.FrontendConfig',
     'user.apps.UserConfig',
@@ -186,3 +187,19 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'user.backends.EmailAuthBackend'
 ]
+
+# Redis backend worker queue db
+RQ_QUEUES = {
+    'default': {
+        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        'DEFAULT_TIMEOUT': 500,
+    },
+    'high': {
+        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        'DEFAULT_TIMEOUT': 500,
+    },
+    'low': {
+        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        'DEFAULT_TIMEOUT': 500,
+    },
+}

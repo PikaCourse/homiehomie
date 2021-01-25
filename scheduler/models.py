@@ -4,6 +4,8 @@ from django.db import models
 from user.models import Student
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
+import datetime
 
 # TODO Use choices options of fields to limit user input and as
 # TODO validation
@@ -14,6 +16,8 @@ class CourseMeta(models.Model):
     Course meta data model
 
     Fields explanation:
+    created_at:     Course create time upon inserting into db
+    last_updated:   Course last update time
     major:          Course major name
     college:        Course providing college
     title:          Course title
@@ -34,6 +38,7 @@ class CourseMeta(models.Model):
     tags:           ["hard", "interesting", "time-consuming", "math"]
     """
     created_at = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
     major = models.CharField(max_length=100, default="", null=True)
     college = models.CharField(max_length=100, null=True, blank=True)
     title = models.CharField(max_length=300, default="")
@@ -46,6 +51,14 @@ class CourseMeta(models.Model):
     class Meta:
         ordering = ["title"]
 
+    def update_recently(self):
+        """
+        Check if the model has been updated recently (within 1 day)
+        :return:
+        """
+        now = timezone.now()
+        return now - datetime.timedelta(days=1) <= self.last_updated <= now
+
     def __str__(self):
         return "_".join([self.school, self.title, self.name])
 
@@ -56,6 +69,8 @@ class Course(models.Model):
 
     Fields explanation:
     course_meta:    Many to one mapping to course meta info
+    created_at:     Course section create time upon inserting into db
+    last_updated:   Course section last update time
     crn:            Course registration number, only number that identified course in a school
     time:           Course time period, in form of array of JSON containing weekday (0~6),
                     start_at (HH:MM), end_at (HH:MM)
@@ -96,6 +111,7 @@ class Course(models.Model):
     """
     course_meta = models.ForeignKey(CourseMeta, on_delete=models.CASCADE, default=-1)
     created_at = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
     crn = models.CharField(max_length=50, default="", null=True)
     time = models.JSONField(default=list, blank=True, null=True)
     section = models.CharField(max_length=50, null=True)
@@ -104,9 +120,9 @@ class Course(models.Model):
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
     semester = models.CharField(max_length=20, null=True, blank=True)
     location = models.CharField(max_length=100, blank=True, null=True)
-    registered = models.IntegerField(default=-1, null=True)
+    registered = models.IntegerField(default=-1, null=True, blank=True)
     capacity = models.IntegerField(default=-1, null=True, blank=True)
-    openseat = models.IntegerField(default=-1, null=True)
+    openseat = models.IntegerField(default=-1, null=True, blank=True)
 
     class Meta:
         ordering = ["course_meta__title"]

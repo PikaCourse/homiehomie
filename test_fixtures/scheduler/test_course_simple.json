@@ -5,6 +5,7 @@
     "fields": {
         "course_meta": 1,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10095",
         "time": [
             {
@@ -34,6 +35,7 @@
     "fields": {
         "course_meta": 2,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10092",
         "time": [
             {
@@ -63,6 +65,7 @@
     "fields": {
         "course_meta": 3,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "19423",
         "time": [
             {
@@ -92,6 +95,7 @@
     "fields": {
         "course_meta": 4,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10093",
         "time": [
             {
@@ -121,6 +125,7 @@
     "fields": {
         "course_meta": 5,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "19422",
         "time": [
             {
@@ -150,6 +155,7 @@
     "fields": {
         "course_meta": 6,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10087",
         "time": [
             {
@@ -179,6 +185,7 @@
     "fields": {
         "course_meta": 7,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10069",
         "time": [
             {
@@ -208,6 +215,7 @@
     "fields": {
         "course_meta": 8,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10083",
         "time": [
             {
@@ -237,6 +245,7 @@
     "fields": {
         "course_meta": 9,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10062",
         "time": [
             {
@@ -271,6 +280,7 @@
     "fields": {
         "course_meta": 10,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "19644",
         "time": [
             {
@@ -300,6 +310,7 @@
     "fields": {
         "course_meta": 10,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10071",
         "time": [
             {
@@ -329,6 +340,7 @@
     "fields": {
         "course_meta": 11,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10068",
         "time": [
             {
@@ -363,6 +375,7 @@
     "fields": {
         "course_meta": 12,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10067",
         "time": [
             {
@@ -397,6 +410,7 @@
     "fields": {
         "course_meta": 13,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10074",
         "time": [
             {
@@ -426,6 +440,7 @@
     "fields": {
         "course_meta": 14,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "19386",
         "time": [
             {
@@ -455,6 +470,7 @@
     "fields": {
         "course_meta": 15,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10082",
         "time": [
             {
@@ -484,6 +500,7 @@
     "fields": {
         "course_meta": 16,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "19791",
         "time": [
             {
@@ -508,6 +525,7 @@
     "fields": {
         "course_meta": 16,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "19696",
         "time": [
             {
@@ -537,6 +555,7 @@
     "fields": {
         "course_meta": 16,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "19686",
         "time": [],
         "section": null,
@@ -555,6 +574,7 @@
     "fields": {
         "course_meta": 17,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10096",
         "time": [],
         "section": null,
@@ -573,6 +593,7 @@
     "fields": {
         "course_meta": 18,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10081",
         "time": [
             {
@@ -602,6 +623,7 @@
     "fields": {
         "course_meta": 20,
         "created_at": "2020-12-24T05:49:03Z",
+        "last_updated": "2020-12-24T05:49:03Z",
         "crn": "10094",
         "time": [],
         "section": null,
