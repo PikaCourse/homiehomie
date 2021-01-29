@@ -88,7 +88,9 @@ function UserModule() {
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
 
-        // TODO Implement this
+        {
+          // TODO Implement this
+        }
         <a className="login-form-forgot" href="">
           Forgot password
         </a>
@@ -266,7 +268,11 @@ function UserModule() {
       footer={null}
     >
       {Object.keys(userProfile).map(key => 
-        <h5>{key+ " : "+userProfile[key]}</h5>
+        <h5
+          key={key}
+        >
+          {key+ " : "+userProfile[key]}
+        </h5>
       )}
      
       <Button onClick={logOut}>Log Out</Button>

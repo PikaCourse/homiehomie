@@ -29,11 +29,11 @@ function Navbar() {
           CourseOcean
         </a>
         <div>
-          <ul class="navbar-nav ml-auto pr-4">
-            <li class="nav-item">
+          <ul className="navbar-nav ml-auto pr-4">
+            <li className="nav-item">
               <Wishlist />
             </li>
-            <li class="nav-item">
+            <li className="nav-item">
               <UserModule />
             </li>
           </ul>

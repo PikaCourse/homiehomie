@@ -9,7 +9,7 @@ import "react-big-calendar/lib/sass/styles.scss";
 import "../../../static/scss/calendar.scss";
 import { connect, } from "react-redux";
 import PropTypes from "prop-types";
-import { setCourse, getCourse, } from "../../actions/course";
+import { selectCourse } from "../../course/action";
 import { addCustomEvent, removeCustomEvent, } from "../../actions/calendar";
 import { updateUserSchedule, } from "../../actions/user";
 import store from "../../store";
@@ -156,13 +156,16 @@ class DnDCalendar extends React.Component {
     };
   };
 
-  onSelect = (event, e,) => {
+  onSelect = (event) => {
     this.setState({
       selected: event,
     },);
     if (event.type != "custom") {
       store.dispatch(
-        setCourse(event.courseId, event.title,),
+        selectCourse({
+          courseId: event.courseId, 
+          title: event.title
+        }),
       );
     }
   };

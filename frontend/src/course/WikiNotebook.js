@@ -9,9 +9,9 @@ import {
   faTimes,
   faThumbtack,
 } from "@fortawesome/free-solid-svg-icons";
-import store from "../../store";
+import store from "../store";
 import axios from "axios";
-import { getQuestion, addQuestion, addOBJ } from "../../actions/question.js";
+import { getQuestion, addQuestion, addOBJ } from "../actions/question.js";
 
 import {
   Button,
@@ -30,7 +30,7 @@ const querystring = require("querystring");
 
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
-import "../../main.less";
+import "../main.less";
 
 const formItemLayout = {
   wrapperCol: {

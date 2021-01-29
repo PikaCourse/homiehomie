@@ -10,7 +10,7 @@
 import React, { useState, } from "react";
 import { Input, Button, AutoComplete, } from "antd";
 const { Search, } = Input;
-import { getCourse, getCourseList, } from "../../actions/course";
+import { getCourseSections, getCourses } from "./action";
 import { useDispatch, useSelector, } from "react-redux";
 import { SearchOutlined, } from "@ant-design/icons";
 
@@ -25,23 +25,22 @@ const prompt = "Try CAS CS 111";
 function WikiSearch() {
   // Receive updated courses list via redux
   // state.course as we will combined the reducer together
-  const option = useSelector((state,) => state.course.option,);
-  const [timer, setTimer,] = useState(null,);
-  const interval = 100;
+  const option = useSelector((state,) => state.course.option);
+  const [timer, setTimer,] = useState(null);
   const dispatch = useDispatch();
 
-  // Call the getCourseList method to store the returned list in redux
+  // Call the getCourses method to store the returned list in redux
   // and be used later here and also other part of the application
-  function searchOnChange(query,) {
+  function searchOnChange(value) {
     // TODO Use same naming for parameters or provide documentation for parameters
     // Search list of course meta objects via the value query
-    clearTimeout(timer,);
-    if (query && query.length > 1) {
+    clearTimeout(timer);
+    if (value && value.length > 1) {
       // TODO Why timeout here? Suspecting this is to add some delay to respond to user input?
       setTimer(
         setTimeout(() => {
-          dispatch(getCourseList(query,),);
-        }, interval,),
+          dispatch(getCourses({"title": value}));
+        }, 100),
       );
     }
   }
@@ -54,10 +53,10 @@ function WikiSearch() {
         backgroundColor: "#ffffff",
         borderRadius: "5rem",
       }}
-      onSelect={(value,) => {
-        dispatch(getCourse(value,),);
+      onSelect={(title) => {
+        dispatch(getCourseSections({"title": title}));
       }}
-      onSearch={(value,) => searchOnChange(value,)}
+      onSearch={(value) => searchOnChange(value)}
       allowClear
       bordered={false}
     >

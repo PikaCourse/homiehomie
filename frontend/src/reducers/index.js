@@ -1,9 +1,10 @@
 import { combineReducers } from "redux";
-import course from "./course";
+// import { course } from "./course";
+import course from "../course/reducer";
 import question from "./question";
 import calendar from "./calendar";
 import wishlist from "./wishlist";
-import user from "./user"
+import user from "./user";
 
 export default combineReducers({
   course,

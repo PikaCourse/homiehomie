@@ -23,7 +23,7 @@ import {
 
 const { Panel } = Collapse;
 // import {} from "../../actions/wishlist"
-import { setCourse, getCourse } from "../../actions/course";
+import { selectCourse } from "../../course/action";
 import { removeCurrCourseFromWish } from "../../actions/wishlist";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -57,7 +57,10 @@ function Wishlist() {
           </Button>
           <Button
             onClick={(e) => {
-              store.dispatch(setCourse(record.courseId,record.title));
+              store.dispatch(selectCourse({
+                courseId: record.courseId,
+                title: record.title
+              }));
               setVisible(false);
             }}
           >
