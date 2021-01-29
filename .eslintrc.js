@@ -22,7 +22,7 @@ module.exports = {
     "react/prop-types": "warn",
 
     // override default options for rules from base configurations
-    "comma-dangle": ["warn", "always",],
+    "comma-dangle": ["off", "always",],
     "no-cond-assign": ["warn", "always",],
 
     // disable rules from base configurations
