@@ -7,17 +7,18 @@
  * Description:	Search bar implementation and autocomplete for searching courses
  */
 
-import React, { useState, } from "react";
-import { Input, Button, AutoComplete, } from "antd";
-const { Search, } = Input;
+import React, { useState } from "react";
+import { Input, AutoComplete } from "antd";
 import { getCourseSections, getCourses } from "./action";
-import { useDispatch, useSelector, } from "react-redux";
-import { SearchOutlined, } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+import { SearchOutlined } from "@ant-design/icons";
 
 // TODO Change based on User school info
 // TODO Can be dynamic showing user different kinds of way to use the search bar
 // TODO   For instance, search by course title, course name, course descriptioon, tags, or professor name
 // TODO Also, make this a function variable since it is not used elsewhere
+
+// TODO Customized based on user school
 const prompt = "Try CAS CS 111";
 
 // TODO Provide a "more courses" option to disable at the bottom of the dropdown list

@@ -10,8 +10,15 @@
 import { createReducer } from "@reduxjs/toolkit";
 import { timeObjFommatter } from "../helper/global";
 
+// TODO Set error message
+import { message } from "antd";
+
 
 import * as action from "./action";
+
+function messageUnknownError() {
+  message.error("Oops! Something went wrong...");
+}
 
 // TODO Need documentation for states
 const initialState = {
@@ -22,7 +29,6 @@ const initialState = {
 
 // TODO rename option to options
 // todo option store whole course meta objects
-
 export default createReducer(initialState, {
   /**
    * Reducer for getCourseSections action
@@ -34,26 +40,44 @@ export default createReducer(initialState, {
 
     // Clear current search options
     state.option = [];
-    // Precompute timeStr to save computation cost
-    const sections = action.payload.map((section) => {
-      return {
-        ...section,
-        timeStr: timeObjFommatter(section.time)
-      };
-    });
-    // Default selected course is the first in the returned array
-    state.selectedCourse = sections[0];
-    state.selectedCourseArray = sections;
+
+    // Handle error
+    if (action.payload.length == 0) {
+      message.error("Oops! This course cannot be found...");
+    } else {
+      // Precompute timeStr to save computation cost
+      const sections = action.payload.map((section) => {
+        return {
+          ...section,
+          timeStr: timeObjFommatter(section.time)
+        };
+      });
+      // Default selected course is the first in the returned array
+      state.selectedCourse = sections[0];
+      state.selectedCourseArray = sections;
+    }
+  },
+  [action.getCourseSections.rejected]: () => {
+    messageUnknownError();
   },
 
-
+  /**
+   * Reducer for getCourses action
+   * Return list of search options to select for `AutoComplete`
+   */
   [action.getCourses.fulfilled]: (state, action) => {
     // Reducer for getting courses list with given query setting
     let strlist = action.payload.map((x) => ({ value: x.title }));
     state.option = strlist;
   },
+  [action.getCourses.rejected]: () => {
+    messageUnknownError();
+  },
 
-
+  /**
+   * Reducer for selectCourse action
+   * Set the current selected course via matching course id
+   */
   [action.selectCourse.fulfilled]: (state, action) => {
     state.option = [];
     // Set the current selected course to be the one in the course list that
@@ -69,22 +93,29 @@ export default createReducer(initialState, {
     );
     state.selectedCourseArray = sections;
   },
+  [action.selectCourse.rejected]: () => {
+    messageUnknownError();
+  },
 
 
-  // TODO Merge the following two
+  // TODO The following should be internal state instead of redux
+  /**
+   * Reducer for setCourseByProf
+   */
   [action.setCourseByProf]: (state, action) => {
     const selectedProf = action.payload;
     state.selectedCourse = state.selectedCourseArray.find(({ professor }) => professor == selectedProf);
   },
 
-
+  /**
+   * Reducer for setCourseByTime
+   */
   [action.setCourseByTime]: (state, action) => {
     // Select the course
     const selectedTime = action.payload;
     const selectedProf = state.selectedCourse.professor;
     state.selectedCourse = state.selectedCourseArray.find(
       ({professor, timeStr}) => {
-        // console.log(`Professor${professor}\tProf: ${professor == selectedProf}\tTime: ${timeStr == selectedTime}`);
         return professor == selectedProf && timeStr == selectedTime;
       }
     );

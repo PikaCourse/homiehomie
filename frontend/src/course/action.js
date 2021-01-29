@@ -9,10 +9,6 @@
 
 import { createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import axios from "axios";
-import store from "../store";
-import { GET_COURSELIST } from "../actions/types";
-import { year, semester, courseDataPatch, school, timeObjFommatter } from "../helper/global";
-import { message } from "antd";
 import queryString from "query-string";
 
 // TODO Not relied on api string but as a package
@@ -25,7 +21,7 @@ import queryString from "query-string";
  * */ 
 export const getCourseSections = createAsyncThunk(
   "course/getCourseSections",
-  async (query, thunkAPI) => {
+  async (query) => {
     let qs = queryString.stringify(query);
     // TODO Not relied on api string but as a package
     // TODO Pack api as a package?
@@ -40,7 +36,7 @@ export const getCourseSections = createAsyncThunk(
  * */ 
 export const getCourses = createAsyncThunk(
   "course/getCourses",
-  async (query, thunkAPI) => {
+  async (query) => {
     // Set default search limit
     if (!("limit" in query))
       query.limit = 15;
@@ -61,7 +57,7 @@ export const getCourses = createAsyncThunk(
  * */ 
 export const selectCourse = createAsyncThunk(
   "course/selectCourses",
-  async (args, thunkAPI) => {
+  async (args) => {
     let title = args.title;
     let courseId = args.courseId;
     let qs = queryString.stringify({"title": title});
