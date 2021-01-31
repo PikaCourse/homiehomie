@@ -7,62 +7,88 @@
  * Description:	action definition for calendar, ported from `action/calendar.js`
  */
 
+import { createAction } from "@reduxjs/toolkit";
 
-import store from "../store";
 
-export const addCurrCourse = () => {
-  // check if curr course is in calendar
-  const courseArray = store
-    .getState()
-    .calendar.calendarCourseBag.filter(
-      (item) =>
-      item.raw.course?.course_meta.id ==
-      store.getState().course.selectedCourse.course_meta.id
-    );
-  if (!Array.isArray(courseArray) || !courseArray.length) {
-    return {
-      type: ADD_COURSE_TO_CAL,
-      selectedCourse: store.getState().course.selectedCourse,
-      selectedCourseArray: store.getState().course.selectedCourseArray,
-    };
-  } else {
-    return {
-      type: UPDATE_COURSE_IN_CAL,
-      selectedCourse: store.getState().course.selectedCourse,
-      selectedCourseArray: store.getState().course.selectedCourseArray,
-      oldId: courseArray[0].id,
-    };
-  }
-};
+// TODO Consider name as schedule instead of calendar as it is more intuitive?
 
-export const removeCurrCourse = () => {
-  return {
-    type: REMOVE_COURSE_FROM_CAL,
-    selectedCourse: store.getState().course.selectedCourse,
-  };
-};
+/**
+ * Action to add a course to calendar
+ * Will ignore repeated course (by course title)
+ * Accept the whole course object as payload
+ * Payload: {course object}
+ */
+export const addCourseToCalendar = createAction("calendar/addCourse");
 
-export const addCustomEvent = (inputEvent) => {
-  return {
-    type: ADD_CUS_EVENT_IN_CAL,
-    event: inputEvent,
-  };
-};
+/**
+ * Action to remove a course from calendar
+ * Will ignore nonexisting course
+ * Accept course title as payload
+ * Payload: course title (e.g. CS 38100)
+ */
+export const removeCourseFromCalendar = createAction("calendar/removeCourse");
 
-export const removeCustomEvent = (inputEvent) => {
-  return {
-    type: REMOVE_CUS_EVENT_IN_CAL,
-    event: inputEvent,
-  };
-};
+/**
+ * Action to merge the currrent calendar with payload
+ * custom event specified in events key
+ * course specified in courses key
+ * payload: {
+ *    events: {},
+ *    courses: {}
+ * }
+ */
+export const mergeCalendar = createAction("calendar/merge");
 
-export const overwriteCourseBag = (newCourseBag) => {
-  newCourseBag.map((element) => {
-    element.start = new Date(element.start);
-    element.end = new Date(element.end);
-  });
-  return {
-    type: OVERWRITE_COURSE_BAG,
-    newBag: newCourseBag,
-  };
-};
+/**
+ * Action to add a custom event to calendar
+ * Will add a new event to calendar regradless of content 
+ *  (i.e. two same title events) can coexist
+ * payload: {event object}
+ * {
+ *    title: string
+ *    weekday: int (0-6: Mon-Sun)
+ *    start_at: string (HH:MM)
+ *    end_at: string (HH:MM)
+ *    detail: string
+ * }
+ */
+export const addEventToCalendar = createAction("calendar/addEvent");
+
+// export const addCustomEvent = (inputEvent) => {
+//   return {
+//     type: ADD_CUS_EVENT_IN_CAL,
+//     event: inputEvent,
+//   };
+// };
+
+/**
+ * Action to update custom event in calendar
+ * Support partial update
+ * payload: {
+ *  id: event id from state
+ *  event: event object
+ * }
+ * 
+ * Key in event can be optional
+ * event: {
+ *    title: string
+ *    weekday: int (0-6: Mon-Sun)
+ *    start_at: string (HH:MM)
+ *    end_at: string (HH:MM)
+ *    detail: string
+ * }
+ */
+export const updateEventInCalendar = createAction("calendar/updateEvent");
+
+/**
+ * Action to remove a custom event in calendar
+ * Use event id as reference to delete key
+ * Payload: eventId
+ */
+export const removeEventInCalendar = createAction("calendar/removeEvent");
+
+/**
+ * Action to clear custom events in calendar
+ * Equivalent of deleting all events from calendar
+ */
+export const clearEventInCalendar = createAction("calendar/clearEvent");

@@ -13,7 +13,7 @@ import { createAction } from "@reduxjs/toolkit";
 
 /**
  * Action to add a course to wishlist
- * Will ignore repeated course
+ * Will ignore repeated course (by course id)
  * Accept the whole course object as payload
  * Payload: {course object}
  */

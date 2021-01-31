@@ -9,7 +9,7 @@
 
 import * as actions from "./action";
 import { createReducer } from "@reduxjs/toolkit";
-import { loadWishlistCourseBag } from "../../src/helper/localStorage";
+import { loadState } from "../../src/helper/localStorage";
 
 const initialState = {
   /**
@@ -20,14 +20,12 @@ const initialState = {
    *    id2: {course}
    * }
    */
-  wishlistCourseBag: loadWishlistCourseBag(),
+  wishlistCourseBag: loadState("wishlistCourseBag", {}),
 };
 
 /**
  * Reducers for wishlist
  */
-
-// TODO Create object, not array
 export default createReducer(initialState, {
   /**
    * Reducer for wishlist/addCourse action
@@ -37,7 +35,6 @@ export default createReducer(initialState, {
   [actions.addCourseToWishlist]: (state, action) => {
     const newCourse = action.payload;
     // Add/update course in course bag with key 
-    // as base64 encoding of course id and value as course object
     // TODO Hashing key length will impact performance?
     // Use "" + id to convert id into string, which has performance advantage according to
     // https://stackoverflow.com/questions/5765398/whats-the-best-way-to-convert-a-number-to-a-string-in-javascript

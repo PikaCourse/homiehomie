@@ -7,144 +7,85 @@
  * Description:	reducer definition for calendar action, ported from `reducer/calendar.js`
  */
 
-import {
-  ADD_COURSE_TO_CAL,
-  REMOVE_COURSE_FROM_CAL,
-  UPDATE_COURSE_IN_CAL,
-  ADD_CUS_EVENT_IN_CAL,
-  DO_NOTHING,
-  REMOVE_CUS_EVENT_IN_CAL,
-  OVERWRITE_COURSE_BAG,
-} from "../actions/types.js";
-import { loadCalendarCourseBag } from "../../src/helper/localStorage";
+import * as actions from "./action";
+import { createReducer } from "@reduxjs/toolkit";
+import { loadState } from "../../src/helper/localStorage";
 
 const initialState = {
-  calendarCourseBag: loadCalendarCourseBag(),
+  courseSchedule: loadState("calendar/courseSchedule", {}),
+  customEvents: loadState("calendar/customEvents", {}),
+  nextEventId: 0
 };
 
-export const getMonday = (d) => {
-  d = new Date(d);
-  var day = d.getDay(),
-    diff = d.getDate() - day + 1; // adjust when day is sunday
-  return new Date(d.setDate(diff));
-};
+/** 
+ * Reducers for calendar 
+ */
+export default createReducer(initialState, {
+  /**
+   * Reducer for calendar/addCourse action
+   * Will add/update a course object into internal state
+   * with course title as key
+   */
+  [actions.addCourseToCalendar]: (state, action) => {
+    const newCourse = action.payload;
+    state.courseSchedule[newCourse.title] = newCourse;
+  },
 
-export const alignDate = (weekDayIndex, timestamp) => {
-  const today = new Date();
-  let date = new Date(today.toDateString() + ", " + timestamp);
-  return new Date(
-    getMonday(date).setDate(getMonday(date).getDate() + weekDayIndex)
-  );
-};
+  /**
+   * Reducer for calendar/removeCourse action
+   * Remove course in state via course title
+   * Will ignore nonexisting course.title
+   */
+  [actions.removeCourseFromCalendar]: (state, action) => {
+    delete state.courseSchedule[action.payload]; 
+  },
 
-function addNewCourseToBag(state, action, update) {
-  let newBag = update
-    ? state.calendarCourseBag.filter(
-        // (item) => item.raw.selectedCourseArray != action.selectedCourseArray
-        (item) => item.title != action.selectedCourse.course_meta.title
-      )
-    : [...state.calendarCourseBag];
-    console.log("deploy is successful"+newBag); 
-  let idList = state.calendarCourseBag.map((a) => a.id);
-  let newId = update
-    ? action.oldId
-    : state.calendarCourseBag.length == 0
-    ? 0
-    : Math.max(...idList) + 1;
+  /**
+   * Reducer for calendar/merge action
+   */
+  [actions.mergeCalendar]: (state, action) => {
+    const otherCourseSchedule = action.payload.courses;
+    const otherCustomEvents = action.payload.events;
+    state.courseSchedule = Object.assign({}, state.courseSchedule, otherCourseSchedule);
+    state.customEvents = Object.assign({}, state.customEvents, otherCustomEvents);
+  },
 
-  action.selectedCourse.time.map((timeslot) => {
-    newBag.push({
-      type: "course",
-      id: newId,
-      courseId: action.selectedCourse.id,
-      title: action.selectedCourse.course_meta.title,
-      allDay: false,
-      start: alignDate(timeslot.weekday, timeslot.start_at),
-      end: alignDate(timeslot.weekday, timeslot.end_at),
-      raw: {
-        name: action.selectedCourse.course_meta.name,
-        instructor: action.selectedCourse.professor,
-        course: action.selectedCourse,
-        selectedCourseArray: action.selectedCourseArray,
-      },
-    });
-  });
-  return newBag;
-}
+  /**
+   * Reducer to add a custom event to calendar
+   * With the event object as action.payload
+   * Will dynamically create a unique id for internal app reference
+   */
+  [actions.addEventToCalendar]: (state, action) => {
+    let eventObj = action.payload
+    eventObj.id = ++state.nextEventId;
+    // Object key as string
+    state.customEvents["" + eventObj.id] = eventObj;
+  },
 
-function addNewCusEventToBag(state, action) {
-  var tempArray = [...state.calendarCourseBag];
-  let update = false;
-  // create a new calBag
-  // check if the action event already exists in calBag
-  // true: update time, set update to true and return
-  // false: do not modify existingEvent and return
-  //debugger;
-  tempArray = tempArray.map((existingEvent) => {
-    if (existingEvent.id === action.event.id) {
-      //addSelectCourse.id????????
-      existingEvent.start = action.event.start;
-      existingEvent.end = action.event.end;
-      update = true;
+  /** 
+   * Reducer to update a custom event via id
+   */
+  [actions.updateEventInCalendar]: (state, action) => {
+    const eventId = action.payload.id;
+    const event = action.payload.event;
+    for (const key in event) {
+      state.customEvents[eventId][key] = event[key];
     }
-    return existingEvent;
-  });
+  },
 
-  if (update) {
-    return tempArray;
+  /**
+   * Reducer to remove a event from calendar
+   */
+  [actions.removeEventInCalendar]: (state, action) => {
+    // Object key as string
+    delete state.customEvents["" + action.payload];
+  },
+
+  /**
+   * Reducer to clear all custom events in the calendar
+   */
+  [actions.clearEventInCalendar]: (state) => {
+    state.customEvents = {};
+    state.nextEventId = 0;
   }
-
-  let idList = state.calendarCourseBag.map((a) => a.id);
-  let newId = state.calendarCourseBag.length == 0 ? 0 : Math.max(...idList) + 1;
-  action.event.id = newId;
-  tempArray.push(action.event);
-
-  return tempArray;
-}
-
-export default function (state = initialState, action) {
-  switch (action.type) {
-    case ADD_COURSE_TO_CAL:
-      return {
-        ...state,
-        calendarCourseBag: addNewCourseToBag(state, action, false),
-      };
-
-    case REMOVE_COURSE_FROM_CAL:
-      //debugger;
-      return {
-        ...state,
-        calendarCourseBag: state.calendarCourseBag.filter(
-          (item) => item.courseId != action.selectedCourse.id
-        ),
-      };
-    case UPDATE_COURSE_IN_CAL:
-      return {
-        ...state,
-        calendarCourseBag: addNewCourseToBag(state, action, true),
-      };
-
-    case ADD_CUS_EVENT_IN_CAL:
-      return {
-        ...state,
-        calendarCourseBag: addNewCusEventToBag(state, action),
-      };
-
-    case REMOVE_CUS_EVENT_IN_CAL:
-      return {
-        ...state,
-        calendarCourseBag: state.calendarCourseBag.filter(
-          (item) => item.id != action.event.id
-        ),
-      };
-
-    case OVERWRITE_COURSE_BAG:
-      return {
-        ...state,
-        calendarCourseBag: action.newBag,
-      };
-
-    default:
-      return state;
-  }
-}
+});
