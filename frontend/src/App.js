@@ -12,7 +12,7 @@ import React, { Fragment, } from "react";
 import Navbar from "./components/nav/Navbar";
 import Footer from "./components/nav/Footer";
 import DnDCalendar from "./components/calendar/DnDCalendar";
-import Wiki from "./course/Wiki";
+import Wiki from "./course";
 
 import { Provider, } from "react-redux";
 import store from "./store";

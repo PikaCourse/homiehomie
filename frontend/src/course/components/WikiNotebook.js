@@ -9,9 +9,9 @@ import {
   faTimes,
   faThumbtack,
 } from "@fortawesome/free-solid-svg-icons";
-import store from "../store";
+import store from "../../store";
 import axios from "axios";
-import { getQuestion, addQuestion, addOBJ } from "../actions/question.js";
+import { getQuestion, addQuestion, addOBJ } from "../../actions/question.js";
 
 import {
   Button,
@@ -25,12 +25,13 @@ import {
   Space,
 } from "antd";
 
+import queryString from "query-string";
+
 const { TextArea } = Input;
-const querystring = require("querystring");
 
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
-import "../main.less";
+import "../../main.less";
 
 const formItemLayout = {
   wrapperCol: {
@@ -66,7 +67,7 @@ export class WikiNotebook extends Component {
     axios
       .post(
         "api/notes",
-        querystring.stringify({
+        queryString.stringify({
           course: this.props.selectedCourse.id,
           question: nbObj.question.id,
           title: "whatever",
@@ -86,7 +87,7 @@ export class WikiNotebook extends Component {
   handleEdit(noteObj) {
     axios.put(
       "api/notes/" + noteObj.id,
-      querystring.stringify({
+      queryString.stringify({
         course: noteObj.course,
         question: noteObj.question,
         title: noteObj.title,
@@ -110,7 +111,7 @@ export class WikiNotebook extends Component {
     axios
       .post(
         "api/questions",
-        querystring.stringify({
+        queryString.stringify({
           course_meta: this.props.selectedCourse.course_meta.id,
           title: values.question,
           is_pin: !this.state.public,
@@ -127,7 +128,7 @@ export class WikiNotebook extends Component {
         axios
           .post(
             "api/notes",
-            querystring.stringify({
+            queryString.stringify({
               course: this.props.selectedCourse.id,
               question: res.data.question,
               title: "whatever",
@@ -144,17 +145,17 @@ export class WikiNotebook extends Component {
           .then((result) => {
             result.data.code == "success"
               ? message.success({
-                  content: "Note Added Successfully",
-                  style: {
-                    marginTop: "5vh",
-                  },
-                })
+                content: "Note Added Successfully",
+                style: {
+                  marginTop: "5vh",
+                },
+              })
               : message.error({
-                  content: "Fail to Add New Note  x_x",
-                  style: {
-                    marginTop: "5vh",
-                  },
-                });
+                content: "Fail to Add New Note  x_x",
+                style: {
+                  marginTop: "5vh",
+                },
+              });
 
             let queObj = {
               id: this.props.noteBag.length,
@@ -235,7 +236,6 @@ export class WikiNotebook extends Component {
           ) : (
             <Card
               bordered={false}
-              hoverable
               title=""
               hoverable={false}
               className="my-2"

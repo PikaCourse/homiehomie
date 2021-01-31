@@ -9,7 +9,7 @@
 
 import React, { useState } from "react";
 import { Input, AutoComplete } from "antd";
-import { getCourseSections, getCourses } from "./action";
+import { getCourseSections, getCourses } from "../action";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
 

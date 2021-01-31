@@ -59,6 +59,8 @@ export const selectCourse = createAsyncThunk(
   "course/selectCourses",
   async (args) => {
     let title = args.title;
+    // Course Id not used since we need to load the all the 
+    // possible sections related to this course in the current semester
     let courseId = args.courseId;
     let qs = queryString.stringify({"title": title});
     let res = await axios.get(`api/courses?${qs}`);

@@ -1,9 +1,9 @@
 import React, {useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, Radio, Button, Tooltip, message, Space } from "antd";
-import { isEmpty } from "../helper/dataCheck";
-import { timeObjFommatter, weekday, Color } from "../helper/global";
-import { setCourseByProf, setCourseByTime } from "./action";
+import { isEmpty } from "../../helper/dataCheck";
+import { timeObjFommatter, weekday, Color } from "../../helper/global";
+import { setCourseByProf, setCourseByTime } from "../action";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMinus,
@@ -11,8 +11,8 @@ import {
   faStar,
   faSave,
 } from "@fortawesome/free-solid-svg-icons";
-import { addCurrCourse, removeCurrCourse } from "../actions/calendar";
-import { addCurrCourseToWish } from "../actions/wishlist";
+import { addCurrCourse, removeCurrCourse } from "../../actions/calendar";
+import { addCourseToWishlist, removeCourseFromWishlist } from "../../wishlist/action";
 const CardStyle = { backgroundColor: "#ffffff", borderRadius: "1.5rem" };
 
 
@@ -66,9 +66,7 @@ function buttonsLoader(
   let add = true;
   let remove = true;
   let addButtonText = "Add Course";
-  let star =
-    wishlistCourseBag.filter((item) => item.courseId === selectedCourse.id)
-      .length == 0; //true if in the wishlist
+  let isStar = selectedCourse.id in wishlistCourseBag && wishlistCourseBag[selectedCourse.id] != null;
   // check if current on display course is already in calendar
   // false: add:true, remove:false
   // true: check if it is the same crn as the one in calendar
@@ -93,7 +91,7 @@ function buttonsLoader(
             disabled={!add}
             className="bubbly-button"
             type="primary"
-            onClick={(event) => {
+            onClick={() => {
               dispatch(addCurrCourse());
               message.success(`${addButtonText} Successfully`);
             }}
@@ -108,7 +106,7 @@ function buttonsLoader(
           <Button
             disabled={!remove}
             type="primary"
-            onClick={(event) => {
+            onClick={() => {
               dispatch(removeCurrCourse());
               message.success("Course Removed Successfully");
             }}
@@ -117,16 +115,26 @@ function buttonsLoader(
           </Button>
         </Tooltip>
 
-        <Tooltip title="Add to Wishlist">
+        <Tooltip title={isStar ? "Remove from Wishlist" : "Add to Wishlist"}>
+          {
+          /** 
+           * TODO Should support remove from wishlist
+           */
+          }
           <Button
-            disabled={!star}
-            type="primary"
-            onClick={(event) => {
-              if (!star) message.error("Course Already in Wishlist");
+            // TODO Disable if not add and not in wish bag
+            // disabled={selectedCourse.id in wishlistCourseBag}
+            type={isStar ? "primary" : "default"}
+            onClick={() => {
+              if (isStar) {
+                dispatch(removeCourseFromWishlist(selectedCourse.id));
+                message.success("Course Removed from Wishlist");
+              }
               else {
-                dispatch(addCurrCourseToWish()); //remove dispatch.then 
+                dispatch(addCourseToWishlist(selectedCourse));
                 message.success("Course Added To Wishlist");
               }
+              isStar = !isStar;
             }}
           >
             <FontAwesomeIcon icon={faStar} />

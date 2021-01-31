@@ -15,7 +15,7 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Layout, Menu } from "antd";
-import Wishlist from "../wishlist/Wishlist";
+import Wishlist from "../../wishlist";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import UserModule from "../user/UserModule";

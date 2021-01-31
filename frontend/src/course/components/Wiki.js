@@ -9,7 +9,7 @@
 
 import React, { useEffect, Fragment, } from "react";
 import WikiNotebook from "./WikiNotebook";
-import { getCourses } from "./action";
+import { getCourses } from "../action";
 import { connect, } from "react-redux";
 
 import WikiSearch from "./Search";
