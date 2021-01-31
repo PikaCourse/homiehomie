@@ -1,27 +1,27 @@
 import React from "react";
-import { Calendar, Views, momentLocalizer, } from "react-big-calendar";
+import { Calendar, Views, momentLocalizer} from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
-const mlocalizer = momentLocalizer(moment,);
-const DragAndDropCalendar = withDragAndDrop(Calendar,);
+const mlocalizer = momentLocalizer(moment);
+const DragAndDropCalendar = withDragAndDrop(Calendar);
 import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
 import "react-big-calendar/lib/sass/styles.scss";
 import "../../../static/scss/calendar.scss";
 import { connect, } from "react-redux";
 import PropTypes from "prop-types";
-import { selectCourse } from "../../course/action";
-import { addCustomEvent, removeCustomEvent, } from "../../actions/calendar";
+import { selectCourse } from "../course/action";
+import { addCustomEvent, removeCustomEvent} from "../../actions/calendar";
 import { updateUserSchedule, } from "../../actions/user";
 import store from "../../store";
-import { EventComponent, } from "./EventComponent";
-import { colors, pcolors, } from "./Color.js";
+import { EventComponent} from "./EventComponent";
+import { colors, pcolors} from "./Color.js";
 
 let formats = {
   dayFormat: (date, culture, localizer,) => moment.utc(date,).format("ddd",), //https://devhints.io/moment
 };
 const today = new Date();
 
-// TODO Unify component design language?
+// TODO Rewrite in functional component
 // TODO Add support to display only one day?
 // TODO Mobile optimization: hide this calendar
 class DnDCalendar extends React.Component {

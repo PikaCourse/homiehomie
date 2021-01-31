@@ -1,5 +1,13 @@
 # CourseOcean Frontent Web Application
 
+## TODO
+
+1. [ ] Restructure project folder structure
+2. [ ] Implement new project design
+3. [ ] Better coding
+   1. [ ] Use `redux-toolkit`
+   2. [ ] Use `prop-types` for type checkings
+
 ## Project structure
 
     src/
