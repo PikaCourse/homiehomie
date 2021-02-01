@@ -19,14 +19,15 @@ import { EventType } from "../utils";
 // todo check for prop type
 export const Event = (props) => {
   // Cast as EventType obj
-  const event = Object(EventType, props.event);
+  const event = props.event;
   // TODO Add support for poping window, delete button, etc.
   return (
     <div>
       <p className="mt-1 mb-0" style = {{fontFamily:'Montserrat'}}><strong>{event.title}</strong> </p>
-      {/* <span>{event.event.name}</span> */}
-      
-      {/* <p className="" style = {{fontFamily:'Montserrat'}}>{event.event.raw.instructor}</p> */}
+      <p style = {{fontFamily:'Montserrat'}}>
+        {event.location} <br />
+        {event.detail}
+      </p>
     </div>
   );
 };

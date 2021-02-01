@@ -75,9 +75,9 @@ export function flattenCourse(courses) {
         if (course.time == []) {
           let event = new EventType();
           // General
-          event.id = -1;  // Special id for course event
+          event.id = course.id;  // Special id for course event
           event.title = course.course_meta.title;
-          event.is_course = true;
+          event.type = "course";
 
           // Empty time
           event.all_day = true;
@@ -89,13 +89,14 @@ export function flattenCourse(courses) {
           // More info
           event.detail = `${course.type}\nTime not found, could be async`;
           event.location = course.locatioon;
+          event.meta = course;
         } else {
           // Create single event for each individual time section
           course.time.forEach((timeSlot) => {
             let event = new EventType();
-            event.id = -1;  // Special id for course event
+            event.id = course.id;  // Special id for course event
             event.title = course.course_meta.title;
-            event.is_course = true;
+            event.type = "course";
 
             // Time
             event.all_day = false;
@@ -105,6 +106,7 @@ export function flattenCourse(courses) {
             // More info
             event.detail = course.type;
             event.location = course.location;
+            event.meta = course;
 
             result.push(event);
           });

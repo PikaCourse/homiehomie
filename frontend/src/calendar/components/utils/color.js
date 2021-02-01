@@ -25,3 +25,10 @@ export const colors = [
 export const pcolors = [
   {strong:"#419ef4", weak:"#ffffff"},
 ];
+
+let val = 0;
+export const getNextColor = () => {
+  return colors[val++ % colors.length];
+};
+
+export const getColor = (x) => colors[x % colors.length];

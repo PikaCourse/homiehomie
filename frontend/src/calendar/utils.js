@@ -13,10 +13,11 @@
 export class EventType extends Object {
   id;           // event id, should be unique within calendar for custom event
   title;        // event title
-  is_course;    // boolean, true for course schedule event, will prevent drag and drop
+  type;         // string, take values from ["course", "custom", "protected"]
   all_day;      // boolean, true to display as all day
   start_at;     // event start Date object
   end_at;       // event end Date object
   detail;       // event detail
-  location;     // vent location
+  location;     // event location
+  meta;         // other info related to event
 }

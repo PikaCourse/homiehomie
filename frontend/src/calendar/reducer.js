@@ -59,8 +59,8 @@ export default createReducer(initialState, {
     let eventObj = action.payload;
     eventObj.id = ++state.nextEventId;
 
-    // Force event type to not be class
-    eventObj.is_course = false;
+    // Force event type to not be course
+    eventObj.type = eventObj.type != "course" ? eventObj.type : "custom";
     // Object key as string
     state.customEvents["" + eventObj.id] = eventObj;
   },
@@ -70,12 +70,14 @@ export default createReducer(initialState, {
    */
   [actions.updateEventInCalendar]: (state, action) => {
     const eventId = action.payload.id;
-    if (eventId < 0)  // -1 reserved for course event
-      return;
     const event = action.payload.event;
+
+    // Protect modification
+    if (state.customEvents[eventId]["type"] == "protected")
+      return;
     for (const key in event) {
       // Forbid modification of this field
-      if (key != "is_course")
+      if (key != "type")
         state.customEvents[eventId][key] = event[key];
     }
   },
@@ -94,5 +96,12 @@ export default createReducer(initialState, {
   [actions.clearEventInCalendar]: (state) => {
     state.customEvents = {};
     state.nextEventId = 0;
+  },
+
+  /**
+   * Reducer to set the event id
+   */
+  [actions.setEventId]: (state, action) => {
+    state.nextEventId = action.payload;
   }
 });

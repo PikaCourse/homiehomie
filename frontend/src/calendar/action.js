@@ -69,3 +69,8 @@ export const removeEventInCalendar = createAction("calendar/removeEvent");
  * Equivalent of deleting all events from calendar
  */
 export const clearEventInCalendar = createAction("calendar/clearEvent");
+
+/**
+ * Action to set event id start point
+ */
+export const setEventId = createAction("calendar/setEventId");

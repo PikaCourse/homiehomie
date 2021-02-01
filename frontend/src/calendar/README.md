@@ -1,5 +1,9 @@
 # Calendar Application
 
+## TODO
+
+1. [ ] event id issue? should it be persistent or temporary?
+
 ## Data Structured
 
 ### Course

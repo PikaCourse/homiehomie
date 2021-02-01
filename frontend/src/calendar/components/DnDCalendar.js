@@ -24,7 +24,7 @@ import { addEventToCalendar, removeEventInCalendar } from "../action";
 import { updateUserSchedule, } from "../../actions/user";
 import store from "../../store";
 import { EventComponent } from "./event";
-import { colors, pcolors } from "./utils/color.js";
+import { colors, pcolors, getNextColor } from "./utils/color.js";
 
 let formats = {
   dayFormat: (date, culture, localizer) => moment.utc(date).format("ddd"), //https://devhints.io/moment
