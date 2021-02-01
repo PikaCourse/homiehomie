@@ -43,39 +43,16 @@ export const mergeCalendar = createAction("calendar/merge");
  * Action to add a custom event to calendar
  * Will add a new event to calendar regradless of content 
  *  (i.e. two same title events) can coexist
- * payload: {event object}
- * {
- *    title: string
- *    weekday: int (0-6: Mon-Sun)
- *    start_at: string (HH:MM)
- *    end_at: string (HH:MM)
- *    detail: string
- * }
+ * payload: EventType
  */
 export const addEventToCalendar = createAction("calendar/addEvent");
-
-// export const addCustomEvent = (inputEvent) => {
-//   return {
-//     type: ADD_CUS_EVENT_IN_CAL,
-//     event: inputEvent,
-//   };
-// };
 
 /**
  * Action to update custom event in calendar
  * Support partial update
  * payload: {
  *  id: event id from state
- *  event: event object
- * }
- * 
- * Key in event can be optional
- * event: {
- *    title: string
- *    weekday: int (0-6: Mon-Sun)
- *    start_at: string (HH:MM)
- *    end_at: string (HH:MM)
- *    detail: string
+ *  event: EventType
  * }
  */
 export const updateEventInCalendar = createAction("calendar/updateEvent");

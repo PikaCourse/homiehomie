@@ -1,3 +1,12 @@
+/**
+ * File name:	DnDCalendar.js
+ * Created:	01/31/2021
+ * Author:	Weili An, Marx Wang
+ * Email:	foo@bar.com
+ * Version:	1.1 Adapt new reducer and action
+ * Description:	Drag and drop calendar application
+ */
+
 import React from "react";
 import { Calendar, Views, momentLocalizer} from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
@@ -6,18 +15,19 @@ const mlocalizer = momentLocalizer(moment);
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 import "react-big-calendar/lib/addons/dragAndDrop/styles.scss";
 import "react-big-calendar/lib/sass/styles.scss";
+// TODO Organize css and other static files!
 import "../../../static/scss/calendar.scss";
-import { connect, } from "react-redux";
+import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { selectCourse } from "../course/action";
-import { addCustomEvent, removeCustomEvent} from "../../actions/calendar";
+import { selectCourse } from "../../course/action";
+import { addEventToCalendar, removeEventInCalendar } from "../action";
 import { updateUserSchedule, } from "../../actions/user";
 import store from "../../store";
-import { EventComponent} from "./EventComponent";
-import { colors, pcolors} from "./Color.js";
+import { EventComponent } from "./event";
+import { colors, pcolors } from "./utils/color.js";
 
 let formats = {
-  dayFormat: (date, culture, localizer,) => moment.utc(date,).format("ddd",), //https://devhints.io/moment
+  dayFormat: (date, culture, localizer) => moment.utc(date).format("ddd"), //https://devhints.io/moment
 };
 const today = new Date();
 
@@ -25,46 +35,48 @@ const today = new Date();
 // TODO Add support to display only one day?
 // TODO Mobile optimization: hide this calendar
 class DnDCalendar extends React.Component {
-  constructor(props,) {
-    super(props,);
+  constructor(props) {
+    super(props);
     this.state = {
       displayDragItemInCell: true,
       selected: {},
     };
 
-    this.moveEvent = this.moveEvent.bind(this,);
-    this.newEvent = this.newEvent.bind(this,);
+    this.moveEvent = this.moveEvent.bind(this);
+    this.newEvent = this.newEvent.bind(this);
   }
 
+  // Update user schedule once the component updates
   componentDidUpdate() {
     if (store.getState().user.loginStatus) {
       store.dispatch(
-        updateUserSchedule(store.getState().calendar.calendarCourseBag,),
+        updateUserSchedule(store.getState().calendar.calendarCourseBag),
       );
     }
   }
 
+  // Initial component load 
   componentDidMount() {
-    document.addEventListener("keydown", this.deleteKeyDown, false,);
-    document.addEventListener("mousedown", this.pageClick, false,);
-    this.setState({ events: store.getState().calendar.calendarCourseBag, },);
+    document.addEventListener("keydown", this.deleteKeyDown, false);
+    document.addEventListener("mousedown", this.pageClick, false);
+    this.setState({ events: store.getState().calendar.events });
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.deleteKeyDown, false,);
-    document.removeEventListener("mousedown", this.pageClick, false,);
+    document.removeEventListener("keydown", this.deleteKeyDown, false);
+    document.removeEventListener("mousedown", this.pageClick, false);
   }
 
-  handleDragStart = (event,) => {
-    this.setState({ draggedEvent: event, },);
-    store.dispatch(addCustomEvent(event,),);
+  handleDragStart = (event) => {
+    this.setState({ draggedEvent: event, });
+    store.dispatch(addCustomEvent(event));
   };
 
   dragFromOutsideItem = () => {
     return this.state.draggedEvent;
   };
 
-  onDropFromOutside = ({ start, end, allDay, },) => {
+  onDropFromOutside = ({ start, end, allDay, }) => {
     const { draggedEvent, } = this.state;
 
     const event = {
@@ -75,41 +87,41 @@ class DnDCalendar extends React.Component {
       allDay: allDay,
     };
 
-    this.setState({ draggedEvent: null, },);
-    this.moveEvent({ event, start, end, },);
+    this.setState({ draggedEvent: null, });
+    this.moveEvent({ event, start, end, });
   };
 
-  moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot, },) => {
+  moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot, }) => {
     if (event.type != "custom") return;
-    const nextEvents = this.props.calendarCourseBag.map((existingEvent,) => {
+    const nextEvents = this.props.calendarCourseBag.map((existingEvent) => {
       if (existingEvent.id === event.id) {
         existingEvent.start = start;
         existingEvent.end = end;
-        store.dispatch(addCustomEvent(existingEvent,),);
+        store.dispatch(addCustomEvent(existingEvent));
       }
       return existingEvent;
-    },);
+    });
   };
 
-  resizeEvent = ({ event, start, end, },) => {
-    const nextEvents = this.props.calendarCourseBag.map((existingEvent,) => {
+  resizeEvent = ({ event, start, end, }) => {
+    const nextEvents = this.props.calendarCourseBag.map((existingEvent) => {
       if (existingEvent.id == event.id) {
         existingEvent.start = start;
         existingEvent.end = end;
-        store.dispatch(addCustomEvent(existingEvent,),);
+        store.dispatch(addCustomEvent(existingEvent));
       }
       return existingEvent;
-    },);
+    });
   };
 
-  newEvent(event,) {
-    const title = window.prompt("New Event Name",);
+  newEvent(event) {
+    const title = window.prompt("New Event Name");
     if (title != null && title != "") {
-      let idList = store.getState().calendar.calendarCourseBag.map((a,) => a.id,);
+      let idList = store.getState().calendar.calendarCourseBag.map((a) => a.id);
       var newId =
         store.getState().calendar.calendarCourseBag.length == 0
           ? 0
-          : Math.max(...idList,) + 1;
+          : Math.max(...idList) + 1;
       let hour = {
         type: "custom",
         id: newId,
@@ -122,11 +134,11 @@ class DnDCalendar extends React.Component {
         raw: { selectedCourseArray: [], },
       };
 
-      store.dispatch(addCustomEvent(hour,),);
+      store.dispatch(addCustomEvent(hour));
     }
   }
 
-  eventStyleHandler = (event, start, end, isSelected,) => {
+  eventStyleHandler = (event, start, end, isSelected) => {
     let currColor =
       event.type == "preview" ? pcolors[0] : colors[(event.id % 10) + 1];
     let newStyle = {
@@ -159,7 +171,7 @@ class DnDCalendar extends React.Component {
   onSelect = (event) => {
     this.setState({
       selected: event,
-    },);
+    });
     if (event.type != "custom") {
       store.dispatch(
         selectCourse({
@@ -170,21 +182,21 @@ class DnDCalendar extends React.Component {
     }
   };
 
-  deleteKeyDown = (e,) => {
+  deleteKeyDown = (e) => {
     if (e.keyCode === 8 && this.state.selected.type == "custom") {
-      store.dispatch(removeCustomEvent(this.state.selected,),);
+      store.dispatch(removeCustomEvent(this.state.selected));
     }
   };
 
-  pageClick = (e,) => {
+  pageClick = () => {
     // https://stackoverflow.com/questions/23821768/how-to-listen-for-click-events-that-are-outside-of-a-component
     this.setState({
       selected: {},
-    },);
+    });
   };
 
-  timeRangeFormat = ({ start, end, }, culture, local,) =>
-    local.format(start, "hh:mm", culture,);
+  timeRangeFormat = ({ start, end }, culture, local) =>
+    local.format(start, "hh:mm", culture);
 
   render() {
     return (
@@ -251,10 +263,10 @@ class DnDCalendar extends React.Component {
   }
 }
 
-const mapStateToProps = (state,) => ({
+const mapStateToProps = (state) => ({
   course: state.course.course,
   calendar: state.calendar,
   calendarCourseBag: state.calendar.calendarCourseBag,
 });
 
-export default connect(mapStateToProps,)(DnDCalendar,);
+export default connect(mapStateToProps)(DnDCalendar);

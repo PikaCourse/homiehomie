@@ -11,7 +11,7 @@ import {
   faStar,
   faSave,
 } from "@fortawesome/free-solid-svg-icons";
-import { addCurrCourse, removeCurrCourse } from "../../actions/calendar";
+import { addCourseToCalendar, removeCourseFromCalendar } from "../../calendar/action";
 import { addCourseToWishlist, removeCourseFromWishlist } from "../../wishlist/action";
 const CardStyle = { backgroundColor: "#ffffff", borderRadius: "1.5rem" };
 
@@ -24,9 +24,14 @@ function WikiSummary() {
   const wishlistCourseBag = useSelector(
     (state) => state.wishlist.wishlistCourseBag
   );
-  const calendarCourseBag = useSelector(
-    (state) => state.calendar.calendarCourseBag
+  const courseSchedule = useSelector(
+    (state) => state.calendar.courseSchedule
   );
+  // Flatten (tmp solution, need to revise in future)
+  let calendarCourseBag = [];
+  for (const key in courseSchedule) {
+    calendarCourseBag.push(courseSchedule[key]);
+  }
 
   const dispatch = useDispatch();
 
@@ -92,7 +97,7 @@ function buttonsLoader(
             className="bubbly-button"
             type="primary"
             onClick={() => {
-              dispatch(addCurrCourse());
+              dispatch(addCourseToCalendar(selectedCourse));
               message.success(`${addButtonText} Successfully`);
             }}
           >
@@ -107,7 +112,7 @@ function buttonsLoader(
             disabled={!remove}
             type="primary"
             onClick={() => {
-              dispatch(removeCurrCourse());
+              dispatch(removeCourseFromCalendar(selectedCourse.title));
               message.success("Course Removed Successfully");
             }}
           >

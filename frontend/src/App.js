@@ -11,7 +11,7 @@ import React, { Fragment, } from "react";
 
 import Navbar from "./components/nav/Navbar";
 import Footer from "./components/nav/Footer";
-import DnDCalendar from "./components/calendar/DnDCalendar";
+import Calendar from "./calendar";
 import Wiki from "./course";
 
 import { Provider, } from "react-redux";
@@ -28,7 +28,7 @@ export default function App(props) {
         <div className="container-fluid">
           <div className="row" style={{ height: "92vh", }}>
             <div className="col-md-6">
-              <DnDCalendar />
+              <Calendar />
             </div>
             <div className="col-md-6">
               <Wiki />

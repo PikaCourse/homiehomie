@@ -1,5 +1,5 @@
 /**
- * File name:	Color.js
+ * File name:	color.js
  * Created:	01/31/2021
  * Author:	Weili An, Joanna Fang, Marx Wang
  * Email:	foo@bar.com

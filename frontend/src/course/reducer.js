@@ -75,6 +75,14 @@ export default createReducer(initialState, {
   },
 
   /**
+   * Reducer for clearCourses action
+   * Clear the available search option
+   */
+  [action.clearCourses]: (state) => {
+    state.option = [];
+  },
+
+  /**
    * Reducer for selectCourse action
    * Set the current selected course via matching course id
    */

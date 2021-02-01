@@ -9,7 +9,7 @@
 
 import React, { useState } from "react";
 import { Input, AutoComplete } from "antd";
-import { getCourseSections, getCourses } from "../action";
+import { getCourseSections, getCourses, clearCourses } from "../action";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
 
@@ -27,7 +27,8 @@ function WikiSearch() {
   // Receive updated courses list via redux
   // state.course as we will combined the reducer together
   const option = useSelector((state,) => state.course.option);
-  const [timer, setTimer,] = useState(null);
+  const [value, setValue] = useState("");
+  const [timer, setTimer] = useState(null);
   const dispatch = useDispatch();
 
   // Call the getCourses method to store the returned list in redux
@@ -57,7 +58,15 @@ function WikiSearch() {
       onSelect={(title) => {
         dispatch(getCourseSections({"title": title}));
       }}
-      onSearch={(value) => searchOnChange(value)}
+      onBlur={() => {
+        // Clear if the search bar is empty
+        if (value.length == 0)
+          dispatch(clearCourses());
+      }}
+      onSearch={(value) => {
+        setValue(value);
+        searchOnChange(value);
+      }}
       allowClear
       bordered={false}
     >

@@ -46,6 +46,11 @@ export const getCourses = createAsyncThunk(
   }
 );
 
+/**
+ * redux action api to clear course info used by autoComplete
+ */
+export const clearCourses = createAction("course/clearCourses");
+
 // TODO Change from setXXX to selectXXX
 // TODO Should check if the current cache hosts the course list?
 // TODO And also this function is quite identical to GET_COURSE, consider merging

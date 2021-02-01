@@ -17,10 +17,10 @@ import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Layout, Menu } from "antd";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
-import prompt from "../../../static/json/prompt.json"
+import prompt from "../../../static/json/prompt.json";
 import store from '../../store'
 import {updateLoginStatus, getUserSchedule, updateUserSchedule, getUserWishlist, updateUserWishlist} from '../../actions/user'
-import {overwriteCourseBag} from '../../actions/calendar';
+import { mergeCalendar } from '../../calendar/action';
 import {useDispatch, useSelector} from "react-redux";
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";

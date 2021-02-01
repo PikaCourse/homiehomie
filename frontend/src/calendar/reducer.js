@@ -28,7 +28,7 @@ export default createReducer(initialState, {
    */
   [actions.addCourseToCalendar]: (state, action) => {
     const newCourse = action.payload;
-    state.courseSchedule[newCourse.title] = newCourse;
+    state.courseSchedule[newCourse.course_meta.title] = newCourse;
   },
 
   /**
@@ -56,8 +56,11 @@ export default createReducer(initialState, {
    * Will dynamically create a unique id for internal app reference
    */
   [actions.addEventToCalendar]: (state, action) => {
-    let eventObj = action.payload
+    let eventObj = action.payload;
     eventObj.id = ++state.nextEventId;
+
+    // Force event type to not be class
+    eventObj.is_course = false;
     // Object key as string
     state.customEvents["" + eventObj.id] = eventObj;
   },
@@ -67,9 +70,13 @@ export default createReducer(initialState, {
    */
   [actions.updateEventInCalendar]: (state, action) => {
     const eventId = action.payload.id;
+    if (eventId < 0)  // -1 reserved for course event
+      return;
     const event = action.payload.event;
     for (const key in event) {
-      state.customEvents[eventId][key] = event[key];
+      // Forbid modification of this field
+      if (key != "is_course")
+        state.customEvents[eventId][key] = event[key];
     }
   },
 

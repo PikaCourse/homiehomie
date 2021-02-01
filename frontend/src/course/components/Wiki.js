@@ -44,4 +44,4 @@ const WikiStyle = {
 };
 
 
-export default connect(null, null)(Wiki,);
+export default connect(null, null)(Wiki);
