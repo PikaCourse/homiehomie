@@ -14,7 +14,7 @@ export class Footer extends Component {
     return (
       <footer style={footer}>
         <div className="container d-flex justify-content-center">
-          <span class="text-muted" style={footerStyle}>
+          <span className="text-muted" style={footerStyle}>
             Copyright © All rights reserved
           </span>
         </div>

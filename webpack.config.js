@@ -1,5 +1,7 @@
 const path = require("path");
 
+// TODO Add minizer setting to ignore console log in production build
+
 module.exports = {
   devtool: "eval-source-map",
   module: {

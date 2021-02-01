@@ -2,7 +2,7 @@ import React, { Component, Fragment, useState, useCallback } from "react";
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
-import { Color } from "../../helper/global";
+import { Color } from "../../../helper/global";
 import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -14,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
-import { getQuestion, addQuestion, addOBJ } from "../../actions/question.js";
+import { getQuestion, addQuestion, addOBJ } from "../../../sactions/question.js";
 
 import {
   Button,
