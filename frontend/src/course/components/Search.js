@@ -56,7 +56,12 @@ function WikiSearch() {
         borderRadius: "5rem",
       }}
       onSelect={(title) => {
-        dispatch(getCourseSections({"title": title}));
+        dispatch(getCourseSections({"title": title})).then(()=>{
+          // TODO get dispatch successful or not, then run the following code 
+          // is then means always successful? 
+          console.log("no error>?????"); 
+        });
+
       }}
       onBlur={() => {
         // Clear if the search bar is empty
