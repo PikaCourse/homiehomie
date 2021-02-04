@@ -12,6 +12,7 @@ import { Input, AutoComplete } from "antd";
 import { getCourseSections, getCourses, clearCourses } from "../action";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
+import {SearchCourseModal} from "./SearchCourseModal"
 
 // TODO Change based on User school info
 // TODO Can be dynamic showing user different kinds of way to use the search bar
@@ -30,6 +31,7 @@ function WikiSearch() {
   const [value, setValue] = useState("");
   const [timer, setTimer] = useState(null);
   const dispatch = useDispatch();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   // Call the getCourses method to store the returned list in redux
   // and be used later here and also other part of the application
@@ -60,6 +62,7 @@ function WikiSearch() {
           // TODO get dispatch successful or not, then run the following code 
           // is then means always successful? 
           console.log("no error>?????"); 
+          setIsModalVisible(true); 
         });
 
       }}
@@ -76,6 +79,7 @@ function WikiSearch() {
       bordered={false}
     >
       <Input size="large" placeholder={prompt} prefix={<SearchOutlined />} />
+      <SearchCourseModal isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}/>
     </AutoComplete>
   );
 }
