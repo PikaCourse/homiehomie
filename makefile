@@ -57,7 +57,7 @@ help:
 	@echo
 	@echo "  start_redis          - start redis server"
 	@echo
-	@echo "  start_worker         - start worker process for redis queue"
+	@echo "  start_worker_%       - start worker process for redis queue"
 	@echo "----------------------------------------------------------------"
 
 #############################################

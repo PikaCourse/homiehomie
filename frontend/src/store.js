@@ -16,7 +16,8 @@ const store = createStore(
 );
 
 store.subscribe((listener) => {
-  saveState("calendarCourseBag", store.getState().calendar.calendarCourseBag);
+  saveState("calendar/courseSchedule", store.getState().calendar.courseSchedule);
+  saveState("calendar/customEvents", store.getState().calendar.customEvents);
   saveState("wishlistCourseBag", store.getState().wishlist.wishlistCourseBag);
 });
 

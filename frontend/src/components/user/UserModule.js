@@ -15,19 +15,18 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Layout, Menu } from "antd";
-import Wishlist from "../wishlist/Wishlist";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
-import prompt from "../../../static/json/prompt.json"
+import prompt from "../../../static/json/prompt.json";
 import store from '../../store'
 import {updateLoginStatus, getUserSchedule, updateUserSchedule, getUserWishlist, updateUserWishlist} from '../../actions/user'
-import {overwriteCourseBag} from '../../actions/calendar'
-import {useDispatch, useSelector} from "react-redux"
+import { mergeCalendar } from '../../calendar/action';
+import {useDispatch, useSelector} from "react-redux";
 axios.defaults.xsrfCookieName = "csrftoken";
 axios.defaults.xsrfHeaderName = "X-CSRFToken";
 import {loadUserCourseBag} from '../../helper/loadUserCalendar'
 import { year, semester, courseDataPatch, school } from "../../helper/global";
-import {overwriteWish} from "../../actions/wishlist"
+import {mergeWishlist} from "../../wishlist/action";
 
 // TODO Need documentation @joannafg
 function UserModule() {
@@ -88,7 +87,9 @@ function UserModule() {
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
 
-        // TODO Implement this
+        {
+          // TODO Implement this
+        }
         <a className="login-form-forgot" href="">
           Forgot password
         </a>
@@ -266,7 +267,11 @@ function UserModule() {
       footer={null}
     >
       {Object.keys(userProfile).map(key => 
-        <h5>{key+ " : "+userProfile[key]}</h5>
+        <h5
+          key={key}
+        >
+          {key+ " : "+userProfile[key]}
+        </h5>
       )}
      
       <Button onClick={logOut}>Log Out</Button>
@@ -493,16 +498,15 @@ function UserModule() {
         axios
           .get("/api/wishlists")
           .then((result) => {
-            var uniqueServerWishlist = result.data[0].custom.filter(x => !wishlistCourseBag.find(y => x.courseId === y.courseId));
-            var mergedWishlist = [...uniqueServerWishlist, ...wishlistCourseBag]; 
-            mergedWishlist.map((currElement, index) => {
-              currElement.id = index + 1; 
-              currElement.key = index + 1; 
-              return currElement; //equivalent to list[index]
+            var serverWishlist = result.data[0].reduce((courses, course) => {
+              courses[course.id] = course;
+              return courses;
             });
-            //remove duplicate and reset id 
-            dispatch(overwriteWish(mergedWishlist)); 
-            dispatch(updateUserWishlist(mergedWishlist)); 
+            // Merge current wishlist bag with server side
+            dispatch(mergeWishlist(serverWishlist)); 
+
+            // TODO
+            dispatch(updateUserWishlist()); 
           })
           .catch((err) => {});
       });
