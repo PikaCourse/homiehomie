@@ -31,7 +31,7 @@ const EventPopup = (props) => {
         <DatePicker 
           defaultValue={moment(event.start_at)} 
           format="dddd, MMM Do"
-          disabled={true}
+          disabled={disableEdit}
         />
         {
           // TODO Fix width of range picker
@@ -39,7 +39,7 @@ const EventPopup = (props) => {
         <RangePicker
           defaultValue={[moment(event.start_at), moment(event.end_at)]}
           format="HH:mm"
-          disabled={true}
+          disabled={disableEdit}
         />
       </Space>
     </div>
@@ -60,8 +60,13 @@ export const Event = (props) => {
   const popupWindow = <EventPopup event={event}/>;
   return (
     <Popover 
+      // Here is the pop up window for event after clicking
       content={popupWindow}
       trigger="click">
+      
+      {
+        // Actual displayed event on Calendar
+      }
       <div>
         <p className="mt-1 mb-0" style = {{fontFamily:'Montserrat'}}><strong>{event.title}</strong> </p>
         <p style = {{fontFamily:'Montserrat'}}>
