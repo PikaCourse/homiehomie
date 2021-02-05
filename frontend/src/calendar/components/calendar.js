@@ -4,7 +4,7 @@
  * Author:	Weili An
  * Email:	China_Aisa@live.com
  * Version:	1.0 Initial file
- * Description:	Calendar component for CourseOceans, 
+ * Description:	Calendar component for PikaCourse, 
  *              based on https://github.com/jquense/react-big-calendar
  */
 
@@ -35,10 +35,11 @@ let formats = {
 
 };
 // Enable Drag and Drop addon
+// TODO Need a custom layout algorithm as the calendar will default to width of 50%
 const DraggableCalendar = withDragAndDrop(bgCalendar);
 
 /**
- * CourseOcean calendar application code
+ * PikaCourse calendar application code
  * @param {*} props Props of Calendar component
  */
 function Calendar(props) {
@@ -98,8 +99,9 @@ function Calendar(props) {
    * @param {Object} slotInfo 
    * @param {Object} box 
    */
-  const createNewEvent = (slotInfo, box) => {
-    // TODO
+  const createNewEvent = (slotInfo) => {
+    // TODO Fire a modal for creating new event
+    console.log(slotInfo);
   };
 
   // TODO Other callbacks
@@ -120,6 +122,9 @@ function Calendar(props) {
           title: event.meta.course_meta.title, 
           courseId: event.meta.id
         }));
+    
+    // TODO Fire a modal for listing detail info
+
   };
 
   // Rendering
@@ -149,6 +154,7 @@ function Calendar(props) {
         formats={formats}
         showMultiDayTimes={true}
         step={15}
+        timeslots={2}
         // Disable toolbar since not needed right now
         // TODO Use custom toolbar
         toolbar={false}
@@ -166,6 +172,7 @@ function Calendar(props) {
           )
         }
         eventPropGetter={getEventStyle}
+        popup={true}
         // TODO Styling for slot
 
         // Create new custom event on calendar
