@@ -26,7 +26,7 @@ function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
       <div className="container-fluid">
         <a className="navbar-brand mx-4 pl-4" href="#" style={selectedStyle}>
-          CourseOcean
+          PikaCourse
         </a>
         <div>
           <ul className="navbar-nav ml-auto pr-4">

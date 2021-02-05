@@ -1,4 +1,4 @@
-# CourseOcean Frontent Web Application
+# PikaCourse Frontent Web Application
 
 ## TODO
 

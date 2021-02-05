@@ -1,5 +1,5 @@
 #############################################
-# Makefile for CourseOcean
+# Makefile for PikaCourse
 #############################################
 
 .PHONY: coverage_%
