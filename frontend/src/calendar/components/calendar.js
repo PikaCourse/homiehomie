@@ -4,7 +4,7 @@
  * Author:	Weili An
  * Email:	China_Aisa@live.com
  * Version:	1.0 Initial file
- * Description:	Calendar component for CourseOceans, 
+ * Description:	Calendar component for PikaCourse, 
  *              based on https://github.com/jquense/react-big-calendar
  */
 
@@ -39,7 +39,7 @@ let formats = {
 const DraggableCalendar = withDragAndDrop(bgCalendar);
 
 /**
- * CourseOcean calendar application code
+ * PikaCourse calendar application code
  * @param {*} props Props of Calendar component
  */
 function Calendar(props) {
