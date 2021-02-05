@@ -15,7 +15,7 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Layout, Menu } from "antd";
-import Wishlist from "../wishlist/Wishlist";
+import Wishlist from "../../wishlist";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import UserModule from "../user/UserModule";
@@ -26,14 +26,14 @@ function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
       <div className="container-fluid">
         <a className="navbar-brand mx-4 pl-4" href="#" style={selectedStyle}>
-          CourseOcean
+          PikaCourse
         </a>
         <div>
-          <ul class="navbar-nav ml-auto pr-4">
-            <li class="nav-item">
+          <ul className="navbar-nav ml-auto pr-4">
+            <li className="nav-item">
               <Wishlist />
             </li>
-            <li class="nav-item">
+            <li className="nav-item">
               <UserModule />
             </li>
           </ul>
