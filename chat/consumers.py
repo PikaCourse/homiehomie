@@ -12,6 +12,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 
 from scheduler.models import CourseMeta
+from chat.serializers import CourseMetaChatSerializer
 
 
 class CourseChatConsumer(AsyncWebsocketConsumer):
@@ -56,6 +57,7 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
     # Receive message from WebSocket
     async def receive(self, text_data):
         message = json.loads(text_data)
+        message["course"] = CourseMetaChatSerializer(self.course_meta).data
 
         # Send message to room group
         await self.channel_layer.group_send(
