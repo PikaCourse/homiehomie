@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'coverage',
     'django_extensions',
-    "django_rq",
+    'django_rq',
+    'channels',
     'scheduler.apps.SchedulerConfig',
     'frontend.apps.FrontendConfig',
     'user.apps.UserConfig',
@@ -90,6 +91,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'homiehomie.wsgi.application'
+ASGI_APPLICATION = "homiehomie.asgi.application"
 
 
 # Database

@@ -1,5 +1,9 @@
 # Development Note on Django and Django Rest Framework
 
+## TODO
+
+1. [ ] Profile use gunicorn to launch asgi app?
+
 ## Serializer
 
 Like django form, handle parsing model db data and
