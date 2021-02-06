@@ -118,6 +118,8 @@ function Calendar(props) {
    * Callback when a time slot is selected
    * See http://jquense.github.io/react-big-calendar/examples/index.html#prop-onSelectSlot
    * for more info
+   * Show create a popup window similar to when you clicking an event
+   * and allow user to enter information
    * @param {Object} slotInfo 
    * @param {Object} box 
    */
@@ -144,9 +146,6 @@ function Calendar(props) {
           title: event.meta.course_meta.title, 
           courseId: event.meta.id
         }));
-    
-    // TODO Fire a modal for listing detail info
-
   };
 
   // Rendering
