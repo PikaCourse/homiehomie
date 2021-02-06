@@ -1,4 +1,4 @@
-# CourseOcean
+# PikaCourse
 
 ![Prod CI](https://github.com/coursewiki/homiehomie/workflows/Prod%20CI/badge.svg?branch=main)
 ![Dev CI](https://github.com/coursewiki/homiehomie/workflows/Dev%20CI/badge.svg?branch=dev)
