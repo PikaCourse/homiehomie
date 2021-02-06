@@ -8,7 +8,7 @@
  *              based on https://github.com/jquense/react-big-calendar
  */
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { Calendar as bgCalendar, Views, momentLocalizer} from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
@@ -46,6 +46,28 @@ function Calendar(props) {
   // Own state
   // Selected event
   const [selectedEvent, setSelectedEvent] = useState({});
+  const [calendarView, setCalendarView] = useState(Views.WEEK);
+
+  // onResize callback to control views for calendar
+  // TODO Need a better way to handle this?
+  const calContainer = useRef();  // Use to get calendar width
+  useEffect(() => {
+    function updateCalendarView() {
+      const width = calContainer.current.offsetWidth;
+      if (width > 700) {
+        setCalendarView(Views.WEEK);
+      } else if (width > 500) {
+        setCalendarView(Views.WORK_WEEK);
+      } else {
+        setCalendarView(Views.DAY);
+      }
+    }
+    window.addEventListener("resize", updateCalendarView);
+    updateCalendarView();
+    return () => {
+      window.removeEventListener("resize", updateCalendarView);
+    };
+  });
 
   // Utility functions
   const dispatch = useDispatch();
@@ -137,6 +159,7 @@ function Calendar(props) {
         overflowY: "auto",
         height: "82vh",
       }}
+      ref={calContainer}
     >
       <DraggableCalendar 
         // General setting
@@ -150,6 +173,9 @@ function Calendar(props) {
         endAccessor="end_at"
 
         // Format setting
+        view={calendarView}
+        views={[Views.DAY, Views.WORK_WEEK, Views.WEEK]}
+        onView={() => {}}
         defaultView={Views.WEEK}  // Week format view
         formats={formats}
         showMultiDayTimes={true}
