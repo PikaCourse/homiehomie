@@ -11,9 +11,10 @@ A scheduling platform for student to choose courses.
 
 ### API
 
-1. [API Document](https://app.swaggerhub.com/apis/NeX-Studio/HomieHomie)
-2. [Dev Server](https://test-homiehomie.thexyzlab.studio/)
-3. [Prod Server](https://pikacourse.com)
+1. [Rest API Documentation](https://app.swaggerhub.com/apis/NeX-Studio/HomieHomie)
+2. [Async API Documentation](https://playground.asyncapi.io/?load=https://raw.githubusercontent.com/CourseOcean/pikacourse-async-api/main/async.yml)
+3. [Dev Server](https://test-homiehomie.thexyzlab.studio/)
+4. [Prod Server](https://pikacourse.com)
 
 ## Preparing for development
 
