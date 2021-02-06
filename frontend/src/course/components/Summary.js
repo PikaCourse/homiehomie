@@ -65,13 +65,15 @@ function buttonsLoader(
 ) {
   const courseArray = calendarCourseBag.filter(
     (item) =>
-      item.title ===
+      item.course_meta.title ===
       selectedCourse.course_meta.title //&& (item.type != 'preview'))
   );
   let add = true;
   let remove = true;
   let addButtonText = "Add Course";
   let isStar = selectedCourse.id in wishlistCourseBag && wishlistCourseBag[selectedCourse.id] != null;
+  // TODO The rest code to determine if add or remove course can use the similar approach as above
+  // TODO @Marx
   // check if current on display course is already in calendar
   // false: add:true, remove:false
   // true: check if it is the same crn as the one in calendar
@@ -81,10 +83,10 @@ function buttonsLoader(
   if (!courseArray.length) {remove = false; }
   else {
     const course = calendarCourseBag.filter(
-      (item) => item.courseId === selectedCourse.id //&& (item.type != 'preview')
+      (item) => item.id === selectedCourse.id //&& (item.type != 'preview')
     );
     if (!course.length) {
-      addButtonText = "Change CRN";
+      addButtonText = "Change Section";
       remove = false;
     } else add = false;
   }

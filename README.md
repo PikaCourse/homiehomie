@@ -1,4 +1,4 @@
-# CourseOcean
+# PikaCourse
 
 ![Prod CI](https://github.com/coursewiki/homiehomie/workflows/Prod%20CI/badge.svg?branch=main)
 ![Dev CI](https://github.com/coursewiki/homiehomie/workflows/Dev%20CI/badge.svg?branch=dev)
@@ -13,7 +13,7 @@ A scheduling platform for student to choose courses.
 
 1. [API Document](https://app.swaggerhub.com/apis/NeX-Studio/HomieHomie)
 2. [Dev Server](https://test-homiehomie.thexyzlab.studio/)
-3. [Prod Server](https://courseocean.cc)
+3. [Prod Server](https://pikacourse.com)
 
 ## Preparing for development
 
