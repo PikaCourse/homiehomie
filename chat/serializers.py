@@ -41,6 +41,9 @@ class CourseChatMessageSerializer(serializers.ModelSerializer):
     """
     Used for saving chat messages and loading history chats
     """
+    course_meta = CourseMetaChatSerializer()
+    user = UserChatSerializer()
+
     class Meta:
         model = CourseChatMessage
         fields = ('id', 'user', 'course_meta', 'message',)
