@@ -70,15 +70,16 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        # Inject sender and course info into messsage field
+        # Inject sender and course info into message field
         message = json.loads(text_data)
         message["course"] = self.course_meta_data
         message["user"] = self.user_data
         # Override message timestamp
         message["message"]["timestamp"] = timezone.now().isoformat()
 
-        # Save the message for history query
-        await self.save_message_to_db(message)
+        # TODO How to handle millions of messages?
+        # Save the message for history query and get the message id
+        message["id"] = await self.save_message_to_db(message)
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -100,10 +101,11 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
                                               context={"user": self.user,
                                                        "course_meta": self.course_meta})
         if message.is_valid(raise_exception=False):
-            message.save()
+            instance = message.save()
+            return instance.id
         else:
             # TODO Error handling?
-            pass
+            return -1
 
     # Receive message from room group
     async def chat_message(self, event):

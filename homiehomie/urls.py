@@ -28,5 +28,5 @@ urlpatterns = [
     path('api/', include('user.urls')),
     path('__debug__/', include(debug_toolbar.urls)),
     path('django-rq/', include('django_rq.urls')),
-    path('chat/', include('chat.urls'))
+    path('api/', include('chat.urls'))
 ]

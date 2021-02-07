@@ -12,5 +12,5 @@ from django.urls import re_path
 from chat.consumers import CourseChatConsumer
 
 websocket_urlpatterns = [
-    re_path(r'course/(?P<course_meta_id>\d+)$', CourseChatConsumer.as_asgi()),
+    re_path(r'coursemeta/(?P<course_meta_id>\d+)$', CourseChatConsumer.as_asgi()),
 ]
