@@ -1,3 +1,12 @@
+"""
+filename:    models.py
+created at:  02/6/2021
+author:      Weili An
+email:       china_aisa@live.com
+version:     v1.0.0
+desc:        data model definitions for scheduler
+"""
+
 from django.db import models
 
 # from django.contrib.auth.models import User
@@ -9,6 +18,7 @@ import datetime
 
 # TODO Use choices options of fields to limit user input and as
 # TODO validation
+
 
 # Create your models here.
 class CourseMeta(models.Model):

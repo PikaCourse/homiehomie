@@ -44,6 +44,7 @@ class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
         queryset = CourseMeta.objects.all()
 
         # TODO Better way?
+        # TODO Put query params in self.get_queryset()
         # TODO Query parameter Vaildation
         # TODO Consider using: https://www.django-rest-framework.org/api-guide/filtering/
         school      = self.request.query_params.get("school", None)
@@ -420,6 +421,7 @@ class NoteViewSet(viewsets.ModelViewSet):
         return Note.objects.filter(qs)
 
 
+# TODO Pagination
 class PostViewSet(viewsets.ModelViewSet):
     """
     ViewSet for retrieving list of posts related to a course

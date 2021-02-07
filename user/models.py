@@ -53,6 +53,11 @@ class Student(models.Model):
         return Student.objects.get(user=user)
 
     @classmethod
+    def get_anonymous_user(cls):
+        anonymous_user, _ = User.objects.get_or_create(username='anonymous')
+        return Student.objects.get(user=anonymous_user)
+
+    @classmethod
     def get_tester_user(cls):
         tester, _ = User.objects.get_or_create(username='tester')
         return Student.objects.get(user=tester)

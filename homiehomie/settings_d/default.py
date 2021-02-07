@@ -50,10 +50,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'coverage',
     'django_extensions',
-    "django_rq",
+    'django_rq',
+    'channels',
     'scheduler.apps.SchedulerConfig',
     'frontend.apps.FrontendConfig',
     'user.apps.UserConfig',
+    'chat'
 ]
 
 MIDDLEWARE = [
@@ -167,7 +169,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
+    ]
 }
 
 # Email setting
@@ -191,15 +193,28 @@ AUTHENTICATION_BACKENDS = [
 # Redis backend worker queue db
 RQ_QUEUES = {
     'default': {
-        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        'URL': config('REDIS_URL', default='redis://localhost:6379/0'),
         'DEFAULT_TIMEOUT': 500,
     },
     'high': {
-        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        'URL': config('REDIS_URL', default='redis://localhost:6379/0'),
         'DEFAULT_TIMEOUT': 500,
     },
     'low': {
-        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        'URL': config('REDIS_URL', default='redis://localhost:6379/0'),
         'DEFAULT_TIMEOUT': 500,
+    },
+}
+
+# Channels config
+ASGI_APPLICATION = "homiehomie.asgi.application"
+
+# channels_redis config
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [config('REDIS_URL', default='redis://localhost:6379/0')],
+        },
     },
 }
