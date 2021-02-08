@@ -8,7 +8,7 @@
  */
 
 import React, { useState } from "react";
-import { Input, AutoComplete } from "antd";
+import { Input, AutoComplete, Modal} from "antd";
 import { getCourseSections, getCourses, clearCourses } from "../action";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
@@ -27,16 +27,9 @@ function SearchCourseModal(props) {
     };
 
     return (
-    <>
-        {()=>{
-            console.log("modal here"); 
-        }}
-        <Modal title="Basic Modal" visible={props.isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        </Modal>
-    </>
+    <Modal title="Basic Modal" visible={true} onOk={handleOk} onCancel={handleCancel}>
+    <p>Some contents...</p>
+    </Modal>
     );
 }
     

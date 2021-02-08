@@ -8,11 +8,12 @@
  */
 
 import React, { useState } from "react";
-import { Input, AutoComplete } from "antd";
+import { Input, AutoComplete, Modal, Button} from "antd";
 import { getCourseSections, getCourses, clearCourses } from "../action";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
 import {SearchCourseModal} from "./SearchCourseModal"
+// import { Button } from "bootstrap";
 
 // TODO Change based on User school info
 // TODO Can be dynamic showing user different kinds of way to use the search bar
@@ -49,7 +50,16 @@ function WikiSearch() {
     }
   }
 
+  function openModal() {
+    setIsModalVisible(true); 
+  }
+
+  function closeModal() {
+
+  }
+
   return (
+    <>
     <AutoComplete
       options={option}
       style={{
@@ -61,8 +71,9 @@ function WikiSearch() {
         dispatch(getCourseSections({"title": title})).then(()=>{
           // TODO get dispatch successful or not, then run the following code 
           // is then means always successful? 
-          console.log("no error>?????"); 
+          //console.log("no error>?????"); 
           setIsModalVisible(true); 
+          openModal(); 
         });
 
       }}
@@ -79,8 +90,14 @@ function WikiSearch() {
       bordered={false}
     >
       <Input size="large" placeholder={prompt} prefix={<SearchOutlined />} />
-      <SearchCourseModal isModalVisible={isModalVisible} setIsModalVisible={setIsModalVisible}/>
+      {/* <SearchCourseModal isModalVisible={true}/> */}
+      
     </AutoComplete>
+    <Button onClick={openModal}>Open Modal</Button>
+      <Modal title="Basic Modal" visible={isModalVisible} onOk={setIsModalVisible(false)} onCancel={setIsModalVisible(false)}>
+        <p>Some contents...</p>
+      </Modal>
+    </>
   );
 }
 
