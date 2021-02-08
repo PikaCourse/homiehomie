@@ -27,7 +27,7 @@ function SearchCourseModal(props) {
     };
 
     return (
-    <Modal title="Basic Modal" visible={true} onOk={handleOk} onCancel={handleCancel}>
+    <Modal title="Basic Modal" visible={props.isModalVisible} onOk={props.closeModal} onCancel={props.closeModal}>
     <p>Some contents...</p>
     </Modal>
     );
