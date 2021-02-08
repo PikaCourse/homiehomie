@@ -12,23 +12,24 @@ import { Input, AutoComplete, Modal} from "antd";
 import { getCourseSections, getCourses, clearCourses } from "../action";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
+import store from "../../store";
+
 
 function SearchCourseModal(props) {
     const showModal = () => {
         props.setIsModalVisible(true);
     };
 
-    const handleOk = () => {
-        props.setIsModalVisible(false);
-    };
-
-    const handleCancel = () => {
-        props.setIsModalVisible(false);
-    };
+    const content = 
+    <div>
+        <p>{props.isModalVisible?store.getState().course.selectedCourse.course_meta.title:null}</p>
+        <p>{props.isModalVisible?store.getState().course.selectedCourse.course_meta.name:null}</p>
+    </div>; 
 
     return (
     <Modal title="Basic Modal" visible={props.isModalVisible} onOk={props.closeModal} onCancel={props.closeModal}>
-    <p>Some contents...</p>
+        {props.isModalVisible?content:null}
+        {/* TODO create when isModalVisible is true, destroy when it is false */}
     </Modal>
     );
 }
