@@ -50,10 +50,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'coverage',
     'django_extensions',
-    "django_rq",
+    'django_rq',
+    'channels',
     'scheduler.apps.SchedulerConfig',
     'frontend.apps.FrontendConfig',
     'user.apps.UserConfig',
+    'chat'
 ]
 
 MIDDLEWARE = [
@@ -167,7 +169,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
+    ]
 }
 
 # Email setting
@@ -176,7 +178,7 @@ EMAIL_PORT = config("EMAIL_PORT", default=25, cast=int)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=False, cast=bool)
-DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="bot@courseocean.cc")
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="bot@pikacourse.cc")
 
 # Verification token timeout in seconds
 # current setting: 3 hrs
@@ -191,15 +193,28 @@ AUTHENTICATION_BACKENDS = [
 # Redis backend worker queue db
 RQ_QUEUES = {
     'default': {
-        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        'URL': config('REDIS_URL', default='redis://localhost:6379/0'),
         'DEFAULT_TIMEOUT': 500,
     },
     'high': {
-        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        'URL': config('REDIS_URL', default='redis://localhost:6379/0'),
         'DEFAULT_TIMEOUT': 500,
     },
     'low': {
-        'URL': os.getenv('REDIS_URL', 'redis://localhost:6379/0'),
+        'URL': config('REDIS_URL', default='redis://localhost:6379/0'),
         'DEFAULT_TIMEOUT': 500,
+    },
+}
+
+# Channels config
+ASGI_APPLICATION = "homiehomie.asgi.application"
+
+# channels_redis config
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [config('REDIS_URL', default='redis://localhost:6379/0')],
+        },
     },
 }

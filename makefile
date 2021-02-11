@@ -1,5 +1,5 @@
 #############################################
-# Makefile for CourseOcean
+# Makefile for PikaCourse
 #############################################
 
 .PHONY: coverage_%
@@ -82,8 +82,10 @@ install : dependency, install_redis
 
 
 dependency :
-	source venv/bin/activate
-	pip install -r requirements/dev.txt
+	( \
+		source venv/bin/activate; \
+		pip install -r requirements/dev.txt; \
+	)
 	npm install
 
 
