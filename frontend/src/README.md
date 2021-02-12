@@ -26,3 +26,7 @@
     |   |   reducer.js: entry file for redux reducer function related to this application
     |   |   index.ks: entry file for the application
     |   application2/
+
+## Useful Resource
+
+1. [Frontend Mock API](https://designer.mocky.io/design)

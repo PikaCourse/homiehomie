@@ -10,7 +10,12 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Select, Button, Form, Input, message, Dropdown, Avatar, Menu, Space } from "antd";
 const { Option } = Select;
+import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import axios from "axios";
+// Config axios to get the csrf cookie preventing manually
+// adding it
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
   faUser, 
@@ -18,6 +23,7 @@ import {
   faEnvelope,
   faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
+import { getCookie } from "../utils";
 
 /**
  * User avatar top level component
@@ -30,16 +36,17 @@ export default function UserAvatar(props) {
   // Set overall login status
   const setLogin = props.setLogin;
   const userInfo = props.userInfo;
+  const setUserInfo = props.setUserInfo;
 
   // Drop down menu visible change
   const [ isMenuVisible, setIsMenuVisible ] = useState(false);
 
-  const userMenu = <UserDropDownMenu userInfo={userInfo} setLogin={setLogin} setVisible={setIsMenuVisible}/>;
+  const userMenu = <UserDropDownMenu userInfo={userInfo} setUserInfo={setUserInfo} setLogin={setLogin} setVisible={setIsMenuVisible}/>;
 
   return (
     <Dropdown 
       overlay={userMenu}
-      overlayStyle={{"box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}
+      overlayStyle={{"boxShadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"}}
       trigger={["hover", "click"]}
       getPopupContainer={(node) => node.parentNode}
       visible={isMenuVisible}
@@ -63,6 +70,7 @@ export default function UserAvatar(props) {
 function UserDropDownMenu(props) {
   const setLogin = props.setLogin;
   const userInfo = props.userInfo;
+  const setUserInfo = props.setUserInfo;
 
   // Menu visible control
   const setVisible = props.setVisible;
@@ -165,7 +173,10 @@ function UserDropDownMenu(props) {
         // Hidden Modal
         // TODO Need a way to set new user info after updating? Or use ws on top level?
       }
-      <UserProfileModal isVisible={isUserModalVisible} setVisible={setIsUserModalVisible} userInfo={userInfo}/>
+      <UserProfileModal 
+        isVisible={isUserModalVisible} setVisible={setIsUserModalVisible} 
+        userInfo={userInfo} setUserInfo={setUserInfo}
+      />
     </>
   );
 }
@@ -178,9 +189,9 @@ function UserProfileModal(props) {
   const isVisible = props.isVisible;
   const setVisible = props.setVisible;
   const userInfo = props.userInfo;
+  const setUserInfo = props.setUserInfo;
 
-  // TODO Render a form with user info and allow to edit and update
-  // TODO Need to reload updated info
+  // Render a form with user info and allow to edit and update
   return (
     <Modal 
       title={`${userInfo.username}'s profile`} 
@@ -189,7 +200,7 @@ function UserProfileModal(props) {
       onCancel={()=>{setVisible(false);}}
       footer={null}
     >
-      <UserProfileForm userInfo={userInfo}/>
+      <UserProfileForm userInfo={userInfo} setUserInfo={setUserInfo}/>
     </Modal>
   );
 }
@@ -200,22 +211,60 @@ function UserProfileModal(props) {
  */
 function UserProfileForm(props) {
   const userInfo = props.userInfo;
+  const setUserInfo = props.setUserInfo;
 
   // Get form instance
   const [form] = Form.useForm();
 
+  // Form control state
+  const [ isLoading, setIsLoading ] = useState(false);
+
+
   // TODO Need an API to gather school list
 
-  // TODO Display backend validation message under each input?
-  // TODO  Refer to https://ant.design/components/form-cn/#components-form-demo-without-form-create
-  // TODO  and https://ant.design/components/form-cn/#Rule
+  // TODO Avatar image upload
+  function submitForm(values) {
+    // Perform update request here
+    setIsLoading(true);
+    console.log(values);
 
-  // TODO Avatar image upload and submit form!
+    axios.patch(`/api/users/${userInfo.id}`, values)
+      .then((res) => {
+        // TODO Close modal?
+        console.log(res);
+        // Update user info state based on returned profile
+        setUserInfo(res.data.profile);
+        message.success("Successfully update profile");
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        // If error status is 400, display validation messages
+        //    Under corresponding fields
+        if (err.response.status == 400) {
+          const backendValidationRes = err.response.data;
+          const fieldErrMsg = [];
+          for (const [ fieldName, errMsgs ] of Object.entries(backendValidationRes)) {
+            fieldErrMsg.push(
+              {
+                name: fieldName,
+                errors: errMsgs
+              }
+            );
+          }
+          form.setFields(fieldErrMsg);
+        } else {
+          message.error("Some errors occurred, make sure you have the right permission");
+        }
+        setIsLoading(false);
+      });
+  }
+
   return (
     <Form
       name="user_profile"
       initialValues={userInfo}
       form={form}
+      onFinish={submitForm}
     >
       <Form.Item
         label="Username"
@@ -224,7 +273,7 @@ function UserProfileForm(props) {
           {
             required: true,
             message: "Please input your username!",
-          },
+          }
         ]}
       >
         <Input />
@@ -235,9 +284,9 @@ function UserProfileForm(props) {
         rules={[
           {
             required: true,
-            type: "email",
-            message: "Please input a valid email!",
-          },
+            pattern: /^.*@.*\.edu$/,
+            message: "Please input a valid .edu email!"
+          }
         ]}
       >
         <Input />
@@ -285,11 +334,12 @@ function UserProfileForm(props) {
           <Option value="JR">Junior</Option>
           <Option value="SR">Senior</Option>
           <Option value="GR">Graduate</Option>
+          <Option value="TT">TEST</Option>
         </Select>
       </Form.Item>
       <Form.Item>
         <Space>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={isLoading}>
             Submit
           </Button>
           <Button htmlType="button" onClick={() => form.resetFields()}>
@@ -299,4 +349,13 @@ function UserProfileForm(props) {
       </Form.Item>
     </Form>
   );
+}
+
+/**
+ * React component to upload avatar image, used in UserProfileForm
+ * @param {*} props 
+ */
+// TODO Need the DigitalOcean Space API to temp stored avatar link
+function AvatarUploadInput(props) {
+
 }

@@ -24,11 +24,11 @@ export default function UserModule(props) {
 
   // User info management
   const sampleUserInfo = {
-    "id": 0,
+    "id": 5,
     "email": "test@test.edu",
     "avatarUrl": "https://randomuser.me/api/portraits/lego/6.jpg",
     "is_verified": true,
-    "username": "Tester",
+    "username": "test_admin",
     "school": "Test University",
     "major": "major 1",
     "majors": [
@@ -48,7 +48,6 @@ export default function UserModule(props) {
   // first loaded
   // If so, set status and user info
   // TODO Comment out for testing avatar
-  /*
   useEffect(() => {
     function checkLogin() {
       axios.get("/api/users")
@@ -62,7 +61,7 @@ export default function UserModule(props) {
         });
     }
     checkLogin();
-  }, []); */
+  }, []);
 
   // TODO Setup ws connection to listen for notification
 
@@ -75,6 +74,7 @@ export default function UserModule(props) {
         <UserAvatar 
           setLogin={setIsLoggedIn}
           userInfo={userInfo}
+          setUserInfo={setUserInfo}
         />
       </>
     );
