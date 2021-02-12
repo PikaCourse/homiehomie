@@ -29,6 +29,9 @@ from rest_framework.fields import (empty)
 
 
 # TODO Add validation for birthday and gradation
+# TODO User email address should need verification
+#   and after user email changes, the student need to have
+#   to verify the email again
 class StudentSerializer(serializers.ModelSerializer):
     """
     Serializer to return student profile

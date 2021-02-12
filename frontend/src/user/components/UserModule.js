@@ -19,10 +19,30 @@ import LoginRegister from "./LoginRegister";
  */
 export default function UserModule(props) {
   // Login Status of user
+  // TODO Temporarily set the logged in state to be true
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   // User info management
-  const [userInfo, setUserInfo] = useState({});
+  const sampleUserInfo = {
+    "id": 0,
+    "email": "test@test.edu",
+    "avatarUrl": "https://randomuser.me/api/portraits/lego/6.jpg",
+    "is_verified": true,
+    "username": "Tester",
+    "school": "Test University",
+    "major": "major 1",
+    "majors": [
+      "major 2"
+    ],
+    "minors": [
+      "string"
+    ],
+    "graduation": "string",
+    "birthday": "string",
+    "sex": "string",
+    "type": "string"
+  };
+  const [userInfo, setUserInfo] = useState(sampleUserInfo);
 
   // Check if user already logged in when the component
   // first loaded
