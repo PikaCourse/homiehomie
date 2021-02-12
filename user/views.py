@@ -265,7 +265,7 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
 
         data = serializer.data
         error_pack = {"code": "success", "detail": "successfully update user profile",
-                      "user": data["id"], "status": status.HTTP_200_OK}
+                      "user": data["id"], "status": status.HTTP_200_OK, "profile": data}
         return Response(error_pack, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'])
