@@ -9,7 +9,30 @@
 
 A scheduling platform for student to choose courses.
 
-### API
+## Outline
+
+- [PikaCourse](#pikacourse)
+  - [Intro](#intro)
+  - [Outline](#outline)
+  - [API](#api)
+  - [Preparing for development](#preparing-for-development)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+      - [Install virtualenv and other python packages](#install-virtualenv-and-other-python-packages)
+      - [Install Node.js packages](#install-nodejs-packages)
+      - [Additional packages (for production only)](#additional-packages-for-production-only)
+    - [Build the project (for Node.js part only)](#build-the-project-for-nodejs-part-only)
+  - [Run the project](#run-the-project)
+    - [Setup](#setup)
+    - [Run dummy email server](#run-dummy-email-server)
+    - [Launch redis db and worker process](#launch-redis-db-and-worker-process)
+    - [Migrate database](#migrate-database)
+    - [Launching server](#launching-server)
+    - [Testing and coverage](#testing-and-coverage)
+  - [Additional note](#additional-note)
+    - [Makefile](#makefile)
+
+## API
 
 1. [Rest API Documentation](https://app.swaggerhub.com/apis/NeX-Studio/HomieHomie)
 2. [Async API Documentation](https://playground.asyncapi.io/?load=https://raw.githubusercontent.com/CourseOcean/pikacourse-async-api/main/async.yml)
@@ -72,9 +95,9 @@ You can check whether or not your system has the above binaries via:
     # Build in production setting, maximize performance and minimize space
     npm run build
 
-### Run the project
+## Run the project
 
-#### Setup
+### Setup
 
 Prepare the environment for projects
 
@@ -86,7 +109,7 @@ Prepare the environment for projects
     npm run dev
 
 
-#### Run dummy email server
+### Run dummy email server
 
 Since the project has included email service, you will need
 a dummy smtp server to listen to it in order to get, for instance, the verification
@@ -97,7 +120,7 @@ terminal tab:
     
 Which will launch a fake smtp server listening on `localhost:1025`
 
-#### Launch redis db and worker process
+### Launch redis db and worker process
 
 The project uses a redis database as a queue for pushing jobs to backend worker process
 in order to separate the external API requests from frontend website rendering. Therefore,
@@ -115,7 +138,7 @@ In addition to redis db, a redis queue worker process must be started prior to l
     
 Where `%` is the setting file config like `local`, `remote`
 
-#### Migrate database
+### Migrate database
 
 Database migration will apply database changes to the database specified in the setting file
 specified by the `--settings` flag here. You can change the setting file specified by changing
@@ -149,7 +172,7 @@ to start the server.
     # Or makefile
     make migratedb_local
 
-#### Launching server
+### Launching server
 
 If you use makefile command, `collectstatic` and `migrate` are automatically
 handled by it so you do not need to run them again
@@ -169,7 +192,7 @@ handled by it so you do not need to run them again
     # Use dev db
     make testserver_dev
 
-#### Testing and coverage
+### Testing and coverage
 
 You can use either the IDE or `manage.py` to run the test scripts, but
 a series of makefile commands are already set up for you to use:
@@ -181,9 +204,9 @@ a series of makefile commands are already set up for you to use:
     # See coverage report
     make coverage-report
 
-### Additional note
+## Additional note
  
-#### Makefile
+### Makefile
 
 A series of makefile commands are set up to ease debugging.
 
