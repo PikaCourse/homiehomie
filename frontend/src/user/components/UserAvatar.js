@@ -23,7 +23,6 @@ import {
   faEnvelope,
   faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
-import { getCookie } from "../utils";
 
 /**
  * User avatar top level component
@@ -33,7 +32,7 @@ import { getCookie } from "../utils";
  * @param {*} props 
  */
 export default function UserAvatar(props) {
-  // Set overall login status
+  // Inherited state control
   const setLogin = props.setLogin;
   const userInfo = props.userInfo;
   const setUserInfo = props.setUserInfo;
@@ -181,6 +180,7 @@ function UserDropDownMenu(props) {
   );
 }
 
+// TODO This modal component not needed?
 /**
  * Modal to view and change user profile
  * @param {*} props 
@@ -334,7 +334,6 @@ function UserProfileForm(props) {
           <Option value="JR">Junior</Option>
           <Option value="SR">Senior</Option>
           <Option value="GR">Graduate</Option>
-          <Option value="TT">TEST</Option>
         </Select>
       </Form.Item>
       <Form.Item>

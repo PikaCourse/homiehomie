@@ -19,8 +19,7 @@ import LoginRegister from "./LoginRegister";
  */
 export default function UserModule(props) {
   // Login Status of user
-  // TODO Temporarily set the logged in state to be true
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // User info management
   const sampleUserInfo = {
@@ -42,7 +41,7 @@ export default function UserModule(props) {
     "sex": "string",
     "type": "string"
   };
-  const [userInfo, setUserInfo] = useState(sampleUserInfo);
+  const [userInfo, setUserInfo] = useState({});
 
   // Check if user already logged in when the component
   // first loaded
@@ -52,12 +51,12 @@ export default function UserModule(props) {
     function checkLogin() {
       axios.get("/api/users")
         .then((res) => {
-          if (res.status === 200) {
-            setIsLoggedIn(true);
-            setUserInfo(res.data);
-          }
-          else
-            setIsLoggedIn(false);
+          setIsLoggedIn(true);
+          setUserInfo(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoggedIn(false);
         });
     }
     checkLogin();
@@ -70,26 +69,20 @@ export default function UserModule(props) {
   //  else login/register button
   if (isLoggedIn)
     return (
-      <>
-        <UserAvatar 
-          setLogin={setIsLoggedIn}
-          userInfo={userInfo}
-          setUserInfo={setUserInfo}
-        />
-      </>
+      <UserAvatar 
+        setLogin={setIsLoggedIn}
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+      />
     );
   else
     return (
-      <>
-        {
-          /** 
-           * TODO Is there a better way to send in handler funcs? 
-           * */
-        }
-        <LoginRegister 
-          setLogin={setIsLoggedIn} 
-          setUserInfo={setUserInfo}
-        />
-      </>
+      /** 
+       * TODO Is there a better way to send in handler funcs? 
+       * */
+      <LoginRegister 
+        setLogin={setIsLoggedIn} 
+        setUserInfo={setUserInfo}
+      />
     );
 }
