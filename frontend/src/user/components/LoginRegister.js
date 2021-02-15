@@ -8,7 +8,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Modal, Button, Form, Input, Space, Checkbox } from "antd";
+import { Modal, Button, Form, Input, Space, Checkbox, message } from "antd";
 import axios from "axios";
 // Config axios to get the csrf cookie preventing manually
 // adding it
@@ -61,8 +61,8 @@ export default function LoginRegister(props) {
         onCancel={() => setModalVisible(false)}
         footer={null}>
         { isLoginForm 
-          ? <UserLoginForm setLogin={setLogin} setUserInfo={setUserInfo} switchForm={switchForm} />
-          : <UserRegisterForm setLogin={setLogin} setUserInfo={setUserInfo} switchForm={switchForm} />
+          ? <UserLoginForm setLogin={setLogin} setUserInfo={setUserInfo} switchForm={switchForm} afterSubmit={ () => setModalVisible(false)}/>
+          : <UserRegisterForm setLogin={setLogin} setUserInfo={setUserInfo} switchForm={switchForm} afterSubmit={ () => setModalVisible(false)}/>
         }
       </Modal>
     </>
@@ -78,6 +78,7 @@ function UserLoginForm(props) {
   const setLogin = props.setLogin;
   const setUserInfo = props.setUserInfo;
   const switchForm = props.switchForm;
+  const afterSubmit = props.afterSubmit;
 
   // Get form instance
   const [ form ] = Form.useForm();
@@ -91,6 +92,41 @@ function UserLoginForm(props) {
     setIsLoading(true);
     console.log(values);
     // TODO Submit form and see if there are validation err msgs
+
+    axios.post("/api/users/login", values)
+      .then((res) => {
+        console.log(res);
+
+        // Update user info state based on returned profile
+        setUserInfo(res.data.profile);
+        setLogin(true);
+        // Call callback
+        message.success("Successfully logged in");
+        afterSubmit();
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        // If error status is 400, display validation messages
+        //    Under corresponding fields
+        setLogin(false);
+        if (err.response.status == 403) {
+          const backendValidationRes = err.response.data;
+          const fieldErrMsg = [
+            {
+              name: "username",
+              errors: [backendValidationRes["detail"]]
+            },
+            {
+              name: "password",
+              errors: [backendValidationRes["detail"]]
+            }
+          ];
+          form.setFields(fieldErrMsg);
+        } else {
+          message.error("Some unkown errors occurred, please try again later");
+        }
+        setIsLoading(false);
+      });
   }
 
   return (
@@ -154,6 +190,7 @@ function UserRegisterForm(props) {
   const setLogin = props.setLogin;
   const setUserInfo = props.setUserInfo;
   const switchForm = props.switchForm;
+  const afterSubmit = props.afterSubmit;
 
   // Get form instance
   const [ form ] = Form.useForm();
@@ -286,10 +323,6 @@ function UserRegisterForm(props) {
           </Space>
         </Form.Item>
       </Form>
-      {
-        // TODO Implement the functionality that
-        // TODO Clicking ok on modal will agree the agreement in outside form
-      }
       <Modal
         title="PikaCourse User Agreement"
         visible={isUAModalVisible}
