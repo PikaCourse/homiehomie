@@ -374,11 +374,3 @@ function UserRegisterForm(props) {
     </>
   );
 }
-
-function convert(values) {
-  // Convert from JSON to `application/x-www-form-urlencoded`
-  const params = new URLSearchParams();
-  for (const [key, value] in Object.entries(values)) {
-    params.append(key, value);
-  }
-}

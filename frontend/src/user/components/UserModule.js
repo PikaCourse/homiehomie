@@ -21,32 +21,12 @@ export default function UserModule(props) {
   // Login Status of user
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // User info management
-  const sampleUserInfo = {
-    "id": 5,
-    "email": "test@test.edu",
-    "avatarUrl": "https://randomuser.me/api/portraits/lego/6.jpg",
-    "is_verified": true,
-    "username": "test_admin",
-    "school": "Test University",
-    "major": "major 1",
-    "majors": [
-      "major 2"
-    ],
-    "minors": [
-      "string"
-    ],
-    "graduation": "string",
-    "birthday": "string",
-    "sex": "string",
-    "type": "string"
-  };
+  // User profile control
   const [userInfo, setUserInfo] = useState({});
 
   // Check if user already logged in when the component
   // first loaded
   // If so, set status and user info
-  // TODO Comment out for testing avatar
   useEffect(() => {
     function checkLogin() {
       axios.get("/api/users")
