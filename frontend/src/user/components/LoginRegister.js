@@ -91,8 +91,8 @@ function UserLoginForm(props) {
     // Perform update request here
     setIsLoading(true);
     console.log(values);
-    // TODO Submit form and see if there are validation err msgs
 
+    // Submit form and see if there are validation err msgs
     axios.post("/api/users/login", values)
       .then((res) => {
         console.log(res);
@@ -213,6 +213,38 @@ function UserRegisterForm(props) {
     setIsLoading(true);
     console.log(values);
     // TODO Submit form and see if there are validation err msgs
+    axios.post("/api/users/register", values)
+      .then((res) => {
+        console.log(res);
+
+        // Update user info state based on returned profile
+        setUserInfo(res.data.profile);
+        setLogin(true);
+        // Call callback
+        message.success("Successfully registered! Please go ahead and fill up your profile!");
+        afterSubmit();
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        // If error status is 400, display validation messages
+        //    Under corresponding fields
+        if (err.response.status == 400) {
+          const backendValidationRes = err.response.data;
+          const fieldErrMsg = [];
+          for (const [ fieldName, errMsgs ] of Object.entries(backendValidationRes)) {
+            fieldErrMsg.push(
+              {
+                name: fieldName,
+                errors: errMsgs
+              }
+            );
+          }
+          form.setFields(fieldErrMsg);
+        } else {
+          message.error("Some errors occurred, make sure you have the right permission");
+        }
+        setIsLoading(false);
+      });
   }
 
   return (
