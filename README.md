@@ -17,6 +17,9 @@ A scheduling platform for student to choose courses.
   - [API](#api)
   - [Preparing for development](#preparing-for-development)
     - [Prerequisites](#prerequisites)
+      - [Binaries](#binaries)
+      - [Private Package](#private-package)
+      - [Environmental Variable](#environmental-variable)
     - [Installation](#installation)
       - [Install virtualenv and other python packages](#install-virtualenv-and-other-python-packages)
       - [Install Node.js packages](#install-nodejs-packages)
@@ -43,6 +46,8 @@ A scheduling platform for student to choose courses.
 
 ### Prerequisites
 
+#### Binaries
+
 To successfully run the following configuration commands, you will need:
 
 1. Python 3.7 or 3.8 with download instruction [here](https://www.python.org/downloads/)
@@ -56,7 +61,26 @@ You can check whether or not your system has the above binaries via:
     
     # For Node.js
     node -v
-    
+
+#### Private Package
+
+You will need to add a ssh key to GitHub in order to download
+certain private packages hosted on GitHub, the instruction for adding
+SSH key is:
+
+1. [Generate SSH key](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+2. [Adding SSH key to GitHub](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account)
+
+Potential resources:
+
+1. [Install Python Package over VCS](https://pip.pypa.io/en/latest/reference/pip_install/#vcs-support)
+
+#### Environmental Variable
+
+The Python Django backend server use python package `decouple` to configure
+certain environmental variables used by the project, you will need to request a
+`.env` config file from the project development leader @William.
+
 ### Installation
 
 #### Install virtualenv and other python packages
