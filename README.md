@@ -28,6 +28,7 @@ A scheduling platform for student to choose courses.
   - [Run the project](#run-the-project)
     - [Setup](#setup)
     - [Run dummy email server](#run-dummy-email-server)
+    - [Lanuch Redis for Async Server Channel Layer](#lanuch-redis-for-async-server-channel-layer)
     - [Launch redis db and worker process](#launch-redis-db-and-worker-process)
     - [Migrate database](#migrate-database)
     - [Launching server](#launching-server)
@@ -144,6 +145,13 @@ terminal tab:
     
 Which will launch a fake smtp server listening on `localhost:1025`
 
+### Lanuch Redis for Async Server Channel Layer
+
+The async library `Channels` need `redis` to be running in order to host async messaging.
+Run the following command to install and launch `redis`
+
+    make start_redis
+
 ### Launch redis db and worker process
 
 The project uses a redis database as a queue for pushing jobs to backend worker process
@@ -185,9 +193,8 @@ the package string after it. Currently we have four setting configuration:
     1. **NOT suitable for local testing**
     2. Setting for production server
 
-
 You should always run this part prior
-to start the server. 
+to start the server.
 
     # Migrate database for local testing setting
     # Python
