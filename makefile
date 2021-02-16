@@ -180,3 +180,4 @@ start_redis : install_redis
 # Start worker
 start_worker_% :
 	@python manage.py rqworker high default low --settings=homiehomie.settings_d.$*
+
