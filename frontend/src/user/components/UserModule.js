@@ -18,6 +18,8 @@ import LoginRegister from "./LoginRegister";
  * @param {*} props 
  */
 export default function UserModule(props) {
+  // TODO How to access internal state? Store in redux
+  // TODO Use 
   // Login Status of user
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 

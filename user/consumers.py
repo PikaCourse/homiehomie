@@ -17,4 +17,10 @@ from user.serializers import *
 
 
 class UserNotificationConsumer(AsyncWebsocketConsumer):
+    """
+    User notification websocket handler, does the following:
+    1. Handle incoming ws connection request and assign group for it
+    2. Handle ws disconnect event to clean up
+    3. Receiving incoming message
+    """
     pass
