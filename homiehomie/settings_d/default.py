@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'coverage',
     'django_extensions',
     'django_rq',
+    'django_filters',
     'channels',
     'scheduler.apps.SchedulerConfig',
     'frontend.apps.FrontendConfig',
@@ -169,7 +170,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ]
+    ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 # Email setting

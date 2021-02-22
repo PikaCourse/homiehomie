@@ -84,7 +84,7 @@ install : dependency, install_redis
 dependency :
 	( \
 		source venv/bin/activate; \
-		pip install -r requirements/dev.txt; \
+		pip install --upgrade -r requirements/dev.txt; \
 	)
 	npm install
 

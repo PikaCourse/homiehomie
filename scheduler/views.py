@@ -3,8 +3,9 @@ filename:    views.py
 created at:  01/24/2021
 author:      Weili An
 email:       china_aisa@live.com
-version:     v1.0.0
+version:     v1.1.0
 desc:        Views for scheduler, including course search and post
+change:      v1.1.0: Rewrite filtering using filterbackend
 """
 
 from django.shortcuts import render, get_list_or_404, get_object_or_404
@@ -16,6 +17,8 @@ from scheduler.serializers import *
 from scheduler.exceptions import *
 from scheduler.permissions import *
 from scheduler.permissions import ReadOnly
+from scheduler.filters import *
+from scheduler.paginations import *
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -35,120 +38,28 @@ API Definition below
 
 # TODO Need an IsAdminOrReadOnly to help uploading and modifying the course objects
 class CourseMetaViewSet(viewsets.ReadOnlyModelViewSet):
-    query_parameters = ["school", "major", "limit"]
-    queryset = CourseMeta.objects.all()
+    queryset = CourseMeta.objects.order_by("title")
     serializer_class = CourseMetaSerializer
     permission_classes = [ReadOnly]
-
-    def list(self, request, *args, **kwargs):
-        queryset = CourseMeta.objects.all()
-
-        # TODO Better way?
-        # TODO Put query params in self.get_queryset()
-        # TODO Query parameter Vaildation
-        # TODO Consider using: https://www.django-rest-framework.org/api-guide/filtering/
-        school      = self.request.query_params.get("school", None)
-        college     = self.request.query_params.get("college", None)
-        title       = self.request.query_params.get("title", None)
-        name        = self.request.query_params.get("name", None)
-        major       = self.request.query_params.get("major", None)
-        limit       = self.request.query_params.get("limit", None)
-
-        if school is not None:
-            queryset = queryset.filter(school__istartswith=school)
-        if major is not None:
-            queryset = queryset.filter(major__istartswith=major)
-        if name is not None:
-            queryset = queryset.filter(name__icontains=name)
-        if college is not None:
-            queryset = queryset.filter(college__icontains=college)
-        if title is not None:
-            queryset = queryset.filter(title__icontains=title)
-
-        # TODO Add support for other sorting?
-        queryset = queryset.order_by("title")
-        if limit is not None:
-            try:
-                limit = int(limit)
-                if limit <= 0:
-                    raise ValueError
-                queryset = queryset[0:int(limit)]
-            except ValueError as err:
-                raise InvalidQueryValue()
-        else:
-            queryset = queryset[:20]
-        serializer = CourseMetaSerializer(queryset, many=True)
-        return Response(serializer.data)
+    filterset_class = CourseMetaFilter
+    pagination_class = CourseMetaPagination
 
 
 # TODO Support for tag serch
 class CourseViewSet(viewsets.ReadOnlyModelViewSet):
-    query_parameters = ["school", "major", "year", "title",
-                        "semester", "professor", "limit"]
-    queryset = Course.objects.all()
+    queryset = Course.objects.order_by("course_meta__title")
     serializer_class = CourseSerializer
     permission_classes = [ReadOnly]
-
-    def list(self, request, *args, **kwargs):
-        queryset = Course.objects.all()
-
-        # TODO Better way?
-        # TODO Query parameter Validation with validator?
-        school      = self.request.query_params.get("school", None)
-        title       = self.request.query_params.get("title", None)
-        name        = self.request.query_params.get("name", None)
-        crn         = self.request.query_params.get("crn", None)
-        major       = self.request.query_params.get("major", None)
-        year        = self.request.query_params.get("year", None)
-        semester    = self.request.query_params.get("semester", None)
-        professor   = self.request.query_params.get("professor", None)
-        tags        = self.request.query_params.get("tags", None)
-        limit       = self.request.query_params.get("limit", None)
-
-        if school is not None:
-            queryset = queryset.filter(course_meta__school__istartswith=school)
-        if title is not None:
-            queryset = queryset.filter(course_meta__title__icontains=title)
-        if name is not None:
-            queryset = queryset.filter(course_meta__name__icontains=name)
-        if crn is not None:
-            queryset = queryset.filter(crn__istartswith=crn)
-        if major is not None:
-            queryset = queryset.filter(course_meta__major__istartswith=major)
-        if year is not None:
-            try:
-                year = int(year)
-                if year < 1970 or year > 2100:
-                    raise ValueError
-                queryset = queryset.filter(year=year)
-            except ValueError:
-                raise InvalidQueryValue()
-        if semester is not None:
-            queryset = queryset.filter(semester__iexact=semester)
-        if professor is not None:
-            queryset = queryset.filter(professor__istartswith=professor)
-
-        # TODO Support other sorting?
-        queryset = queryset.order_by("course_meta__title")
-        if limit is not None:
-            try:
-                limit = int(limit)
-                if limit <= 0:
-                    raise ValueError
-                queryset = queryset[0:int(limit)]
-            except ValueError as err:
-                raise InvalidQueryValue()
-        else:
-            queryset = queryset[:20]
-
-        serializer = CourseSerializer(queryset, many=True)
-        return Response(serializer.data)
+    filterset_class = CourseFilter
+    pagination_class = CoursePagination
 
     def get_object(self):
         obj = super().get_object()
         # Request the worker process to update the course if necessary
+        today = datetime.today()
+        current_year = today.year
         django_rq.enqueue(update_course, school=obj.course_meta.school, course_title=obj.course_meta.title,
-                          year=int(obj.year), semester=obj.semester)
+                          year=current_year, semester=obj.semester)
         return obj
 
 
