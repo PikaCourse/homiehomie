@@ -9,8 +9,8 @@
 
 import React, { Fragment, } from "react";
 
-import Navbar from "./components/nav/Navbar";
-import Footer from "./components/nav/Footer";
+import Navbar from "./nav/Navbar";
+import Footer from "./nav/Footer";
 import Calendar from "./calendar";
 import Wiki from "./course";
 

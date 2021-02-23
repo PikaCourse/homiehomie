@@ -9,7 +9,34 @@
 
 A scheduling platform for student to choose courses.
 
-### API
+## Outline
+
+- [PikaCourse](#pikacourse)
+  - [Intro](#intro)
+  - [Outline](#outline)
+  - [API](#api)
+  - [Preparing for development](#preparing-for-development)
+    - [Prerequisites](#prerequisites)
+      - [Binaries](#binaries)
+      - [Private Package](#private-package)
+      - [Environmental Variable](#environmental-variable)
+    - [Installation](#installation)
+      - [Install virtualenv and other python packages](#install-virtualenv-and-other-python-packages)
+      - [Install Node.js packages](#install-nodejs-packages)
+      - [Additional packages (for production only)](#additional-packages-for-production-only)
+    - [Build the project (for Node.js part only)](#build-the-project-for-nodejs-part-only)
+  - [Run the project](#run-the-project)
+    - [Setup](#setup)
+    - [Run dummy email server](#run-dummy-email-server)
+    - [Lanuch Redis for Async Server Channel Layer](#lanuch-redis-for-async-server-channel-layer)
+    - [Launch redis db and worker process](#launch-redis-db-and-worker-process)
+    - [Migrate database](#migrate-database)
+    - [Launching server](#launching-server)
+    - [Testing and coverage](#testing-and-coverage)
+  - [Additional note](#additional-note)
+    - [Makefile](#makefile)
+
+## API
 
 1. [Rest API Documentation](https://app.swaggerhub.com/apis/NeX-Studio/HomieHomie)
 2. [Async API Documentation](https://playground.asyncapi.io/?load=https://raw.githubusercontent.com/CourseOcean/pikacourse-async-api/main/async.yml)
@@ -19,6 +46,8 @@ A scheduling platform for student to choose courses.
 ## Preparing for development
 
 ### Prerequisites
+
+#### Binaries
 
 To successfully run the following configuration commands, you will need:
 
@@ -33,7 +62,26 @@ You can check whether or not your system has the above binaries via:
     
     # For Node.js
     node -v
-    
+
+#### Private Package
+
+You will need to add a ssh key to GitHub in order to download
+certain private packages hosted on GitHub, the instruction for adding
+SSH key is:
+
+1. [Generate SSH key](https://docs.github.com/en/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
+2. [Adding SSH key to GitHub](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account)
+
+Potential resources:
+
+1. [Install Python Package over VCS](https://pip.pypa.io/en/latest/reference/pip_install/#vcs-support)
+
+#### Environmental Variable
+
+The Python Django backend server use python package `decouple` to configure
+certain environmental variables used by the project, you will need to request a
+`.env` config file from the project development leader @William.
+
 ### Installation
 
 #### Install virtualenv and other python packages
@@ -72,9 +120,9 @@ You can check whether or not your system has the above binaries via:
     # Build in production setting, maximize performance and minimize space
     npm run build
 
-### Run the project
+## Run the project
 
-#### Setup
+### Setup
 
 Prepare the environment for projects
 
@@ -86,7 +134,7 @@ Prepare the environment for projects
     npm run dev
 
 
-#### Run dummy email server
+### Run dummy email server
 
 Since the project has included email service, you will need
 a dummy smtp server to listen to it in order to get, for instance, the verification
@@ -97,7 +145,14 @@ terminal tab:
     
 Which will launch a fake smtp server listening on `localhost:1025`
 
-#### Launch redis db and worker process
+### Lanuch Redis for Async Server Channel Layer
+
+The async library `Channels` need `redis` to be running in order to host async messaging.
+Run the following command to install and launch `redis`
+
+    make start_redis
+
+### Launch redis db and worker process
 
 The project uses a redis database as a queue for pushing jobs to backend worker process
 in order to separate the external API requests from frontend website rendering. Therefore,
@@ -115,7 +170,7 @@ In addition to redis db, a redis queue worker process must be started prior to l
     
 Where `%` is the setting file config like `local`, `remote`
 
-#### Migrate database
+### Migrate database
 
 Database migration will apply database changes to the database specified in the setting file
 specified by the `--settings` flag here. You can change the setting file specified by changing
@@ -138,9 +193,8 @@ the package string after it. Currently we have four setting configuration:
     1. **NOT suitable for local testing**
     2. Setting for production server
 
-
 You should always run this part prior
-to start the server. 
+to start the server.
 
     # Migrate database for local testing setting
     # Python
@@ -149,7 +203,7 @@ to start the server.
     # Or makefile
     make migratedb_local
 
-#### Launching server
+### Launching server
 
 If you use makefile command, `collectstatic` and `migrate` are automatically
 handled by it so you do not need to run them again
@@ -169,7 +223,7 @@ handled by it so you do not need to run them again
     # Use dev db
     make testserver_dev
 
-#### Testing and coverage
+### Testing and coverage
 
 You can use either the IDE or `manage.py` to run the test scripts, but
 a series of makefile commands are already set up for you to use:
@@ -181,9 +235,9 @@ a series of makefile commands are already set up for you to use:
     # See coverage report
     make coverage-report
 
-### Additional note
+## Additional note
  
-#### Makefile
+### Makefile
 
 A series of makefile commands are set up to ease debugging.
 

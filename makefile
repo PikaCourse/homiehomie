@@ -107,7 +107,11 @@ collectstatic_% :
 # Launching server
 # Launch test server
 testserver_% : migratedb_%
-	python manage.py runserver --settings=homiehomie.settings_d.$*
+	( \
+		python -m smtpd -n -c DebuggingServer localhost:1025 & \
+		redis-server & \
+		python manage.py runserver --settings=homiehomie.settings_d.$* && fg \
+	)
 
 testserver : testserver_local
 
@@ -176,3 +180,4 @@ start_redis : install_redis
 # Start worker
 start_worker_% :
 	@python manage.py rqworker high default low --settings=homiehomie.settings_d.$*
+

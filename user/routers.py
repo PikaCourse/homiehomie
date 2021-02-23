@@ -33,7 +33,8 @@ class UserRouter(SimpleRouter):
         Route(
             url=r'^{prefix}/{lookup}{trailing_slash}$',
             mapping={'get': 'retrieve',
-                     'put': 'update'},
+                     'put': 'update',
+                     'patch': 'partial_update'},
             name='{basename}-detail',
             detail=True,
             initkwargs={'suffix': 'Detail'}

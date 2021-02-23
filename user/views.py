@@ -77,8 +77,12 @@ class UserLoginViewSet(viewsets.GenericViewSet):
             # Refresh user login timestamp for token usage
             # todo why need to specify backend?
             auth_login(request, request.user, backend="django.contrib.auth.backends.ModelBackend")
+            # Get the student instance
+            student_instance = Student.objects.get(user=request.user)
+            data = self.get_serializer(student_instance).data
             error_pack = {"code": "success", "detail": "already login",
-                          "user": request.user.id, "status": status.HTTP_200_OK}
+                          "user": request.user.id, "status": status.HTTP_200_OK,
+                          "profile": data}
             return Response(error_pack, status=status.HTTP_200_OK)
         credentials = UserLoginSerializer(data=request.data)
 
@@ -90,8 +94,10 @@ class UserLoginViewSet(viewsets.GenericViewSet):
             # No need to specify backend as the user is returned by `authenticate()`, which will
             # set the `.backend` attribute for the user
             auth_login(request, user)
+            student_instance = Student.objects.get(user=user)
+            data = self.get_serializer(student_instance).data
             error_pack = {"code": "success", "detail": "successfully login user",
-                          "user": user.id, "status": status.HTTP_200_OK}
+                          "user": user.id, "status": status.HTTP_200_OK, "profile": data}
             return Response(error_pack, status=status.HTTP_200_OK)
         else:
             raise ValidationError("invalid username or password combination", code="invalid_login")
@@ -128,8 +134,10 @@ class UserLoginViewSet(viewsets.GenericViewSet):
             # Credentials valid, creating new user/student instance
             user = credentials.save()
             try:
+                student = Student.objects.get(user=user)
+                data = self.get_serializer(student).data
                 error_pack = {"code": "success", "detail": "successfully register user",
-                              "user": user.id, "status": status.HTTP_200_OK}
+                              "user": user.id, "status": status.HTTP_200_OK, "profile": data}
                 # Login user, removed after adding email registration
                 # Specify default auth backend since the user is not authenticated but created
                 auth_login(request, user, backend="django.contrib.auth.backends.ModelBackend")
@@ -265,7 +273,7 @@ class UserManagementViewSet(mixins.RetrieveModelMixin,
 
         data = serializer.data
         error_pack = {"code": "success", "detail": "successfully update user profile",
-                      "user": data["id"], "status": status.HTTP_200_OK}
+                      "user": data["id"], "status": status.HTTP_200_OK, "profile": data}
         return Response(error_pack, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'])
