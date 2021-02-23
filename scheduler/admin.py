@@ -5,6 +5,7 @@ from scheduler.models import *
 admin.site.register(Schedule)
 admin.site.register(CourseMeta)
 admin.site.register(Course)
+admin.site.register(Tag)
 admin.site.register(Question)
 admin.site.register(Note)
 admin.site.register(Post)

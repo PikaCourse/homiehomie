@@ -332,7 +332,6 @@ class NoteViewSet(viewsets.ModelViewSet):
         return Note.objects.filter(qs)
 
 
-# TODO Pagination
 class PostViewSet(viewsets.ModelViewSet):
     """
     ViewSet for retrieving list of posts related to a course
@@ -343,62 +342,8 @@ class PostViewSet(viewsets.ModelViewSet):
     parser_classes = [FormParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
     permission_classes = [PostViewSetPermission, IsVerifiedOrReadOnly]
-
-    # TODO Better way to valdiate query param
-    # Supported fields for sortby option
-    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
-
-    def list(self, request, *args, **kwargs):
-        queryset = Post.objects.all()
-
-        # TODO Better way?
-        # TODO Query parameter Validation according to API DOC
-        courseid    = self.request.query_params.get("courseid", None)
-        userid      = self.request.query_params.get("userid", None)
-        sortby      = self.request.query_params.get("sortby", None)
-        descending  = self.request.query_params.get("descending", None)
-        if descending is not None:
-            if descending.lower() == "true":
-                descending = True
-            elif descending.lower() == "false":
-                descending = False
-            else:
-                raise InvalidQueryValue()
-        else:
-            descending = True
-        limit = self.request.query_params.get("limit", None)
-
-        if courseid is not None:
-            try:
-                courseid = int(courseid)
-                queryset = queryset.filter(course_id=courseid)
-            except ValueError:
-                raise InvalidQueryValue()
-        if userid is not None:
-            try:
-                userid = int(userid)
-                queryset = queryset.filter(poster__user_id=userid)
-            except ValueError:
-                raise InvalidQueryValue()
-        if sortby is not None:
-            if sortby not in self.supported_sortby_options:
-                raise InvalidQueryValue()
-            queryset = queryset.order_by(("-" if descending else "") + sortby)
-        else:
-            queryset = queryset.order_by(("-" if descending else "") + "like_count")
-        if limit is not None:
-            try:
-                limit = int(limit)
-                if limit <= 0:
-                    raise ValueError
-                queryset = queryset[0:limit]
-            except ValueError as err:
-                raise InvalidQueryValue()
-        else:
-            queryset = queryset[:1000]
-
-        serializer = PostSerializer(queryset, many=True)
-        return Response(serializer.data)
+    filterset_class = PostFilter
+    pagination_class = PostPagination
 
     # POST method to create a post related to a course
     # TODO Use django form?

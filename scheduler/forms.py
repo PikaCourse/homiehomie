@@ -101,7 +101,7 @@ class NoteModificationForm(ModelForm):
 class PostCreationForm(ModelForm):
     class Meta:
         model = Post
-        fields = ["course", "title", "content", "tags"]
+        fields = ["title", "content", "tags"]
 
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request", None)

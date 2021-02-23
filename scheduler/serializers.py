@@ -29,6 +29,7 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    # TODO Tag object in serializer?
     class Meta:
         model = Post
         fields = '__all__'
