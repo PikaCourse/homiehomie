@@ -63,6 +63,14 @@ class CourseViewSet(viewsets.ReadOnlyModelViewSet):
         return obj
 
 
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    # Can only create tags via post
+    queryset = Tag.objects.order_by("name")
+    serializer_class = TagSerializer
+    filterset_class = TagFilter
+    pagination_class = TagPagination
+
+
 # TODO Paging
 class QuestionViewSet(viewsets.ModelViewSet):
     query_parameters = ["courseid", "sortby", "descending", "limit"]

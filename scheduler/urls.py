@@ -5,6 +5,7 @@ from scheduler import views
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'coursesmeta', views.CourseMetaViewSet, basename='coursesmeta')
 router.register(r'courses', views.CourseViewSet, basename='courses')
+router.register(r'tags', views.TagViewSet, basename='tags')
 router.register(r'questions', views.QuestionViewSet, basename='questions')
 router.register(r'notes', views.NoteViewSet, basename='notes')
 router.register(r'posts', views.PostViewSet, basename='posts')

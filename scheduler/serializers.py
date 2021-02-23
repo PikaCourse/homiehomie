@@ -16,6 +16,14 @@ class CourseSerializer(serializers.ModelSerializer):
         depth = 1
 
 
+# TODO Forbid updating tag
+#   can only add tag
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "name", )
+
+
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
@@ -29,7 +37,9 @@ class NoteSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    # TODO Tag object in serializer?
+    # tags = TagSerializer(many=True)
+    tags = serializers.SlugRelatedField(many=True, slug_field="name", queryset=Tag.objects.all())
+
     class Meta:
         model = Post
         fields = '__all__'
