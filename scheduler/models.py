@@ -19,6 +19,8 @@ import datetime
 # TODO Use choices options of fields to limit user input and as
 # TODO validation
 
+# TODO Tag list? ManytoManyField
+
 
 # Create your models here.
 class CourseMeta(models.Model):
@@ -141,6 +143,14 @@ class Course(models.Model):
         return "_".join([str(self.year), str(self.semester), str(self.course_meta)])
 
 
+class Tag(models.Model):
+    """
+    Tagging system
+    """
+    name = models.CharField(max_length=20)
+    count = models.PositiveIntegerField(verbose_name="tag count")
+
+
 class Question(models.Model):
     """
     Question Data model
@@ -190,7 +200,7 @@ class Note(models.Model):
     star_count:     Star/favorite count
     dislike_count:  Dislike count
     title:          Note title
-    is_private:     Is this question only viewable by creater?
+    is_private:     Is this question only viewable by creator?
     content:        Note content in markdown
     tags:           User tagging
     """
@@ -236,7 +246,7 @@ class Post(models.Model):
     dislike_count = models.IntegerField(default=0)
     title = models.CharField(max_length=200)
     content = models.TextField(blank=True)  # In markdown
-    tags = models.JSONField(default=list)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     def __str__(self):
         return "_".join([str(self.course), self.title])
@@ -360,3 +370,4 @@ def create_user_wishlist(sender, instance, created, raw, **kwargs):
     # Prevent creating instance upon loading fixtures, which is used for testing
     if created and not raw:
         WishList.objects.create(student=instance)
+

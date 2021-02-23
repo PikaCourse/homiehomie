@@ -39,14 +39,13 @@ def update_course(school, course_title, year, semester):
             api_client = GenericCourseAPI(school)
         except AssertionError:
             return "assert fail, might not be implemented yet"
+        # Get basic queryset of all sections belong to this course and the given term
+        queryset = Course.objects.filter(course_meta_id=course_meta.id, year=year, semester=semester)
         for course_section in api_client.get_course_section(course_title, year, semester):
             # Find the course section existing in the database and update its information
             #  if cannot find any, insert as a new record
 
             # TODO What if a university delete a course section?
-
-            # Get basic queryset of all sections belong to this course and the given term
-            queryset = Course.objects.filter(course_meta_id=course_meta.id, year=year, semester=semester)
 
             course_section["course_meta_id"] = course_meta.id
             course_section.pop("title")  # title key not used
@@ -61,5 +60,6 @@ def update_course(school, course_title, year, semester):
             else:
                 raise Exception(f"No reference key existed for course {course_meta} sections")
         # Call save to update last updated time
+        # TODO Update last updated time only when the request is for current semester?
         course_meta.save()
         return "success"
