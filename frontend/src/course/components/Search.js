@@ -94,11 +94,7 @@ function WikiSearch() {
       
       
     </AutoComplete>
-    {/* <Button onClick={openModal}>Open Modal</Button> */}
     <SearchCourseModal isModalVisible={isModalVisible} openModal={openModal} closeModal={closeModal}/>
-      {/* <Modal title="Basic Modal" visible={isModalVisible} >
-        <p>Some contents...</p>
-      </Modal> */}
     </>
   );
 }
