@@ -9,10 +9,11 @@
 
 import React, { Fragment, } from "react";
 
-import Navbar from "./components/nav/Navbar";
-import Footer from "./components/nav/Footer";
+import Navbar from "./nav/Navbar";
+import Footer from "./nav/Footer";
 import Calendar from "./calendar";
 import Wiki from "./course";
+import Landing from "./landing";
 
 import { Provider, } from "react-redux";
 import store from "./store";
@@ -24,6 +25,7 @@ export default function App(props) {
   return (
     <Provider store={store}>
       <Fragment>
+        <Landing />
         <Navbar style={{ height: "5vh", }} />
         <div className="container-fluid">
           <div className="row" style={{ height: "92vh", }}>

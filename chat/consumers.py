@@ -14,6 +14,7 @@ from django.utils import timezone
 
 from scheduler.models import CourseMeta
 from chat.serializers import *
+from copy import deepcopy
 
 
 class CourseChatConsumer(AsyncWebsocketConsumer):
@@ -27,8 +28,11 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
         # Get user info from Django session
         self.user = self.scope["user"]
         # Assign the db anonymous user if the request is anonymous
+        # Also convert from Django User to our own Student instance
         if self.user.is_anonymous:
             self.user = await database_sync_to_async(Student.get_anonymous_user)()
+        else:
+            self.user = await database_sync_to_async(Student.objects.get)(user__id=self.user.id)
         self.user_data = await self.get_user_data()
 
         # Get course meta info from path
@@ -51,7 +55,8 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_user_data(self):
-        return UserChatSerializer(self.user).data
+        tmp = UserChatSerializer(self.user)
+        return tmp.data
 
     @database_sync_to_async
     def get_course_meta(self, coursemetaid):
@@ -72,7 +77,7 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         # Inject sender and course info into message field
         message = json.loads(text_data)
-        message["course"] = self.course_meta_data
+        message["course_meta"] = self.course_meta_data
         message["user"] = self.user_data
         # Override message timestamp
         message["message"]["timestamp"] = timezone.now().isoformat()
@@ -80,6 +85,9 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
         # TODO How to handle millions of messages?
         # Save the message for history query and get the message id
         message["id"] = await self.save_message_to_db(message)
+
+        # Add sender channel info in case the user is anonymous
+        message["sender_channel"] = self.channel_name
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -109,7 +117,25 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group
     async def chat_message(self, event):
-        message = event['message']
+        # Make a copy of the object to change the return message
+        # for individual sender
+        message = deepcopy(event['message'])
+
+        # Determine if the receiver is the sender
+        # If user is anonymous, use channel name as identifier
+        # else use user id
+        if message["user"]["username"] == "anonymous":
+            if self.channel_name == message["sender_channel"]:
+                message["sender"] = True
+            else:
+                message["sender"] = False
+        else:
+            if self.user.id == message["user"]["id"]:
+                message["sender"] = True
+            else:
+                message["sender"] = False
+
+        message.pop("sender_channel")
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps(message))

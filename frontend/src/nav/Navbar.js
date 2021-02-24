@@ -9,16 +9,16 @@
 
 import React, { Component, useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Modal, Button, Form, Input, Checkbox, Radio } from "antd";
+import { Modal, Button, Form, Input, Checkbox, Radio, Space } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { Layout, Menu } from "antd";
-import Wishlist from "../../wishlist";
+import Wishlist from "../wishlist";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
-import UserModule from "../user/UserModule";
+import UserModule from "../user";
 
 // TODO Mobile optimization
 function Navbar() {
@@ -29,14 +29,10 @@ function Navbar() {
           PikaCourse
         </a>
         <div>
-          <ul className="navbar-nav ml-auto pr-4">
-            <li className="nav-item">
-              <Wishlist />
-            </li>
-            <li className="nav-item">
-              <UserModule />
-            </li>
-          </ul>
+          <Space>
+            <Wishlist />
+            <UserModule />
+          </Space>
         </div>
       </div>
     </nav>
