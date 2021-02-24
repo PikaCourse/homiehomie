@@ -67,7 +67,7 @@ export default createReducer(initialState, {
    */
   [action.getCourses.fulfilled]: (state, action) => {
     // Reducer for getting courses list with given query setting
-    let strlist = action.payload.map((x) => ({ value: x.title }));
+    let strlist = action.payload.results.map((x) => ({ value: x.title }));
     state.option = strlist;
   },
   [action.getCourses.rejected]: () => {
