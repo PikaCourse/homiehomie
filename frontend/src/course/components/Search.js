@@ -50,10 +50,12 @@ function WikiSearch() {
     }
   }
 
+  // open search bar pop up modal 
   function openModal() {
     setIsModalVisible(true); 
   }
 
+  // close search bar pop up modal 
   function closeModal() {
     setIsModalVisible(false); 
   }
