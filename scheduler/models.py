@@ -8,6 +8,7 @@ desc:        data model definitions for scheduler
 """
 
 from django.db import models
+from django.db.models import F
 
 # from django.contrib.auth.models import User
 from user.models import Student
@@ -148,9 +149,28 @@ class Tag(models.Model):
     Tagging system
     """
     name = models.CharField(max_length=20, unique=True)
+    # As if created, there must be some stuff pointed to this tag
     count = models.PositiveIntegerField(verbose_name="tag count", default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+
+    @staticmethod
+    def increment_tags(tags, amount=1):
+        """
+        Increment tag in queryset by amount
+        :param tags: queryset of tag instance
+        :param amount: amount to increment
+        :return:
+        """
+        for tag in tags:
+            tag.count += amount
+            if tag.count < 0:
+                tag.count = 0
+            tag.save()
+
+    @staticmethod
+    def decrement_tags(tags, amount=1):
+        Tag.increment_tags(tags, -amount)
 
     def __str__(self):
         return self.name
@@ -242,7 +262,7 @@ class Post(models.Model):
     """
     poster = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     created_at = models.DateTimeField(auto_now_add=True)
-    last_edited = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now=True)
     last_answered = models.DateTimeField(auto_now_add=True)
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
@@ -271,7 +291,7 @@ class PostAnswer(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     postee = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     created_at = models.DateTimeField(auto_now_add=True)
-    last_edited = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now=True)
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
@@ -316,7 +336,7 @@ class Schedule(models.Model):
     ]
     student = models.ForeignKey(Student, on_delete=models.SET(Student.get_sentinel_user))
     created_at = models.DateTimeField(auto_now_add=True)
-    last_edited = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now=True)
     is_star = models.BooleanField(default=False)
     is_private = models.BooleanField(default=True)
     year = models.DecimalField(max_digits=4, decimal_places=0, default=2020)
@@ -358,7 +378,7 @@ class WishList(models.Model):
     """
     student = models.OneToOneField(Student, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    last_edited = models.DateTimeField(auto_now_add=True)
+    last_edited = models.DateTimeField(auto_now=True)
     note = models.TextField(blank=True, null=True)
     courses = models.ManyToManyField(Course, blank=True)
 

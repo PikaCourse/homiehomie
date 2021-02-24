@@ -347,39 +347,11 @@ class PostViewSet(viewsets.ModelViewSet):
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    parser_classes = [FormParser]
+    parser_classes = [JSONParser]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
     permission_classes = [PostViewSetPermission, IsVerifiedOrReadOnly]
     filterset_class = PostFilter
     pagination_class = PostPagination
-
-    # POST method to create a post related to a course
-    # TODO Use django form?
-    # TODO Consider mixin? refer to django rest framework ModelViewset API
-    def create(self, request, *args, **kwargs):
-        post = request.data
-        f = PostCreationForm(post, request=request)
-        if f.is_valid():
-            post = f.save(debug=True)
-            error_pack = {"code": "success", "errmsg": "successfully created post",
-                          "post": post.id, "status": status.HTTP_201_CREATED}
-            return Response(error_pack, status=status.HTTP_201_CREATED)
-        raise InvalidForm()
-
-    # PUT method used to update existing question
-    def update(self, request, pk=None, *args, **kwargs):
-        # TODO Verify the user is the owner
-        post = request.data
-        old_post = self.get_object()
-
-        # Update note
-        f = PostModificationForm(post, instance=old_post)
-        if f.is_valid():
-            post = f.save()
-            error_pack = {"code": "success", "detail": "successfully updated post",
-                          "post": post.id, "status": status.HTTP_200_OK}
-            return Response(error_pack, status=status.HTTP_200_OK)
-        raise InvalidForm()
 
     # Override existing delete method provided by DRF for customized return error packet
     def destroy(self, request, *args, **kwargs):
