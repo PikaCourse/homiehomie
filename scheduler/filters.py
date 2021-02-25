@@ -33,5 +33,23 @@ class CourseFilter(filters.FilterSet):
     professor = filters.CharFilter(lookup_expr="istartswith")
 
 
+class TagFilter(filters.FilterSet):
+    name = filters.CharFilter(lookup_expr="istartswith")
+
+
 class PostFilter(filters.FilterSet):
+    poster = filters.ModelChoiceFilter(queryset=Student.objects.all())
+    title = filters.CharFilter(lookup_expr="istartswith")
+    tags = filters.ModelMultipleChoiceFilter(queryset=Tag.objects.all(), field_name="tags__name",
+                                             to_field_name="name", distinct=True)
+    order_by = filters.OrderingFilter(
+        fields=(
+            ("like_count", "like_count"),
+            ("star_count", "star_count"),
+            ("dislike_count", "dislike_count"),
+        )
+    )
+
+
+class PostAnswerFilter(filters.FilterSet):
     pass
