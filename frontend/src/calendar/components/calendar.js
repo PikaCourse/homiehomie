@@ -129,12 +129,15 @@ function Calendar(props) {
     // TODO Fire a modal for creating new event
     console.log(slotInfo);
     let newAnonymousEvent = {
-      type: "custom",
-      id: 0,
+      id: 0, 
       title: "new custom event",
-      start: slotInfo.start,
-      end: slotInfo.end,
-      allDay: false, 
+      type: "custom",
+      all_day: slotInfo.slots.length == 1,
+      start_at: slotInfo.start,
+      end_at: slotInfo.end,
+      detail: "", 
+      location: "", 
+      meta: "", 
     };
     store.dispatch(addEventToCalendar(newAnonymousEvent)); 
     
