@@ -163,7 +163,7 @@ function Calendar(props) {
         }));
   };
 
-  const moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot, }) => {
+  const updateEvent = ({ event, start, end, }) => {
     let updatedEvent = {
       id: event.id, 
       title: event.title,
@@ -176,10 +176,6 @@ function Calendar(props) {
       meta: event.meta, 
     };
     store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent})); 
-  }; 
-
-  const resizeEvent = ({ event, start, end, }) => {
-
   }; 
 
   // Rendering
@@ -244,8 +240,8 @@ function Calendar(props) {
 
         // Drag and drop control related
         resizable={true}
-        onEventDrop={moveEvent}
-        onEventResize={resizeEvent}
+        onEventDrop={updateEvent}
+        onEventResize={updateEvent}
       />
     </div>
   );
