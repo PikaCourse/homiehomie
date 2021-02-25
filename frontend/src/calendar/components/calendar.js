@@ -24,6 +24,8 @@ import "../../../static/scss/calendar.scss";
 import { flattenEvents, flattenCourse } from "./utils";
 import { EventType } from "../utils";
 import { getNextColor, getColor } from "./utils/color.js";
+import store from "../../store";
+
 
 // Date internationalization and localization
 const localizer = momentLocalizer(moment);  
@@ -126,6 +128,16 @@ function Calendar(props) {
   const createNewEvent = (slotInfo) => {
     // TODO Fire a modal for creating new event
     console.log(slotInfo);
+    let newAnonymousEvent = {
+      type: "custom",
+      id: 0,
+      title: "new custom event",
+      start: slotInfo.start,
+      end: slotInfo.end,
+      allDay: false, 
+    };
+    store.dispatch(addEventToCalendar(newAnonymousEvent)); 
+    
   };
 
   // TODO Other callbacks
@@ -138,7 +150,7 @@ function Calendar(props) {
     // Update selected event
     setSelectedEvent(event);
 
-    // Select the course
+    // Select the course<
     if (event.type == "course")
       dispatch(
         selectCourse({
