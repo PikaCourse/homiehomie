@@ -21,3 +21,16 @@ export class EventType extends Object {
   location;     // event location
   meta;         // other info related to event
 }
+/**
+ * Convert custom event's start and end string to date object 
+ * @param {*} props custom event json 
+ */
+export const dateObjConverter = (props) => {
+  Object.keys(props).map((event) => {
+    props[event].start_at = new Date(props[event].start_at); 
+    props[event].end_at = new Date(props[event].end_at);
+    return event; 
+  })
+
+  return props; 
+}

@@ -10,10 +10,12 @@
 import * as actions from "./action";
 import { createReducer } from "@reduxjs/toolkit";
 import { loadState } from "../../src/helper/localStorage";
+import {dateObjConverter} from "./utils"
 
+// TODO Create a converter to convert date string into date object upon first load
 const initialState = {
   courseSchedule: loadState("calendar/courseSchedule", {}),
-  customEvents: loadState("calendar/customEvents", {}),
+  customEvents: dateObjConverter(loadState("calendar/customEvents", {})),
   nextEventId: 0
 };
 
