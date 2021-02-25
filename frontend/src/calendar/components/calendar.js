@@ -13,7 +13,7 @@ import { Calendar as bgCalendar, Views, momentLocalizer} from "react-big-calenda
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import { useSelector, connect, useDispatch } from "react-redux";
-import { addEventToCalendar, removeEventInCalendar } from "../action";
+import { addEventToCalendar, updateEventInCalendar, removeEventInCalendar } from "../action";
 import { Event as CalendarEvent } from "./event";
 import { selectCourse } from "../../course/action";
 
@@ -163,6 +163,25 @@ function Calendar(props) {
         }));
   };
 
+  const moveEvent = ({ event, start, end, isAllDay: droppedOnAllDaySlot, }) => {
+    let updatedEvent = {
+      id: event.id, 
+      title: event.title,
+      type: event.type,
+      all_day: event.all_day,
+      start_at: start,
+      end_at: end,
+      detail: event.detail, 
+      location: event.location, 
+      meta: event.meta, 
+    };
+    store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent})); 
+  }; 
+
+  const resizeEvent = ({ event, start, end, }) => {
+
+  }; 
+
   // Rendering
   return (
     <div
@@ -225,6 +244,8 @@ function Calendar(props) {
 
         // Drag and drop control related
         resizable={true}
+        onEventDrop={moveEvent}
+        onEventResize={resizeEvent}
       />
     </div>
   );
