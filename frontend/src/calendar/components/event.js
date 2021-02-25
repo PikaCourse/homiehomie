@@ -7,11 +7,15 @@
  * Description:	Event react component for dnd calendars
  */
 
-import React from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import moment from 'moment';
-import { Popover, message, Input, TimePicker, DatePicker, Space, Form } from 'antd';
+import { Popover, message, Input, TimePicker, DatePicker, Space, Form, Button} from 'antd';
 const { RangePicker } = TimePicker;
 import { EventType } from "../utils";
+import { addEventToCalendar, updateEventInCalendar, removeEventInCalendar } from "../action";
+import store from "../../store";
+import { useSelector, connect, useDispatch } from "react-redux";
+
 
 /**
  * Event popup window component for calendar event
@@ -22,11 +26,33 @@ const EventPopup = (props) => {
   let disableEdit = false;
   if (event.type == "protected" || event.type == "course")
     disableEdit = true;
+  const [title, setTitle] = useState(event.title);
+  const [start, setStart] = useState(event.start_at);
+  const [end, setEnd] = useState(event.end_at);
+  const dispatch = useDispatch(); 
+  const submitChanges = () => {
+    let updatedEvent = {
+      id: event.id, 
+      title: title,
+      type: event.type,
+      all_day: event.all_day,
+      start_at: start,
+      end_at: end,
+      detail: event.detail, 
+      location: event.location, 
+      meta: event.meta, 
+
+    }; 
+    store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent}));
+  }
+  const dateChangeHandler = (dates, dateStrings) => {
+    setStart(dates[0]._d); 
+    setEnd(dates[1]._d); 
+  }; 
   return (
     // TODO Use form to control the data
     <div>
-      <Input>
-      </Input>
+      <Input disabled={disableEdit} defaultValue={title} onChange={(e)=>setTitle(e.target.value)}/>
       <Space direction="horizontal" size="small">
         <DatePicker 
           defaultValue={moment(event.start_at)} 
@@ -40,7 +66,9 @@ const EventPopup = (props) => {
           defaultValue={[moment(event.start_at), moment(event.end_at)]}
           format="HH:mm"
           disabled={disableEdit}
+          onChange={dateChangeHandler}
         />
+        <Button onClick={submitChanges}>Update</Button>
       </Space>
     </div>
   );
