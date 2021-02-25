@@ -8,10 +8,12 @@
  */
 
 import React, { useState } from "react";
-import { Input, AutoComplete } from "antd";
+import { Input, AutoComplete, Modal, Button} from "antd";
 import { getCourseSections, getCourses, clearCourses } from "../action";
 import { useDispatch, useSelector } from "react-redux";
 import { SearchOutlined } from "@ant-design/icons";
+import SearchCourseModal from "./SearchCourseModal"
+// import { Button } from "bootstrap";
 
 // TODO Change based on User school info
 // TODO Can be dynamic showing user different kinds of way to use the search bar
@@ -30,6 +32,7 @@ function WikiSearch() {
   const [value, setValue] = useState("");
   const [timer, setTimer] = useState(null);
   const dispatch = useDispatch();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   // Call the getCourses method to store the returned list in redux
   // and be used later here and also other part of the application
@@ -47,7 +50,18 @@ function WikiSearch() {
     }
   }
 
+  // open search bar pop up modal 
+  function openModal() {
+    setIsModalVisible(true); 
+  }
+
+  // close search bar pop up modal 
+  function closeModal() {
+    setIsModalVisible(false); 
+  }
+
   return (
+    <>
     <AutoComplete
       options={option}
       style={{
@@ -56,7 +70,13 @@ function WikiSearch() {
         borderRadius: "5rem",
       }}
       onSelect={(title) => {
-        dispatch(getCourseSections({"title": title}));
+        dispatch(getCourseSections({"title": title})).then(()=>{
+          // TODO get dispatch successful or not, then run the following code 
+          // is then means always successful? 
+          //console.log("no error>?????"); 
+          openModal(); 
+        });
+
       }}
       onBlur={() => {
         // Clear if the search bar is empty
@@ -71,7 +91,11 @@ function WikiSearch() {
       bordered={false}
     >
       <Input size="large" placeholder={prompt} prefix={<SearchOutlined />} />
+      
+      
     </AutoComplete>
+    <SearchCourseModal isModalVisible={isModalVisible} openModal={openModal} closeModal={closeModal}/>
+    </>
   );
 }
 
