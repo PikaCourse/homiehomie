@@ -27,6 +27,7 @@ const EventPopup = (props) => {
   if (event.type == "protected" || event.type == "course")
     disableEdit = true;
   const [title, setTitle] = useState(event.title);
+  const [location, setLocation] = useState(event.location);
   const [start, setStart] = useState(event.start_at);
   const [end, setEnd] = useState(event.end_at);
   const dispatch = useDispatch(); 
@@ -39,25 +40,51 @@ const EventPopup = (props) => {
       start_at: start,
       end_at: end,
       detail: event.detail, 
-      location: event.location, 
+      location: location, 
       meta: event.meta, 
 
     }; 
     store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent}));
+
+    console.log(getMonday()); 
+    console.log(getFriday()); 
   }
-  const dateChangeHandler = (dates, dateStrings) => {
+  const timeChangeHandler = (dates, dateStrings) => {
     setStart(dates[0]._d); 
     setEnd(dates[1]._d); 
   }; 
+
+  const dateChangeHandler = (date, dateString) => {
+    setStart(start.setDate(date._d.getDate())); 
+    setEnd(end.setDate(date._d.getDate())); 
+    console.log(date); 
+  }
+
+  const getMonday = () => {
+    let d = new Date();
+    var day = d.getDay(),
+        diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+    return new Date(d.setDate(diff));
+  }
+
+  const getFriday = () => {
+    let d = new Date(getMonday());
+    d.setDate(d.getDate()+4); 
+    return new Date(d);
+  }
+
   return (
     // TODO Use form to control the data
     <div>
-      <Input disabled={disableEdit} defaultValue={title} onChange={(e)=>setTitle(e.target.value)}/>
+      <Input addonBefore="Title" disabled={disableEdit} defaultValue={title} onChange={(e)=>setTitle(e.target.value)}/>
+      <Input addonBefore="Location" disabled={disableEdit} defaultValue={location} onChange={(e)=>setLocation(e.target.value)}/>
       <Space direction="horizontal" size="small">
         <DatePicker 
           defaultValue={moment(event.start_at)} 
           format="dddd, MMM Do"
           disabled={disableEdit}
+          onChange={dateChangeHandler}
+          disabledDate = {d => d.isBefore(getMonday()) || d.isAfter(getFriday())}
         />
         {
           // TODO Fix width of range picker
@@ -66,7 +93,7 @@ const EventPopup = (props) => {
           defaultValue={[moment(event.start_at), moment(event.end_at)]}
           format="HH:mm"
           disabled={disableEdit}
-          onChange={dateChangeHandler}
+          onChange={timeChangeHandler}
         />
         <Button onClick={submitChanges}>Update</Button>
       </Space>
