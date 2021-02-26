@@ -30,7 +30,10 @@ const EventPopup = (props) => {
   const [location, setLocation] = useState(event.location);
   const [start, setStart] = useState(event.start_at);
   const [end, setEnd] = useState(event.end_at);
-  const dispatch = useDispatch(); 
+
+  /**
+   * Dispatch the edited event 
+   */
   const submitChanges = () => {
     let updatedEvent = {
       id: event.id, 
@@ -45,21 +48,32 @@ const EventPopup = (props) => {
 
     }; 
     store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent}));
-
-    console.log(getMonday()); 
-    console.log(getFriday()); 
   }
+
+  /**
+   * Handle time change 
+   * @param {*} dates an object containing original and changed dates 
+   * @param {*} dateStrings 
+   */
   const timeChangeHandler = (dates, dateStrings) => {
     setStart(dates[0]._d); 
     setEnd(dates[1]._d); 
   }; 
 
+  /**
+   * Handle date change 
+   * @param {*} date an object containing original and changed dates
+   * @param {*} dateString 
+   */
   const dateChangeHandler = (date, dateString) => {
     setStart(start.setDate(date._d.getDate())); 
     setEnd(end.setDate(date._d.getDate())); 
     console.log(date); 
   }
 
+  /**
+   * Get Monday of the week. 
+   */
   const getMonday = () => {
     let d = new Date();
     var day = d.getDay(),
@@ -67,6 +81,9 @@ const EventPopup = (props) => {
     return new Date(d.setDate(diff));
   }
 
+  /**
+   * Get Friday of the week. 
+   */
   const getFriday = () => {
     let d = new Date(getMonday());
     d.setDate(d.getDate()+4); 
@@ -84,6 +101,7 @@ const EventPopup = (props) => {
           format="dddd, MMM Do"
           disabled={disableEdit}
           onChange={dateChangeHandler}
+          //TODO incorreact disabled dates
           disabledDate = {d => d.isBefore(getMonday()) || d.isAfter(getFriday())}
         />
         {
