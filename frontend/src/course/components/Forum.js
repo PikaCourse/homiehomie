@@ -16,7 +16,7 @@ import {
   Space,
   Divider,
 } from "antd";
-import { Fragment, useState } from "react";
+import React,{ Fragment, useState } from "react";
 import {
   LikeFilled,
   DislikeFilled,
@@ -41,26 +41,47 @@ function Forum() {
  */
 
 function PostCard() {
-  const exampleTags = ["help", "lol"];
+  // For dummy content
+  //const titleexample = "optional title"
+  const timestampexample = "4hrs"
+  const contentexample = "This is a test post card"
+  const nameexample = "Jo Biden"
+  // Tags container
+  const exampleTags = ["#help", "#lol"];
+  // For module (pop out comments)
   const [visible, setVisible] = useState(false);
   return (
     <Fragment>
+
+      {/* single card displayed. only have basic information */}
       <Card
         style={{ width: 500, margin: "1rem" }}
         hoverable
         onClick={() => setVisible(true)}
         bodyStyle={{ paddingBottom: 0, paddingTop: "1rem" }}
       >
-        <PostCardSubtitle name="John Doe" timestamp="4" />
-        <PostCardTitle
-          title="Have a Question about SQLite"
-          tags={exampleTags}
+
+        <PostCardContent 
+        name = {nameexample} 
+        timestamp = {timestampexample} 
+        avatar={
+        <Avatar
+          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+          alt="Han Solo"
         />
-        <PostCardContent content="This is a test post card" />
-        <PostCardToolkit like="10" dislike="11" />
+        }
+        toolkit = { <PostCardToolkit like="10" dislike="11" comment = "18"/> }
+        //title = { <PostCardTitle thetitle = {titleexample}/>}
+        content = {contentexample}
+        tags = { <PostCardTags thetags = {exampleTags}/>}
+        />
+        <PostCardToolkit like="10" dislike="11" comment = "18"/>
       </Card>
+
+      {/* when clicked, open the post details and comments */}
+      {/* post details display */}
       <Modal
-        title="CS3114: Have a Question about SQLite "
+        //title= {titleexample}
         centered
         visible={visible}
         onOk={() => setVisible(false)}
@@ -73,15 +94,24 @@ function PostCard() {
           style={{ width: "100%" }}
           bodyStyle={{ paddingBottom: 0, paddingTop: 0 }}
         >
-          <PostCardSubtitle name="John Doe" timestamp="4" />
-          <PostCardTitle
-            title="Have a Question about SQLite"
-            tags={exampleTags}
-          />
-          <PostCardContent content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
-          <PostCardToolkit like="10" dislike="11" />
+          <PostCardContent 
+        name = {nameexample} 
+        timestamp = {timestampexample} 
+        avatar={
+        <Avatar
+          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+          alt="Han Solo"
+        />
+        }
+        toolkit = { <PostCardToolkit like="10"  dislike="11"  comment = "18"/>}
+        //title = { <PostCardTitle thetitle = {titleexample}/>}
+        content = {contentexample}
+        tags = { <PostCardTags thetags = {exampleTags}/>}     
+        />
+        <PostCardToolkit like="10" dislike="11" comment = "18"/>
         </Card>
 
+        {/* post comments */}
         <Card
           bordered={false}
           style={{ width: "100%" }}
@@ -100,28 +130,28 @@ function PostCard() {
 }
 
 /**
- * Post Card Subtitle subcomponent for PostCard
- * @param  name: the name of the author
- * @param  timestamp: the creat_at of this post
+ * Post Card title for single PostCard
+ * @param thetitle: the title of the post
  */
-const PostCardSubtitle = (props) => (
-  <p className="text-left mb-0" style={{ color: "grey", fontSize: "0.7rem" }}>
-    Post by {props.name} {props.timestamp} hours ago
+const PostCardTitle = (props) => (
+  <p
+    className="text-left mb-0"
+    style={{ color: "black", fontSize: "1.3rem", fontWeight: "700" }}
+  >
+    {props.thetitle} <br/>
   </p>
 );
 
 /**
- * Post Card title subcomponent for PostCard
- * @param  title: the title of the post
- * @param  tags: the tags of this post
+ * Post Card tag subcomponent for PostCard
+ * @param thetags: the tags of this post
  */
-const PostCardTitle = (props) => (
+const PostCardTags = (props) => (
   <p
-    className="text-left my-1"
+    className="text-left mb-0"
     style={{ color: "black", fontSize: "1.3rem", fontWeight: "700" }}
   >
-    {props.title}
-    {props.tags.map((tag) => (
+    {props.thetags.map((tag) => (
       <Tag className="align-middle mx-1" color="red">
         {tag}
       </Tag>
@@ -134,13 +164,25 @@ const PostCardTitle = (props) => (
  * @param  content: the content of the post
  */
 const PostCardContent = (props) => (
-  <p className="text-left mb-0">{props.content}</p>
+  <Comment
+    actions = {props.toolkit}
+    author = {props.name}
+    avatar = {props.avatar}
+    content = {
+    <p>
+      {props.title}
+      {props.content} <br/>
+      {props.tags}
+    </p>
+    }
+  />
 );
 
 /**
  * Post Card Content subcomponent for PostCard
  * @param like: the number of likes of the post
  * @param dislike: the number of dislikes of the post
+ * @param comment: the number of comments of the post
  */
 const PostCardToolkit = (props) => (
   <p className="text-left m-0">
@@ -149,7 +191,9 @@ const PostCardToolkit = (props) => (
         className="float-left"
         icon={<CommentOutlined />}
         style={{ border: "none", color: "grey" }}
-      />
+        >
+          {props.comment}
+      </Button>
 
       <Button
         className="float-left"
@@ -158,6 +202,7 @@ const PostCardToolkit = (props) => (
       >
         {props.like}
       </Button>
+
       <Button
         className="mx-1 float-left"
         icon={<DislikeFilled />}
