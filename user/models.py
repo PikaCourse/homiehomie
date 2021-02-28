@@ -71,6 +71,13 @@ class Student(models.Model):
         return self.user.username
 
 
+class Notification(models.Model):
+    receiver = models.ForeignKey(Student, on_delete=models.CASCADE, default=Student.get_sentinel_user())
+    content = models.JSONField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    read_at = models.DateTimeField(blank=True, null=True)
+
 # Create student instance upon new user and link with it
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, raw, **kwargs):
