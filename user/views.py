@@ -11,6 +11,8 @@ from user.serializers import *
 from user.permissions import *
 from user.tokens import *
 from user.backends import *
+from user.filters import *
+from user.paginations import *
 from django.shortcuts import redirect, resolve_url, reverse, render
 from django.conf import settings
 from django.contrib.auth import login as auth_login
@@ -341,3 +343,27 @@ def send_verification_email(request, from_email=None,
     else:
         raise ValidationError("invalid email",
                               code="invalid_email")
+
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    """
+    Viewset for accessing user notification
+    """
+    http_method_names = ["get", "put", "delete"]
+    serializer_class = NotificationSerializer
+    parser_classes = [JSONParser]
+    permission_classes = [IsAuthenticated, NotificationViewSetPermission]
+    filterset_class = NotificationFilter
+    pagination_class = NotificationPagination
+
+    # Override existing delete method provided by DRF for customized return error packet
+    def destroy(self, request, *args, **kwargs):
+        notification = self.get_object()
+        self.perform_destroy(notification)
+        error_pack = {"code": "success", "detail": "successfully deleted notification",
+                      "post": notification.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)
+
+    def get_queryset(self):
+        receiver = self.request.user.student
+        return Notification.objects.filter(receiver=receiver)

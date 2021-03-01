@@ -1,12 +1,8 @@
 """
 Test cases testing again empty database view operations
 """
-from django.shortcuts import reverse
 from rest_framework.test import APITestCase
-from rest_framework import status
-from rest_framework.exceptions import *
-from scheduler.exceptions import *
-from scheduler.test_utils import *
+from scheduler.test.test_utils import *
 from urllib.parse import urlencode
 import unittest
 
