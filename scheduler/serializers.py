@@ -43,7 +43,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = '__all__'
+        exclude = ("like", "star", "dislike", )
         read_only_fields = ("created_at", "last_edited", "last_answered",
                             "like_count", "star_count", "dislike_count", "poster")
 
@@ -79,9 +79,9 @@ class PostSerializer(serializers.ModelSerializer):
 class PostAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostAnswer
-        fields = '__all__'
+        exclude = ("like", "star", "dislike", )
         read_only_fields = ("post", "postee", "created_at", "last_edited",
-                            "like_count", "dislike_count")
+                            "like_count", "dislike_count", "star_count")
 
     def create(self, validated_data):
         # Inject user info

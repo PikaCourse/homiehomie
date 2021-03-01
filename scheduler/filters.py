@@ -52,4 +52,10 @@ class PostFilter(filters.FilterSet):
 
 
 class PostAnswerFilter(filters.FilterSet):
-    pass
+    order_by = filters.OrderingFilter(
+        fields=(
+            ("like_count", "like_count"),
+            ("star_count", "star_count"),
+            ("dislike_count", "dislike_count"),
+        )
+    )

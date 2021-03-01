@@ -142,12 +142,13 @@ jobs:
       - name: Deploy Test Server
         # You may pin to the exact commit or the version.
         # uses: dokku/github-action@f3dfd4bae85d064232999f269c271bfd0e45c2e8
-        uses: dokku/github-action@0.0.11
+        uses: dokku/github-action@v1.0.1
         with:
           # The branch to deploy when pushing to Dokku (default: master)
           branch: master # optional, default is master
           # The command to run for the action (default: detected from GITHUB_REF)
-          ci_branch_name: main # optional, default is 
+          ci_branch_name: main # optional, default is
+          git_push_flags: --force
           # The commit sha that will be pushed (default: detected from GITHUB_SHA)
           # A string containing a set of flags to set on push
           # The dokku app's git repository url (in SSH format)
