@@ -361,6 +361,76 @@ class PostViewSet(viewsets.ModelViewSet):
                       "post": post.id, "status": status.HTTP_200_OK}
         return Response(error_pack)
 
+    # Permission already handled in Default permission setting
+    @action(detail=True, methods=["post"])
+    def star(self, request, pk=None):
+        student = request.user.student
+        post = self.get_object()
+        state = True   # Final state of the toggle
+
+        # Toggle star or undo star
+        # If user already star the post, unstar it
+        if post.star.filter(id=student.id):
+            post.star.remove(student)
+            post.star_count -= 1
+            post.save()
+            state = False
+        else:
+            # Else star the post
+            post.star.add(student)
+            post.star_count += 1
+            post.save()
+
+        error_pack = {"code": "success", "detail": "successfully toggle star state",
+                      "post": post.id, "state": state, "status": status.HTTP_200_OK}
+        return Response(error_pack)
+
+    @action(detail=True, methods=["post"])
+    def like(self, request, pk=None):
+        student = request.user.student
+        post = self.get_object()
+        state = True  # Final state of the toggle
+
+        # Toggle like or undo like
+        # If user already like the post, unlike it
+        if post.like.filter(id=student.id):
+            post.like.remove(student)
+            post.like_count -= 1
+            post.save()
+            state = False
+        else:
+            # Else star the post
+            post.like.add(student)
+            post.like_count += 1
+            post.save()
+
+        error_pack = {"code": "success", "detail": "successfully toggle like state",
+                      "post": post.id, "state": state, "status": status.HTTP_200_OK}
+        return Response(error_pack)
+
+    @action(detail=True, methods=["post"])
+    def dislike(self, request, pk=None):
+        student = request.user.student
+        post = self.get_object()
+        state = True  # Final state of the toggle
+
+        # Toggle dislike or undo dislike
+        # If user already star the post, unstar it
+        if post.dislike.filter(id=student.id):
+            post.dislike.remove(student)
+            post.dislike_count -= 1
+            post.save()
+            state = False
+        else:
+            # Else star the post
+            post.dislike.add(student)
+            post.dislike_count += 1
+            post.save()
+
+        error_pack = {"code": "success", "detail": "successfully toggle dislike_count state",
+                      "post": post.id, "state": state, "status": status.HTTP_200_OK}
+        return Response(error_pack)
+
 
 class PostAnswerViewSet(viewsets.ModelViewSet):
     """
@@ -509,6 +579,76 @@ class PostAnswerViewSet(viewsets.ModelViewSet):
 
         # Invalid form key
         raise InvalidForm()
+
+    # Permission already handled in Default permission setting
+    @action(detail=True, methods=["post"])
+    def star(self, request, pk=None):
+        student = request.user.student
+        answer = self.get_object()
+        state = True  # Final state of the toggle
+
+        # Toggle star or undo star
+        # If user already star the post, unstar it
+        if answer.star.filter(id=student.id):
+            answer.star.remove(student)
+            answer.star_count -= 1
+            answer.save()
+            state = False
+        else:
+            # Else star the post
+            answer.star.add(student)
+            answer.star_count += 1
+            answer.save()
+
+        error_pack = {"code": "success", "detail": "successfully toggle star state",
+                      "answer": answer.id, "state": state, "status": status.HTTP_200_OK}
+        return Response(error_pack)
+
+    @action(detail=True, methods=["post"])
+    def like(self, request, pk=None):
+        student = request.user.student
+        answer = self.get_object()
+        state = True  # Final state of the toggle
+
+        # Toggle like or undo like
+        # If user already like the post, unlike it
+        if answer.like.filter(id=student.id):
+            answer.like.remove(student)
+            answer.like_count -= 1
+            answer.save()
+            state = False
+        else:
+            # Else star the post
+            answer.like.add(student)
+            answer.like_count += 1
+            answer.save()
+
+        error_pack = {"code": "success", "detail": "successfully toggle like state",
+                      "answer": answer.id, "state": state, "status": status.HTTP_200_OK}
+        return Response(error_pack)
+
+    @action(detail=True, methods=["post"])
+    def dislike(self, request, pk=None):
+        student = request.user.student
+        answer = self.get_object()
+        state = True  # Final state of the toggle
+
+        # Toggle dislike or undo dislike
+        # If user already star the post, unstar it
+        if answer.dislike.filter(id=student.id):
+            answer.dislike.remove(student)
+            answer.dislike_count -= 1
+            answer.save()
+            state = False
+        else:
+            # Else star the post
+            answer.dislike.add(student)
+            answer.dislike_count += 1
+            answer.save()
+
+        error_pack = {"code": "success", "detail": "successfully toggle dislike_count state",
+                      "answer": answer.id, "state": state, "status": status.HTTP_200_OK}
+        return Response(error_pack)
 
 
 class ScheduleViewSet(viewsets.ModelViewSet):

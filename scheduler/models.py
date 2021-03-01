@@ -267,6 +267,11 @@ class Post(models.Model):
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
     dislike_count = models.IntegerField(default=0)
+
+    like = models.ManyToManyField(Student, blank=True, related_name="post_like")
+    dislike = models.ManyToManyField(Student, blank=True, related_name="post_dislike")
+    star = models.ManyToManyField(Student, blank=True, related_name="post_star")
+
     title = models.CharField(max_length=200)
     content = models.TextField(blank=True)  # In markdown
     tags = models.ManyToManyField(Tag, blank=True)
@@ -294,6 +299,11 @@ class PostAnswer(models.Model):
     last_edited = models.DateTimeField(auto_now=True)
     like_count = models.IntegerField(default=0)
     star_count = models.IntegerField(default=0)
+
+    like = models.ManyToManyField(Student, blank=True, related_name="postanswer_like")
+    dislike = models.ManyToManyField(Student, blank=True, related_name="postanswer_dislike")
+    star = models.ManyToManyField(Student, blank=True, related_name="postanswer_star")
+
     dislike_count = models.IntegerField(default=0)
     content = models.TextField()  # In markdown
 
