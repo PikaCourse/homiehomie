@@ -356,13 +356,6 @@ class Schedule(models.Model):
     def __str__(self):
         return str(self.student) + "_" + str(self.year) + "_" + self.semester + "_" + self.name
 
-# Create a schedule after a student instance is created
-@receiver(post_save, sender=Student)
-def create_user_schedule(sender, instance, created, raw, **kwargs):
-    # Prevent creating instance upon loading fixtures, which is used for testing
-    if created and not raw:
-        Schedule.objects.create(student=instance)
-
 
 class WishList(models.Model):
     """
@@ -386,11 +379,4 @@ class WishList(models.Model):
 
     def __str__(self):
         return f"Wishlist_{self.student}"
-
-# Create a wishlist after a student instance is created
-@receiver(post_save, sender=Student)
-def create_user_wishlist(sender, instance, created, raw, **kwargs):
-    # Prevent creating instance upon loading fixtures, which is used for testing
-    if created and not raw:
-        WishList.objects.create(student=instance)
 

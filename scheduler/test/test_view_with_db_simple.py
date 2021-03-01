@@ -3,17 +3,11 @@ Test cases testing again non-empty database view operations using fixtures loadi
 Perform operations on small dataset of few entries
 """
 
-from django.shortcuts import reverse
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
-from rest_framework import status
-from rest_framework.exceptions import *
-from scheduler.exceptions import *
-from scheduler.test_utils import *
+from scheduler.test.test_utils import *
 from scheduler.permissions import *
 from scheduler.models import *
-from user.test_utils import login_with_api, logout_with_api, register_with_api
-from urllib.parse import urlencode
 from datetime import datetime
 import json
 import random

@@ -41,7 +41,7 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
         self.course_meta_data = CourseMetaChatSerializer(self.course_meta).data
         if self.course_meta is None:
             # Invalid course meta id, reject
-            await self.close(code=1008)
+            await self.close(code=4001)
         else:
             self.room_group_name = f'course_chat_{self.course_meta.title}'
 

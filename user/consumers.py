@@ -19,8 +19,37 @@ from user.serializers import *
 class UserNotificationConsumer(AsyncWebsocketConsumer):
     """
     User notification websocket handler, does the following:
-    1. Handle incoming ws connection request and assign group for it
-    2. Handle ws disconnect event to clean up
-    3. Receiving incoming message
+    1. Join a channel group if user is logged in
+    2. Handle disconnect event to logout user
     """
-    pass
+    async def connect(self):
+        # Get user info from Django session
+        self.user = self.scope["user"]
+        # If user is anonymous, reject the connection since it is no use
+        if self.user.is_anonymous:
+            await self.close(code=4000)
+            # self.room_group_name = f"notification_test_admin"
+            # await self.channel_layer.group_add(
+            #     self.room_group_name,
+            #     self.channel_name
+            # )
+            # await self.accept()
+        else:
+            self.room_group_name = f"notification_{self.user.username}"
+            await self.channel_layer.group_add(
+                self.room_group_name,
+                self.channel_name
+            )
+            await self.accept()
+
+    async def disconnect(self, close_code):
+        # Leave room group
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    # Handle notification received
+    async def send_notification(self, payload):
+        notification = payload["notification"]
+        await self.send(text_data=json.dumps(notification))

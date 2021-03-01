@@ -308,3 +308,11 @@ class EmailTokenSerializer(serializers.Serializer):
                 subject_template_name, email_template_name, context, from_email,
                 user_email, html_email_template_name=html_email_template_name,
             )
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = '__all__'
+        read_only_fields = ("id", "read_at", "receiver", "created_at")
+

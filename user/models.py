@@ -1,7 +1,16 @@
+"""
+filename:    models.py
+created at:  02/28/2021
+author:      Weili An
+email:       china_aisa@live.com
+version:     v1.0.0
+desc:        User module model definitions
+"""
+
+
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
 
 # TODO Add API KEY field?
 class Student(models.Model):
@@ -71,9 +80,13 @@ class Student(models.Model):
         return self.user.username
 
 
-# Create student instance upon new user and link with it
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, raw, **kwargs):
-    # Prevent creating instance upon loading fixtures, which is used for testing
-    if created and not raw:
-        Student.objects.create(user=instance)
+class Notification(models.Model):
+    receiver = models.ForeignKey(Student, on_delete=models.CASCADE)
+    content = models.JSONField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+    read_at = models.DateTimeField(blank=True, null=True)
+
+
+
+
