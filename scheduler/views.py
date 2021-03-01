@@ -8,7 +8,7 @@ desc:        Views for scheduler, including course search and post
 change:      v1.1.0: Rewrite filtering using filterbackend
 """
 
-from django.shortcuts import render, get_list_or_404, get_object_or_404
+from django.shortcuts import render, get_list_or_404
 from django.db.models import Model, Q
 from django.utils.decorators import method_decorator
 from scheduler.models import *
@@ -20,6 +20,7 @@ from scheduler.permissions import ReadOnly
 from scheduler.filters import *
 from scheduler.paginations import *
 from rest_framework import viewsets, status
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.request import Request
@@ -439,146 +440,37 @@ class PostAnswerViewSet(viewsets.ModelViewSet):
     """
     queryset = PostAnswer.objects.all()
     serializer_class = PostAnswerSerializer
-    parser_classes = [FormParser]
+    parser_classes = [JSONParser]
     permission_classes = [PostAnswerViewSetPermission, IsVerifiedOrReadOnly]
     http_method_names = ['get', 'post', 'head', 'put', 'delete']
+    filterset_class = PostAnswerFilter
+    pagination_class = PostAnswerPagination
 
+    def get_queryset(self):
+        """
+        Filter correct queryset
+        :return:
+        """
+        post_id = self.kwargs["post_id"]
+        return PostAnswer.objects.filter(post_id=post_id)
 
-    # TODO Better way to valdiate query param
-    # Supported fields for sortby option
-    supported_sortby_options = ["like_count", "star_count", "dislike_count"]
+    def get_serializer_context(self):
+        """
+        Inject post context
+        :return:
+        """
+        context = super().get_serializer_context()
+        post_id = self.kwargs["post_id"]
+        context["post"] = get_object_or_404(Post.objects.all(), id=post_id)
+        return context
 
-    def list(self, request, post_id=None, *args, **kwargs):
-        queryset = PostAnswer.objects.all()
-
-        # Verify that post with id pk exist in db
-        try:
-            get_object_or_404(Post, id=post_id)
-        except ValueError:
-            # Not valid post_id
-            raise NotFound()
-        # Parse Params
-        queryset = queryset.filter(post_id=post_id)
-        sortby = self.request.query_params.get("sortby", None)
-        descending = self.request.query_params.get("descending", None)
-        limit = self.request.query_params.get("limit", None)
-
-        # TODO Better way to do the query params validation
-        if descending is not None:
-            if str(descending).lower() == "true":
-                descending = True
-            elif str(descending).lower() == "false":
-                descending = False
-            else:
-                raise InvalidQueryValue()
-        else:
-            descending = True
-        if sortby is not None:
-            if sortby not in self.supported_sortby_options:
-                raise InvalidQueryValue()
-            queryset = queryset.order_by(("-" if descending else "") + sortby)
-        else:
-            queryset = queryset.order_by(("-" if descending else "") + "like_count")
-        if limit is not None:
-            try:
-                limit = int(limit)
-                if limit <= 0:
-                    raise ValueError
-                queryset = queryset[0:limit]
-            except ValueError as err:
-                raise InvalidQueryValue()
-        else:
-            queryset = queryset[:10]
-
-        serializer = PostAnswerSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def create(self, request, post_id=None, *args, **kwargs):
-        answer = request.data
-
-        try:
-            # Set post id from path param
-            post = Post.objects.get(id=post_id)
-            f = PostAnswerCreationForm(answer, request=request, post=post)
-            if f.is_valid():
-                answer = f.save(debug=True)
-                error_pack = {"code": "success", "detail": "successfully created post answer",
-                              "post": post.id, "answer": answer.id, "status": status.HTTP_201_CREATED}
-                return Response(error_pack, status=status.HTTP_201_CREATED)
-        except Post.DoesNotExist:
-            # Invalid post id path
-            raise NotFound()
-        raise InvalidForm()
-
-    def retrieve(self, request, post_id=None, *args, **kwargs):
-        # TODO Verify that the post_id matched with the object post_id
-        # TODO Validate post_id match internally to raise NotFound
-        try:
-            post = get_object_or_404(Post, id=post_id)
-        except ValueError:
-            raise NotFound()
+    # Override existing delete method provided by DRF for customized return error packet
+    def destroy(self, request, *args, **kwargs):
         answer = self.get_object()
-        if post.id != answer.post_id:
-            raise NotFound()
-        serializer = self.get_serializer(answer)
-        return Response(serializer.data)
-
-    def update(self, request, post_id=None, *args, **kwargs):
-        answer = request.data
-        try:
-            # Cannot use self.get_object since it is not in PostAnswer viewset
-            old_answer = self.get_object()
-
-            # Check post answer and the post is linked
-            if eval(post_id) != old_answer.post_id:
-                raise ValidationError("mismatch between given post id and answer post id",
-                                      code="mismatch")
-            # Update post answer
-            f = PostAnswerModificationForm(answer, instance=old_answer)
-            if f.is_valid():
-                answer = f.save()
-                post = Post.objects.get(id=post_id)
-                post.last_answered = answer.last_edited
-                post.save()
-                error_pack = {"code": "success", "detail": "successfully modified post answer",
-                              "post": post.id, "answer": answer.id, "status": status.HTTP_200_OK}
-                return Response(error_pack, status=status.HTTP_200_OK)
-
-        except Post.DoesNotExist:
-            # Invalid post id
-            raise NotFound()
-        except PostAnswer.DoesNotExist:
-            # Invalid question answer id
-            raise NotFound()
-        except ValidationError:
-            raise NotFound()
-        # Invalid form key
-        raise InvalidForm()
-
-    def destroy(self, request, pk=None, post_id=None, *args, **kwargs):
-        try:
-            old_answer = self.get_object()
-            post = get_object_or_404(Post, id=post_id)
-
-            # Check post answer and the post is linked
-            if post.id != old_answer.post_id:
-                raise ValidationError("mismatch between given post id and answer post id",
-                                      code="mismatch")
-            # Delete post answer
-            old_answer.delete()
-            error_pack = {"code": "success", "detail": "successfully deleted post answer",
-                          "answer": pk, "status": status.HTTP_200_OK}
-            return Response(error_pack, status=status.HTTP_200_OK)
-        except PostAnswer.DoesNotExist:
-            # Invalid question answer id
-            raise NotFound()
-        except ValueError:
-            raise NotFound()
-        except ValidationError:
-            raise NotFound()
-
-        # Invalid form key
-        raise InvalidForm()
+        self.perform_destroy(answer)
+        error_pack = {"code": "success", "detail": "successfully deleted post answer",
+                      "answer": answer.id, "status": status.HTTP_200_OK}
+        return Response(error_pack)
 
     # Permission already handled in Default permission setting
     @action(detail=True, methods=["post"])
