@@ -47,6 +47,7 @@ class PostFilter(filters.FilterSet):
             ("like_count", "like_count"),
             ("star_count", "star_count"),
             ("dislike_count", "dislike_count"),
+            ("last_edited", "last_edited"),
         )
     )
 
