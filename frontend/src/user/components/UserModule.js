@@ -12,11 +12,13 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import UserAvatar from "./UserAvatar";
 import LoginRegister from "./LoginRegister";
+import {Row, Col, Modal, Button, Image, Divider, notification, message} from 'antd'
 
 /**
  * Top level user module
  * @param {*} props 
  */
+
 export default function UserModule(props) {
   // TODO How to access internal state? Store in redux
   // TODO Use 
@@ -35,6 +37,7 @@ export default function UserModule(props) {
         .then((res) => {
           setIsLoggedIn(true);
           setUserInfo(res.data);
+          console.log("check is loggedin",isLoggedIn)
         })
         .catch((err) => {
           console.log(err);
@@ -42,13 +45,48 @@ export default function UserModule(props) {
         });
     }
     checkLogin();
+    console.log("get to useeffect",isLoggedIn)
+    //Setup ws connection to listen for notification
+    function connectWS (isLoggedIn){
+      console.log("connectws checkpoint1",isLoggedIn)
+      //if is loggedin
+      if(isLoggedIn){
+        console.log("get to connectWS line1")
+        ws = new WebSocket('ws://localhost:8000/ws');
+        let that = this; //cache this
+        ws.onopen = () =>{
+          //for debug
+          console.log('connected');
+        }
+        ws.onmessage = evt =>{
+          message = JSON.parse(evt.data);
+          notification.open({
+            message: 'Notification',
+            description: message.content.content,
+            onClick: () => {
+              console.log('Notification Clicked!');
+            },
+          });
+        }
+        ws.onerror = err =>{
+          console.error(
+            "Socket encountered error: ",
+                  err.message,
+                  "Closing socket"
+          )
+          ws.close();
+        };
+      }
+      //if is not logged in
+    }
+    console.log("get to useeffect connectWS",isLoggedIn)
+    connectWS(isLoggedIn);
   }, []);
-
-  // TODO Setup ws connection to listen for notification
 
   // On start, see if logged in
   // if logged in, display User avator
   //  else login/register button
+  console.log("check isloggedin", isLoggedIn)
   if (isLoggedIn)
     return (
       <UserAvatar 
