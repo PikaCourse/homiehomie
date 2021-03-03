@@ -14,6 +14,7 @@ import { connect, } from "react-redux";
 
 import WikiSearch from "./Search";
 import WikiSummary from "./Summary";
+import PostForm from "./PostForm"
 
 function Wiki(props) {
   // TODO Initial course should the last one user accessed
@@ -31,6 +32,7 @@ function Wiki(props) {
         <WikiSearch />
         <WikiSummary />
         <WikiNotebook />
+        <PostForm /> 
       </div>
     </Fragment>
   );
