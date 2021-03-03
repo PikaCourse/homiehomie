@@ -101,8 +101,6 @@ const EventPopup = (props) => {
           format="dddd, MMM Do"
           disabled={disableEdit}
           onChange={dateChangeHandler}
-          //TODO incorreact disabled dates
-          disabledDate = {d => d.isBefore(getMonday()) || d.isAfter(getFriday())}
         />
         {
           // TODO Fix width of range picker
