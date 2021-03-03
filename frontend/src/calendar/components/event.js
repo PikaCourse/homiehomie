@@ -16,7 +16,6 @@ import { addEventToCalendar, updateEventInCalendar, removeEventInCalendar } from
 import store from "../../store";
 import { useSelector, connect, useDispatch } from "react-redux";
 
-
 /**
  * Event popup window component for calendar event
  * @param {object} props 
