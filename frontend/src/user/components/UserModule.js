@@ -37,7 +37,6 @@ export default function UserModule(props) {
         .then((res) => {
           setIsLoggedIn(true);
           setUserInfo(res.data);
-          console.log("check is loggedin",isLoggedIn)
         })
         .catch((err) => {
           console.log(err);
@@ -45,49 +44,50 @@ export default function UserModule(props) {
         });
     }
     checkLogin();
-    console.log("get to useeffect",isLoggedIn)
+
     //Setup ws connection to listen for notification
-    function connectWS (isLoggedIn){
-      console.log("connectws checkpoint1",isLoggedIn)
-      //if is loggedin
-      if(isLoggedIn){
-        console.log("get to connectWS line1")
-        ws = new WebSocket('ws://localhost:8000/ws');
-        let that = this; //cache this
-        ws.onopen = () =>{
-          //for debug
-          console.log('connected');
-        }
-        ws.onmessage = evt =>{
-          message = JSON.parse(evt.data);
-          notification.open({
-            message: 'Notification',
-            description: message.content.content,
-            onClick: () => {
-              console.log('Notification Clicked!');
-            },
-          });
-        }
-        ws.onerror = err =>{
-          console.error(
-            "Socket encountered error: ",
-                  err.message,
-                  "Closing socket"
-          )
-          ws.close();
-        };
+  function connectWS (isLoggedIn) {
+    console.log("connectws checkpoint1",isLoggedIn)
+    //if is loggedin
+    if(isLoggedIn){
+      const ws = new WebSocket('ws://127.0.0.1:3004');
+      let that = this; //cache this
+      console.log("get to connectWS after establish websocket")
+      ws.onopen = () =>{
+        //for debug
+        console.log('connected');
       }
-      //if is not logged in
+      ws.onmessage = evt =>{
+        message = JSON.parse(evt.data);
+        notification.open({
+          message: 'Notification',
+          description: message.content.content,
+          onClick: () => {
+            console.log('Notification Clicked!');
+          },
+        });
+      }
+      ws.onerror = err =>{
+        console.error(
+          "Socket encountered error: ",
+                err.message,
+                "Closing socket"
+        )
+        ws.close();
+      };
     }
-    console.log("get to useeffect connectWS",isLoggedIn)
-    connectWS(isLoggedIn);
-  }, []);
+    else{
+      //if is not logged in
+      console.log("get to connectWS is not logged in",isLoggedIn)
+    }
+  }
+  connectWS(isLoggedIn);
+  },[isLoggedIn] );
 
   // On start, see if logged in
   // if logged in, display User avator
   //  else login/register button
-  console.log("check isloggedin", isLoggedIn)
-  if (isLoggedIn)
+  if (isLoggedIn){
     return (
       <UserAvatar 
         setLogin={setIsLoggedIn}
@@ -95,6 +95,7 @@ export default function UserModule(props) {
         setUserInfo={setUserInfo}
       />
     );
+  }
   else
     return (
       /** 
