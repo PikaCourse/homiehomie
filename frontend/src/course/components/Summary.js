@@ -69,7 +69,7 @@ function buttonsLoader(
       selectedCourse.course_meta.title //&& (item.type != 'preview'))
   );
   let add = true;
-  let remove = true;
+  // let remove = true;
   let addButtonText = "Add Course";
   let isStar = selectedCourse.id in wishlistCourseBag && wishlistCourseBag[selectedCourse.id] != null;
   // TODO The rest code to determine if add or remove course can use the similar approach as above
@@ -79,15 +79,16 @@ function buttonsLoader(
   // true: check if it is the same crn as the one in calendar
   //    true: add: false, remove true
   //    false: add->save: true, remove false
+  // Joanna 3/3: remove auto the opposite of add, removed "remove" variable  
 
-  if (!courseArray.length) {remove = false; }
-  else {
+  // if (!courseArray.length) {remove = false; }
+  if(courseArray.length) {
     const course = calendarCourseBag.filter(
       (item) => item.id === selectedCourse.id 
     );
     if (!course.length) {
       addButtonText = "Change Section";
-      remove = false;
+      // remove = false;
     } else add = false;
   }
   return (
@@ -111,10 +112,10 @@ function buttonsLoader(
 
         <Tooltip title="Remove">
           <Button
-            disabled={!remove}
+            disabled={add}//{!remove}
             type="primary"
             onClick={() => {
-              dispatch(removeCourseFromCalendar(selectedCourse.title));
+              dispatch(removeCourseFromCalendar(selectedCourse.course_meta.title+selectedCourse.type));
               message.success("Course Removed Successfully");
             }}
           >
