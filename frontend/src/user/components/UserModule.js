@@ -50,8 +50,12 @@ export default function UserModule(props) {
     console.log("connectws checkpoint1",isLoggedIn)
     //if is loggedin
     if(isLoggedIn){
-      const ws = new WebSocket('ws://127.0.0.1:3004');
-      let that = this; //cache this
+      const ws = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/user/notification'
+    );
+      //let that = this; //cache this
       console.log("get to connectWS after establish websocket")
       ws.onopen = () =>{
         //for debug
