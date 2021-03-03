@@ -90,7 +90,7 @@ export default createReducer(initialState, {
     state.option = [];
     // Set the current selected course to be the one in the course list that
     // has the matching course id
-    const sections = action.payload.courses.map((section) => {
+    const sections = action.payload.courses.results.map((section) => {
       return {
         ...section,
         timeStr: timeObjFommatter(section.time)

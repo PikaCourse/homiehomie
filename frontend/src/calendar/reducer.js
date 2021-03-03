@@ -28,7 +28,7 @@ export default createReducer(initialState, {
    */
   [actions.addCourseToCalendar]: (state, action) => {
     const newCourse = action.payload;
-    state.courseSchedule[newCourse.course_meta.title] = newCourse;
+    state.courseSchedule[newCourse.course_meta.title+newCourse.type] = newCourse;
   },
 
   /**

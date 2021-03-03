@@ -83,7 +83,7 @@ function buttonsLoader(
   if (!courseArray.length) {remove = false; }
   else {
     const course = calendarCourseBag.filter(
-      (item) => item.id === selectedCourse.id //&& (item.type != 'preview')
+      (item) => item.id === selectedCourse.id //&& (item.type != selectedCourse.type)
     );
     if (!course.length) {
       addButtonText = "Change Section";
