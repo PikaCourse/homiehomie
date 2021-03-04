@@ -61,3 +61,6 @@ coverage.xml
 
 # Redis
 *.rdb
+
+redis-stable.tar.gz.1
+redis-stable.tar.gz.2
