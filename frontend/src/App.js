@@ -14,8 +14,7 @@ import Footer from "./nav/Footer";
 import Calendar from "./calendar";
 import Wiki from "./course";
 import Landing from "./landing";
-import { Widget as ChatWidget } from '@du201/react-chat-widget';
-import '@du201/react-chat-widget/lib/styles.css';
+import Chat from "./chat/Chat";
 
 import { Provider, } from "react-redux";
 import store from "./store";
@@ -41,7 +40,7 @@ export default function App(props) {
         </div>
         <Footer style={{ height: "3vh", }} />
       </Fragment>
-      <ChatWidget />
+      <Chat />
     </Provider>
   );
 }
