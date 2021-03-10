@@ -45,18 +45,18 @@ function PostCard(props) {
   const data = props.data
   //const titleexample = "optional title"
 
-  const avatarexample = data.avatar 
+  const avatar = data.avatar 
   //src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
 
-  const timestampexample = data.timestamp //"4hrs"
-  const contentexample = data.content //"This is a test post card"
-  const nameexample = data.name //"Jo Biden"
-  const commentsexample = data.comments //array of comments
+  const timestamp = data.timestamp //"4hrs"
+  const content = data.content //"This is a test post card"
+  const name = data.name //"Jo Biden"
+  const comments = data.comments //array of comments
   const likeamount = data.likes //the amount of likes
   const disamount = data.dislike //dislike amount
   const commentamount = data.comment.length //comment amount
   // Tags container
-  const exampleTags = data.tags //["#help", "#lol"];
+  const Tags = data.tags //["#help", "#lol"];
   // For module (pop out comments)
   const [visible, setVisible] = useState(false);
   return (
@@ -71,17 +71,17 @@ function PostCard(props) {
       >
 
         <PostCardContent 
-        name = {nameexample} 
-        timestamp = {timestampexample} 
+        name = {name} 
+        timestamp = {timestamp} 
         avatar={
         <Avatar
-          src= {avatarexample}
+          src= {avatar}
         />
         }
         //toolkit = { <PostCardToolkit like="10" dislike="11" comment = "18"/> }
         //title = { <PostCardTitle thetitle = {titleexample}/>}
-        content = {contentexample}
-        tags = { <PostCardTags thetags = {exampleTags}/>}
+        content = {content}
+        tags = { <PostCardTags thetags = {Tags}/>}
         />
         <PostCardToolkit like={likeamount} dislike={disamount} comment = {commentamount}/>
       </Card>
@@ -103,17 +103,17 @@ function PostCard(props) {
           bodyStyle={{ paddingBottom: 0, paddingTop: 0 }}
         >
           <PostCardContent 
-        name = {nameexample} 
-        timestamp = {timestampexample} 
+        name = {name} 
+        timestamp = {timestamp} 
         avatar={
         <Avatar
-          src={avatarexample}
+          src={avatar}
         />
         }
         //toolkit = { <PostCardToolkit like="10"  dislike="11"  comment = "18"/>}
         //title = { <PostCardTitle thetitle = {titleexample}/>}
-        content = {contentexample}
-        tags = { <PostCardTags thetags = {exampleTags}/>}     
+        content = {content}
+        tags = { <PostCardTags thetags = {Tags}/>}     
         />
         <PostCardToolkit like={likeamount} dislike={disamount} comment = {commentamount}/>
         </Card>
@@ -126,9 +126,9 @@ function PostCard(props) {
         >
           <List 
           className="comment-list"
-          header={`${commentsexample.length} replies`}
+          header={`${comments.length} replies`}
           itemLayout="horizontal"
-          dataSource={commentsexample}
+          dataSource={comments}
           renderItem={item => (
           <li>
             <Comment
@@ -187,7 +187,7 @@ const PostCardContent = (props) => (
     avatar = {props.avatar}
     content = {
     <p>
-      {props.title}
+      {/* props.title */}
       {props.content} <br/>
       {props.tags}
     </p>
