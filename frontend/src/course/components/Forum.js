@@ -52,6 +52,9 @@ function PostCard(props) {
   const contentexample = data.content //"This is a test post card"
   const nameexample = data.name //"Jo Biden"
   const commentsexample = data.comments //array of comments
+  const likeamount = data.likes //the amount of likes
+  const disamount = data.dislike //dislike amount
+  const commentamount = data.comment.length //comment amount
   // Tags container
   const exampleTags = data.tags //["#help", "#lol"];
   // For module (pop out comments)
@@ -75,12 +78,12 @@ function PostCard(props) {
           src= {avatarexample}
         />
         }
-        toolkit = { <PostCardToolkit like="10" dislike="11" comment = "18"/> }
+        //toolkit = { <PostCardToolkit like="10" dislike="11" comment = "18"/> }
         //title = { <PostCardTitle thetitle = {titleexample}/>}
         content = {contentexample}
         tags = { <PostCardTags thetags = {exampleTags}/>}
         />
-        <PostCardToolkit like="10" dislike="11" comment = "18"/>
+        <PostCardToolkit like={likeamount} dislike={disamount} comment = {commentamount}/>
       </Card>
 
       {/* when clicked, open the post details and comments */}
@@ -107,12 +110,12 @@ function PostCard(props) {
           src={avatarexample}
         />
         }
-        toolkit = { <PostCardToolkit like="10"  dislike="11"  comment = "18"/>}
+        //toolkit = { <PostCardToolkit like="10"  dislike="11"  comment = "18"/>}
         //title = { <PostCardTitle thetitle = {titleexample}/>}
         content = {contentexample}
         tags = { <PostCardTags thetags = {exampleTags}/>}     
         />
-        <PostCardToolkit like="10" dislike="11" comment = "18"/>
+        <PostCardToolkit like={likeamount} dislike={disamount} comment = {commentamount}/>
         </Card>
 
         {/* post comments */}
@@ -179,7 +182,7 @@ const PostCardTags = (props) => (
  */
 const PostCardContent = (props) => (
   <Comment
-    actions = {props.toolkit}
+    //actions = {props.toolkit}
     author = {props.name}
     avatar = {props.avatar}
     content = {
