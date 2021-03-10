@@ -1,10 +1,10 @@
 /**
  * File name:	Forum.js
  * Created:	02/2/2021
- * Author:	Marx Wang
- * Email:	boyuan@vt.edu
- * Version:	1.2 Initial file
- * Description:	Forum react component for the forum
+ * Author:	Marx Wang Ji Zhang
+ * Email:	boyuan@vt.edu annajz@bu.edu
+ * Version:	2.0 implemented post
+ * Description:	Forum react component for the forum, called in wiki.js
  */
 import {
   Card,
@@ -40,14 +40,20 @@ function Forum() {
  * @param {object} post: post object that has info about author, timestamp, title and so on.
  */
 
-function PostCard() {
-  // For dummy content
+ //function for only rendering one post card
+function PostCard(props) {
+  const data = props.data
   //const titleexample = "optional title"
-  const timestampexample = "4hrs"
-  const contentexample = "This is a test post card"
-  const nameexample = "Jo Biden"
+
+  const avatarexample = data.avatar 
+  //src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+
+  const timestampexample = data.timestamp //"4hrs"
+  const contentexample = data.content //"This is a test post card"
+  const nameexample = data.name //"Jo Biden"
+  const commentsexample = data.comments //array of comments
   // Tags container
-  const exampleTags = ["#help", "#lol"];
+  const exampleTags = data.tags //["#help", "#lol"];
   // For module (pop out comments)
   const [visible, setVisible] = useState(false);
   return (
@@ -66,8 +72,7 @@ function PostCard() {
         timestamp = {timestampexample} 
         avatar={
         <Avatar
-          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-          alt="Han Solo"
+          src= {avatarexample}
         />
         }
         toolkit = { <PostCardToolkit like="10" dislike="11" comment = "18"/> }
@@ -99,8 +104,7 @@ function PostCard() {
         timestamp = {timestampexample} 
         avatar={
         <Avatar
-          src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-          alt="Han Solo"
+          src={avatarexample}
         />
         }
         toolkit = { <PostCardToolkit like="10"  dislike="11"  comment = "18"/>}
@@ -117,12 +121,22 @@ function PostCard() {
           style={{ width: "100%" }}
           bodyStyle={{ paddingTop: 0 }}
         >
-          <PostComment>
-            <PostComment>
-              <PostComment />
-              <PostComment />
-            </PostComment>
-          </PostComment>
+          <List 
+          className="comment-list"
+          header={`${commentsexample.length} replies`}
+          itemLayout="horizontal"
+          dataSource={commentsexample}
+          renderItem={item => (
+          <li>
+            <Comment
+                author={item.name}
+                avatar={item.avatar}
+                content={item.content}
+                datetime={item.timestamp}
+            />
+          </li>
+          )}
+          />
         </Card>
       </Modal>
     </Fragment>
@@ -226,25 +240,5 @@ const PostCardToolkit = (props) => (
   </p>
 );
 
-const PostComment = ({ children }) => (
-  <Comment
-    actions={[<span key="comment-nested-reply-to">Reply to</span>]}
-    author={<a href="#">Han Solo</a>}
-    avatar={
-      <Avatar
-        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Han Solo"
-      />
-    }
-    content={
-      <p>
-        We supply a series of design principles, practical patterns and high
-        quality design resources (Sketch and Axure).
-      </p>
-    }
-  >
-    {children}
-  </Comment>
-);
 
 export default Forum;
