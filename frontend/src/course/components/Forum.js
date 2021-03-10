@@ -51,8 +51,8 @@ function Forum() {
       res.data.results.forEach(function (postData, index) {
         newPostsArray.push({
           avatar : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
-          timestamp : "4hrs",
-          content : "This is a test post card",
+          timestamp : postData.created_at,
+          content : postData.content,
           name : "Jo Biden",
           comments : [{ name: "Trump",
             avatar:"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
@@ -61,10 +61,10 @@ function Forum() {
             avatar:"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
             content:"this is a comment content2",
             timestamp:"2hrs"}], //array of comments
-          likes : 10, //the amount of likes
-          dislikes : 11, //dislike amount
+          likes : postData.like_count, //the amount of likes
+          dislikes : postData.dislike_count, //dislike amount
           // Tags container
-          tags : ["#help", "#lol"]
+          tags : postData.tags
         }); 
       });
       setPosts(newPostsArray); 
