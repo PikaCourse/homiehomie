@@ -31,6 +31,13 @@ function Navbar() {
         </a>
         <div>
         <Space>
+            <Button type="text">Playground</Button>
+            <Button type="text">Classroom</Button>
+          </Space>
+        </div>
+        <div> 
+          {/* TODO stratch out the search bar  */}
+        <Space>
             <WikiSearch />
           </Space>
         </div>
