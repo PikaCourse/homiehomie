@@ -22,7 +22,14 @@ import UserModule from "../user";
 import WikiSearch from "../course/components/Search"
 
 // TODO Mobile optimization
-function Navbar() {
+function Navbar(props) {
+  const handleClassroomOnClick = () => {
+    props.tab=="classroom"?null:props.setTab("classroom"); 
+  }
+
+  const handlePlaygroundOnClick = () => {
+    props.tab=="playground"?null:props.setTab("playground"); 
+  }
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
       <div className="container-fluid">
@@ -31,8 +38,8 @@ function Navbar() {
         </a>
         <div>
         <Space>
-            <Button type="text">Playground</Button>
-            <Button type="text">Classroom</Button>
+            <Button type="text" onClick={handlePlaygroundOnClick}>Playground</Button>
+            <Button type="text" onClick={handleClassroomOnClick}>Classroom</Button>
           </Space>
         </div>
         <div> 

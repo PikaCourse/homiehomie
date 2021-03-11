@@ -7,7 +7,7 @@
  * Description:	Frontend global container
  */
 
-import React, { Fragment, } from "react";
+import React, { Fragment, useState} from "react";
 
 import Navbar from "./nav/Navbar";
 import Footer from "./nav/Footer";
@@ -22,11 +22,16 @@ import "../static/scss/button.scss";
 export default function App(props) {
   // App class to host sub modules
   // TODO Might need to separate note section from wiki?
+
+  //tab can be "playground" or "classroom"
+  const [tab, setTab] = useState("classroom");
+
   return (
     <Provider store={store}>
       <Fragment>
         <Landing />
-        <Navbar style={{ height: "5vh", }} />
+        <Navbar tab={tab} setTab={setTab} style={{ height: "5vh", }} />
+        {tab=="classroom"?
         <div className="container-fluid">
           <div className="row" style={{ height: "92vh", }}>
             <div className="col-md-6">
@@ -37,6 +42,7 @@ export default function App(props) {
             </div>
           </div>
         </div>
+        :<div>Playground</div>}
         <Footer style={{ height: "3vh", }} />
       </Fragment>
     </Provider>
