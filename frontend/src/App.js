@@ -25,6 +25,7 @@ export default function App(props) {
   // TODO Might need to separate note section from wiki?
 
   //tab can be "playground" or "classroom"
+  //TODO store tab to local storage 
   const [tab, setTab] = useState("classroom");
 
   return (
