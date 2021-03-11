@@ -65,7 +65,7 @@ function Forum(props) {
           avatar : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
           timestamp : postData.created_at,
           content : postData.content,
-          name : "HAHA", //postData.poster.name, 
+          name : postData.poster.username, 
           comments : [{ name: "Trump",
             avatar:"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
             content:"this is a comment content",
