@@ -1,10 +1,10 @@
 /**
  * File name:	Forum.js
  * Created:	02/2/2021
- * Author:	Marx Wang
- * Email:	boyuan@vt.edu
- * Version:	1.2 Initial file
- * Description:	Forum react component for the forum
+ * Author:	Marx Wang Ji Zhang
+ * Email:	boyuan@vt.edu annajz@bu.edu
+ * Version:	2.0 implemented post
+ * Description:	Forum react component for the forum, called in wiki.js
  */
 import {
   Card,
@@ -16,7 +16,7 @@ import {
   Space,
   Divider,
 } from "antd";
-import { Fragment, useState } from "react";
+import React,{ Fragment, useState } from "react";
 import {
   LikeFilled,
   DislikeFilled,
@@ -40,27 +40,56 @@ function Forum() {
  * @param {object} post: post object that has info about author, timestamp, title and so on.
  */
 
-function PostCard() {
-  const exampleTags = ["help", "lol"];
+ //function for only rendering one post card
+function PostCard(props) {
+  const data = props.data
+  //const titleexample = "optional title"
+
+  const avatar = data.avatar 
+  //src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+
+  const timestamp = data.timestamp //"4hrs"
+  const content = data.content //"This is a test post card"
+  const name = data.name //"Jo Biden"
+  const comments = data.comments //array of comments
+  const likeamount = data.likes //the amount of likes
+  const disamount = data.dislike //dislike amount
+  const commentamount = data.comment.length //comment amount
+  // Tags container
+  const Tags = data.tags //["#help", "#lol"];
+  // For module (pop out comments)
   const [visible, setVisible] = useState(false);
   return (
     <Fragment>
+
+      {/* single card displayed. only have basic information */}
       <Card
         style={{ width: 500, margin: "1rem" }}
         hoverable
         onClick={() => setVisible(true)}
         bodyStyle={{ paddingBottom: 0, paddingTop: "1rem" }}
       >
-        <PostCardSubtitle name="John Doe" timestamp="4" />
-        <PostCardTitle
-          title="Have a Question about SQLite"
-          tags={exampleTags}
+
+        <PostCardContent 
+        name = {name} 
+        timestamp = {timestamp} 
+        avatar={
+        <Avatar
+          src= {avatar}
         />
-        <PostCardContent content="This is a test post card" />
-        <PostCardToolkit like="10" dislike="11" />
+        }
+        //toolkit = { <PostCardToolkit like="10" dislike="11" comment = "18"/> }
+        //title = { <PostCardTitle thetitle = {titleexample}/>}
+        content = {content}
+        tags = { <PostCardTags thetags = {Tags}/>}
+        />
+        <PostCardToolkit like={likeamount} dislike={disamount} comment = {commentamount}/>
       </Card>
+
+      {/* when clicked, open the post details and comments */}
+      {/* post details display */}
       <Modal
-        title="CS3114: Have a Question about SQLite "
+        //title= {titleexample}
         centered
         visible={visible}
         onOk={() => setVisible(false)}
@@ -73,26 +102,44 @@ function PostCard() {
           style={{ width: "100%" }}
           bodyStyle={{ paddingBottom: 0, paddingTop: 0 }}
         >
-          <PostCardSubtitle name="John Doe" timestamp="4" />
-          <PostCardTitle
-            title="Have a Question about SQLite"
-            tags={exampleTags}
-          />
-          <PostCardContent content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
-          <PostCardToolkit like="10" dislike="11" />
+          <PostCardContent 
+        name = {name} 
+        timestamp = {timestamp} 
+        avatar={
+        <Avatar
+          src={avatar}
+        />
+        }
+        //toolkit = { <PostCardToolkit like="10"  dislike="11"  comment = "18"/>}
+        //title = { <PostCardTitle thetitle = {titleexample}/>}
+        content = {content}
+        tags = { <PostCardTags thetags = {Tags}/>}     
+        />
+        <PostCardToolkit like={likeamount} dislike={disamount} comment = {commentamount}/>
         </Card>
 
+        {/* post comments */}
         <Card
           bordered={false}
           style={{ width: "100%" }}
           bodyStyle={{ paddingTop: 0 }}
         >
-          <PostComment>
-            <PostComment>
-              <PostComment />
-              <PostComment />
-            </PostComment>
-          </PostComment>
+          <List 
+          className="comment-list"
+          header={`${comments.length} replies`}
+          itemLayout="horizontal"
+          dataSource={comments}
+          renderItem={item => (
+          <li>
+            <Comment
+                author={item.name}
+                avatar={item.avatar}
+                content={item.content}
+                datetime={item.timestamp}
+            />
+          </li>
+          )}
+          />
         </Card>
       </Modal>
     </Fragment>
@@ -100,28 +147,28 @@ function PostCard() {
 }
 
 /**
- * Post Card Subtitle subcomponent for PostCard
- * @param  name: the name of the author
- * @param  timestamp: the creat_at of this post
+ * Post Card title for single PostCard
+ * @param thetitle: the title of the post
  */
-const PostCardSubtitle = (props) => (
-  <p className="text-left mb-0" style={{ color: "grey", fontSize: "0.7rem" }}>
-    Post by {props.name} {props.timestamp} hours ago
+const PostCardTitle = (props) => (
+  <p
+    className="text-left mb-0"
+    style={{ color: "black", fontSize: "1.3rem", fontWeight: "700" }}
+  >
+    {props.thetitle} <br/>
   </p>
 );
 
 /**
- * Post Card title subcomponent for PostCard
- * @param  title: the title of the post
- * @param  tags: the tags of this post
+ * Post Card tag subcomponent for PostCard
+ * @param thetags: the tags of this post
  */
-const PostCardTitle = (props) => (
+const PostCardTags = (props) => (
   <p
-    className="text-left my-1"
+    className="text-left mb-0"
     style={{ color: "black", fontSize: "1.3rem", fontWeight: "700" }}
   >
-    {props.title}
-    {props.tags.map((tag) => (
+    {props.thetags.map((tag) => (
       <Tag className="align-middle mx-1" color="red">
         {tag}
       </Tag>
@@ -134,13 +181,25 @@ const PostCardTitle = (props) => (
  * @param  content: the content of the post
  */
 const PostCardContent = (props) => (
-  <p className="text-left mb-0">{props.content}</p>
+  <Comment
+    //actions = {props.toolkit}
+    author = {props.name}
+    avatar = {props.avatar}
+    content = {
+    <p>
+      {/* props.title */}
+      {props.content} <br/>
+      {props.tags}
+    </p>
+    }
+  />
 );
 
 /**
  * Post Card Content subcomponent for PostCard
  * @param like: the number of likes of the post
  * @param dislike: the number of dislikes of the post
+ * @param comment: the number of comments of the post
  */
 const PostCardToolkit = (props) => (
   <p className="text-left m-0">
@@ -149,7 +208,9 @@ const PostCardToolkit = (props) => (
         className="float-left"
         icon={<CommentOutlined />}
         style={{ border: "none", color: "grey" }}
-      />
+        >
+          {props.comment}
+      </Button>
 
       <Button
         className="float-left"
@@ -158,6 +219,7 @@ const PostCardToolkit = (props) => (
       >
         {props.like}
       </Button>
+
       <Button
         className="mx-1 float-left"
         icon={<DislikeFilled />}
@@ -181,25 +243,5 @@ const PostCardToolkit = (props) => (
   </p>
 );
 
-const PostComment = ({ children }) => (
-  <Comment
-    actions={[<span key="comment-nested-reply-to">Reply to</span>]}
-    author={<a href="#">Han Solo</a>}
-    avatar={
-      <Avatar
-        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-        alt="Han Solo"
-      />
-    }
-    content={
-      <p>
-        We supply a series of design principles, practical patterns and high
-        quality design resources (Sketch and Axure).
-      </p>
-    }
-  >
-    {children}
-  </Comment>
-);
 
 export default Forum;

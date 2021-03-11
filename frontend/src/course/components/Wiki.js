@@ -14,6 +14,7 @@ import { connect, } from "react-redux";
 
 import WikiSearch from "./Search";
 import WikiSummary from "./Summary";
+import Forum from "./Forum"
 
 function Wiki(props) {
   // TODO Initial course should the last one user accessed
@@ -30,7 +31,7 @@ function Wiki(props) {
       <div className="px-1 mt-4" style={WikiStyle}>
         <WikiSearch />
         <WikiSummary />
-        <WikiNotebook />
+        <Forum />
       </div>
     </Fragment>
   );
