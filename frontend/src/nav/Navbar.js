@@ -19,6 +19,7 @@ import Wishlist from "../wishlist";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import UserModule from "../user";
+import WikiSearch from "../course/components/Search"
 
 // TODO Mobile optimization
 function Navbar() {
@@ -28,6 +29,11 @@ function Navbar() {
         <a className="navbar-brand mx-4 pl-4" href="#" style={selectedStyle}>
           PikaCourse
         </a>
+        <div>
+        <Space>
+            <WikiSearch />
+          </Space>
+        </div>
         <div>
           <Space>
             <Wishlist />
