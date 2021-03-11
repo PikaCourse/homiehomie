@@ -31,7 +31,7 @@ function Wiki(props) {
       <div className="px-1 mt-4" style={WikiStyle}>
         <WikiSearch />
         <WikiSummary />
-        <Forum />
+        <Forum maxPost={5}/> {/* maxPost: maximum number of posts  */}
       </div>
     </Fragment>
   );

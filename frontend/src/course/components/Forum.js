@@ -40,20 +40,32 @@ const sampledata = {
   // Tags container
   tags : ["#help", "#lol"]
 }
-function Forum() {
+/**
+ * 
+ * @param {*} props 
+ * maxPost: maximum number of posts
+ */
+function Forum(props) {
+
+  // TODO 
+  // render commment
+  // await? reducer/action 
+  // what is course is get post api 
+  // limit, amount of post to render. how to get the next 50 posts 
+  // PostCard handle undefine or empty? 
 
   const [posts, setPosts] = useState([]);
 
 
   const getPosts = () => {
-    axios.get(`api/posts?courseid=2642&sortby=created_at`).then((res) => {
+    axios.get(`api/posts?sortby=created_at&limit=${props.maxPost}`).then((res) => {
       let newPostsArray = []; 
       res.data.results.forEach(function (postData, index) {
         newPostsArray.push({
           avatar : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
           timestamp : postData.created_at,
           content : postData.content,
-          name : "Jo Biden",
+          name : "HAHA", //postData.poster.name, 
           comments : [{ name: "Trump",
             avatar:"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
             content:"this is a comment content",
