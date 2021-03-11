@@ -2,6 +2,7 @@ from rest_framework import serializers
 from scheduler.models import *
 from django.utils import timezone
 from homiehomie.utils import CreatableSlugRelatedField
+from django.contrib.auth.models import User
 
 
 class CourseMetaSerializer(serializers.ModelSerializer):
@@ -37,8 +38,19 @@ class NoteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PosterSerializer(serializers.ModelSerializer):
+    user = User
+    username = serializers.CharField(source="user.username")
+
+    class Meta:
+        model = Student
+        fields = ("id", "username")
+        read_only_fields = ("id", "username")
+
+
 class PostSerializer(serializers.ModelSerializer):
     # tags = TagSerializer(many=True)
+    poster = PosterSerializer()
     tags = CreatableSlugRelatedField(many=True, slug_field="name", queryset=Tag.objects.all())
 
     class Meta:
@@ -77,6 +89,8 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostAnswerSerializer(serializers.ModelSerializer):
+    postee = PosterSerializer()
+
     class Meta:
         model = PostAnswer
         exclude = ("like", "star", "dislike", )
