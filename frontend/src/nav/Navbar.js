@@ -19,15 +19,35 @@ import Wishlist from "../wishlist";
 const { Header } = Layout;
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 import UserModule from "../user";
+import WikiSearch from "../course/components/Search"
 
 // TODO Mobile optimization
-function Navbar() {
+function Navbar(props) {
+  const handleClassroomOnClick = () => {
+    props.tab=="classroom"?null:props.setTab("classroom"); 
+  }
+
+  const handlePlaygroundOnClick = () => {
+    props.tab=="playground"?null:props.setTab("playground"); 
+  }
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light border-0 pb-2 pt-2">
       <div className="container-fluid">
         <a className="navbar-brand mx-4 pl-4" href="#" style={selectedStyle}>
           PikaCourse
         </a>
+        <div>
+        <Space>
+            <Button type="text" onClick={handlePlaygroundOnClick}>Playground</Button>
+            <Button type="text" onClick={handleClassroomOnClick}>Classroom</Button>
+          </Space>
+        </div>
+        <div> 
+          {/* TODO stratch out the search bar  */}
+        <Space>
+            <WikiSearch />
+          </Space>
+        </div>
         <div>
           <Space>
             <Wishlist />

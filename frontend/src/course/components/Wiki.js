@@ -29,9 +29,9 @@ function Wiki(props) {
   return (
     <Fragment>
       <div className="px-1 mt-4" style={WikiStyle}>
-        <WikiSearch />
+        {/* <WikiSearch /> */}
         <WikiSummary />
-        <Forum />
+        <Forum maxPost={10} height={400}/> {/* maxPost: maximum number of posts  */}
       </div>
     </Fragment>
   );
