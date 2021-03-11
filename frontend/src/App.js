@@ -14,6 +14,7 @@ import Footer from "./nav/Footer";
 import Calendar from "./calendar";
 import Wiki from "./course";
 import Landing from "./landing";
+import Forum from "./course/components/Forum"
 
 import { Provider, } from "react-redux";
 import store from "./store";
@@ -42,7 +43,13 @@ export default function App(props) {
             </div>
           </div>
         </div>
-        :<div>Playground</div>}
+        :<div className="container">
+          <div class="row justify-content-md-center">
+            <div class="col-md-auto">
+              <Forum maxPost={10} height={800}/>
+            </div>
+          </div>
+          </div>}
         <Footer style={{ height: "3vh", }} />
       </Fragment>
     </Provider>
