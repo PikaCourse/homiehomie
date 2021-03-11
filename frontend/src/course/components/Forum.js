@@ -1,7 +1,7 @@
 /**
  * File name:	Forum.js
  * Created:	02/2/2021
- * Author:	Marx Wang Ji Zhang
+ * Author:	Marx Wang Ji Zhang, Joanna Fang 
  * Email:	boyuan@vt.edu annajz@bu.edu
  * Version:	2.0 implemented post
  * Description:	Forum react component for the forum, called in wiki.js
@@ -15,13 +15,18 @@ import {
   Avatar,
   Space,
   Divider,
-  List
+  List, 
+  Spin
 } from "antd";
 import React,{ Fragment, useState, useEffect} from "react";
 import { getPositionOfLineAndCharacter } from "typescript";
 import PostCard from "./Post"
 import axios from "axios";
 import queryString from "query-string";
+import InfiniteScroll from 'react-infinite-scroll-component';
+// npm install react-infinite-scroller --save
+//  npm install --save react-infinite-scroll-component
+
 
 const sampledata = {
   avatar : "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
@@ -55,10 +60,17 @@ function Forum(props) {
   // PostCard handle undefine or empty? 
 
   const [posts, setPosts] = useState([]);
-
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [nextPage, setNextPage] = useState(`api/posts?sortby=created_at&limit=${props.maxPost}`);
 
   const getPosts = () => {
-    axios.get(`api/posts?sortby=created_at&limit=${props.maxPost}`).then((res) => {
+    if (posts.length >= 100) { //stop loading more when reach 100 posts 
+      setHasMore(false); 
+      return;
+    }
+    axios.get(nextPage).then((res) => {
+      //set new posts state 
       let newPostsArray = []; 
       res.data.results.forEach(function (postData, index) {
         newPostsArray.push({
@@ -80,8 +92,18 @@ function Forum(props) {
           tags : postData.tags
         }); 
       });
-      setPosts(newPostsArray); 
-    });
+      setPosts(posts.concat(newPostsArray)); 
+      
+      //set loadMore and nextPage 
+      if (res.data.next==null)
+      {
+        setHasMore(false); 
+        setNextPage(null); 
+      } else {
+        setHasMore(true); 
+        setNextPage(res.data.next); 
+      }
+    }); 
   }; 
 
   useEffect(() => {
@@ -90,11 +112,30 @@ function Forum(props) {
 
   return ( 
     <Fragment>
+      <InfiniteScroll
+          dataLength={posts.length}
+          // initialLoad={true}
+          // pageStart={0}
+          // loadMore={getPosts}
+          next={getPosts}
+          hasMore={hasMore}
+          useWindow={false}
+          height={props.height}
+          loader={<Spin />}
+          scrollThreshold={0.95}
+          endMessage={
+            <p style={{ textAlign: "center" }}>
+              <b>Yay! You have seen it all</b>
+            </p>
+          }
+        >
+           
       {/* <PostCard data = {sampledata}/> */}
       {posts.map(post=>{
         return <PostCard data = {post}/>
       })}
       {/* <Button onClick={getPosts}>getPost</Button> */}
+      </InfiniteScroll>
     </Fragment>
   );
 }
