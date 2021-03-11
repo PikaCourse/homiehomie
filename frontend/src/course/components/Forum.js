@@ -66,6 +66,7 @@ function Forum(props) {
           timestamp : postData.created_at,
           content : postData.content,
           name : postData.poster.username, 
+          id: postData.id,
           comments : [{ name: "Trump",
             avatar:"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
             content:"this is a comment content",

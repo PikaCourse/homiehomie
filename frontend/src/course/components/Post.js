@@ -25,6 +25,7 @@ import {
     CommentOutlined,
     FlagFilled,
   } from "@ant-design/icons";
+import axios from "axios";
   
   /**
    * Post Card component for Forum
@@ -38,18 +39,21 @@ import {
   
     const avatar = data.avatar 
     //src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+    const id = data.id
   
     const timestamp = data.timestamp //"4hrs"
     const content = data.content //"This is a test post card"
     const name = data.name //"Jo Biden"
     const comments = data.comments //array of comments
-    const likeamount = data.likes //the amount of likes
-    const disamount = data.dislikes //dislike amount
-    const commentamount = data.comments.length //comment amount
+    const [likeamount, setLike] = useState(data.likes)
+    const [disamount, setDis] = useState(data.dislikes); //dislike amount
+    const commentamount = data.comments.length
     // Tags container
     const Tags = data.tags //["#help", "#lol"];
     // For module (pop out comments)
     const [visible, setVisible] = useState(false);
+    const[LikeButDis, setLikeButDis] = useState(false);
+    const[DisButDis, setDisButDis] = useState(false);
     return (
       <Fragment>
   
@@ -74,7 +78,12 @@ import {
           content = {content}
           tags = { <PostCardTags thetags = {Tags}/>}
           />
-          <PostCardToolkit like={likeamount} dislike={disamount} comment = {commentamount}/>
+          <PostCardToolkit like = {likeamount} setLike = {setLike} 
+                            dislike = {disamount} setDis = {setDis} 
+                            comment = {commentamount}
+                            postid = {id}
+                            LikeBut = {LikeButDis} setLikeBut={setLikeButDis}
+                            DisBut = {DisButDis} setDisBut = {setDisButDis}/>
         </Card>
   
         {/* when clicked, open the post details and comments */}
@@ -106,7 +115,12 @@ import {
           content = {content}
           tags = { <PostCardTags thetags = {Tags}/>}     
           />
-          <PostCardToolkit like={likeamount} dislike={disamount} comment = {commentamount}/>
+          <PostCardToolkit like = {likeamount} setLike = {setLike} 
+                            dislike = {disamount} setDis = {setDis} 
+                            comment = {commentamount}
+                            postid = {id}
+                            LikeBut = {LikeButDis} setLikeBut={setLikeButDis}
+                            DisBut = {DisButDis} setDisBut = {setDisButDis}/>
           </Card>
   
           {/* post comments */}
@@ -192,8 +206,9 @@ import {
    * @param dislike: the number of dislikes of the post
    * @param comment: the number of comments of the post
    */
-  const PostCardToolkit = (props) => (
-    <p className="text-left m-0">
+  function PostCardToolkit (props) {
+    return(
+      <p className="text-left m-0">
       <Space size="small" split={<Divider type="vertical" />}>
         <Button
           className="float-left"
@@ -207,6 +222,8 @@ import {
           className="float-left"
           icon={<LikeFilled />}
           style={{ border: "none", color: "grey" }}
+          disabled={props.LikeBut}
+          onClick={()=>{IncreaseLike(props.postid);props.setLike(props.like+1);props.setLikeBut(true)}}
         >
           {props.like}
         </Button>
@@ -215,6 +232,8 @@ import {
           className="mx-1 float-left"
           icon={<DislikeFilled />}
           style={{ border: "none", color: "grey" }}
+          disabled={props.DisBut}
+          onClick = {()=>{IncreaseDislike(props.postid);props.setDis(props.dislike+1);props.setDisBut(true)}}
         >
           {props.dislike}
         </Button>
@@ -232,7 +251,22 @@ import {
         />
       </Space>
     </p>
-  );
+    )
+  }
   
-  
+  function IncreaseLike(id){
+    axios.post(
+      "api/posts/"+id+"/like"
+    ).then((response) => 
+    {console.log(response);},
+    (error)=>{console.log(error)})
+  }
+
+  function IncreaseDislike(id){
+    axios.post(
+      "api/posts/"+id+"/dislike"
+    ).then((response) => 
+    {console.log(response);},
+    (error)=>{console.log(error)})
+  }
   export default PostCard;
