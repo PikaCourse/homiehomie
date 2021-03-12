@@ -28,6 +28,12 @@ export default function UserModule(props) {
   // User profile control
   const [userInfo, setUserInfo] = useState({});
 
+  const ws = new WebSocket(
+    'ws://'
+    + window.location.host
+    + '/ws/user/notification'
+  );
+
   // Check if user already logged in when the component
   // first loaded
   // If so, set status and user info
@@ -50,11 +56,6 @@ export default function UserModule(props) {
     console.log("connectws checkpoint1",isLoggedIn)
     //if is loggedin
     if(isLoggedIn){
-      const ws = new WebSocket(
-        'ws://'
-        + window.location.host
-        + '/ws/user/notification'
-    );
       //let that = this; //cache this
       console.log("get to connectWS after establish websocket")
       ws.onopen = () =>{
@@ -83,6 +84,7 @@ export default function UserModule(props) {
     else{
       //if is not logged in
       console.log("get to connectWS is not logged in",isLoggedIn)
+      ws.close();
     }
   }
   connectWS(isLoggedIn);
