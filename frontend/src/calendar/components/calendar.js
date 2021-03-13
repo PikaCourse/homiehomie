@@ -155,7 +155,6 @@ function Calendar(props) {
     // Update selected event
     setSelectedEvent(event);
 
-    // let a = store.getState().calendar.customEvents[event.id]["onSelect"];
     if (event.type == "custom") {
       let updatedEvent = {
         id: event.id, 

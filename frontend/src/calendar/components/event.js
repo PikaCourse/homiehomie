@@ -21,6 +21,7 @@ import { useSelector, connect, useDispatch } from "react-redux";
  * @param {object} props 
  */
 const EventPopup = (props) => {
+  const dispatch = useDispatch();
   const event = props.event;
   let disableEdit = false;
   if (event.type == "protected" || event.type == "course")
@@ -89,6 +90,13 @@ const EventPopup = (props) => {
     return new Date(d);
   }
 
+  /**
+   * Remove a event from calendar 
+   */
+  const removeEvent = () => {
+    dispatch(removeEventInCalendar(event.id)); 
+  }
+
   return (
     // TODO Use form to control the data
     <div>
@@ -111,6 +119,7 @@ const EventPopup = (props) => {
           onChange={timeChangeHandler}
         />
         <Button onClick={submitChanges}>Update</Button>
+        <Button onClick={removeEvent}>Delete</Button>
       </Space>
     </div>
   );
@@ -128,7 +137,6 @@ export const Event = (props) => {
   const event = props.event;
   // TODO Add support for poping window, delete button, etc.
   const popupWindow = <EventPopup event={event}/>;
-  // const [visibility, setVisibility] = useState(event.first_created);
   const handleVisibilityChange = (visible) => {
       let updatedEvent = {
         id: event.id, 

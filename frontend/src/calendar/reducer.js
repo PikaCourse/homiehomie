@@ -74,6 +74,10 @@ export default createReducer(initialState, {
     const eventId = action.payload.id;
     const event = action.payload.event;
 
+    // Undefined event 
+    if (state.customEvents[eventId] == undefined)
+      return; 
+
     // Protect modification
     if (state.customEvents[eventId]["type"] == "protected")
       return;
