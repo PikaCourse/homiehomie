@@ -20,6 +20,7 @@ export class EventType extends Object {
   detail;       // event detail
   location;     // event location
   meta;         // other info related to event
+  first_created; //if the event is first created 
 }
 /**
  * Convert custom event's start and end string to date object 

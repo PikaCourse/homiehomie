@@ -1,7 +1,7 @@
 /**
  * File name:	calendar.js
  * Created:	01/31/2021
- * Author:	Weili An
+ * Author:	Weili An, Joanna Fang
  * Email:	China_Aisa@live.com
  * Version:	1.0 Initial file
  * Description:	Calendar component for PikaCourse, 
@@ -138,6 +138,7 @@ function Calendar(props) {
       detail: "", 
       location: "", 
       meta: "", 
+      first_created: true, 
     };
     store.dispatch(addEventToCalendar(newAnonymousEvent)); 
     

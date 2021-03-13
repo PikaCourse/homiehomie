@@ -128,10 +128,21 @@ export const Event = (props) => {
   const event = props.event;
   // TODO Add support for poping window, delete button, etc.
   const popupWindow = <EventPopup event={event}/>;
+  const [visibility, setVisibility] = useState(event.first_created);
+  const handleVisibilityChange = (visible) => {
+    setVisibility(visible); 
+    //set first_created field in event to false after first pop up 
+    let updatedEvent = {
+      first_created: false,  
+    };
+    store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent})); 
+  }
   return (
     <Popover 
       // Here is the pop up window for event after clicking
       content={popupWindow}
+      visible={visibility}
+      onVisibleChange={handleVisibilityChange}
       trigger="click">
       
       {
