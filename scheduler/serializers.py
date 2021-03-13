@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from scheduler.models import *
 from django.utils import timezone
+from homiehomie.utils import CreatableSlugRelatedField
+from django.contrib.auth.models import User
 
 
 class CourseMetaSerializer(serializers.ModelSerializer):
@@ -16,6 +18,14 @@ class CourseSerializer(serializers.ModelSerializer):
         depth = 1
 
 
+# TODO Forbid updating tag
+#   can only add tag
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("name", "count",)
+
+
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
@@ -28,16 +38,74 @@ class NoteSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class PosterSerializer(serializers.ModelSerializer):
+    user = User
+    username = serializers.CharField(source="user.username")
+
+    class Meta:
+        model = Student
+        fields = ("id", "username")
+        read_only_fields = ("id", "username")
+
+
 class PostSerializer(serializers.ModelSerializer):
+    # tags = TagSerializer(many=True)
+    poster = PosterSerializer()
+    tags = CreatableSlugRelatedField(many=True, slug_field="name", queryset=Tag.objects.all())
+
     class Meta:
         model = Post
-        fields = '__all__'
+        exclude = ("like", "star", "dislike", )
+        read_only_fields = ("created_at", "last_edited", "last_answered",
+                            "like_count", "star_count", "dislike_count", "poster")
+
+    def create(self, validated_data):
+        """
+        Create an instance based on validated data
+        :param validated_data:
+        :return:
+        """
+        # Inject user info
+        user_id = self.context["request"].user.id
+        validated_data["poster_id"] = user_id
+
+        instance = super().create(validated_data)
+
+        # Update count of tag by 1
+        Tag.increment_tags(Tag.objects.filter(post=instance))
+        return instance
+
+    def update(self, instance, validated_data):
+        """
+        Update an instance and change tag count accordingly
+        :param instance:
+        :param validated_data:
+        :return:
+        """
+        Tag.decrement_tags(Tag.objects.filter(post=instance))
+        new_instance = super().update(instance, validated_data)
+        Tag.increment_tags(Tag.objects.filter(post=new_instance))
+        return new_instance
 
 
 class PostAnswerSerializer(serializers.ModelSerializer):
+    postee = PosterSerializer()
+
     class Meta:
         model = PostAnswer
-        fields = '__all__'
+        exclude = ("like", "star", "dislike", )
+        read_only_fields = ("post", "postee", "created_at", "last_edited",
+                            "like_count", "dislike_count", "star_count")
+
+    def create(self, validated_data):
+        # Inject user info
+        user_id = self.context["request"].user.id
+        validated_data["postee_id"] = user_id
+
+        # Inject post info
+        post_id = self.context["post"].id
+        validated_data["post_id"] = post_id
+        return super().create(validated_data)
 
 
 # TODO Validate that the courses in the schedule matched
@@ -73,17 +141,6 @@ class ScheduleSerializer(serializers.ModelSerializer):
         validated_data["student_id"] = user_id
         return super().create(validated_data)
 
-    def update(self, instance, validated_data):
-        """
-        Update the instance
-        :param instance:
-        :param validated_data:
-        :return:
-        """
-        # Update instance last_edited field
-        instance.last_edited = timezone.now()
-        return super().update(instance, validated_data)
-
 
 class WishListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -115,14 +172,3 @@ class WishListSerializer(serializers.ModelSerializer):
         user_id = self.context["request"].user.id
         validated_data["student_id"] = user_id
         return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        """
-        Update the instance
-        :param instance:
-        :param validated_data:
-        :return:
-        """
-        # Update instance last_edited field
-        instance.last_edited = timezone.now()
-        return super().update(instance, validated_data)

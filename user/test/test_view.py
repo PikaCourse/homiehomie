@@ -7,18 +7,10 @@ version:     v1.0.0
 desc:        Unit tests for user application
 """
 
-from django.shortcuts import reverse
 from rest_framework.test import APITestCase
-from rest_framework import status
-from rest_framework.exceptions import *
-from datetime import datetime
-from user.test_utils import *
-from scheduler.test_utils import check_method_not_allowed, check_fields
+from user.test.test_utils import *
+from scheduler.test.test_utils import check_method_not_allowed, check_fields
 from django.contrib.auth.models import User
-from django.contrib import auth
-import json
-import random
-
 
 """
 Begin TestCase classes

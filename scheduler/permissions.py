@@ -3,11 +3,13 @@ filename:    permissions.py
 created at:  01/9/2021
 author:      Weili An
 email:       china_aisa@live.com
-version:     v1.0.0
-desc:        Permission for scheduler api
+version:     v1.1.0
+desc:        Permission for scheduler api;
+             Add notification permission
 """
 
 from rest_framework import permissions
+from user.models import Notification
 
 # TODO Restructure permission code here
 

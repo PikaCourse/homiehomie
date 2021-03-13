@@ -108,6 +108,7 @@ collectstatic_% :
 # Launch test server
 testserver_% : migratedb_%
 	( \
+		source venv/bin/activate; \
 		python -m smtpd -n -c DebuggingServer localhost:1025 & \
 		redis-server & \
 		python manage.py runserver --settings=homiehomie.settings_d.$* && fg \
@@ -166,7 +167,7 @@ ifeq (, $(shell which redis-server))
 	@wget http://download.redis.io/redis-stable.tar.gz
 	@tar xvzf redis-stable.tar.gz
 	@$(MAKE) -C redis-stable
-	@$(MAKE) -C redis-stable test
+# 	@$(MAKE) -C redis-stable test
 	@sudo $(MAKE) -C redis-stable install
 	@cd ..
 	@rm redis-stable.tar.gz

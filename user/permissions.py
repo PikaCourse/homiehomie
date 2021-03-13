@@ -8,6 +8,7 @@ desc:        permission settings for user application
 """
 
 from rest_framework import permissions
+from user.models import *
 
 
 class IsProfileOwnerUser(permissions.BasePermission):
@@ -19,3 +20,19 @@ class IsProfileOwnerUser(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user
+
+
+class NotificationViewSetPermission(permissions.BasePermission):
+    """
+    Check if the user is the owner of the notification
+    """
+    message = "Need to be the owner to perform the operation"
+
+    def has_object_permission(self, request, view, obj: Notification):
+        """
+        :param request:
+        :param view:
+        :param obj:
+        :return:
+        """
+        return obj.receiver.user == request.user

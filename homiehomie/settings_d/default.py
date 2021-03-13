@@ -55,8 +55,8 @@ INSTALLED_APPS = [
     'channels',
     'scheduler.apps.SchedulerConfig',
     'frontend.apps.FrontendConfig',
+    'chat.apps.ChatConfig',
     'user.apps.UserConfig',
-    'chat'
 ]
 
 MIDDLEWARE = [
