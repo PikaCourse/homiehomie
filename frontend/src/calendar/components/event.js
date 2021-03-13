@@ -132,10 +132,21 @@ export const Event = (props) => {
   const handleVisibilityChange = (visible) => {
     setVisibility(visible); 
     //set first_created field in event to false after first pop up 
-    let updatedEvent = {
-      first_created: false,  
-    };
-    store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent})); 
+    if (event.first_created==true) {
+      let updatedEvent = {
+        id: event.id, 
+        title: event.title,
+        type: event.type,
+        all_day: event.all_day,
+        start_at: event.start_at,
+        end_at: event.end_at,
+        detail: event.detail, 
+        location: event.location, 
+        meta: event.meta, 
+        first_created: false,  
+      };
+      store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent})); 
+    }
   }
   return (
     <Popover 
@@ -144,7 +155,6 @@ export const Event = (props) => {
       visible={visibility}
       onVisibleChange={handleVisibilityChange}
       trigger="click">
-      
       {
         // Actual displayed event on Calendar
       }
