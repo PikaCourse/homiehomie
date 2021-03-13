@@ -20,7 +20,8 @@ export class EventType extends Object {
   detail;       // event detail
   location;     // event location
   meta;         // other info related to event
-  first_created; //if the event is first created 
+  // first_created; //if the event is first created 
+  onSelect;     //if the event is being selected (a quick fix for trigger not working on 15mins event)
 }
 /**
  * Convert custom event's start and end string to date object 

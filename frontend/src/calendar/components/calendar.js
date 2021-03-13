@@ -138,7 +138,8 @@ function Calendar(props) {
       detail: "", 
       location: "", 
       meta: "", 
-      first_created: true, 
+      // first_created: true, 
+      onSelect: true, 
     };
     store.dispatch(addEventToCalendar(newAnonymousEvent)); 
     
@@ -153,6 +154,23 @@ function Calendar(props) {
   const onSelectEvent = (event) => {
     // Update selected event
     setSelectedEvent(event);
+
+    // let a = store.getState().calendar.customEvents[event.id]["onSelect"];
+    if (event.type == "custom") {
+      let updatedEvent = {
+        id: event.id, 
+        title: event.title,
+        type: event.type,
+        all_day: event.all_day,
+        start_at: event.start_at,
+        end_at: event.end_at,
+        detail: event.detail, 
+        location: event.location, 
+        meta: event.meta, 
+        onSelect: true, 
+      };
+      store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent})); 
+    }
 
     // Select the course<
     if (event.type == "course")
@@ -175,6 +193,7 @@ function Calendar(props) {
       detail: event.detail, 
       location: event.location, 
       meta: event.meta, 
+      onSelect: event.onSelect, 
     };
     store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent})); 
   }; 
