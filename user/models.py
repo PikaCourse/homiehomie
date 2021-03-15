@@ -86,6 +86,7 @@ class Notification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)
     read_at = models.DateTimeField(blank=True, null=True)
+    # TODO Add notification type field here
 
 
 

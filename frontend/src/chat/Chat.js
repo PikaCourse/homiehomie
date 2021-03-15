@@ -29,7 +29,6 @@ function Chat() {
     };
   }, []);
 
-
   /**
    * Triggered when a new message is sent from the message input
    * @param {string} newMessage 
