@@ -15,6 +15,7 @@ import Calendar from "./calendar";
 import Wiki from "./course";
 import Landing from "./landing";
 import Forum from "./course/components/Forum"
+import PostForm from "./course/components/PostForm"
 
 import { Provider, } from "react-redux";
 import store from "./store";
@@ -26,7 +27,7 @@ export default function App(props) {
 
   //tab can be "playground" or "classroom"
   //TODO store tab to local storage 
-  const [tab, setTab] = useState("classroom");
+  const [tab, setTab] = useState("playground");//("classroom");
 
   return (
     <Provider store={store}>
@@ -46,6 +47,9 @@ export default function App(props) {
         </div>
         :<div className="container">
           <div class="row justify-content-md-center">
+            <div class="col-md-auto" style={{paddingTop: '50px'}}>
+              <PostForm/>
+            </div>
             <div class="col-md-auto">
               <Forum maxPost={10} height={800}/>
             </div>
