@@ -26,6 +26,7 @@ import {
   Switch,
   Space,
   Divider, 
+  Col, 
 } from "antd";
 
 function PostForm () {
@@ -33,9 +34,24 @@ function PostForm () {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
   };
-  const tailLayout = {
-    wrapperCol: { offset: 8, span: 16 },
-  };
+
+  const onFinish = (values) => {
+    let post = {
+      "poster": {
+          "username": "usernametest"
+      },
+      "tags": [],
+      "title": "title",
+      "content": "content"
+    }; 
+
+    axios.post("api/posts").then((res) => {
+    });
+  }
+
+  const onFinishFailed = () => {
+    //TODO: display an error message 
+  }
 
   return (
     <>
@@ -44,16 +60,35 @@ function PostForm () {
     {/* <UserModule/> */}
     <Card  style={{backgroundColor: 'rgba(255,255,255)', border: 0 }}>
     <h5>Something to share?</h5>
-    <Form {...layout} name="Make a new post">
+    <Space/>
+    <Form {...layout} 
+    name="Make a new post"
+    initialValues={{
+      remember: true,
+    }}
+    onFinish={onFinish}
+    onFinishFailed={onFinishFailed}
+    >
       <Form.Item name="title" >
-      <Input placeholder="title(optional)" bordered={false}/>
+        <Input placeholder="title (optional)" bordered={false}/>
       </Form.Item>
-      <Form.Item name="content" >
-      <Input placeholder="text" bordered={false}/>
+      <Form.Item 
+      name="content" 
+      rules={[
+        {
+          required: true,
+          message: 'Please input your content',
+        },
+      ]}
+      >
+        <Input placeholder="text" bordered={false}/>
       </Form.Item>
       <Divider/>
       <Form.Item name="tags" >
-      <Input placeholder="#tags" bordered={false}/>
+        <Input placeholder="#tags" bordered={false}/>
+      </Form.Item>
+      <Form.Item name="submit" style={{float: 'right'}}>
+        <Button type="dashed" htmlType="submit">Post</Button>
       </Form.Item>
     </Form>
     </Card>
