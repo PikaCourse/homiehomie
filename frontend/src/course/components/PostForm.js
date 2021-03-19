@@ -13,7 +13,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import store from "../../store";
 import axios from "axios";
-// import UserModule from "../../user/UserModule"
 
 import {
   Button,
@@ -49,6 +48,7 @@ function PostForm () {
     typeof values.title === 'undefined'|| values.title == ""?title=firstWord:title=values.title; 
 
 
+    var success = false; 
     let post = {
       // TODO read multiple tags 
       tags: [tags],
@@ -58,24 +58,23 @@ function PostForm () {
 
     axios.post("api/posts", post, {
       headers: {
-        // Accept: "application/json",
         "Content-Type": "application/json",
-      }}, ).then((res) => {
+      }}, 
+    ).then((res) => {
       console.log(res); 
-      res.status != 201?onFinishFailed(res.statusText):form.resetFields(); 
-      //TODO pop up a message when post successfully 
+      if (res.status != 201) {
+        onFinishFailed(res.statusText)}
+      else {
+        success = true; 
+        form.resetFields(); 
+        message.success(`Congrats! Create post successfully`);
+      }
     });
-  }
-
-  const onFinishFailed = (errorMessage) => {
-    //TODO: display an error message 
+    success?null:message.error('Something went wrong! Please try again!')
   }
 
   return (
     <>
-    {/* <h3>This is for post creation</h3>
-    <h3>Development purpose only</h3> */}
-    {/* <UserModule/> */}
     <Card  style={{backgroundColor: 'rgba(255,255,255)', border: 0 }}>
     <h5>Something to share?</h5>
     <Space/>
@@ -86,7 +85,7 @@ function PostForm () {
       remember: true,
     }}
     onFinish={onFinish}
-    onFinishFailed={onFinishFailed}
+    // onFinishFailed={onFinishFailed}
     >
       <Form.Item name="title" >
         <Input placeholder="title (optional)" bordered={false}/>
