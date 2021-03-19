@@ -70,7 +70,9 @@ function PostForm () {
         message.success(`Congrats! Create post successfully`);
       }
     });
-    success?null:message.error('Something went wrong! Please try again!')
+    //TODO disable form if user is not logged in 
+    success?null:message.error('Something went wrong! Please try again!', 10)
+    success?null:message.warning('Please make sure you are logged in', 10)
   }
 
   return (
