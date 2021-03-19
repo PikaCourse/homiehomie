@@ -36,16 +36,22 @@ function PostForm () {
   };
 
   const onFinish = (values) => {
+    //Get the first word of content, later used as title 
+    var firstWord = values.content.split(/[ ,]+/)[0];
+
     let post = {
-      "poster": {
-          "username": "usernametest"
-      },
-      "tags": [],
-      "title": "title",
-      "content": "content"
+      // TODO read multiple tags 
+      tags: [values.tags],
+      title: values.title, //values.title==""?firstWord:values.title,
+      content: values.content
     }; 
 
-    axios.post("api/posts").then((res) => {
+    axios.post("api/posts", post, {
+      headers: {
+        // Accept: "application/json",
+        "Content-Type": "application/json",
+      }}, ).then((res) => {
+      console.log(res); 
     });
   }
 
