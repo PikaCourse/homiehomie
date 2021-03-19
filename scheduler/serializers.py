@@ -50,7 +50,7 @@ class PosterSerializer(serializers.ModelSerializer):
 
 class PostSerializer(serializers.ModelSerializer):
     # tags = TagSerializer(many=True)
-    poster = PosterSerializer()
+    poster = PosterSerializer(read_only=True)
     tags = CreatableSlugRelatedField(many=True, slug_field="name", queryset=Tag.objects.all())
 
     class Meta:
