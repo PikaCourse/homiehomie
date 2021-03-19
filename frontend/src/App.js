@@ -32,7 +32,7 @@ export default function App(props) {
   return (
     <Provider store={store}>
       <Fragment>
-        <Landing />
+        {/* <Landing /> */}
         <Navbar tab={tab} setTab={setTab} style={{ height: "5vh", }} />
         {tab=="classroom"?
         <div className="container-fluid">
