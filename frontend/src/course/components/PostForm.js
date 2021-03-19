@@ -2,16 +2,6 @@ import React, { Component, Fragment, useState, useCallback } from "react";
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
-import { useDispatch, useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faThumbsUp,
-  faThumbsDown,
-  faPen,
-  faTimes,
-  faThumbtack,
-} from "@fortawesome/free-solid-svg-icons";
-import store from "../../store";
 import axios from "axios";
 
 import {
@@ -19,10 +9,8 @@ import {
   Input,
   Card,
   Form,
-  Checkbox,
   message,
   resetFields,
-  Switch,
   Space,
   Divider, 
   Col, 
@@ -41,7 +29,7 @@ function PostForm () {
     //Get the first word of content, later used as title 
     var firstWord = values.content.split(/[ ,]+/)[0];
     
-    //undefined
+    // deal with undefined
     var tags; 
     var title; 
     typeof values.tags === 'undefined'?tags="":tags=values.tags; 
