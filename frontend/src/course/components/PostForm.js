@@ -30,19 +30,29 @@ import {
 } from "antd";
 
 function PostForm () {
+  const [form] = Form.useForm();
+
   const layout = {
     labelCol: { span: 8 },
     wrapperCol: { span: 16 },
   };
+  
 
   const onFinish = (values) => {
     //Get the first word of content, later used as title 
     var firstWord = values.content.split(/[ ,]+/)[0];
+    
+    //undefined
+    var tags; 
+    var title; 
+    typeof values.tags === 'undefined'?tags="":tags=values.tags; 
+    typeof values.title === 'undefined'|| values.title == ""?title=firstWord:title=values.title; 
+
 
     let post = {
       // TODO read multiple tags 
-      tags: [values.tags],
-      title: values.title, //values.title==""?firstWord:values.title,
+      tags: [tags],
+      title: title,
       content: values.content
     }; 
 
@@ -52,10 +62,12 @@ function PostForm () {
         "Content-Type": "application/json",
       }}, ).then((res) => {
       console.log(res); 
+      res.status != 201?onFinishFailed(res.statusText):form.resetFields(); 
+      //TODO pop up a message when post successfully 
     });
   }
 
-  const onFinishFailed = () => {
+  const onFinishFailed = (errorMessage) => {
     //TODO: display an error message 
   }
 
@@ -68,6 +80,7 @@ function PostForm () {
     <h5>Something to share?</h5>
     <Space/>
     <Form {...layout} 
+    form={form}
     name="Make a new post"
     initialValues={{
       remember: true,
