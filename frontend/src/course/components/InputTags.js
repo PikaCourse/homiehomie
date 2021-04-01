@@ -23,11 +23,12 @@ import {
 
 class InputTags extends React.Component {
   state = {
-    tags: ['Unremovable', 'Tag 2', 'Tag 3'],
+    tags: [],
     inputVisible: false,
     inputValue: '',
     editInputIndex: -1,
     editInputValue: '',
+    options: [], 
   };
 
   handleClose = removedTag => {
@@ -41,7 +42,12 @@ class InputTags extends React.Component {
   };
 
   handleInputChange = e => {
-    this.setState({ inputValue: e.target.value });
+    this.setState({ inputValue: e });
+    axios.get(`api/tags?name=${e}`).then((res) => {
+      console.log(res.data.results); 
+      let tags = res.data.results.map(a => ({value: a.name})); 
+      this.setState({options: tags}); 
+    });
   };
 
   handleInputConfirm = () => {
@@ -90,16 +96,24 @@ class InputTags extends React.Component {
         {tags.map((tag, index) => {
           if (editInputIndex === index) {
             return (
+              <AutoComplete
+              options={this.state.options}
+              style={{
+              width: 200,
+              }}
+              placeholder="input here"
+              ref={this.saveEditInputRef}
+              key={tag}
+              size="middle"
+              className="tag-input"
+              value={editInputValue}
+              onChange={this.handleEditInputChange}
+              onBlur={this.handleEditInputConfirm}
+              >
               <Input
-                ref={this.saveEditInputRef}
-                key={tag}
-                size="small"
-                className="tag-input"
-                value={editInputValue}
-                onChange={this.handleEditInputChange}
-                onBlur={this.handleEditInputConfirm}
                 onPressEnter={this.handleEditInputConfirm}
               />
+              </AutoComplete>
             );
           }
 
@@ -109,17 +123,15 @@ class InputTags extends React.Component {
             <Tag
               className="edit-tag"
               key={tag}
-              closable={index !== 0}
+              closable={true}
               onClose={() => this.handleClose(tag)}
             >
               <span
                 onDoubleClick={e => {
-                  if (index !== 0) {
-                    this.setState({ editInputIndex: index, editInputValue: tag }, () => {
-                      this.editInput.focus();
-                    });
-                    e.preventDefault();
-                  }
+                  this.setState({ editInputIndex: index, editInputValue: tag }, () => {
+                    this.editInput.focus();
+                  });
+                  e.preventDefault();
                 }}
               >
                 {isLongTag ? `${tag.slice(0, 20)}...` : tag}
@@ -135,16 +147,23 @@ class InputTags extends React.Component {
           );
         })}
         {inputVisible && (
-          <Input
+          <AutoComplete
+            options={this.state.options}
+            style={{
+            width: 200,
+            }}
+            // TODO: onSelect auto create tag 
+            placeholder="input tag here"
             ref={this.saveInputRef}
             type="text"
-            size="small"
+            size="middle"
             className="tag-input"
             value={inputValue}
             onChange={this.handleInputChange}
             onBlur={this.handleInputConfirm}
-            onPressEnter={this.handleInputConfirm}
-          />
+            >
+               <Input onPressEnter={this.handleInputConfirm}/>
+          </AutoComplete> 
         )}
         {!inputVisible && (
           <Tag className="site-tag-plus" onClick={this.showInput}>
