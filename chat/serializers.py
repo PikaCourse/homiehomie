@@ -44,11 +44,11 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatRoom
-        exclude = ("group_name", )
+        fields = "__all__"
         read_only_fields = ("id", "created_at",
                             "last_active", "is_DM",
                             "admin", "supervisors",
-                            "participants")
+                            "participants", "group_name")
 
     def create(self, validated_data):
         """

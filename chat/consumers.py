@@ -16,6 +16,7 @@ from scheduler.models import CourseMeta
 from chat.models import ChatRoom
 from chat.serializers import *
 from copy import deepcopy
+from asgiref.sync import sync_to_async
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
@@ -43,8 +44,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             # Invalid course meta id, reject
             await self.close(code=4001)
         else:
-            self.room_data = ChatRoomSerializer(self.room)
-            self.room_group_name = self.room.group_name
+            self.room_data = await self.get_room_data()
+            self.room_group_name = self.room_data['group_name']
 
             # Join room group
             await self.channel_layer.group_add(
@@ -66,6 +67,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except ChatRoom.DoesNotExist:
             obj = None
         return obj
+
+    @sync_to_async
+    def get_room_data(self):
+        tmp = ChatRoomSerializer(self.room)
+        return tmp.data
 
     async def disconnect(self, close_code):
         # Leave room group
