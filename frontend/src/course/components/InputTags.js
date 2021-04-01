@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useState, useCallback } from "react";
+import React from "react";
 import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
@@ -7,14 +7,6 @@ import { PlusOutlined } from '@ant-design/icons';
 
 
 import {
-  Button,
-  Card,
-  Form,
-  message,
-  resetFields,
-  Space,
-  Divider, 
-  Col, 
   AutoComplete, 
   Tag, 
   Input, 
@@ -24,7 +16,7 @@ import {
 class InputTags extends React.Component {
   state = {
     tags: [],
-    inputVisible: false,
+    inputVisible: true,
     inputValue: '',
     editInputIndex: -1,
     editInputValue: '',
@@ -43,6 +35,7 @@ class InputTags extends React.Component {
 
   handleInputChange = e => {
     this.setState({ inputValue: e });
+    this.showInput(); 
     axios.get(`api/tags?name=${e}`).then((res) => {
       console.log(res.data.results); 
       let tags = res.data.results.map(a => ({value: a.name})); 
@@ -59,7 +52,7 @@ class InputTags extends React.Component {
     console.log(tags);
     this.setState({
       tags,
-      inputVisible: false,
+      inputVisible: true,
       inputValue: '',
     });
   };
@@ -93,6 +86,30 @@ class InputTags extends React.Component {
     const { tags, inputVisible, inputValue, editInputIndex, editInputValue } = this.state;
     return (
       <>
+        {true && (
+          <AutoComplete
+            options={this.state.options}
+            style={{
+            width: 200,
+            }}
+            // TODO: onSelect auto create tag 
+            placeholder="#tags"
+            ref={this.saveInputRef}
+            type="text"
+            size="middle"
+            className="tag-input"
+            value={inputValue}
+            onChange={this.handleInputChange}
+            onBlur={this.handleInputConfirm}
+            >
+               <Input onPressEnter={this.handleInputConfirm} bordered={false}/>
+          </AutoComplete> 
+        )}
+        {/* {!inputVisible && (
+          <Tag className="site-tag-plus" onClick={this.showInput} color="blue">
+            <PlusOutlined /> New Tag
+          </Tag>
+        )} */}
         {tags.map((tag, index) => {
           if (editInputIndex === index) {
             return (
@@ -101,10 +118,9 @@ class InputTags extends React.Component {
               style={{
               width: 200,
               }}
-              placeholder="input here"
+              placeholder="#tags"
               ref={this.saveEditInputRef}
               key={tag}
-              size="middle"
               className="tag-input"
               value={editInputValue}
               onChange={this.handleEditInputChange}
@@ -112,6 +128,7 @@ class InputTags extends React.Component {
               >
               <Input
                 onPressEnter={this.handleEditInputConfirm}
+                size="small"
               />
               </AutoComplete>
             );
@@ -125,6 +142,7 @@ class InputTags extends React.Component {
               key={tag}
               closable={true}
               onClose={() => this.handleClose(tag)}
+              color="blue"
             >
               <span
                 onDoubleClick={e => {
@@ -146,30 +164,6 @@ class InputTags extends React.Component {
             tagElem
           );
         })}
-        {inputVisible && (
-          <AutoComplete
-            options={this.state.options}
-            style={{
-            width: 200,
-            }}
-            // TODO: onSelect auto create tag 
-            placeholder="input tag here"
-            ref={this.saveInputRef}
-            type="text"
-            size="middle"
-            className="tag-input"
-            value={inputValue}
-            onChange={this.handleInputChange}
-            onBlur={this.handleInputConfirm}
-            >
-               <Input onPressEnter={this.handleInputConfirm}/>
-          </AutoComplete> 
-        )}
-        {!inputVisible && (
-          <Tag className="site-tag-plus" onClick={this.showInput}>
-            <PlusOutlined /> New Tag
-          </Tag>
-        )}
       </>
     );
   }

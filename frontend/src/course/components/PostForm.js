@@ -95,9 +95,9 @@ function PostForm () {
       </Form.Item>
       <Divider/>
       <Form.Item name="tags" >
-        <Input placeholder="#tags" bordered={false}/>
+        {/* <Input placeholder="#tags" bordered={false}/> */}
         <InputTags/>
-        <TagAutoComplete/>
+        {/* <TagAutoComplete/> */}
       </Form.Item>
       <Form.Item name="submit" style={{float: 'right'}}>
         <Button type="dashed" htmlType="submit">Post</Button>
