@@ -65,17 +65,32 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+class ChatRoomShortSerializer(serializers.ModelSerializer):
+    """
+    Short Serializer for chat room
+    """
+
+    class Meta:
+        model = ChatRoom
+        fields = ("id", "admin", "is_DM", "name")
+        read_only_fields = ("id", "admin", "is_DM", "name")
+
+
 class ChatMessageSerializer(serializers.ModelSerializer):
     """
     Used for saving chat messages and loading history chats
     """
-    chat_room = ChatRoomSerializer()
-    user = UserChatSerializer()
+    chat_room = ChatRoomShortSerializer(read_only=True)
+    user = UserChatSerializer(read_only=True)
+    sender = serializers.SerializerMethodField("is_sender")
 
     class Meta:
         model = ChatMessage
-        fields = ('id', 'user', 'chat_room', 'message',)
-        read_only_fields = ('id', 'user', 'chat_room',)
+        fields = ('id', 'user', 'chat_room', 'message', "sender")
+        read_only_fields = ('id', 'user', 'chat_room', "sender")
+
+    def is_sender(self, obj):
+        return obj.user.id == self.context["request"].user.id
 
     # TODO Define save() method to save incoming message
     def create(self, validated_data):
