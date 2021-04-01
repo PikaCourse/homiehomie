@@ -3,7 +3,6 @@ import "antd/lib/style/themes/default.less";
 import "antd/dist/antd.less";
 import "../../main.less";
 import axios from "axios";
-import TagAutoComplete from "./TagAutoComplete"
 import InputTags from "./InputTags"
 
 import {
