@@ -1,22 +1,29 @@
+import { Widget as ChatWidget, addResponseMessageToBottom, addUserMessageToBottom, addResponseMessageToTop, addUserMessageToTop, setQuickButtons, toggleMsgLoader, addLinkSnippet, dropMessages } from '@du201/react-chat-widget';
+import '@du201/react-chat-widget/lib/styles.css';
+import './Chat.css';
+
+
+
+
 import React, { useState, useEffect } from 'react';
 import { w3cwebsocket as W3CWebSocket } from "websocket";
-import { Widget as ChatWidget, addResponseMessage, addUserMessage, dropMessages, toggleMsgLoader } from '@du201/react-chat-widget';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
-import '@du201/react-chat-widget/lib/styles.css';
-import './Chat.css';
 
 const client = new W3CWebSocket('ws://127.0.0.1:8000/ws/chat/coursemeta/123');
+let loading = false; // whether the chat is loading history
 
 function Chat() {
   let [input, setInput] = useState(""); // message input
   let [currentRoom, setCurrentRoom] = useState(""); // the current chat room
-  let [moreHistoryToLoad, setMoreHistoryToLoad] = useState(false);
-  let [nextHistoryPageToLoad, setNextHistoryPageToLoad] = useState(1);
+  let [moreHistoryToLoad, setMoreHistoryToLoad] = useState(false); // when there is more chat history page to load from the server
+  let [nextHistoryPageToLoad, setNextHistoryPageToLoad] = useState(1); // the page index of the next history page to load from the server
 
+  // Initial connection
   useEffect(() => {
+
     // connect to the server
     client.onopen = function (event) {
       console.log("successfully connected to the server");
@@ -25,16 +32,14 @@ function Chat() {
     // listen to the messages from the server
     client.onmessage = function (message) {
       let messageFromServer = JSON.parse(message.data);
-      console.log('receiving message: ');
-      console.log(messageFromServer);
       let date = new Date(messageFromServer.message.timestamp);
-      console.log(typeof date)
       if (messageFromServer.sender) { // if the sender of the message is this instance itself
-        addUserMessage(messageFromServer.message.text + ' ' + messageFromServer.id, messageFromServer.user.username, convertTimeFormat(date)); // display the message on the right side
+        addUserMessageToBottom(messageFromServer.message.text + ' ' + messageFromServer.id, messageFromServer.user.username, convertTimeFormat(date)); // display the message on the right side
       } else {
-        addResponseMessage(messageFromServer.message.text + ' ' + messageFromServer.id, messageFromServer.user.username, convertTimeFormat(date));
+        addResponseMessageToBottom(messageFromServer.message.text + ' ' + messageFromServer.id, messageFromServer.user.username, convertTimeFormat(date)); // display the message on the left side
       }
     };
+
   }, []);
 
   // Pull in chat history when changing chatroom
@@ -53,30 +58,32 @@ function Chat() {
       setMoreHistoryToLoad(false);
       setNextHistoryPageToLoad(1);
 
-      axios.get(`http://127.0.0.1:8000/api/chat/coursemeta/123?page=${nextHistoryPageToLoad}`)
-        .then(res => {
+      // todo: 123 needs to be replaced with real chat room number
+      axios.get(`http://127.0.0.1:8000/api/chat/coursemeta/${123}?page=${1}`).then(res => {
 
-          // check the existence of chat history
-          if (res.data.count !== 0) {
+        // check the existence of chat history
+        if (res.data.count !== 0) {
 
-            // if chat history exists, load the messenges
-            let chatHistory = res.data.results;
-            chatHistory.reverse().forEach((message) => {
-              let date = new Date(message.message.timestamp);
-              console.log(message);
-              addResponseMessage(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date)); // todo: ask William to add "sender" data
-            });
+          // if chat history exists, load the messenges
+          let chatHistory = res.data.results;
 
-            // undisplay the loading sign
-            toggleMsgLoader();
+          chatHistory.forEach((message) => {
+            let date = new Date(message.message.timestamp);
+            console.log(message);
+            addResponseMessageToTop(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date)); // todo: ask William to add "sender" data
+          });
 
-            // check whether more history exists
-            if (res.data.next !== null) {
-              setMoreHistoryToLoad(true);
-              setNextHistoryPageToLoad(nextHistoryPageToLoad + 1);
-            }
+          // undisplay the loading sign
+          toggleMsgLoader();
+
+          // check whether more history exists
+          if (res.data.next !== null) {
+            setMoreHistoryToLoad(true);
+            setNextHistoryPageToLoad(nextHistoryPageToLoad + 1);
           }
-        });
+        }
+      });
+
     }
   }, [currentRoom]);
 
@@ -155,31 +162,37 @@ function Chat() {
    * When the chat window is scrolled to the top
    */
   let handleScrollToTop = () => {
-    console.log(nextHistoryPageToLoad);
-    console.log(moreHistoryToLoad);
-    if (moreHistoryToLoad) {
-      axios.get(`http://127.0.0.1:8000/api/chat/coursemeta/123?page=${nextHistoryPageToLoad}`)
-        .then(res => {
+    // console.log("before enter: " + loading);
+    if (moreHistoryToLoad && !loading) {
+      loading = true; // grab lock
+      // console.log(nextHistoryPageToLoad, moreHistoryToLoad, loading);
+      toggleMsgLoader();
+      axios.get(`http://127.0.0.1:8000/api/chat/coursemeta/123?page=${nextHistoryPageToLoad}`).then(res => {
 
-          // check the existence of chat history
-          if (res.data.count !== 0) {
+        // check the existence of chat history
+        if (res.data.count !== 0) {
 
-            // if chat history exists, load the messenges
-            let chatHistory = res.data.results;
-            chatHistory.reverse().forEach((message) => {
-              let date = new Date(message.message.timestamp);
-              addResponseMessage(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date));
-            });
+          // if chat history exists, load the messenges
+          let chatHistory = res.data.results;
+          chatHistory.forEach((message) => {
+            let date = new Date(message.message.timestamp);
+            console.log(message);
+            addResponseMessageToTop(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date));
+          });
 
-            // check whether more history exists
-            if (res.data.next !== null) {
-              setMoreHistoryToLoad(true);
-              setNextHistoryPageToLoad(nextHistoryPageToLoad + 1);
-            } else {
-              setMoreHistoryToLoad(false);
-            }
+          toggleMsgLoader();
+
+          // check whether more history exists
+          if (res.data.next !== null) {
+            setMoreHistoryToLoad(true);
+            setNextHistoryPageToLoad(nextHistoryPageToLoad + 1);
+          } else {
+            setMoreHistoryToLoad(false);
           }
-        });
+        }
+
+        loading = false; // release lock
+      });
     }
   }
 
@@ -199,6 +212,7 @@ function Chat() {
         handleScrollToTop={handleScrollToTop}
         courseChatRooms={["ece437", "ece301", "ece302"]}
         privateChatRooms={["William", "Andy", "John"]}
+        loading={loading}
       />
     </div>
   );
