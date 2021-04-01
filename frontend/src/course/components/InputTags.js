@@ -35,7 +35,8 @@ class InputTags extends React.Component {
   handleInputChange = e => {
     this.setState({ inputValue: e });
     this.showInput(); 
-    axios.get(`api/tags?name=${e}`).then((res) => {
+    let input = e.replace("#", "%23"); 
+    axios.get(`api/tags?name=${input}`).then((res) => {
       let tags = res.data.results.map(a => ({value: a.name})); 
       this.setState({options: tags}); 
     });
