@@ -27,7 +27,7 @@ export default function App(props) {
 
   //tab can be "playground" or "classroom"
   //TODO store tab to local storage 
-  const [tab, setTab] = useState("playground");//("classroom");
+  const [tab, setTab] = useState("classroom");
 
   return (
     <Provider store={store}>
