@@ -37,17 +37,45 @@ class UserChatSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "username",)
 
 
-class CourseChatMessageSerializer(serializers.ModelSerializer):
+class ChatRoomSerializer(serializers.ModelSerializer):
+    """
+    Serializer for chat room
+    """
+
+    class Meta:
+        model = ChatRoom
+        exclude = ("group_name", )
+        read_only_fields = ("id", "created_at",
+                            "last_active", "is_DM",
+                            "admin", "supervisors",
+                            "participants")
+
+    def create(self, validated_data):
+        """
+        Create a instance based on the validated data
+        :param validated_data:
+        :return:
+        """
+        # Get user info from context
+        # default admin is who created it
+        user = self.context["request"].user
+
+        validated_data["admin"] = user.student
+        validated_data["participants"] = [user.student]
+        return super().create(validated_data)
+
+
+class ChatMessageSerializer(serializers.ModelSerializer):
     """
     Used for saving chat messages and loading history chats
     """
-    course_meta = CourseMetaChatSerializer()
+    chat_room = ChatRoomSerializer()
     user = UserChatSerializer()
 
     class Meta:
-        model = CourseChatMessage
-        fields = ('id', 'user', 'course_meta', 'message',)
-        read_only_fields = ('id', 'user', 'course_meta',)
+        model = ChatMessage
+        fields = ('id', 'user', 'chat_room', 'message',)
+        read_only_fields = ('id', 'user', 'chat_room',)
 
     # TODO Define save() method to save incoming message
     def create(self, validated_data):
@@ -59,9 +87,9 @@ class CourseChatMessageSerializer(serializers.ModelSerializer):
         # Get user and course info from context
         # assuming that user is a valid user in db
         user = self.context["user"]
-        course_meta = self.context["course_meta"]
+        chat_room = self.context["chat_room"]
 
         validated_data["user"] = user
-        validated_data["course_meta"] = course_meta
+        validated_data["chat_room"] = chat_room
         return super().create(validated_data)
 
