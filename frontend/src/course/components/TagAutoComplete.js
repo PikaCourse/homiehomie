@@ -16,9 +16,6 @@ import {
   Col, 
   AutoComplete, 
 } from "antd";
-const mockVal = (str, repeat = 1) => ({
-    value: str.repeat(repeat),
-  });
 
 function TagAutoComplete () {
     const [value, setValue] = useState('');

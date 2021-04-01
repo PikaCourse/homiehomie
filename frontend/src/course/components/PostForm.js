@@ -4,6 +4,7 @@ import "antd/dist/antd.less";
 import "../../main.less";
 import axios from "axios";
 import TagAutoComplete from "./TagAutoComplete"
+import InputTags from "./InputTags"
 
 import {
   Button,
@@ -95,6 +96,7 @@ function PostForm () {
       <Divider/>
       <Form.Item name="tags" >
         <Input placeholder="#tags" bordered={false}/>
+        <InputTags/>
         <TagAutoComplete/>
       </Form.Item>
       <Form.Item name="submit" style={{float: 'right'}}>
