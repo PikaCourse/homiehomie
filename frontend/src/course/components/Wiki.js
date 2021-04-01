@@ -15,6 +15,7 @@ import { connect, } from "react-redux";
 import WikiSearch from "./Search";
 import WikiSummary from "./Summary";
 import Forum from "./Forum"
+import PostForm from "./PostForm"
 
 function Wiki(props) {
   // TODO Initial course should the last one user accessed
@@ -31,7 +32,14 @@ function Wiki(props) {
       <div className="px-1 mt-4" style={WikiStyle}>
         {/* <WikiSearch /> */}
         <WikiSummary />
-        <Forum maxPost={10} height={400}/> {/* maxPost: maximum number of posts  */}
+        <div class="row justify-content-md-center">
+          <div class="col-md-auto" style={{paddingTop: '50px'}} >
+            <PostForm/>
+          </div>
+          <div class="col-md-auto">
+            <Forum maxPost={10} height={400}/> {/* maxPost: maximum number of posts  */}
+          </div>
+        </div>
       </div>
     </Fragment>
   );
