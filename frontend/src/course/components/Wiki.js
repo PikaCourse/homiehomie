@@ -11,6 +11,7 @@ import React, { useEffect, Fragment, } from "react";
 import WikiNotebook from "./WikiNotebook";
 import { getCourses } from "../action";
 import { connect, } from "react-redux";
+import store from "../../store"
 
 import WikiSearch from "./Search";
 import WikiSummary from "./Summary";
@@ -25,6 +26,7 @@ function Wiki(props) {
     props.dispatch(getCourses({
       title: "CAS BI 315"
     }));
+    console.log(store.getState().course.selectedCourse); 
   });
 
   return (
@@ -37,7 +39,8 @@ function Wiki(props) {
             <PostForm/>
           </div>
           <div class="col-md-auto">
-            <Forum maxPost={10} height={400}/> {/* maxPost: maximum number of posts  */}
+            <Forum maxPost={10} height={400} tag={"#"+store.getState().course.selectedCourse.title}/> {/* maxPost: maximum number of posts  */}
+            {/* {console.log(store.getState().course.selectedCourse)} */}
           </div>
         </div>
       </div>
