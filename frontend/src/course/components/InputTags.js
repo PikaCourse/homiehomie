@@ -25,7 +25,6 @@ class InputTags extends React.Component {
 
   handleClose = removedTag => {
     const tags = this.state.tags.filter(tag => tag !== removedTag);
-    console.log(tags);
     this.setState({ tags });
   };
 
@@ -37,7 +36,6 @@ class InputTags extends React.Component {
     this.setState({ inputValue: e });
     this.showInput(); 
     axios.get(`api/tags?name=${e}`).then((res) => {
-      console.log(res.data.results); 
       let tags = res.data.results.map(a => ({value: a.name})); 
       this.setState({options: tags}); 
     });
@@ -49,7 +47,6 @@ class InputTags extends React.Component {
     if (inputValue && tags.indexOf(inputValue) === -1) {
       tags = [...tags, inputValue];
     }
-    console.log(tags);
     this.setState({
       tags,
       inputVisible: true,
