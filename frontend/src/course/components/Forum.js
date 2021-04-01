@@ -62,7 +62,7 @@ function Forum(props) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [nextPage, setNextPage] = useState(`api/posts?sortby=created_at&limit=${props.maxPost}`);
+  const [nextPage, setNextPage] = useState(); //(`api/posts?sortby=created_at&limit=${props.maxPost}&tags=${props.tag}`);//%23CS-1114
 
   const getPosts = () => {
     if (posts.length >= 100) { //stop loading more when reach 100 posts 
@@ -107,6 +107,11 @@ function Forum(props) {
   }; 
 
   useEffect(() => {
+    let tagDefined; 
+    typeof props.tag == 'undefined'?tagDefined="#all":tagDefined=props.tag; 
+    let tag = tagDefined.replace("#", "%23");
+    typeof tag == 'undefined' || tag == '%23all' ? setNextPage(`api/posts?sortby=created_at&limit=${props.maxPost}`) : setNextPage(`api/posts?sortby=created_at&limit=${props.maxPost}&tags=${tag}`); 
+
     getPosts();
   });
 

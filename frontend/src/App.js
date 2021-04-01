@@ -51,7 +51,7 @@ export default function App(props) {
               <PostForm/>
             </div>
             <div class="col-md-auto">
-              <Forum maxPost={50} height={800}/>
+              <Forum maxPost={50} height={800} tag={"#all"}/>
             </div>
           </div>
           </div>}
