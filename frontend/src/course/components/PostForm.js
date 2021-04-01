@@ -19,6 +19,7 @@ import {
 
 function PostForm () {
   const [form] = Form.useForm();
+  const [tags, setTags] = useState([""]); 
 
   const layout = {
     labelCol: { span: 8 },
@@ -31,16 +32,15 @@ function PostForm () {
     var firstWord = values.content.split(/[ ,]+/)[0];
     
     // deal with undefined
-    var tags; 
     var title; 
-    typeof values.tags === 'undefined'?tags="":tags=values.tags; 
+    // typeof values.tags === 'undefined'?tags="":tags=values.tags; 
     typeof values.title === 'undefined'|| values.title == ""?title=firstWord:title=values.title; 
 
 
     var success = false; 
     let post = {
       // TODO read multiple tags 
-      tags: [tags],
+      tags: tags,
       title: title,
       content: values.content
     }; 
@@ -94,9 +94,7 @@ function PostForm () {
       </Form.Item>
       <Divider/>
       <Form.Item name="tags" >
-        {/* <Input placeholder="#tags" bordered={false}/> */}
-        <InputTags/>
-        {/* <TagAutoComplete/> */}
+        <InputTags setTags={setTags}/>
       </Form.Item>
       <Form.Item name="submit" style={{float: 'right'}}>
         <Button type="dashed" htmlType="submit">Post</Button>

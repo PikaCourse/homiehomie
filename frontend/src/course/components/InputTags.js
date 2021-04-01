@@ -62,7 +62,6 @@ class InputTags extends React.Component {
     this.setState(({ tags, editInputIndex, editInputValue }) => {
       const newTags = [...tags];
       newTags[editInputIndex] = editInputValue;
-
       return {
         tags: newTags,
         editInputIndex: -1,
@@ -81,6 +80,7 @@ class InputTags extends React.Component {
 
   render() {
     const { tags, inputVisible, inputValue, editInputIndex, editInputValue } = this.state;
+    this.props.setTags(this.state.tags); 
     return (
       <>
         {true && (
