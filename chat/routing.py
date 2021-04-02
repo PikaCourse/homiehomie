@@ -9,8 +9,8 @@ desc:        Routing for chat consumers
 
 from django.urls import re_path
 
-from chat.consumers import CourseChatConsumer
+from chat.consumers import ChatConsumer
 
 websocket_urlpatterns = [
-    re_path(r'coursemeta/(?P<course_meta_id>\d+)$', CourseChatConsumer.as_asgi()),
+    re_path(r'room/(?P<room_id>\d+)$', ChatConsumer.as_asgi()),
 ]

@@ -13,13 +13,15 @@ from channels.db import database_sync_to_async
 from django.utils import timezone
 
 from scheduler.models import CourseMeta
+from chat.models import ChatRoom
 from chat.serializers import *
 from copy import deepcopy
+from asgiref.sync import sync_to_async
 
 
-class CourseChatConsumer(AsyncWebsocketConsumer):
+class ChatConsumer(AsyncWebsocketConsumer):
     """
-    Course chat websocket handler, does the following:
+    Chat websocket handler, does the following:
     1. Handle incoming ws connection request and assign group for it
     2. Handle ws disconnect event to clean up
     3. Receiving incoming message and broadcast to all other ws connections in the same group/course
@@ -36,14 +38,14 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
         self.user_data = await self.get_user_data()
 
         # Get course meta info from path
-        course_meta_id = self.scope['url_route']['kwargs']['course_meta_id']
-        self.course_meta = await self.get_course_meta(course_meta_id)
-        self.course_meta_data = CourseMetaChatSerializer(self.course_meta).data
-        if self.course_meta is None:
+        room_id = self.scope['url_route']['kwargs']['room_id']
+        self.room = await self.get_room(room_id)
+        if self.room is None:
             # Invalid course meta id, reject
             await self.close(code=4001)
         else:
-            self.room_group_name = f'course_chat_{self.course_meta.title}'
+            self.room_data = await self.get_room_data()
+            self.room_group_name = self.room_data['group_name']
 
             # Join room group
             await self.channel_layer.group_add(
@@ -59,12 +61,17 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
         return tmp.data
 
     @database_sync_to_async
-    def get_course_meta(self, coursemetaid):
+    def get_room(self, room_id):
         try:
-            obj = CourseMeta.objects.get(id=coursemetaid)
-        except CourseMeta.DoesNotExist:
+            obj = ChatRoom.objects.get(id=room_id)
+        except ChatRoom.DoesNotExist:
             obj = None
         return obj
+
+    @sync_to_async
+    def get_room_data(self):
+        tmp = ChatRoomSerializer(self.room)
+        return tmp.data
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -77,7 +84,7 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         # Inject sender and course info into message field
         message = json.loads(text_data)
-        message["course_meta"] = self.course_meta_data
+        message["meta"] = self.room_data
         message["user"] = self.user_data
         # Override message timestamp
         message["message"]["timestamp"] = timezone.now().isoformat()
@@ -105,9 +112,9 @@ class CourseChatConsumer(AsyncWebsocketConsumer):
         :param message: message to be saved
         :return:
         """
-        message = CourseChatMessageSerializer(data=message,
-                                              context={"user": self.user,
-                                                       "course_meta": self.course_meta})
+        message = ChatMessageSerializer(data=message,
+                                        context={"user": self.user,
+                                                 "chat_room": self.room})
         if message.is_valid(raise_exception=False):
             instance = message.save()
             return instance.id
