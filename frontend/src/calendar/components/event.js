@@ -101,27 +101,31 @@ const EventPopup = (props) => {
   return (
     // TODO Use form to control the data
     <div>
-      <Input addonBefore="Title" disabled={disableEdit} defaultValue={title} onChange={(e)=>setTitle(e.target.value)}/>
-      <Input addonBefore="Location" disabled={disableEdit} defaultValue={location} onChange={(e)=>setLocation(e.target.value)}/>
-      <Input addonBefore="Detail" disabled={disableEdit} defaultValue={detail} onChange={(e)=>setDetail(e.target.value)}/>
-      <Space direction="horizontal" size="small">
-        <DatePicker 
-          defaultValue={moment(event.start_at)} 
-          format="dddd, MMM Do"
-          disabled={disableEdit}
-          onChange={dateChangeHandler}
-        />
-        {
-          // TODO Fix width of range picker
-        }
-        <RangePicker
-          defaultValue={[moment(event.start_at), moment(event.end_at)]}
-          format="HH:mm"
-          disabled={disableEdit}
-          onChange={timeChangeHandler}
-        />
-        <Button onClick={submitChanges}>Update</Button>
-        <Button onClick={removeEvent}>Delete</Button>
+      <Space direction="vertical" size="middle">
+        <Input style={{"width" : "100%"}} addonBefore="Title" disabled={disableEdit} defaultValue={title} onChange={(e)=>setTitle(e.target.value)}/>
+        <Input style={{"width" : "100%"}} addonBefore="Location" disabled={disableEdit} defaultValue={location} onChange={(e)=>setLocation(e.target.value)}/>
+        <Input style={{"width" : "100%"}} addonBefore="Detail" disabled={disableEdit} defaultValue={detail} onChange={(e)=>setDetail(e.target.value)}/>
+        <Space direction="horizontal" size="middle">
+          <DatePicker 
+            defaultValue={moment(event.start_at)} 
+            format="dddd, MMM Do"
+            disabled={disableEdit}
+            onChange={dateChangeHandler}
+          />
+          {
+            // TODO Fix width of range picker
+          }
+          <RangePicker
+            defaultValue={[moment(event.start_at), moment(event.end_at)]}
+            format="HH:mm"
+            disabled={disableEdit}
+            onChange={timeChangeHandler}
+          />
+        </Space>
+        <Space direction="horizontal" size="middle" align="end">
+          <Button onClick={submitChanges}>Update</Button>
+          <Button onClick={removeEvent}>Delete</Button>
+        </Space>
       </Space>
     </div>
   );
@@ -157,6 +161,9 @@ export const Event = (props) => {
   return (
     <Popover 
       // Here is the pop up window for event after clicking
+      overlayStyle={{
+        width: "40vw"
+      }}
       content={popupWindow}
       visible={store.getState().calendar.customEvents[event.id]["onSelect"]}
       onVisibleChange={handleVisibilityChange}
