@@ -12,11 +12,13 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import UserAvatar from "./UserAvatar";
 import LoginRegister from "./LoginRegister";
+import {Row, Col, Modal, Button, Image, Divider, notification, message} from 'antd'
 
 /**
  * Top level user module
  * @param {*} props 
  */
+
 export default function UserModule(props) {
   // TODO How to access internal state? Store in redux
   // TODO Use 
@@ -25,6 +27,12 @@ export default function UserModule(props) {
 
   // User profile control
   const [userInfo, setUserInfo] = useState({});
+
+  const ws = new WebSocket(
+    'ws://'
+    + window.location.host
+    + '/ws/user/notification'
+  );
 
   // Check if user already logged in when the component
   // first loaded
@@ -42,14 +50,63 @@ export default function UserModule(props) {
         });
     }
     checkLogin();
-  }, []);
 
-  // TODO Setup ws connection to listen for notification
+    //Setup ws connection to listen for notification
+  function connectWS (isLoggedIn) {
+    console.log("connectws checkpoint1",isLoggedIn)
+    //if is loggedin
+    if(isLoggedIn){
+      //let that = this; //cache this
+      console.log("get to connectWS after establish websocket")
+      ws.onopen = () =>{
+        //for debug
+        console.log('connected');
+        //pull histroy
+        //and display contents in notification style
+        axios.get("/api/notifications")
+        .then((res) => {
+          res.data.results.forEach(x => 
+            notification.open({
+              message: 'History',
+              description: x.content.content,
+              onClick: () =>{
+                console.log('Notification Clicked!')
+              }
+            }))
+        })
+      }
+      ws.onmessage = evt =>{
+        message = JSON.parse(evt.data);
+        notification.open({
+          message: 'Notification',
+          description: message.content.content,
+          onClick: () => {
+            console.log('Notification Clicked!');
+          },
+        });
+      }
+      ws.onerror = err =>{
+        console.error(
+          "Socket encountered error: ",
+                err.message,
+                "Closing socket"
+        )
+        ws.close();
+      };
+    }
+    else{
+      //if is not logged in
+      console.log("get to connectWS is not logged in",isLoggedIn)
+      ws.close();
+    }
+  }
+  connectWS(isLoggedIn);
+  },[isLoggedIn] );
 
   // On start, see if logged in
   // if logged in, display User avator
   //  else login/register button
-  if (isLoggedIn)
+  if (isLoggedIn){
     return (
       <UserAvatar 
         setLogin={setIsLoggedIn}
@@ -57,6 +114,7 @@ export default function UserModule(props) {
         setUserInfo={setUserInfo}
       />
     );
+  }
   else
     return (
       /** 

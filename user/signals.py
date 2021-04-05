@@ -13,17 +13,21 @@ from django.dispatch import receiver
 from user.models import Student, Notification
 from scheduler.models import PostAnswer
 from scheduler.serializers import PostAnswerSerializer
-from chat.models import CourseChatMessage
-from chat.serializers import CourseChatMessageSerializer
+from chat.models import ChatMessage
+from chat.serializers import ChatMessageSerializer
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 import threading
 
 
-class NotificationThread(threading.Thread):
+class NotificationPostAnswerThread(threading.Thread):
+    """
+    Thread to start a notification on post answer
+    """
+
     def __init__(self, instance, **kwargs):
         self.instance = instance
-        super(NotificationThread, self).__init__(**kwargs)
+        super(NotificationPostAnswerThread, self).__init__(**kwargs)
 
     def run(self):
         instance = self.instance
@@ -50,7 +54,7 @@ def create_user_profile(sender, instance: User, created, raw, **kwargs):
 @receiver(post_save, sender=PostAnswer)
 def notify_on_new_postanswer(sender, instance: PostAnswer, created, **kwargs):
     # Use threading as signal is not asynchronous
-    NotificationThread(instance).start()
+    NotificationPostAnswerThread(instance).start()
 
 # Create notification after a chat message
 # TODO Need user to subscribe to a chat room for message notification
