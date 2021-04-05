@@ -83,15 +83,6 @@ const EventPopup = (props) => {
   }
 
   /**
-   * Get Friday of the week. 
-   */
-  const getFriday = () => {
-    let d = new Date(getMonday());
-    d.setDate(d.getDate()+4); 
-    return new Date(d);
-  }
-
-  /**
    * Remove a event from calendar 
    */
   const removeEvent = () => {
