@@ -28,6 +28,7 @@ const EventPopup = (props) => {
     disableEdit = true;
   const [title, setTitle] = useState(event.title);
   const [location, setLocation] = useState(event.location);
+  const [detail, setDetail] = useState(event.detail);
   const [start, setStart] = useState(event.start_at);
   const [end, setEnd] = useState(event.end_at);
 
@@ -42,7 +43,7 @@ const EventPopup = (props) => {
       all_day: event.all_day,
       start_at: start,
       end_at: end,
-      detail: event.detail, 
+      detail: detail, 
       location: location, 
       meta: event.meta, 
 
@@ -102,6 +103,7 @@ const EventPopup = (props) => {
     <div>
       <Input addonBefore="Title" disabled={disableEdit} defaultValue={title} onChange={(e)=>setTitle(e.target.value)}/>
       <Input addonBefore="Location" disabled={disableEdit} defaultValue={location} onChange={(e)=>setLocation(e.target.value)}/>
+      <Input addonBefore="Detail" disabled={disableEdit} defaultValue={detail} onChange={(e)=>setDetail(e.target.value)}/>
       <Space direction="horizontal" size="small">
         <DatePicker 
           defaultValue={moment(event.start_at)} 
