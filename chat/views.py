@@ -42,7 +42,7 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
     # Pagination control, default 20 rooms per page
     pagination_class = ChatRoomPagination
 
-    @action(detail=True)
+    @action(detail=True, methods=['post'])
     def join(self, request, pk=None):
         """
         Join a chat room as a participant
@@ -56,7 +56,7 @@ class ChatRoomViewSet(viewsets.ModelViewSet):
                       "chatroom": chatroom.id,  "status": status.HTTP_200_OK}
         return Response(error_pack)
 
-    @action(detail=True)
+    @action(detail=True, methods=['post'])
     def leave(self, request, pk=None):
         student = request.user.student
         chatroom = self.get_object()

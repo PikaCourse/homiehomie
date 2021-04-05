@@ -5,8 +5,8 @@ from chat import views
 from rest_framework import routers
 
 router = routers.DefaultRouter(trailing_slash=False)
-router.register(r'room/(?P<room_id>[^/.]+)/message', views.ChatMessageViewSet, basename="chat-message")
-router.register(r'room', views.ChatRoomViewSet, basename="chat-room")
+router.register(r'rooms/(?P<room_id>[^/.]+)/messages', views.ChatMessageViewSet, basename="chat-message")
+router.register(r'rooms', views.ChatRoomViewSet, basename="chat-room")
 
 
 urlpatterns = [
