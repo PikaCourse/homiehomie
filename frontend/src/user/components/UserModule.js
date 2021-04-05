@@ -61,6 +61,19 @@ export default function UserModule(props) {
       ws.onopen = () =>{
         //for debug
         console.log('connected');
+        //pull histroy
+        //and display contents in notification style
+        axios.get("/api/notifications")
+        .then((res) => {
+          res.data.results.forEach(x => 
+            notification.open({
+              message: 'History',
+              description: x.content.content,
+              onClick: () =>{
+                console.log('Notification Clicked!')
+              }
+            }))
+        })
       }
       ws.onmessage = evt =>{
         message = JSON.parse(evt.data);
