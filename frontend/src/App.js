@@ -54,7 +54,7 @@ export default function App(props) {
           </div>}
         <Footer style={{ height: "3vh", }} />
       </Fragment>
-      <Chat />
+      {/* <Chat /> */}
     </Provider>
   );
 }
