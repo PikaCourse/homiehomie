@@ -1,4 +1,4 @@
-import { Widget as ChatWidget, addResponseMessageToBottom, addUserMessageToBottom, addResponseMessageToTop, addUserMessageToTop, setQuickButtons, toggleMsgLoader, addLinkSnippet, dropMessages } from '@du201/react-chat-widget';
+import { Widget as ChatWidget, addResponseMessageToBottom, addUserMessageToBottom, addResponseMessageToTop, addUserMessageToTop, setQuickButtons, toggleMsgLoader, addLinkSnippet, dropMessages, currentDistanceToBottom, resumeDistanceToBottom } from '@du201/react-chat-widget';
 import '@du201/react-chat-widget/lib/styles.css';
 import './Chat.css';
 
@@ -13,13 +13,13 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 
 const client = new W3CWebSocket('ws://127.0.0.1:8000/ws/chat/coursemeta/123');
-let loading = false; // whether the chat is loading history
 
 function Chat() {
   let [input, setInput] = useState(""); // message input
   let [currentRoom, setCurrentRoom] = useState(""); // the current chat room
   let [moreHistoryToLoad, setMoreHistoryToLoad] = useState(false); // when there is more chat history page to load from the server
   let [nextHistoryPageToLoad, setNextHistoryPageToLoad] = useState(1); // the page index of the next history page to load from the server
+  let [loading, setLoading] = useState(false); // whether the chat is loading history
 
   // Initial connection
   useEffect(() => {
@@ -159,12 +159,13 @@ function Chat() {
   };
 
   /**
-   * When the chat window is scrolled to the top
+   * When the chat window is scrolled to the top (have used "loading" variable to prevent load the same history page several times)
    */
   let handleScrollToTop = () => {
     // console.log("before enter: " + loading);
     if (moreHistoryToLoad && !loading) {
-      loading = true; // grab lock
+      setLoading(true);
+      // loading = true; // grab lock
       // console.log(nextHistoryPageToLoad, moreHistoryToLoad, loading);
       toggleMsgLoader();
       axios.get(`http://127.0.0.1:8000/api/chat/coursemeta/123?page=${nextHistoryPageToLoad}`).then(res => {
@@ -172,15 +173,24 @@ function Chat() {
         // check the existence of chat history
         if (res.data.count !== 0) {
 
+          // store scroll position
+          let distanceToBottom = currentDistanceToBottom();
+          // console.log("to bottom: " + distanceToBottom);
+
           // if chat history exists, load the messenges
           let chatHistory = res.data.results;
           chatHistory.forEach((message) => {
             let date = new Date(message.message.timestamp);
             console.log(message);
+            // console.log("loading in my own page is: " + loading);
             addResponseMessageToTop(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date));
           });
 
           toggleMsgLoader();
+
+          // resume scroll position
+          // console.log("restore: " + distanceToBottom);
+          resumeDistanceToBottom(distanceToBottom);
 
           // check whether more history exists
           if (res.data.next !== null) {
@@ -191,7 +201,8 @@ function Chat() {
           }
         }
 
-        loading = false; // release lock
+        setLoading(false);
+        // loading = false; // release lock
       });
     }
   }
