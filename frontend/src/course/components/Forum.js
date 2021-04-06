@@ -45,6 +45,7 @@ const sampledata = {
   // Tags container
   tags : ["#help", "#lol"]
 }
+
 /**
  * 
  * @param {*} props 
@@ -62,14 +63,21 @@ function Forum(props) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [nextPage, setNextPage] = useState(`api/posts?sortby=created_at&limit=${props.maxPost}`);
+  const [nextPage, setNextPage] = useState(); //`api/posts?sortby=created_at&limit=${props.maxPost}&tags=${props.tag}`);//%23CS-1114
+  const [errorMes, setErrorMes] = useState(null);
 
-  const getPosts = () => {
+  const getPosts = (initialPage) => {
     if (posts.length >= 100) { //stop loading more when reach 100 posts 
       setHasMore(false); 
       return;
     }
-    axios.get(nextPage).then((res) => {
+
+    let thisPage = nextPage; 
+    typeof initialPage == 'undefined' || initialPage == null?null:thisPage=initialPage; 
+
+    axios.get(thisPage).then((res) => {
+      console.log(res); 
+
       //set new posts state 
       let newPostsArray = []; 
       res.data.results.forEach(function (postData, index) {
@@ -103,15 +111,40 @@ function Forum(props) {
         setHasMore(true); 
         setNextPage(res.data.next); 
       }
+    })
+    .catch((err) => {
+      // console.log(err); 
+      if (err == "Error: Request failed with status code 400" || err.response.status == 400) {
+        // console.log("tag error"); 
+        setErrorMes(<p>No post under {props.tag} tag. Displaying all post for you.</p>); 
+        setNextPage(`api/posts?sortby=created_at&limit=${props.maxPost}`); 
+        getPosts(`api/posts?sortby=created_at&limit=${props.maxPost}`); 
+      }
     }); 
   }; 
 
   useEffect(() => {
-    getPosts();
-  });
+
+    var firstPage;  
+
+    let tagDefined; 
+    typeof props.tag == 'undefined'?tagDefined="#all":tagDefined=props.tag; 
+    let tag = tagDefined.replace("#", "%23");
+
+    if (typeof tag == 'undefined' || tag == '%23all') {
+      setNextPage(`api/posts?sortby=created_at&limit=${props.maxPost}`); 
+      firstPage = `api/posts?sortby=created_at&limit=${props.maxPost}`; 
+    } else {
+      setNextPage(`api/posts?sortby=created_at&limit=${props.maxPost}&tags=${tag}`);
+      firstPage = `api/posts?sortby=created_at&limit=${props.maxPost}&tags=${tag}`; 
+    }
+
+    getPosts(firstPage);
+  }, []);
 
   return ( 
     <Fragment>
+      {errorMes}
       <InfiniteScroll
           dataLength={posts.length}
           // initialLoad={true}
