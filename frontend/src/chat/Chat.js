@@ -12,17 +12,38 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 
-const client = new W3CWebSocket('ws://127.0.0.1:8000/ws/chat/coursemeta/123');
+const client = new W3CWebSocket('ws://127.0.0.1:8000/ws/chat/room/2');
 
 function Chat() {
   let [input, setInput] = useState(""); // message input
-  let [currentRoom, setCurrentRoom] = useState(""); // the current chat room
+  let [currentRoom, setCurrentRoom] = useState(""); // the current chat room. The default value has to be "", cuz it's used as a check in handleRoomSelect
   let [moreHistoryToLoad, setMoreHistoryToLoad] = useState(false); // when there is more chat history page to load from the server
   let [nextHistoryPageToLoad, setNextHistoryPageToLoad] = useState(1); // the page index of the next history page to load from the server
   let [loading, setLoading] = useState(false); // whether the chat is loading history
+  let [privateChatRooms, setPrivateChatRooms] = useState([]);
+  let [publicChatRooms, setPublicChatRooms] = useState([]);
 
   // Initial connection
   useEffect(() => {
+
+    // ! manually create a chat room
+
+
+    // retrieve all the room data
+    axios.get(`http://127.0.0.1:8000/api/chat/rooms`).then(res => {
+      // console.log(res)
+      for (let i = 0; i < res.data.count; i++) {
+        if (res.data.results[i].is_private) {
+          let rooms = [...privateChatRooms];
+          rooms.push(res.data.results[i])
+          setPrivateChatRooms(rooms);
+        } else {
+          let rooms = [...publicChatRooms];
+          rooms.push(res.data.results[i])
+          setPublicChatRooms(rooms);
+        }
+      }
+    })
 
     // connect to the server
     client.onopen = function (event) {
@@ -32,12 +53,7 @@ function Chat() {
     // listen to the messages from the server
     client.onmessage = function (message) {
       let messageFromServer = JSON.parse(message.data);
-      let date = new Date(messageFromServer.message.timestamp);
-      if (messageFromServer.sender) { // if the sender of the message is this instance itself
-        addUserMessageToBottom(messageFromServer.message.text + ' ' + messageFromServer.id, messageFromServer.user.username, convertTimeFormat(date)); // display the message on the right side
-      } else {
-        addResponseMessageToBottom(messageFromServer.message.text + ' ' + messageFromServer.id, messageFromServer.user.username, convertTimeFormat(date)); // display the message on the left side
-      }
+      displayMessage({ message: messageFromServer, isHistoryMessage: false });
     };
 
   }, []);
@@ -58,8 +74,7 @@ function Chat() {
       setMoreHistoryToLoad(false);
       setNextHistoryPageToLoad(1);
 
-      // todo: 123 needs to be replaced with real chat room number
-      axios.get(`http://127.0.0.1:8000/api/chat/coursemeta/${123}?page=${1}`).then(res => {
+      axios.get(`http://127.0.0.1:8000/api/chat/rooms/${getRoomId(currentRoom)}/messages?page=${1}`).then(res => {
 
         // check the existence of chat history
         if (res.data.count !== 0) {
@@ -68,9 +83,8 @@ function Chat() {
           let chatHistory = res.data.results;
 
           chatHistory.forEach((message) => {
-            let date = new Date(message.message.timestamp);
             console.log(message);
-            addResponseMessageToTop(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date)); // todo: ask William to add "sender" data
+            displayMessage({ message: message, isHistoryMessage: true });
           });
 
           // undisplay the loading sign
@@ -86,6 +100,38 @@ function Chat() {
 
     }
   }, [currentRoom]);
+
+  /**
+   * get the room id from the currentRoom state
+   */
+  let getRoomId = (targetRoom) => {
+
+    let publicRoom = publicChatRooms.find(room => room.name === targetRoom);
+    let privateRoom = privateChatRooms.find(room => room.name === targetRoom);
+    if (publicRoom && privateRoom) {
+      throw "the currentRoom's name is in both public and private room! duplicate name";
+    } else if (publicRoom) {
+      return publicRoom.id;
+    } else if (privateRoom) { // if the currentRoom is not a public room (== a private room)
+      return privateRoom.id;
+    }
+  }
+
+  /**
+   * 
+   * display the message according to its sender and also whether it is history message
+   */
+  let displayMessage = ({ message, isHistoryMessage }) => {
+    let date = new Date(message.message.timestamp);
+    if (message.sender) { // if the sender of the message is this instance itself
+      if (isHistoryMessage) addUserMessageToTop(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date));
+      else addUserMessageToBottom(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date)); // display the message on the right side
+    }
+    else {
+      if (isHistoryMessage) addResponseMessageToTop(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date));
+      else addResponseMessageToBottom(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date)); // display the message on the left side
+    }
+  };
 
   /**
    * Convert Date() object to the date string format that I want
@@ -154,7 +200,20 @@ function Chat() {
    * change the current selected chatting room
    */
   let handleRoomSelect = (e) => {
-    // console.log(e.key);
+
+    // when it is not the first room select && when select a new chat room
+    if (currentRoom !== "" && e.key !== currentRoom) {
+      // tells the server that I left this chatroom
+      axios.post(`http://127.0.0.1:8000/api/chat/rooms/${getRoomId(currentRoom)}/leave`).then(res => {
+        console.log(res);
+      })
+
+      // tells the server that I joined this chatroom
+      axios.post(`http://127.0.0.1:8000/api/chat/rooms/${getRoomId(e.key)}/join`).then(res => {
+        console.log(res);
+      })
+    }
+
     setCurrentRoom(e.key);
   };
 
@@ -168,7 +227,7 @@ function Chat() {
       // loading = true; // grab lock
       // console.log(nextHistoryPageToLoad, moreHistoryToLoad, loading);
       toggleMsgLoader();
-      axios.get(`http://127.0.0.1:8000/api/chat/coursemeta/123?page=${nextHistoryPageToLoad}`).then(res => {
+      axios.get(`http://127.0.0.1:8000/api/chat/rooms/${getRoomId(currentRoom)}/messages?page=${nextHistoryPageToLoad}`).then(res => {
 
         // check the existence of chat history
         if (res.data.count !== 0) {
@@ -180,10 +239,8 @@ function Chat() {
           // if chat history exists, load the messenges
           let chatHistory = res.data.results;
           chatHistory.forEach((message) => {
-            let date = new Date(message.message.timestamp);
             console.log(message);
-            // console.log("loading in my own page is: " + loading);
-            addResponseMessageToTop(message.message.text + ' ' + message.id, message.user.username, convertTimeFormat(date));
+            displayMessage({ message: message, isHistoryMessage: true });
           });
 
           toggleMsgLoader();
@@ -207,11 +264,18 @@ function Chat() {
     }
   }
 
+  /**
+   * return an array of room names used for UI
+   */
+  let returnRoomNames = (rooms) => {
+    return rooms.map((room) => room.name);
+  }
+
   return (
     <div>
       <ChatWidget
         handleNewUserMessage={handleNewUserMessage}
-        title="ECE666"
+        title=""
         subtitle=""
         showEmoji={true}
         input={input}
@@ -221,8 +285,8 @@ function Chat() {
         handleRoomSelect={handleRoomSelect}
         currentRoom={currentRoom}
         handleScrollToTop={handleScrollToTop}
-        courseChatRooms={["ece437", "ece301", "ece302"]}
-        privateChatRooms={["William", "Andy", "John"]}
+        courseChatRooms={returnRoomNames(publicChatRooms)}
+        privateChatRooms={returnRoomNames(privateChatRooms)}
         loading={loading}
       />
     </div>
