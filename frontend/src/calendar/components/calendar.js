@@ -1,7 +1,7 @@
 /**
  * File name:	calendar.js
  * Created:	01/31/2021
- * Author:	Weili An
+ * Author:	Weili An, Joanna Fang
  * Email:	China_Aisa@live.com
  * Version:	1.0 Initial file
  * Description:	Calendar component for PikaCourse, 
@@ -13,7 +13,7 @@ import { Calendar as bgCalendar, Views, momentLocalizer} from "react-big-calenda
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import moment from "moment";
 import { useSelector, connect, useDispatch } from "react-redux";
-import { addEventToCalendar, removeEventInCalendar } from "../action";
+import { addEventToCalendar, updateEventInCalendar, removeEventInCalendar } from "../action";
 import { Event as CalendarEvent } from "./event";
 import { selectCourse } from "../../course/action";
 
@@ -24,6 +24,8 @@ import "../../../static/scss/calendar.scss";
 import { flattenEvents, flattenCourse } from "./utils";
 import { EventType } from "../utils";
 import { getNextColor, getColor } from "./utils/color.js";
+import store from "../../store";
+
 
 // Date internationalization and localization
 const localizer = momentLocalizer(moment);  
@@ -126,6 +128,21 @@ function Calendar(props) {
   const createNewEvent = (slotInfo) => {
     // TODO Fire a modal for creating new event
     console.log(slotInfo);
+    let newAnonymousEvent = {
+      id: 0, 
+      title: "new custom event",
+      type: "custom",
+      all_day: slotInfo.slots.length == 1,
+      start_at: slotInfo.start,
+      end_at: slotInfo.end,
+      detail: "", 
+      location: "", 
+      meta: "", 
+      // first_created: true, 
+      onSelect: true, 
+    };
+    store.dispatch(addEventToCalendar(newAnonymousEvent)); 
+    
   };
 
   // TODO Other callbacks
@@ -138,7 +155,23 @@ function Calendar(props) {
     // Update selected event
     setSelectedEvent(event);
 
-    // Select the course
+    if (event.type == "custom") {
+      let updatedEvent = {
+        id: event.id, 
+        title: event.title,
+        type: event.type,
+        all_day: event.all_day,
+        start_at: event.start_at,
+        end_at: event.end_at,
+        detail: event.detail, 
+        location: event.location, 
+        meta: event.meta, 
+        onSelect: true, 
+      };
+      store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent})); 
+    }
+
+    // Select the course<
     if (event.type == "course")
       dispatch(
         selectCourse({
@@ -147,6 +180,22 @@ function Calendar(props) {
           courseId: event.meta.id
         }));
   };
+
+  const updateEvent = ({ event, start, end, }) => {
+    let updatedEvent = {
+      id: event.id, 
+      title: event.title,
+      type: event.type,
+      all_day: event.all_day,
+      start_at: start,
+      end_at: end,
+      detail: event.detail, 
+      location: event.location, 
+      meta: event.meta, 
+      onSelect: event.onSelect, 
+    };
+    store.dispatch(updateEventInCalendar({id: event.id, event: updatedEvent})); 
+  }; 
 
   // Rendering
   return (
@@ -210,6 +259,8 @@ function Calendar(props) {
 
         // Drag and drop control related
         resizable={true}
+        onEventDrop={updateEvent}
+        onEventResize={updateEvent}
       />
     </div>
   );
