@@ -42,11 +42,11 @@ export default createReducer(initialState, {
     state.option = [];
 
     // Handle error
-    if (action.payload.results.length == 0) {
+    if (action.payload.length == 0) {
       message.error("Oops! This course cannot be found...");
     } else {
       // Precompute timeStr to save computation cost
-      const sections = action.payload.results.map((section) => {
+      const sections = action.payload.map((section) => {
         return {
           ...section,
           timeStr: timeObjFommatter(section.time)
@@ -67,7 +67,7 @@ export default createReducer(initialState, {
    */
   [action.getCourses.fulfilled]: (state, action) => {
     // Reducer for getting courses list with given query setting
-    let strlist = action.payload.results.map((x) => ({ value: x.title }));
+    let strlist = action.payload.map((x) => ({ value: x.title }));
     state.option = strlist;
   },
   [action.getCourses.rejected]: () => {
@@ -90,7 +90,7 @@ export default createReducer(initialState, {
     state.option = [];
     // Set the current selected course to be the one in the course list that
     // has the matching course id
-    const sections = action.payload.courses.map((section) => {
+    const sections = action.payload.courses.results.map((section) => {
       return {
         ...section,
         timeStr: timeObjFommatter(section.time)

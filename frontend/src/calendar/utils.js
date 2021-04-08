@@ -1,7 +1,7 @@
 /**
  * File name:	utils.js
  * Created:	01/31/2021
- * Author:	Weili An
+ * Author:	Weili An, Joanna Fang
  * Email:	China_Aisa@live.com
  * Version:	1.0 Initial file
  * Description:	Global utils for Calendar application
@@ -20,4 +20,19 @@ export class EventType extends Object {
   detail;       // event detail
   location;     // event location
   meta;         // other info related to event
+  // first_created; //if the event is first created 
+  onSelect;     //if the event is being selected (a quick fix for trigger not working on 15mins event)
+}
+/**
+ * Convert custom event's start and end string to date object 
+ * @param {*} props custom event json 
+ */
+export const dateObjConverter = (props) => {
+  Object.keys(props).map((event) => {
+    props[event].start_at = new Date(props[event].start_at); 
+    props[event].end_at = new Date(props[event].end_at);
+    return event; 
+  })
+
+  return props; 
 }

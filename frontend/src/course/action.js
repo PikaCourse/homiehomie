@@ -26,7 +26,7 @@ export const getCourseSections = createAsyncThunk(
     // TODO Not relied on api string but as a package
     // TODO Pack api as a package?
     let res = await axios.get(`api/courses?${qs}`);
-    return res.data;
+    return res.data.results;
   }
 );
 
@@ -42,7 +42,7 @@ export const getCourses = createAsyncThunk(
       query.limit = 15;
     let qs = queryString.stringify(query);
     let res = await axios.get(`api/coursesmeta?${qs}`);
-    return res.data;
+    return res.data.results;
   }
 );
 
