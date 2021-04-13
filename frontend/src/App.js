@@ -7,13 +7,14 @@
  * Description:	Frontend global container
  */
 
-import React, { Fragment, useState} from "react";
+import React, { Fragment, useState } from "react";
 
 import Navbar from "./nav/Navbar";
 import Footer from "./nav/Footer";
 import Calendar from "./calendar";
 import Wiki from "./course";
 import Landing from "./landing";
+import Chat from "./chat/Chat";
 import Forum from "./course/components/Forum"
 import PostForm from "./course/components/PostForm"
 
@@ -34,29 +35,30 @@ export default function App(props) {
       <Fragment>
         {/* <Landing /> */}
         <Navbar tab={tab} setTab={setTab} style={{ height: "5vh", }} />
-        {tab=="classroom"?
-        <div className="container-fluid">
-          <div className="row" style={{ height: "92vh", }}>
-            <div className="col-md-6">
-              <Calendar />
-            </div>
-            <div className="col-md-6">
-              <Wiki />
-            </div>
-          </div>
-        </div>
-        :<div className="container">
-          <div class="row justify-content-md-center">
-            <div class="col-md-auto" style={{paddingTop: '50px'}}>
-              <PostForm/>
-            </div>
-            <div class="col-md-auto">
-              <Forum maxPost={50} height={800} tag={"#all"}/>
+        {tab == "classroom" ?
+          <div className="container-fluid">
+            <div className="row" style={{ height: "92vh", }}>
+              <div className="col-md-6">
+                <Calendar />
+              </div>
+              <div className="col-md-6">
+                <Wiki />
+              </div>
             </div>
           </div>
+          : <div className="container">
+            <div class="row justify-content-md-center">
+              <div class="col-md-auto" style={{ paddingTop: '50px' }}>
+                <PostForm />
+              </div>
+              <div class="col-md-auto">
+                <Forum maxPost={50} height={800} tag={"#all"} />
+              </div>
+            </div>
           </div>}
         <Footer style={{ height: "3vh", }} />
       </Fragment>
+      <Chat />
     </Provider>
   );
 }
