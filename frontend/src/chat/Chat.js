@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 
-const client = new W3CWebSocket('ws://127.0.0.1:8000/ws/chat/room/2');
+let client = null;
 
 function Chat() {
   let [input, setInput] = useState(""); // message input
@@ -20,18 +20,16 @@ function Chat() {
   let [moreHistoryToLoad, setMoreHistoryToLoad] = useState(false); // when there is more chat history page to load from the server
   let [nextHistoryPageToLoad, setNextHistoryPageToLoad] = useState(1); // the page index of the next history page to load from the server
   let [loading, setLoading] = useState(false); // whether the chat is loading history
-  let [privateChatRooms, setPrivateChatRooms] = useState([]);
-  let [publicChatRooms, setPublicChatRooms] = useState([]);
+  let [privateChatRooms, setPrivateChatRooms] = useState([]); // a list of room's data
+  let [publicChatRooms, setPublicChatRooms] = useState([]); // a list of room's data
 
   // Initial connection
   useEffect(() => {
 
-    // ! manually create a chat room
-
-
     // retrieve all the room data
     axios.get(`http://127.0.0.1:8000/api/chat/rooms`).then(res => {
-      // console.log(res)
+      console.log("hehehhe")
+      console.log(res)
       for (let i = 0; i < res.data.count; i++) {
         if (res.data.results[i].is_private) {
           let rooms = [...privateChatRooms];
@@ -45,17 +43,6 @@ function Chat() {
       }
     })
 
-    // connect to the server
-    client.onopen = function (event) {
-      console.log("successfully connected to the server");
-    };
-
-    // listen to the messages from the server
-    client.onmessage = function (message) {
-      let messageFromServer = JSON.parse(message.data);
-      displayMessage({ message: messageFromServer, isHistoryMessage: false });
-    };
-
   }, []);
 
   // Pull in chat history when changing chatroom
@@ -63,6 +50,12 @@ function Chat() {
 
     // if room selection is not empty
     if (currentRoom !== "") {
+
+      if (client !== null) {
+        // todo: check bufferedAmount?
+        client.close();
+        console.log("closed!");
+      }
 
       // empty the chat window
       dropMessages();
@@ -74,7 +67,7 @@ function Chat() {
       setMoreHistoryToLoad(false);
       setNextHistoryPageToLoad(1);
 
-      axios.get(`http://127.0.0.1:8000/api/chat/rooms/${getRoomId(currentRoom)}/messages?page=${1}`).then(res => {
+      axios.get(`http://127.0.0.1:8000/api/chat/rooms/${getRoomId(currentRoom)}/messages?page_size=10&page=${1}`).then(res => {
 
         // check the existence of chat history
         if (res.data.count !== 0) {
@@ -98,6 +91,19 @@ function Chat() {
         }
       });
 
+      // connect to the new room
+      client = new W3CWebSocket(`ws://127.0.0.1:8000/ws/chat/room/${getRoomId(currentRoom)}`);
+
+      client.onopen = function (event) {
+        console.log("successfully connected to the server");
+      };
+
+      // listen to the messages from the server
+      client.onmessage = function (message) {
+        let messageFromServer = JSON.parse(message.data);
+        displayMessage({ message: messageFromServer, isHistoryMessage: false });
+      };
+
     }
   }, [currentRoom]);
 
@@ -118,7 +124,6 @@ function Chat() {
   }
 
   /**
-   * 
    * display the message according to its sender and also whether it is history message
    */
   let displayMessage = ({ message, isHistoryMessage }) => {
@@ -166,7 +171,9 @@ function Chat() {
   const handleNewUserMessage = (newMessage) => {
     setInput('');
     let messageObj = { message: { text: newMessage, timestamp: Date() } };
-    client.send(JSON.stringify(messageObj));
+    if (client !== null) {
+      client.send(JSON.stringify(messageObj));
+    }
   };
 
   /**
@@ -227,7 +234,7 @@ function Chat() {
       // loading = true; // grab lock
       // console.log(nextHistoryPageToLoad, moreHistoryToLoad, loading);
       toggleMsgLoader();
-      axios.get(`http://127.0.0.1:8000/api/chat/rooms/${getRoomId(currentRoom)}/messages?page=${nextHistoryPageToLoad}`).then(res => {
+      axios.get(`http://127.0.0.1:8000/api/chat/rooms/${getRoomId(currentRoom)}/messages?page_size=10&page=${nextHistoryPageToLoad}`).then(res => {
 
         // check the existence of chat history
         if (res.data.count !== 0) {
