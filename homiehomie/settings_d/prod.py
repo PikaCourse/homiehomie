@@ -32,8 +32,8 @@ REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'] = [
 ]
 
 REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
-    # 'anon': '500/day',
-    # 'user': '5000/day',
+    'anon': '500/day',
+    'user': '5000/day',
     'user.register': '20/day',
     'user.verify_email': '5/hour'
 }
